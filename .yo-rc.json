@@ -1,0 +1,45 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "sn.sonatel.dsi.dif.selfcare.b2c",
+      "nativeLanguage": "fr"
+    },
+    "jhipsterVersion": "5.3.4",
+    "baseName": "selfcare-b2c",
+    "packageName": "sn.sonatel.dsi.dif.selfcare.b2c",
+    "packageFolder": "sn/sonatel/dsi/dif/selfcare/b2c",
+    "serverPort": "8707",
+    "authenticationType": "uaa",
+    "uaaBaseName": "samplessouaas",
+    "hibernateCache": "ehcache",
+    "clusteredHttpSession": false,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": "elasticsearch",
+    "messageBroker": false,
+    "serviceDiscoveryType": "eureka",
+    "buildTool": "maven",
+    "enableSocialSignIn": false,
+    "jwtSecretKey": "5fad32ef556def85aa6835719db5f6b73fa2c31a",
+    "enableTranslation": true,
+    "applicationType": "microservice",
+    "testFrameworks": [
+      "gatling",
+      "cucumber"
+    ],
+    "jhiPrefix": "jhi",
+    "skipClient": true,
+    "skipUserManagement": true,
+    "nativeLanguage": "fr",
+    "languages": [
+      "fr",
+      "en"
+    ],
+    "clientPackageManager": "yarn"
+  },
+  "generator-jhipster-entity-audit": {
+    "auditFramework": "custom"
+  }
+}
