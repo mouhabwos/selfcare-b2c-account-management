@@ -6,13 +6,34 @@
     <artifactId>selfcare-b2c-be</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>Selfcare B 2 C</name>
+    <name>selfcare-b2c-be</name>
 
     <repositories>
         <!-- jhipster-needle-maven-repository -->
     </repositories>
 
     <!-- jhipster-needle-distribution-management -->
+    <distributionManagement>
+        <!-- Publish versioned releases here -->
+        <repository>
+            <id>nexus</id>
+            <name>RELEASE VERSION</name>
+            <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
+        </repository>
+        <!-- Publish snapshots here -->
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>SNAPSHOTS VERSION</name>
+            <url>http://${server.nexus.url}/nexus/content/repositories/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://digitalfactory.atlassian.net/browse/MCHANGES</url>
+    </issueManagement>
+
 
     <properties>
         <!-- Build properties -->
@@ -68,7 +89,7 @@
         <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
 
         <!-- Sonar properties -->
-        <sonar.host.url>http://localhost:9001</sonar.host.url>
+        <sonar.host.url>http://sonar.tools.orange-sonatel.com</sonar.host.url>
         <sonar.exclusions>src/main/webapp/content/**/*.*, src/main/webapp/i18n/*.js, target/www/**/*.*</sonar.exclusions>
         <sonar.issue.ignore.multicriteria>S3437,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
         <!-- Rule https://sonarcloud.io/coding_rules?open=Web%3ABoldAndItalicTagsCheck&rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
