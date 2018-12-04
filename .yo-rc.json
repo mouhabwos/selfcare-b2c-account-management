@@ -8,7 +8,7 @@
     "baseName": "selfcare-b2c",
     "packageName": "sn.sonatel.dsi.dif.selfcare.b2c",
     "packageFolder": "sn/sonatel/dsi/dif/selfcare/b2c",
-    "serverPort": "8707",
+    "serverPort": "8706",
     "authenticationType": "uaa",
     "uaaBaseName": "samplessouaas",
     "hibernateCache": "ehcache",
