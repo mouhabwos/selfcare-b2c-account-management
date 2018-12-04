@@ -12,8 +12,8 @@ pipeline {
   environment {
       IMAGE = 'registry.tools.orange-sonatel.com/dif/selfcare-b2c-fe'
       VERSION = readMavenPom().getVersion()
-      NAME = 'selfcare-b2c-fe'
-      PORT=8700
+      NAME = readMavenPom().getArtifactId()
+      PORT=8706
   }
 
   tools {
@@ -52,14 +52,7 @@ pipeline {
        }
      }
 	 }
-/*
-    stage('Build For Dev Env') {
-            steps {
-               sh 'mvn clean package -Pdev'
-               stash includes: 'target/*', name: 'target'
-            }
-         }
-*/
+
 
     stage(' [DEV2] Build & Run Docker image') {
         agent  { label 'docker-builder-dev' }
