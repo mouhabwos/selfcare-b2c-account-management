@@ -102,8 +102,8 @@ jhipster:
                 # Token is valid 24 hours
                 token-validity-in-seconds: 86400
         client-authorization:
-            access-token-uri: http://samplessouaas/oauth/token
-            token-service-id: samplessouaas
+            access-token-uri: http://selfcare-uaa/oauth/token
+            token-service-id: selfcare-uaa
             client-id: internal
             client-secret: internal
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
