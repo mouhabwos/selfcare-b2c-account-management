@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
-    <artifactId>selfcare-b2c-be</artifactId>
+    <artifactId>selfcare-b2c</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>selfcare-b2c-be</name>
+    <name>selfcare-b2c</name>
 
     <repositories>
         <!-- jhipster-needle-maven-repository -->
@@ -38,7 +38,7 @@
     <properties>
 
         <!-- Docker compliance port range allocation -->
-        <server.port.docker.expose>8706</server.port.docker.expose>
+        <server.port.docker.expose>8711</server.port.docker.expose>
         <eureka.instance.dev.hostname>10.137.52.10</eureka.instance.dev.hostname>
         <eureka.instance.rec.hostname>10.137.52.12</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
