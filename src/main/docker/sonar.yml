@@ -1,6 +1,6 @@
 version: '2'
 services:
-    selfcare-b2c-sonar:
+    selfcare-b2c-conso-sonar:
         image: sonarqube:7.1-alpine
         ports:
             - 9001:9000

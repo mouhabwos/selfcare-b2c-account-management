@@ -1,13 +1,13 @@
 version: '2'
 services:
-    selfcare-b2c-mysql:
+    selfcare-b2c-conso-mysql:
         image: mysql:5.7.20
         # volumes:
-        #     - ~/volumes/jhipster/selfcare-b2c/mysql/:/var/lib/mysql/
+        #     - ~/volumes/jhipster/selfcare-b2c-conso/mysql/:/var/lib/mysql/
         environment:
             - MYSQL_USER=root
             - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-            - MYSQL_DATABASE=selfcare-b2c
+            - MYSQL_DATABASE=selfcare-b2c-conso
         ports:
             - 3306:3306
         command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
