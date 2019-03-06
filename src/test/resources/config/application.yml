@@ -17,17 +17,17 @@ eureka:
     client:
         enabled: false
     instance:
-        appname: selfcare-b2c-conso
-        instanceId: selfcare-b2c-conso:${spring.application.instance-id:${random.value}}
+        appname: selfcare-b2c-account-management
+        instanceId: selfcare-b2c-account-management:${spring.application.instance-id:${random.value}}
 
 spring:
     application:
-        name: selfcare-b2c-conso
+        name: selfcare-b2c-account-management
     cache:
         type: simple
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:h2:mem:selfcare-b2c-conso;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        url: jdbc:h2:mem:selfcare-b2c-account-management;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
         name:
         username:
         password:

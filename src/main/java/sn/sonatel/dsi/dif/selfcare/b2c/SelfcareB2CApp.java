@@ -41,7 +41,7 @@ public class SelfcareB2CApp {
     }
 
     /**
-     * Initializes selfcare-b2c-conso.
+     * Initializes selfcare-b2c-account-management.
      * <p>
      * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
      * <p>

@@ -5,10 +5,10 @@
       "nativeLanguage": "fr"
     },
     "jhipsterVersion": "5.3.4",
-    "baseName": "selfcare-b2c-conso",
+    "baseName": "selfcare-b2c-account-management",
     "packageName": "sn.sonatel.dsi.dif.selfcare.b2c",
     "packageFolder": "sn/sonatel/dsi/dif/selfcare/b2c",
-    "serverPort": "8716",
+    "serverPort": "8715",
     "authenticationType": "uaa",
     "uaaBaseName": "selfcare-uaa",
     "hibernateCache": "ehcache",

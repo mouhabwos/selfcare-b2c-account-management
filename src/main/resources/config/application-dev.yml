@@ -44,7 +44,7 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_conso?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
         password: digitalfactory
         hikari:
@@ -120,7 +120,7 @@ jhipster:
             client-id: internal
             client-secret: internal
     mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: selfcare-b2c-conso@localhost
+        from: selfcare-b2c-account-management@localhost
         base-url: http://127.0.0.1:8707
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx:
