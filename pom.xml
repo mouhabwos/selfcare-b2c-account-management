@@ -29,6 +29,13 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <scm>
+        <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-conso.git</connection>
+        <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-conso.git</developerConnection>
+        <tag>v0.0.1</tag>
+        <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-conso.git</url>
+    </scm>
+
     <issueManagement>
         <system>JIRA</system>
         <url>https://digitalfactory.atlassian.net/browse/MCHANGES</url>
@@ -736,6 +743,15 @@
                 </configuration>
             </plugin>
             <!-- jhipster-needle-maven-add-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
