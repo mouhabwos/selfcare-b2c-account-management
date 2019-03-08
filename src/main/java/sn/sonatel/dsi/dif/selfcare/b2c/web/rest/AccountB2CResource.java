@@ -33,7 +33,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  * REST controller for managing AccountB2C.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/account-management")
 public class AccountB2CResource {
 
     private final Logger log = LoggerFactory.getLogger(AccountB2CResource.class);
@@ -82,7 +82,7 @@ public class AccountB2CResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new accountB2C, or with status 400 (Bad Request) if the accountB2C has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/account-b-2-cs/register")
+    @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
@@ -96,9 +96,11 @@ public class AccountB2CResource {
             throw new LigneAlreadyRattachedException();
         }
 
+        managedUserVM.setActivated(true);
         iServiceUAA.registerAccount(managedUserVM);
 
         AccountB2C account =  new AccountB2C();
+        account.setNumero(managedUserVM.getLogin());
         account.setEmail(managedUserVM.getEmail());
         account.setFirstName(managedUserVM.getFirstName());
         account.setLastName(managedUserVM.getLastName());

@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class UserDTO {
 
-	private String id;
+	private Long id;
 
 	@ApiModelProperty(required = true)
 	@NotNull(message = "Le numero ne peut pas être vide")
@@ -61,15 +61,15 @@ public class UserDTO {
 		// Empty constructor needed for Jackson.
 	}
 
-	public String getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getLogin() {
+    public String getLogin() {
 		return login;
 	}
 
