@@ -1,0 +1,52 @@
+{
+    "name": "AccountB2C",
+    "fields": [
+        {
+            "fieldName": "numero",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "firstName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "lastName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "imagePrfil",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "rattachementLigne",
+            "otherEntityRelationshipName": "accountB2C",
+            "relationshipName": "user"
+        }
+    ],
+    "changelogDate": "20190308110239",
+    "entityTableName": "account_b_2_c",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "selfcare-b2c-account-management",
+    "applications": "*",
+    "microserviceName": "selfcare-b2c-account-management"
+}

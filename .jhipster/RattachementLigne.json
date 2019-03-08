@@ -1,0 +1,54 @@
+{
+    "name": "RattachementLigne",
+    "fields": [
+        {
+            "fieldName": "numero",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "typeVerification",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "codeVerification",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "statut",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "imagePrfil",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "typeNumero",
+            "fieldType": "TypeNumero",
+            "fieldValues": "FIX,MOBILE",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipName": "accountB2C",
+            "otherEntityName": "accountB2C",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190308110242",
+    "entityTableName": "rattachement_ligne",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "selfcare-b2c-account-management",
+    "applications": "*",
+    "microserviceName": "selfcare-b2c-account-management"
+}
