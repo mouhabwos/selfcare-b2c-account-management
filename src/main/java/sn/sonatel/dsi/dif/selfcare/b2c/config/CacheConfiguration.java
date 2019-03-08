@@ -36,6 +36,9 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
+            cm.createCache(sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C.class.getName(), jcacheConfiguration);
+            cm.createCache(sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C.class.getName() + ".users", jcacheConfiguration);
+            cm.createCache(sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }
