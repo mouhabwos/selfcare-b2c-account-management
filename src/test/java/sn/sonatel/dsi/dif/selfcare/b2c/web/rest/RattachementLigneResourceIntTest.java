@@ -53,8 +53,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
 public class RattachementLigneResourceIntTest {
 
-    private static final String DEFAULT_NUMERO = "AAAAAAAAAA";
-    private static final String UPDATED_NUMERO = "BBBBBBBBBB";
+    private static final String DEFAULT_NUMERO = "778505050";
+    private static final String UPDATED_NUMERO = "778505052";
 
     private static final String DEFAULT_TYPE_VERIFICATION = "AAAAAAAAAA";
     private static final String UPDATED_TYPE_VERIFICATION = "BBBBBBBBBB";

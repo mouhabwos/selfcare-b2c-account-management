@@ -94,18 +94,26 @@ public class AccountB2CResource {
 
         if(ligne.isPresent()){
             throw new LigneAlreadyRattachedException();
+
         }
 
-        managedUserVM.setActivated(true);
-        iServiceUAA.registerAccount(managedUserVM);
+        AccountB2C result =  new AccountB2C();
+        try {
+            managedUserVM.setActivated(true);
+            iServiceUAA.registerAccount(managedUserVM);
 
-        AccountB2C account =  new AccountB2C();
-        account.setNumero(managedUserVM.getLogin());
-        account.setEmail(managedUserVM.getEmail());
-        account.setFirstName(managedUserVM.getFirstName());
-        account.setLastName(managedUserVM.getLastName());
-        account.setImagePrfil(managedUserVM.getImageprofil());
-        AccountB2C result = accountB2CRepository.save(account);
+            AccountB2C account =  new AccountB2C();
+            account.setNumero(managedUserVM.getLogin());
+            account.setEmail(managedUserVM.getEmail());
+            account.setFirstName(managedUserVM.getFirstName());
+            account.setLastName(managedUserVM.getLastName());
+            account.setImagePrfil(managedUserVM.getImageprofil());
+            result = accountB2CRepository.save(account);
+        }catch (Exception e){
+
+            throw new BadRequestAlertException("Le compte n'a pas été créé", ENTITY_NAME, "");
+        }
+
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
