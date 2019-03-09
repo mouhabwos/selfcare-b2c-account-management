@@ -46,13 +46,13 @@ public class AccountB2CResource {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    private final IServiceUAA iServiceUAA;
+   // private final IServiceUAA iServiceUAA;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository, IServiceUAA iServiceUAA) {
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository) {
         this.accountB2CRepository = accountB2CRepository;
         this.accountB2CSearchRepository = accountB2CSearchRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.iServiceUAA = iServiceUAA;
+       // this.iServiceUAA = iServiceUAA;
     }
 
     /**
@@ -100,7 +100,7 @@ public class AccountB2CResource {
         AccountB2C result =  new AccountB2C();
 
             managedUserVM.setActivated(true);
-            iServiceUAA.registerAccount(managedUserVM);
+           // iServiceUAA.registerAccount(managedUserVM);
 
             AccountB2C account =  new AccountB2C();
             account.setNumero(managedUserVM.getLogin());

@@ -8,6 +8,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @AuthorizedFeignClient(name="selfcare-b2c-soap")
 public interface IServiceSOAP {
@@ -15,6 +16,6 @@ public interface IServiceSOAP {
     @RequestMapping("/api/soap/souscription")
     SouscriptionDto getSouscription(@Valid @RequestBody SOAPRequest soapRequest);
 
-    @RequestMapping("/api/soap/souscription")
-    AbonneDTO getAbonne(@Valid @RequestBody SOAPRequest soapRequest);
+    @RequestMapping("/api/soap/information-client")
+    List<AbonneDTO> getAbonne(@Valid @RequestBody SOAPRequest soapRequest);
 }

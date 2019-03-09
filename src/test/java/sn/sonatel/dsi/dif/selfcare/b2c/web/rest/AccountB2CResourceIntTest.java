@@ -98,13 +98,13 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
-    @Autowired
-    private IServiceUAA iServiceUAA;
+    /*@Autowired
+    private IServiceUAA iServiceUAA;*/
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository, iServiceUAA);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository);
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
