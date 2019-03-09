@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -9,6 +10,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.Document;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +32,12 @@ public class AccountB2C implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+
+    @ApiModelProperty(required = true)
+    @NotNull(message = "Le numero ne peut pas être vide")
+    @NotBlank(message = "Le numéro ne doit pas être vide")
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
+    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
     @Column(name = "numero", nullable = false)
     private String numero;
 
@@ -41,6 +49,7 @@ public class AccountB2C implements Serializable {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Email
     @Column(name = "email")
     private String email;
 

@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
@@ -49,8 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
 public class AccountB2CResourceIntTest {
 
-    private static final String DEFAULT_NUMERO = "AAAAAAAAAA";
-    private static final String UPDATED_NUMERO = "BBBBBBBBBB";
+    private static final String DEFAULT_NUMERO = "778505050";
+    private static final String UPDATED_NUMERO = "778505055";
 
     private static final String DEFAULT_FIRST_NAME = "AAAAAAAAAA";
     private static final String UPDATED_FIRST_NAME = "BBBBBBBBBB";
@@ -58,8 +59,8 @@ public class AccountB2CResourceIntTest {
     private static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
     private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_EMAIL = "AAAAAAAAAA";
-    private static final String UPDATED_EMAIL = "BBBBBBBBBB";
+    private static final String DEFAULT_EMAIL = "AAAAA@gmail.com";
+    private static final String UPDATED_EMAIL = "BBBBB@gmail.com";
 
     private static final String DEFAULT_IMAGE_PRFIL = "AAAAAAAAAA";
     private static final String UPDATED_IMAGE_PRFIL = "BBBBBBBBBB";
@@ -139,7 +140,7 @@ public class AccountB2CResourceIntTest {
         int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
 
         // Create the AccountB2C
-        restAccountB2CMockMvc.perform(post("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
             .andExpect(status().isCreated());
@@ -160,6 +161,38 @@ public class AccountB2CResourceIntTest {
 
     @Test
     @Transactional
+    public void registerAccountB2C() throws Exception {
+        int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
+
+        ManagedUserVM managedUserVM = new ManagedUserVM();
+        managedUserVM.setPassword("Passer12");
+        managedUserVM.setLogin("775666363");
+        managedUserVM.setFirstName("firsname");
+        managedUserVM.setLastName("lastame");
+        managedUserVM.setEmail("mail@gmail.com");
+
+
+        // Create the AccountB2C
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
+            .andExpect(status().isCreated());
+
+        // Validate the AccountB2C in the database
+        List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
+        assertThat(accountB2CList).hasSize(databaseSizeBeforeCreate + 1);
+        AccountB2C testAccountB2C = accountB2CList.get(accountB2CList.size() - 1);
+        assertThat(testAccountB2C.getNumero()).isEqualTo("775666363");
+        assertThat(testAccountB2C.getFirstName()).isEqualTo("firsname");
+        assertThat(testAccountB2C.getLastName()).isEqualTo("lastame");
+        assertThat(testAccountB2C.getEmail()).isEqualTo("mail@gmail.com");
+
+        // Validate the AccountB2C in Elasticsearch
+        verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
+    }
+
+    @Test
+    @Transactional
     public void createAccountB2CWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
 
@@ -167,7 +200,7 @@ public class AccountB2CResourceIntTest {
         accountB2C.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restAccountB2CMockMvc.perform(post("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
             .andExpect(status().isBadRequest());
@@ -189,7 +222,7 @@ public class AccountB2CResourceIntTest {
 
         // Create the AccountB2C, which fails.
 
-        restAccountB2CMockMvc.perform(post("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
             .andExpect(status().isBadRequest());
@@ -207,7 +240,7 @@ public class AccountB2CResourceIntTest {
 
         // Create the AccountB2C, which fails.
 
-        restAccountB2CMockMvc.perform(post("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
             .andExpect(status().isBadRequest());
@@ -225,7 +258,7 @@ public class AccountB2CResourceIntTest {
 
         // Create the AccountB2C, which fails.
 
-        restAccountB2CMockMvc.perform(post("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
             .andExpect(status().isBadRequest());
@@ -241,7 +274,7 @@ public class AccountB2CResourceIntTest {
         accountB2CRepository.saveAndFlush(accountB2C);
 
         // Get all the accountB2CList
-        restAccountB2CMockMvc.perform(get("/api/account-b-2-cs?sort=id,desc"))
+        restAccountB2CMockMvc.perform(get("/api/account-management/account-b-2-cs?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(accountB2C.getId().intValue())))
@@ -259,7 +292,7 @@ public class AccountB2CResourceIntTest {
         accountB2CRepository.saveAndFlush(accountB2C);
 
         // Get the accountB2C
-        restAccountB2CMockMvc.perform(get("/api/account-b-2-cs/{id}", accountB2C.getId()))
+        restAccountB2CMockMvc.perform(get("/api/account-management/account-b-2-cs/{id}", accountB2C.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(accountB2C.getId().intValue()))
@@ -274,7 +307,7 @@ public class AccountB2CResourceIntTest {
     @Transactional
     public void getNonExistingAccountB2C() throws Exception {
         // Get the accountB2C
-        restAccountB2CMockMvc.perform(get("/api/account-b-2-cs/{id}", Long.MAX_VALUE))
+        restAccountB2CMockMvc.perform(get("/api/account-management/account-b-2-cs/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
@@ -297,7 +330,7 @@ public class AccountB2CResourceIntTest {
             .email(UPDATED_EMAIL)
             .imagePrfil(UPDATED_IMAGE_PRFIL);
 
-        restAccountB2CMockMvc.perform(put("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(put("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(updatedAccountB2C)))
             .andExpect(status().isOk());
@@ -324,7 +357,7 @@ public class AccountB2CResourceIntTest {
         // Create the AccountB2C
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restAccountB2CMockMvc.perform(put("/api/account-b-2-cs")
+        restAccountB2CMockMvc.perform(put("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
             .andExpect(status().isBadRequest());
@@ -346,7 +379,7 @@ public class AccountB2CResourceIntTest {
         int databaseSizeBeforeDelete = accountB2CRepository.findAll().size();
 
         // Delete the accountB2C
-        restAccountB2CMockMvc.perform(delete("/api/account-b-2-cs/{id}", accountB2C.getId())
+        restAccountB2CMockMvc.perform(delete("/api/account-management/account-b-2-cs/{id}", accountB2C.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
@@ -366,7 +399,7 @@ public class AccountB2CResourceIntTest {
         when(mockAccountB2CSearchRepository.search(queryStringQuery("id:" + accountB2C.getId()), PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(accountB2C), PageRequest.of(0, 1), 1));
         // Search the accountB2C
-        restAccountB2CMockMvc.perform(get("/api/_search/account-b-2-cs?query=id:" + accountB2C.getId()))
+        restAccountB2CMockMvc.perform(get("/api/account-management/_search/account-b-2-cs?query=id:" + accountB2C.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(accountB2C.getId().intValue())))

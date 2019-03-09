@@ -210,23 +210,19 @@ public class RattachementLigneResource {
 
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-    public ResponseEntity<Set<InfoNumberVM>> getRattachementLignes(
+    public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug("REST request to get RattachementLigne : {}", msisdn);
 
-        Set<InfoNumberVM> infoNumberVMList = null;
+        List<InfoNumberVM> infoNumberVMList = null;
 
         msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
 
         Optional<AccountB2C> user = accountB2CRepository.findOneByNumero(msisdn);
 
         if (user.isPresent()) {
-            Set<RattachementLigne> list =  user.get().getUsers();
+            List<RattachementLigne> list =  rattachementLigneRepository.findAllByAccountB2C(user.get());
 
-            for (RattachementLigne l:rattachementLigneRepository.findAll()
-                 ) {
-                System.out.println("===>"+ l);
-            }
             for (RattachementLigne rattachementLigne : list) {
 
                 InfoNumberVM infoNumberVMS = new InfoNumberVM();

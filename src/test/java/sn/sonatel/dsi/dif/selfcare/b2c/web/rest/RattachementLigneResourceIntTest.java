@@ -4,6 +4,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
@@ -387,31 +388,30 @@ public class RattachementLigneResourceIntTest {
         rattachementLigne1.setId(null);
         assertThat(rattachementLigne1).isNotEqualTo(rattachementLigne2);
     }
-/*
+
     public void addRattachement() {
-        User u = new User();
-        u.setLogin("775167600");
+        AccountB2C u = new AccountB2C();
+        u.setNumero("775167600");
         u.setFirstName("leyla");
         u.setLastName("diallo");
         u.setEmail("diall@gmail.com");
-        u.setPassword("Passer@12");
-        userRepository.save(u);
 
-        User u1 = new User();
-        u1.setLogin("775167602");
+        accountB2CRepository.save(u);
+
+        AccountB2C u1 = new AccountB2C();
+        u1.setNumero("775167602");
         u1.setFirstName("leyla");
         u1.setLastName("diallo");
         u1.setEmail("dial@gmail.com");
-        u.setPassword("Passer@12");
-        userRepository.save(u1);
+        accountB2CRepository.save(u1);
 
         RattachementLigne ligne1 = new RattachementLigne();
-        ligne1.setMsisdn("772502592");
-        ligne1.setUser(u);
+        ligne1.setNumero("772502592");
+        ligne1.setAccountB2C(u);
         rattachementLigneRepository.save(ligne1);
 
     }
-
+/*
     @Test
     public void deleteMultipleRattachementLigne() throws Exception {
 

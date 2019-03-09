@@ -98,7 +98,7 @@ public class AccountB2CResource {
         }
 
         AccountB2C result =  new AccountB2C();
-        try {
+
             managedUserVM.setActivated(true);
             iServiceUAA.registerAccount(managedUserVM);
 
@@ -109,10 +109,6 @@ public class AccountB2CResource {
             account.setLastName(managedUserVM.getLastName());
             account.setImagePrfil(managedUserVM.getImageprofil());
             result = accountB2CRepository.save(account);
-        }catch (Exception e){
-
-            throw new BadRequestAlertException("Le compte n'a pas été créé", ENTITY_NAME, "");
-        }
 
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
