@@ -22,7 +22,17 @@ public final class Constants {
     public static final String NAME_REGEX = "^[^0-9_!¡?÷?¿/\\\\+=,.@#$%ˆ&*(){}|~<>;:\\[\\]-]{1,}$";
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$";
-    
+
+    public static final String SELFCARE_B2C_SOAP_SERVICE = "http://selfcare-b2c-soap";
+
+    public static final String SELFCARE_UAA_SERVICE = "http://selfcare-uaa";
+
+    public static final String GET_ABONNE = "/api/soap/information-client";
+
+    public static final String GET_SOUSCRIPTION_ABONNE = "/api/soap/souscription";
+
+    public static final String REGISTER_ACCOUNT = "/api/register";
+
     private Constants() {
     }
 }

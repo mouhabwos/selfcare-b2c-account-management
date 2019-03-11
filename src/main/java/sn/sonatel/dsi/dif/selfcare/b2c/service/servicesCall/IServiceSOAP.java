@@ -14,8 +14,8 @@ import java.util.List;
 public interface IServiceSOAP {
 
     @RequestMapping("/api/soap/souscription")
-    SouscriptionDto getSouscription(@Valid @RequestBody SOAPRequest soapRequest);
+    SouscriptionDto getSouscription(SOAPRequest soapRequest);
 
     @RequestMapping("/api/soap/information-client")
-    List<AbonneDTO> getAbonne(@Valid @RequestBody SOAPRequest soapRequest);
+    List<AbonneDTO> getAbonne(SOAPRequest soapRequest);
 }

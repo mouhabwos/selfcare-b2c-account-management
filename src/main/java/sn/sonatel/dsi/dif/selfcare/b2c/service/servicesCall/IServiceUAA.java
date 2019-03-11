@@ -8,7 +8,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import javax.validation.Valid;
 
 
-//@AuthorizedFeignClient(name="selfcare-uaa")
+@AuthorizedFeignClient(name="selfcare-uaa")
 public interface IServiceUAA {
 
     @RequestMapping("/api/register")

@@ -7,7 +7,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.IServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -98,8 +97,6 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
-    /*@Autowired
-    private IServiceUAA iServiceUAA;*/
 
     @Before
     public void setup() {
@@ -278,11 +275,11 @@ public class AccountB2CResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(accountB2C.getId().intValue())))
-            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO.toString())))
-            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
-            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL.toString())));
+            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO)))
+            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
+            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
+            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
     
     @Test

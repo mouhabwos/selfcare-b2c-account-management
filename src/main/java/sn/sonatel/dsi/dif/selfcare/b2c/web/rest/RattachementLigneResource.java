@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import com.codahale.metrics.annotation.Timed;
-import io.undertow.security.idm.Account;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -8,7 +10,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.IServiceSOAP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareb2cSOAP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
@@ -33,10 +35,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -57,13 +57,13 @@ public class RattachementLigneResource {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    private final IServiceSOAP iServiceSOAP;
 
-    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, RattachementLigneSearchRepository rattachementLigneSearchRepository, AccountB2CRepository accountB2CRepository, IServiceSOAP iServiceSOAP) {
+
+    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, RattachementLigneSearchRepository rattachementLigneSearchRepository, AccountB2CRepository accountB2CRepository) {
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.rattachementLigneSearchRepository = rattachementLigneSearchRepository;
         this.accountB2CRepository = accountB2CRepository;
-        this.iServiceSOAP = iServiceSOAP;
+
     }
 
     /**
@@ -226,17 +226,10 @@ public class RattachementLigneResource {
             for (RattachementLigne rattachementLigne : list) {
 
                 InfoNumberVM infoNumberVMS = new InfoNumberVM();
-                SOAPRequest soapRequest = new SOAPRequest(msisdn);
+
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
-                SouscriptionDto souscriptionDto = iServiceSOAP.getSouscription(soapRequest);
-                if (souscriptionDto == null) {
                     infoNumberVMS.setProfil("");
                     infoNumberVMS.setFormule("");
-                }
-                else {
-                    infoNumberVMS.setProfil(souscriptionDto.getProfil());
-                    infoNumberVMS.setFormule(souscriptionDto.getNomOffre());
-                }
 
                 infoNumberVMList.add(infoNumberVMS);
             }

@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 
@@ -45,6 +47,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
+
 /**
  * Test class for the RattachementLigneResource REST controller.
  *
@@ -105,13 +109,11 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     private AccountB2CRepository accountB2CRepository;
 
-    @Autowired
-    private IServiceSOAP iServiceSOAP;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, mockRattachementLigneSearchRepository, accountB2CRepository, iServiceSOAP);
+        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, mockRattachementLigneSearchRepository, accountB2CRepository);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -411,7 +413,7 @@ public class RattachementLigneResourceIntTest {
         rattachementLigneRepository.save(ligne1);
 
     }
-/*
+
     @Test
     public void deleteMultipleRattachementLigne() throws Exception {
 
@@ -432,8 +434,8 @@ public class RattachementLigneResourceIntTest {
             .andExpect(status().isOk());
 
         Optional<RattachementLigne> opLign1 = rattachementLigneRepository
-            .findOneByMsisdn("772502592");
+            .findByNumero("772502592");
         assertThat(opLign1).isEmpty();
     }
-*/
+
 }

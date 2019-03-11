@@ -1,13 +1,18 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.IServiceUAA;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -46,13 +51,14 @@ public class AccountB2CResource {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-   // private final IServiceUAA iServiceUAA;
+    @Autowired
+    @Qualifier("loadBalancedRestTemplate")
+    private RestTemplate restTemplate;
 
     public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository) {
         this.accountB2CRepository = accountB2CRepository;
         this.accountB2CSearchRepository = accountB2CSearchRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-       // this.iServiceUAA = iServiceUAA;
     }
 
     /**
@@ -98,10 +104,11 @@ public class AccountB2CResource {
         }
 
         AccountB2C result =  new AccountB2C();
+        try{
 
             managedUserVM.setActivated(true);
-           // iServiceUAA.registerAccount(managedUserVM);
-
+            HttpEntity<ManagedUserVM> request = new HttpEntity<>(managedUserVM);
+            ServiceSelfcareUAA.regiserAccount(restTemplate, request);
             AccountB2C account =  new AccountB2C();
             account.setNumero(managedUserVM.getLogin());
             account.setEmail(managedUserVM.getEmail());
@@ -109,6 +116,11 @@ public class AccountB2CResource {
             account.setLastName(managedUserVM.getLastName());
             account.setImagePrfil(managedUserVM.getImageprofil());
             result = accountB2CRepository.save(account);
+    }catch (Exception e){
+
+        throw new BadRequestAlertException("Utilisateur non enregistré", ENTITY_NAME, "");
+
+    }
 
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -193,6 +205,23 @@ public class AccountB2CResource {
         Page<AccountB2C> page = accountB2CSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/account-b-2-cs");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+
+    @GetMapping("/check_number/{msisdn}")
+    public ResponseEntity checkNumber(@PathVariable String msisdn) {
+        msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
+
+        Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(msisdn);
+        if(account.isPresent()){
+            throw new LoginAlreadyUsedException();
+        }
+
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
+        if(ligne.isPresent()){
+            throw new LigneAlreadyRattachedException();
+        }
+        return ResponseEntity.ok().build();
     }
 
 }
