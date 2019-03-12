@@ -1,5 +1,4 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
@@ -51,14 +50,14 @@ public class AccountB2CResource {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    @Autowired
     @Qualifier("loadBalancedRestTemplate")
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository) {
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate) {
         this.accountB2CRepository = accountB2CRepository;
         this.accountB2CSearchRepository = accountB2CSearchRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
+        this.restTemplate = restTemplate;
     }
 
     /**

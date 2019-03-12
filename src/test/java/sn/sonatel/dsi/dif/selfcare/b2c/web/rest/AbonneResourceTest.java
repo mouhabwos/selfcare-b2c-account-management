@@ -15,7 +15,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
 public class AbonneResourceTest {
 
@@ -36,9 +35,8 @@ public class AbonneResourceTest {
     @Autowired
     private Validator validator;
 
-    @Autowired
-    @Qualifier("loadBalancedRestTemplateAbonne")
-    private  RestTemplate restTemplate;
+    @Qualifier("loadBalancedRestTemplate")
+    private RestTemplate restTemplate;
 
     @Before
     public void setUp() throws Exception {

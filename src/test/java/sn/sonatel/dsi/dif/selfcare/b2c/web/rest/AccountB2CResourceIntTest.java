@@ -1,9 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
@@ -25,7 +29,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
@@ -64,6 +67,8 @@ public class AccountB2CResourceIntTest {
     private static final String DEFAULT_IMAGE_PRFIL = "AAAAAAAAAA";
     private static final String UPDATED_IMAGE_PRFIL = "BBBBBBBBBB";
 
+    private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
+
     @Autowired
     private AccountB2CRepository accountB2CRepository;
 
@@ -97,11 +102,14 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
+    @Qualifier("loadBalancedRestTemplate")
+    private RestTemplate restTemplate;
+
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository, restTemplate);
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -156,37 +164,6 @@ public class AccountB2CResourceIntTest {
         verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
     }
 
-    @Test
-    @Transactional
-    public void registerAccountB2C() throws Exception {
-        int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
-
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setPassword("Passer12");
-        managedUserVM.setLogin("775666363");
-        managedUserVM.setFirstName("firsname");
-        managedUserVM.setLastName("lastame");
-        managedUserVM.setEmail("mail@gmail.com");
-
-
-        // Create the AccountB2C
-        restAccountB2CMockMvc.perform(post("/api/account-management/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
-            .andExpect(status().isCreated());
-
-        // Validate the AccountB2C in the database
-        List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
-        assertThat(accountB2CList).hasSize(databaseSizeBeforeCreate + 1);
-        AccountB2C testAccountB2C = accountB2CList.get(accountB2CList.size() - 1);
-        assertThat(testAccountB2C.getNumero()).isEqualTo("775666363");
-        assertThat(testAccountB2C.getFirstName()).isEqualTo("firsname");
-        assertThat(testAccountB2C.getLastName()).isEqualTo("lastame");
-        assertThat(testAccountB2C.getEmail()).isEqualTo("mail@gmail.com");
-
-        // Validate the AccountB2C in Elasticsearch
-        verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
-    }
 
     @Test
     @Transactional
@@ -420,5 +397,42 @@ public class AccountB2CResourceIntTest {
         assertThat(accountB2C1).isNotEqualTo(accountB2C2);
         accountB2C1.setId(null);
         assertThat(accountB2C1).isNotEqualTo(accountB2C2);
+    }
+
+    @Test
+    @Transactional
+    public void checkLoginUsed() throws Exception {
+        // Initialize the database
+        accountB2CRepository.saveAndFlush(accountB2C);
+
+        // Get the accountB2C
+        restAccountB2CMockMvc.perform(get("/api/account-management/check_number/{msisdn}", accountB2C.getNumero()))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    public void checkLoginAlreadyRattached() throws Exception {
+        // Initialize the database
+        accountB2CRepository.saveAndFlush(accountB2C);
+
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setNumero("771222323");
+        ligne.setAccountB2C(accountB2C);
+        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
+        rattachementLigneRepository.save(ligne);
+        // Get the accountB2C
+        restAccountB2CMockMvc.perform(get("/api/account-management/check_number/{msisdn}", ligne.getNumero()))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @Transactional
+    public void checkLoginNotUsed() throws Exception {
+
+        // Get the accountB2C
+        restAccountB2CMockMvc.perform(get("/api/account-management/check_number/{msisdn}","779853232"))
+            .andExpect(status().isOk());
     }
 }

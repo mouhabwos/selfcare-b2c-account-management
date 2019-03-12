@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareb2cSOAP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
@@ -23,11 +24,13 @@ public class AbonneResource {
 
     private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
 
+   // private final ServiceSelfcareb2cSOAP serviceSelfcare;
 
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
-    public AbonneResource(RestTemplate restTemplate) {
+    public AbonneResource(@Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
+
         this.restTemplate = restTemplate;
     }
 
@@ -60,6 +63,7 @@ public class AbonneResource {
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
         ResponseEntity<List<AbonneDTO>> response = ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
+
         return response;
     }
 

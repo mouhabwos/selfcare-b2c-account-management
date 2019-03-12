@@ -57,13 +57,16 @@ public class RattachementLigneResource {
 
     private final AccountB2CRepository accountB2CRepository;
 
+    @Qualifier("loadBalancedRestTemplate")
+    private final RestTemplate restTemplate;
 
 
-    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, RattachementLigneSearchRepository rattachementLigneSearchRepository, AccountB2CRepository accountB2CRepository) {
+    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, RattachementLigneSearchRepository rattachementLigneSearchRepository, AccountB2CRepository accountB2CRepository, @Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.rattachementLigneSearchRepository = rattachementLigneSearchRepository;
         this.accountB2CRepository = accountB2CRepository;
 
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -168,18 +171,18 @@ public class RattachementLigneResource {
 
 
     @PostMapping("/rattachement-lignes/register")
-    public ResponseEntity<RattachementLigneVM> addRattachementLigne(
-        @Valid @RequestBody RattachementLigneVM ligneVM) {
+    public ResponseEntity<RattachementLigne> addRattachementLigne(
+        @Valid @RequestBody RattachementLigneVM ligneVM) throws Exception {
 
         ligneVM.setNumero(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getNumero()));
 
         ligneVM.setLogin(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getLogin()));
-
+        RattachementLigne rattachement = new RattachementLigne();
         if (ligneVM.getNumero().matches(Constants.LOGIN_REGEX_VALID_NUMBER)) {
 
             checkNumberIfUsed(ligneVM.getNumero(), ligneVM.getLogin());
 
-            RattachementLigne rattachement = new RattachementLigne();
+
 
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
 
@@ -204,7 +207,9 @@ public class RattachementLigneResource {
 
             }
 
-        return ResponseEntity.ok(ligneVM);
+        return ResponseEntity.created(new URI("/api/rattachement-lignes/" + rattachement.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, rattachement.getId().toString()))
+            .body(rattachement);
     }
 
 
@@ -226,7 +231,6 @@ public class RattachementLigneResource {
             for (RattachementLigne rattachementLigne : list) {
 
                 InfoNumberVM infoNumberVMS = new InfoNumberVM();
-
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
                     infoNumberVMS.setProfil("");
                     infoNumberVMS.setFormule("");

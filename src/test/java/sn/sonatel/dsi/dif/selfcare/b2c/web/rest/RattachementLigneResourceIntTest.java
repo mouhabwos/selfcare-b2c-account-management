@@ -11,7 +11,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.IServiceSOAP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -47,6 +46,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
 
 /**
@@ -109,11 +109,15 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     private AccountB2CRepository accountB2CRepository;
 
+    @Autowired
+    @Qualifier("loadBalancedRestTemplate")
+    private RestTemplate restTemplate;
+
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, mockRattachementLigneSearchRepository, accountB2CRepository);
+        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, mockRattachementLigneSearchRepository, accountB2CRepository, restTemplate);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -410,6 +414,7 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne ligne1 = new RattachementLigne();
         ligne1.setNumero("772502592");
         ligne1.setAccountB2C(u);
+        ligne1.setTypeNumero(UPDATED_TYPE_NUMERO);
         rattachementLigneRepository.save(ligne1);
 
     }
@@ -436,6 +441,108 @@ public class RattachementLigneResourceIntTest {
         Optional<RattachementLigne> opLign1 = rattachementLigneRepository
             .findByNumero("772502592");
         assertThat(opLign1).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void getRattachementLignesByMsisdn() throws Exception {
+
+        // Initialize the database
+        rattachementLigneRepository.saveAndFlush(rattachementLigne);
+
+        // Get the rattachementLigne
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
+            .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @Transactional
+    public void addRattachementLigne() throws Exception {
+
+        AccountB2C u = new AccountB2C();
+        u.setNumero("775167605");
+        u.setFirstName("leyla");
+        u.setLastName("diallo");
+        u.setEmail("dia@gmail.com");
+
+        accountB2CRepository.save(u);
+        int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
+
+        RattachementLigneVM ligneVM = new RattachementLigneVM();
+
+        ligneVM.setLogin(u.getNumero());
+        ligneVM.setNumero("771326617");
+        ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+
+
+        // Create the RattachementLigne
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+            .andExpect(status().isCreated());
+
+        // Validate the RattachementLigne in the database
+        List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
+        assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate + 1);
+        RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
+        assertThat(testRattachementLigne.getNumero()).isEqualTo("771326617");
+        assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
+
+    }
+
+    @Test
+    @Transactional
+    public void addRattachementLigneLoginNotFound() throws Exception {
+
+        int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
+
+        RattachementLigneVM ligneVM = new RattachementLigneVM();
+
+        ligneVM.setLogin("774502525");
+        ligneVM.setNumero("771326617");
+        ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+
+
+        // Create the RattachementLigne
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+            .andExpect(status().isBadRequest());
+
+
+    }
+
+    @Test
+    @Transactional
+    public void addRattachementLigneExistingLigne() throws Exception {
+
+        AccountB2C u = new AccountB2C();
+        u.setNumero("775167605");
+        u.setFirstName("leyla");
+        u.setLastName("diallo");
+        u.setEmail("dia@gmail.com");
+
+        accountB2CRepository.save(u);
+        int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
+
+        RattachementLigneVM ligneVM = new RattachementLigneVM();
+
+        ligneVM.setLogin(u.getNumero());
+        ligneVM.setNumero("771326617");
+        ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+         rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
+         rattachementLigne.setNumero("771326617");
+         rattachementLigne.setAccountB2C(u);
+        rattachementLigneRepository.save(rattachementLigne);
+
+        // Create the RattachementLigne
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+            .andExpect(status().isBadRequest());
+
+
     }
 
 }
