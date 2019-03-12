@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -9,8 +8,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareb2cSOAP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
@@ -29,12 +27,12 @@ import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,12 +75,20 @@ public class RattachementLigneResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/rattachement-lignes")
-    public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigne rattachementLigne) throws URISyntaxException {
+    public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
         log.debug("REST request to save RattachementLigne : {}", rattachementLigne);
         if (rattachementLigne.getId() != null) {
             throw new BadRequestAlertException("A new rattachementLigne cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        RattachementLigne result = rattachementLigneRepository.save(rattachementLigne);
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setTypeNumero(rattachementLigne.getTypeNumero());
+        ligne.setAccountB2C(rattachementLigne.getAccountB2C());
+        ligne.setNumero(rattachementLigne.getNumero());
+        ligne.setStatut(rattachementLigne.getStatut());
+        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
+        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
+
+        RattachementLigne result = rattachementLigneRepository.save(ligne);
         rattachementLigneSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/rattachement-lignes/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -99,12 +105,21 @@ public class RattachementLigneResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/rattachement-lignes")
-    public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigne rattachementLigne) throws URISyntaxException {
+    public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
         log.debug("REST request to update RattachementLigne : {}", rattachementLigne);
         if (rattachementLigne.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        RattachementLigne result = rattachementLigneRepository.save(rattachementLigne);
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setId(rattachementLigne.getId());
+        ligne.setTypeNumero(rattachementLigne.getTypeNumero());
+        ligne.setAccountB2C(rattachementLigne.getAccountB2C());
+        ligne.setNumero(rattachementLigne.getNumero());
+        ligne.setStatut(rattachementLigne.getStatut());
+        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
+        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
+
+        RattachementLigne result = rattachementLigneRepository.save(ligne);
         rattachementLigneSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, rattachementLigne.getId().toString()))
@@ -182,8 +197,6 @@ public class RattachementLigneResource {
 
             checkNumberIfUsed(ligneVM.getNumero(), ligneVM.getLogin());
 
-
-
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
 
             if(!accountB2C.isPresent()){
@@ -196,7 +209,6 @@ public class RattachementLigneResource {
             rattachement.setTypeVerification(ligneVM.getTypeVerification());
             rattachement.setStatut(ligneVM.getStatut());
             rattachement.setAccountB2C(accountB2C.get());
-
 
             try {
                 rattachement = rattachementLigneRepository.save(rattachement);
@@ -219,7 +231,7 @@ public class RattachementLigneResource {
         @PathVariable String msisdn) {
         log.debug("REST request to get RattachementLigne : {}", msisdn);
 
-        List<InfoNumberVM> infoNumberVMList = null;
+        List<InfoNumberVM> infoNumberVMList = new ArrayList<>();
 
         msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
 

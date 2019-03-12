@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareUAA;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareb2cSOAP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareb2cSOAP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import java.util.List;
@@ -24,7 +23,6 @@ public class AbonneResource {
 
     private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
 
-   // private final ServiceSelfcareb2cSOAP serviceSelfcare;
 
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
@@ -45,9 +43,7 @@ public class AbonneResource {
         log.debug("REST request to get souscription : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        ResponseEntity<SouscriptionDto> response = ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
-
-            return response;
+        return ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
 
     }
 
@@ -62,9 +58,7 @@ public class AbonneResource {
         log.debug("REST request to get abonne : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        ResponseEntity<List<AbonneDTO>> response = ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
-
-        return response;
+        return ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
     }
 
 

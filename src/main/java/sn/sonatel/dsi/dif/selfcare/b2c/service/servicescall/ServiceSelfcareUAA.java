@@ -1,4 +1,4 @@
-package sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall;
+package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -9,6 +9,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 
 public class ServiceSelfcareUAA {
+
+    private ServiceSelfcareUAA(){
+        //Default constructor
+    }
 
     public static void regiserAccount(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<ManagedUserVM> request){
 

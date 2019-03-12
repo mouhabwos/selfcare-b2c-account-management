@@ -1,4 +1,4 @@
-package sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall;
+package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -14,32 +14,21 @@ import java.util.List;
 
 public class ServiceSelfcareb2cSOAP {
 
+    private ServiceSelfcareb2cSOAP() {
+        //Default constructor
+    }
 
     public static ResponseEntity<SouscriptionDto> getSouscription(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<SOAPRequest> request){
 
-        try {
-            ResponseEntity<SouscriptionDto> response = restTemplate
+
+            return restTemplate
                 .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
-            return response;
-
-        }catch (Exception e){
-
-
-        }
-       return null;
     }
 
     public static ResponseEntity<List<AbonneDTO>> getAbonne(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate ,HttpEntity<SOAPRequest> request){
 
-        try {
-            ResponseEntity<List<AbonneDTO>> response = restTemplate
+            return restTemplate
                 .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_ABONNE, HttpMethod.POST, request,(Class) List.class);
-            return response;
 
-        }catch (Exception e){
-
-
-        }
-        return null;
     }
 }
