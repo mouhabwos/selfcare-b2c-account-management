@@ -11,6 +11,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -144,10 +145,17 @@ public class AccountB2CResourceIntTest {
     public void createAccountB2C() throws Exception {
         int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
 
+        AccountB2CDTO b2C = new AccountB2CDTO();
+        b2C.setNumero(accountB2C.getNumero());
+        b2C.setEmail(accountB2C.getEmail());
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setImagePrfil(accountB2C.getImagePrfil());
+
         // Create the AccountB2C
         restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(accountB2C)))
+            .content(TestUtil.convertObjectToJsonBytes(b2C)))
             .andExpect(status().isCreated());
 
         // Validate the AccountB2C in the database
@@ -297,6 +305,7 @@ public class AccountB2CResourceIntTest {
         AccountB2C updatedAccountB2C = accountB2CRepository.findById(accountB2C.getId()).get();
         // Disconnect from session so that the updates on updatedAccountB2C are not directly saved in db
         em.detach(updatedAccountB2C);
+
         updatedAccountB2C
             .numero(UPDATED_NUMERO)
             .firstName(UPDATED_FIRST_NAME)

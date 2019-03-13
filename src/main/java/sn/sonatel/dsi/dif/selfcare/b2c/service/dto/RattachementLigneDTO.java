@@ -31,8 +31,6 @@ public class RattachementLigneDTO {
 
     private Boolean statut;
 
-    private String imagePrfil;
-
     @NotNull(message = "Le type de numéro ne peut pas être vide")
     @Enumerated(EnumType.STRING)
     private TypeNumero typeNumero;
@@ -83,13 +81,6 @@ public class RattachementLigneDTO {
         this.statut = statut;
     }
 
-    public String getImagePrfil() {
-        return imagePrfil;
-    }
-
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
-    }
 
     public TypeNumero getTypeNumero() {
         return typeNumero;

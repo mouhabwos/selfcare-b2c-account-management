@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,22 @@ public class AbonneResource {
         log.debug("REST request to get souscription : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        return ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
+        try {
+
+            ResponseEntity<SouscriptionDto> response = ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
+            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+            else if (response.getStatusCode() == HttpStatus.OK) {
+                return response;
+            }
+
+        }catch (Exception e){
+
+            log.debug("Exception get souscription abonne : {}", msisdn);
+        }
+
+        return null;
 
     }
 
@@ -58,7 +74,27 @@ public class AbonneResource {
         log.debug("REST request to get abonne : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        return ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
+
+        try {
+
+            ResponseEntity<List<AbonneDTO>> response = ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
+            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+
+                return null;
+            }
+            else if (response.getStatusCode() == HttpStatus.OK) {
+
+                return response;
+            }
+
+        }catch (Exception e){
+
+            log.debug("Exception get information abonne : {}", msisdn);
+        }
+
+        return null;
+
+
     }
 
 

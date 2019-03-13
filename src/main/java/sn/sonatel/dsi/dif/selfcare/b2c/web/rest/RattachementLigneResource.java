@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -9,6 +11,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareb2cSOAP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -187,7 +192,7 @@ public class RattachementLigneResource {
 
     @PostMapping("/rattachement-lignes/register")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
-        @Valid @RequestBody RattachementLigneVM ligneVM) throws Exception {
+        @Valid @RequestBody RattachementLigneVM ligneVM)  throws URISyntaxException{
 
         ligneVM.setNumero(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getNumero()));
 
@@ -244,8 +249,17 @@ public class RattachementLigneResource {
 
                 InfoNumberVM infoNumberVMS = new InfoNumberVM();
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
+                SouscriptionDto dto = getSouscription(msisdn);
+                if(dto != null){
+
+                    infoNumberVMS.setProfil(dto.getProfil());
+                    infoNumberVMS.setFormule(dto.getNomOffre());
+
+                }else {
                     infoNumberVMS.setProfil("");
                     infoNumberVMS.setFormule("");
+
+                }
 
                 infoNumberVMList.add(infoNumberVMS);
             }
@@ -295,4 +309,25 @@ public class RattachementLigneResource {
 
     }
 
+
+    public SouscriptionDto getSouscription(String msisdn){
+
+        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
+        try {
+
+            ResponseEntity<SouscriptionDto> response = ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
+            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+            else if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            }
+
+        }catch (Exception e){
+
+            log.debug("Exception get souscription abonne : {}", msisdn);
+        }
+
+        return null;
+    }
 }

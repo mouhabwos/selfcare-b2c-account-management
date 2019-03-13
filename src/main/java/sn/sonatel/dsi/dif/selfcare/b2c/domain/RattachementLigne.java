@@ -49,9 +49,6 @@ public class RattachementLigne implements Serializable {
     @Column(name = "statut")
     private Boolean statut;
 
-    @Column(name = "image_prfil")
-    private String imagePrfil;
-
     @NotNull(message = "Le type de numéro ne peut pas être vide")
     @Enumerated(EnumType.STRING)
     @Column(name = "type_numero", nullable = false)
@@ -122,18 +119,6 @@ public class RattachementLigne implements Serializable {
         this.statut = statut;
     }
 
-    public String getImagePrfil() {
-        return imagePrfil;
-    }
-
-    public RattachementLigne imagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
-        return this;
-    }
-
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
-    }
 
     public TypeNumero getTypeNumero() {
         return typeNumero;
@@ -190,7 +175,6 @@ public class RattachementLigne implements Serializable {
             ", typeVerification='" + getTypeVerification() + "'" +
             ", codeVerification='" + getCodeVerification() + "'" +
             ", statut='" + isStatut() + "'" +
-            ", imagePrfil='" + getImagePrfil() + "'" +
             ", typeNumero='" + getTypeNumero() + "'" +
             "}";
     }

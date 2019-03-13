@@ -11,6 +11,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -70,8 +71,6 @@ public class RattachementLigneResourceIntTest {
     private static final Boolean DEFAULT_STATUT = false;
     private static final Boolean UPDATED_STATUT = true;
 
-    private static final String DEFAULT_IMAGE_PRFIL = "AAAAAAAAAA";
-    private static final String UPDATED_IMAGE_PRFIL = "BBBBBBBBBB";
 
     private static final TypeNumero DEFAULT_TYPE_NUMERO = TypeNumero.FIX;
     private static final TypeNumero UPDATED_TYPE_NUMERO = TypeNumero.MOBILE;
@@ -138,7 +137,6 @@ public class RattachementLigneResourceIntTest {
             .typeVerification(DEFAULT_TYPE_VERIFICATION)
             .codeVerification(DEFAULT_CODE_VERIFICATION)
             .statut(DEFAULT_STATUT)
-            .imagePrfil(DEFAULT_IMAGE_PRFIL)
             .typeNumero(DEFAULT_TYPE_NUMERO);
         return rattachementLigne;
     }
@@ -153,10 +151,19 @@ public class RattachementLigneResourceIntTest {
     public void createRattachementLigne() throws Exception {
         int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
 
+        RattachementLigneDTO ligne = new RattachementLigneDTO();
+        ligne.setTypeNumero(rattachementLigne.getTypeNumero());
+        ligne.setAccountB2C(rattachementLigne.getAccountB2C());
+        ligne.setNumero(rattachementLigne.getNumero());
+        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
+        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
+
+
+
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigne)))
+            .content(TestUtil.convertObjectToJsonBytes(ligne)))
             .andExpect(status().isCreated());
 
         // Validate the RattachementLigne in the database
@@ -166,8 +173,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(testRattachementLigne.getNumero()).isEqualTo(DEFAULT_NUMERO);
         assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
         assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
-        assertThat(testRattachementLigne.isStatut()).isEqualTo(DEFAULT_STATUT);
-        assertThat(testRattachementLigne.getImagePrfil()).isEqualTo(DEFAULT_IMAGE_PRFIL);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
 
         // Validate the RattachementLigne in Elasticsearch
@@ -247,7 +252,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION.toString())))
             .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION.toString())))
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL.toString())))
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
     
@@ -266,7 +270,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION.toString()))
             .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION.toString()))
             .andExpect(jsonPath("$.statut").value(DEFAULT_STATUT.booleanValue()))
-            .andExpect(jsonPath("$.imagePrfil").value(DEFAULT_IMAGE_PRFIL.toString()))
             .andExpect(jsonPath("$.typeNumero").value(DEFAULT_TYPE_NUMERO.toString()));
     }
 
@@ -295,7 +298,6 @@ public class RattachementLigneResourceIntTest {
             .typeVerification(UPDATED_TYPE_VERIFICATION)
             .codeVerification(UPDATED_CODE_VERIFICATION)
             .statut(UPDATED_STATUT)
-            .imagePrfil(UPDATED_IMAGE_PRFIL)
             .typeNumero(UPDATED_TYPE_NUMERO);
 
         restRattachementLigneMockMvc.perform(put("/api/rattachement-lignes")
@@ -311,7 +313,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(UPDATED_TYPE_VERIFICATION);
         assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(UPDATED_CODE_VERIFICATION);
         assertThat(testRattachementLigne.isStatut()).isEqualTo(UPDATED_STATUT);
-        assertThat(testRattachementLigne.getImagePrfil()).isEqualTo(UPDATED_IMAGE_PRFIL);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
 
         // Validate the RattachementLigne in Elasticsearch
@@ -376,7 +377,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION)))
             .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION)))
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL)))
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
