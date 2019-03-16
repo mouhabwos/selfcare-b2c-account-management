@@ -48,7 +48,9 @@ public class AccountB2C implements Serializable {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @ApiModelProperty(required = false)
     @Email
+    @Size(min = 5, max = 254)
     @Column(name = "email")
     private String email;
 

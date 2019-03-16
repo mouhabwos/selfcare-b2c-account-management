@@ -1,19 +1,19 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
+import com.codahale.metrics.annotation.Timed;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareUAA;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.UserNoCreatedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
@@ -79,7 +79,15 @@ public class AccountB2CResource {
         AccountB2C b2C = new AccountB2C();
 
         b2C.setNumero(accountB2C.getNumero());
-        b2C.setEmail(accountB2C.getEmail());
+        if(accountB2C.getEmail()!= null){
+
+            b2C.setEmail(accountB2C.getEmail());
+
+        }else {
+
+            b2C.setEmail("selfcate-b2c-"+accountB2C.getNumero()+"@selfcare.com");
+        }
+
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImagePrfil(accountB2C.getImagePrfil());
@@ -116,14 +124,29 @@ public class AccountB2CResource {
         try {
 
             HttpEntity<ManagedUserVM> request = new HttpEntity<>(managedUserVM);
+            if(managedUserVM.getEmail() == null){
+
+                managedUserVM.setEmail("selfcare-b2c-"+managedUserVM.getLogin()+"@selfcare.com");
+
+            }
             ResponseEntity response = ServiceSelfcareUAA.regiserAccount(restTemplate, request);
 
             if (response.getStatusCode() == HttpStatus.CREATED) {
                 managedUserVM.setActivated(true);
                 AccountB2C account =  new AccountB2C();
+                if(managedUserVM.getEmail() != null){
 
+                    account.setEmail(managedUserVM.getEmail());
+
+                }else{
+
+                    managedUserVM.setEmail("selfcare-b2c-"+account.getNumero()+"@selfcare.com");
+
+                    account.setEmail(managedUserVM.getEmail());
+
+                }
                 account.setNumero(managedUserVM.getLogin());
-                account.setEmail(managedUserVM.getEmail());
+
                 account.setFirstName(managedUserVM.getFirstName());
                 account.setLastName(managedUserVM.getLastName());
                 account.setImagePrfil(managedUserVM.getImageprofil());
@@ -135,7 +158,7 @@ public class AccountB2CResource {
 
         }catch (Exception e){
 
-            log.debug("register Account user : {}", managedUserVM);
+            log.debug(" exception for creation Account : {}", e);
         }
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -246,5 +269,56 @@ public class AccountB2CResource {
         return ResponseEntity.ok().build();
     }
 
+
+    @PostMapping("/email-already-exist")
+    @Timed
+    public boolean emailExistingVerify(@Valid @RequestBody EmailExistDTO email) {
+
+        if (email != null) {
+
+            Optional<AccountB2C> user = accountB2CRepository.findOneByEmail(email.getEmail());
+
+            if (user.isPresent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @GetMapping("/account/{login}")
+    @Timed
+    public AccountB2C getAccount(@PathVariable String login) {
+
+        if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
+
+            login = FormatNumberPhoneUtil.getNumberFormat(login);
+
+            Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
+            if(account.isPresent()){
+
+                return account.get();
+
+            }else {
+
+                throw new LigneNotFoundException();
+            }
+
+        }else if(login.matches(Constants.EMAIL_VALIDATION)){
+
+            Optional<AccountB2C> account = accountB2CRepository.findOneByEmail(login);
+
+            if(account.isPresent()){
+
+                return account.get();
+
+            }else {
+
+                throw new LigneNotFoundException();
+            }
+
+        }
+
+        return null;
+    }
 
 }

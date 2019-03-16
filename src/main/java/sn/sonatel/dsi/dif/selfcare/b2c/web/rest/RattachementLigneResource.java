@@ -248,8 +248,10 @@ public class RattachementLigneResource {
             for (RattachementLigne rattachementLigne : list) {
 
                 InfoNumberVM infoNumberVMS = new InfoNumberVM();
+
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
-                SouscriptionDto dto = getSouscription(msisdn);
+
+                SouscriptionDto dto = getSouscription(rattachementLigne.getNumero());
                 if(dto != null){
 
                     infoNumberVMS.setProfil(dto.getProfil());

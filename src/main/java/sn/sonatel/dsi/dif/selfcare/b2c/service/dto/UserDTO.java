@@ -4,13 +4,12 @@ import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
 import javax.validation.constraints.*;
-import java.time.Instant;
 import java.util.Set;
 
 /**
  * A DTO representing a user, with his authorities.
  */
-public class UserDTO {
+public class UserDTO extends Same {
 
 	private Long id;
 
@@ -45,21 +44,16 @@ public class UserDTO {
 	@Size(min = 2, max = 6)
 	private String langKey;
 
-	private String createdBy;
 
-	private Instant createdDate;
-
-	private String lastModifiedBy;
-
-	private Instant lastModifiedDate;
 
 	private Set<String> authorities;
 
 	private String imageprofil;
 
-	public UserDTO() {
-		// Empty constructor needed for Jackson.
-	}
+    public UserDTO login(String login) {
+        this.login = login;
+        return this;
+    }
 
     public Long getId() {
         return id;
@@ -125,38 +119,6 @@ public class UserDTO {
 		this.langKey = langKey;
 	}
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Instant getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Instant createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public Instant getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Instant lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
 	public Set<String> getAuthorities() {
 		return authorities;
 	}
@@ -178,10 +140,7 @@ public class UserDTO {
 		return "UserDTO{" + "login='" + login + '\'' + ", firstName='" + firstName + '\''
 				+ ", lastName='" + lastName + '\'' + ", email='" + email + '\''
 				+ ", imageUrl='" + imageUrl + '\'' + ", activated=" + activated
-				+ ", langKey='" + langKey + '\'' + ", createdBy=" + createdBy
-				+ ", createdDate=" + createdDate + ", lastModifiedBy='" + lastModifiedBy
-				+ '\'' + ", lastModifiedDate=" + lastModifiedDate + ", authorities="
-				+ authorities + "}";
+				+ ", langKey='" + langKey  + "}";
 	}
 
 }

@@ -474,7 +474,8 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-
+        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
+        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
 
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
@@ -488,6 +489,8 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("771326617");
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
+        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
+        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
 
     }
 
@@ -531,6 +534,8 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
+        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
          rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
          rattachementLigne.setNumero("771326617");
          rattachementLigne.setAccountB2C(u);
