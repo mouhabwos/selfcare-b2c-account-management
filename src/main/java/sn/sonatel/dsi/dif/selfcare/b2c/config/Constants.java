@@ -34,6 +34,8 @@ public final class Constants {
 
     public static final String REGISTER_ACCOUNT = "/api/register";
 
+    public static final String GET_FORMULE_BY_MSISDN = "/api/soap/achats/formules/";
+
     private Constants() {
     }
 }
