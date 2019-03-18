@@ -28,7 +28,7 @@ public class AbonneResource {
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
-    public AbonneResource(@Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
+    public AbonneResource(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate) {
 
         this.restTemplate = restTemplate;
     }

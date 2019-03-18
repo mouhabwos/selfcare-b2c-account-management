@@ -38,6 +38,8 @@ public class AbonneResourceTest {
     @Qualifier("loadBalancedRestTemplate")
     private RestTemplate restTemplate;
 
+
+
     @Before
     public void setUp() throws Exception {
 
@@ -55,6 +57,13 @@ public class AbonneResourceTest {
 
     @Test
     public void getAbonne() throws Exception {
+
+        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAbonneWithStatusNOT_FOUND() throws Exception {
 
         restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
             .andExpect(status().isOk());
