@@ -9,7 +9,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import org.springframework.data.elasticsearch.annotations.Document;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
 import java.io.Serializable;
@@ -24,11 +23,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "account_b_2_c")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "accountb2c")
 public class AccountB2C implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

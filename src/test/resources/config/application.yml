@@ -50,11 +50,7 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
             hibernate.hbm2ddl.auto: validate
-    data:
-        elasticsearch:
-            properties:
-                path:
-                    home: target/elasticsearch
+
     liquibase:
         contexts: test
     mail:

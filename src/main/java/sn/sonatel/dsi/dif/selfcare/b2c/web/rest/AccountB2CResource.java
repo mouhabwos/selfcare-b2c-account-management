@@ -10,7 +10,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
@@ -38,7 +37,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing AccountB2C.
@@ -53,8 +51,6 @@ public class AccountB2CResource {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    private final AccountB2CSearchRepository accountB2CSearchRepository;
-
     private final RattachementLigneRepository rattachementLigneRepository;
 
     private final ServiceFile service;
@@ -64,9 +60,8 @@ public class AccountB2CResource {
 
     private final MailService mailService;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository, ServiceFile service, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService) {
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository,  RattachementLigneRepository rattachementLigneRepository, ServiceFile service, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService) {
         this.accountB2CRepository = accountB2CRepository;
-        this.accountB2CSearchRepository = accountB2CSearchRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.service = service;
         this.restTemplate = restTemplate;
@@ -96,7 +91,7 @@ public class AccountB2CResource {
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImageProfil(accountB2C.getImagePrfil());
         AccountB2C result = accountB2CRepository.save(b2C);
-        accountB2CSearchRepository.save(result);
+
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -194,7 +189,7 @@ public class AccountB2CResource {
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImageProfil(accountB2C.getImagePrfil());
         AccountB2C result = accountB2CRepository.save(b2C);
-        accountB2CSearchRepository.save(result);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, accountB2C.getId().toString()))
             .body(result);
@@ -237,24 +232,8 @@ public class AccountB2CResource {
     public ResponseEntity<Void> deleteAccountB2C(@PathVariable Long id) {
         log.debug("REST request to delete AccountB2C : {}", id);
         accountB2CRepository.deleteById(id);
-        accountB2CSearchRepository.deleteById(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-    }
 
-    /**
-     * SEARCH  /_search/account-b-2-cs?query=:query : search for the accountB2C corresponding
-     * to the query.
-     *
-     * @param query the query of the accountB2C search
-     * @param pageable the pagination information
-     * @return the result of the search
-     */
-    @GetMapping("/_search/account-b-2-cs")
-    public ResponseEntity<List<AccountB2C>> searchAccountB2CS(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of AccountB2CS for query {}", query);
-        Page<AccountB2C> page = accountB2CSearchRepository.search(queryStringQuery(query), pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/account-b-2-cs");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
 

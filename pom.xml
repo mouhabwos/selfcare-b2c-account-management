@@ -309,12 +309,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
+        </dependency>-->
         <!-- Spring Data Jest dependencies for Elasticsearch -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.github.vanroy</groupId>
             <artifactId>spring-boot-starter-data-jest</artifactId>
             <exclusions>
@@ -323,7 +323,7 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <!-- log4j needed to create embedded elasticsearch instance -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

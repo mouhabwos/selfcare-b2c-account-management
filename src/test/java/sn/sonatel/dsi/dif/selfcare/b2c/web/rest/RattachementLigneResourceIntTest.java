@@ -10,7 +10,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
@@ -40,7 +39,6 @@ import java.util.Optional;
 
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,13 +76,6 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
-    /**
-     * This repository is mocked in the sn.sonatel.dsi.dif.selfcare.b2c.repository.search test package.
-     *
-     * @see sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepositoryMockConfiguration
-     */
-    @Autowired
-    private RattachementLigneSearchRepository mockRattachementLigneSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -116,7 +107,7 @@ public class RattachementLigneResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, mockRattachementLigneSearchRepository, accountB2CRepository, restTemplate);
+        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, restTemplate);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -175,8 +166,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(1)).save(testRattachementLigne);
     }
 
     @Test
@@ -197,8 +186,6 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(0)).save(rattachementLigne);
     }
 
     @Test
@@ -254,7 +241,7 @@ public class RattachementLigneResourceIntTest {
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getRattachementLigne() throws Exception {
@@ -315,8 +302,7 @@ public class RattachementLigneResourceIntTest {
         assertThat(testRattachementLigne.isStatut()).isEqualTo(UPDATED_STATUT);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(1)).save(testRattachementLigne);
+
     }
 
     @Test
@@ -336,8 +322,6 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(0)).save(rattachementLigne);
     }
 
     @Test
@@ -357,27 +341,6 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeDelete - 1);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(1)).deleteById(rattachementLigne.getId());
-    }
-
-    @Test
-    @Transactional
-    public void searchRattachementLigne() throws Exception {
-        // Initialize the database
-        rattachementLigneRepository.saveAndFlush(rattachementLigne);
-        when(mockRattachementLigneSearchRepository.search(queryStringQuery("id:" + rattachementLigne.getId()), PageRequest.of(0, 20)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(rattachementLigne), PageRequest.of(0, 1), 1));
-        // Search the rattachementLigne
-        restRattachementLigneMockMvc.perform(get("/api/_search/rattachement-lignes?query=id:" + rattachementLigne.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
-            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO)))
-            .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION)))
-            .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION)))
-            .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
-            .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
     @Test

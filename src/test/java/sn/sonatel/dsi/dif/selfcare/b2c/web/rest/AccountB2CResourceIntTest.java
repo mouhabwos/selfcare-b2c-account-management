@@ -10,7 +10,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
@@ -41,7 +40,6 @@ import java.util.List;
 
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,14 +73,6 @@ public class AccountB2CResourceIntTest {
 
     @Autowired
     private AccountB2CRepository accountB2CRepository;
-
-    /**
-     * This repository is mocked in the sn.sonatel.dsi.dif.selfcare.b2c.repository.search test package.
-     *
-     * @see sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepositoryMockConfiguration
-     */
-    @Autowired
-    private AccountB2CSearchRepository mockAccountB2CSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -118,7 +108,7 @@ public class AccountB2CResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository, service, restTemplate, mailService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, rattachementLigneRepository, service, restTemplate, mailService);
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -176,8 +166,6 @@ public class AccountB2CResourceIntTest {
         assertThat(testAccountB2C.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testAccountB2C.getImageProfil()).isEqualTo(DEFAULT_IMAGE_PRFIL);
 
-        // Validate the AccountB2C in Elasticsearch
-        verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
     }
 
 
@@ -199,8 +187,6 @@ public class AccountB2CResourceIntTest {
         List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
         assertThat(accountB2CList).hasSize(databaseSizeBeforeCreate);
 
-        // Validate the AccountB2C in Elasticsearch
-        verify(mockAccountB2CSearchRepository, times(0)).save(accountB2C);
     }
 
     @Test
@@ -274,7 +260,7 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
             .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
-    
+
     @Test
     @Transactional
     public void getAccountB2C() throws Exception {
@@ -335,8 +321,6 @@ public class AccountB2CResourceIntTest {
         assertThat(testAccountB2C.getLastName()).isEqualTo(UPDATED_LAST_NAME);
         assertThat(testAccountB2C.getEmail()).isEqualTo(UPDATED_EMAIL);
 
-        // Validate the AccountB2C in Elasticsearch
-        verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
     }
 
     @Test
@@ -356,8 +340,6 @@ public class AccountB2CResourceIntTest {
         List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
         assertThat(accountB2CList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the AccountB2C in Elasticsearch
-        verify(mockAccountB2CSearchRepository, times(0)).save(accountB2C);
     }
 
     @Test
@@ -377,27 +359,6 @@ public class AccountB2CResourceIntTest {
         List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
         assertThat(accountB2CList).hasSize(databaseSizeBeforeDelete - 1);
 
-        // Validate the AccountB2C in Elasticsearch
-        verify(mockAccountB2CSearchRepository, times(1)).deleteById(accountB2C.getId());
-    }
-
-    @Test
-    @Transactional
-    public void searchAccountB2C() throws Exception {
-        // Initialize the database
-        accountB2CRepository.saveAndFlush(accountB2C);
-        when(mockAccountB2CSearchRepository.search(queryStringQuery("id:" + accountB2C.getId()), PageRequest.of(0, 20)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(accountB2C), PageRequest.of(0, 1), 1));
-        // Search the accountB2C
-        restAccountB2CMockMvc.perform(get("/api/account-management/_search/account-b-2-cs?query=id:" + accountB2C.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(accountB2C.getId().intValue())))
-            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO)))
-            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
-            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
-            .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
 
     @Test

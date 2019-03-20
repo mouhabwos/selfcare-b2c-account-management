@@ -9,7 +9,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareb2cSOAP;
@@ -41,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing RattachementLigne.
@@ -56,17 +54,15 @@ public class RattachementLigneResource {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    private final RattachementLigneSearchRepository rattachementLigneSearchRepository;
-
     private final AccountB2CRepository accountB2CRepository;
 
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
 
-    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, RattachementLigneSearchRepository rattachementLigneSearchRepository, AccountB2CRepository accountB2CRepository, @Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
+    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, @Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.rattachementLigneSearchRepository = rattachementLigneSearchRepository;
+
         this.accountB2CRepository = accountB2CRepository;
 
         this.restTemplate = restTemplate;
@@ -94,7 +90,7 @@ public class RattachementLigneResource {
         ligne.setTypeVerification(rattachementLigne.getTypeVerification());
 
         RattachementLigne result = rattachementLigneRepository.save(ligne);
-        rattachementLigneSearchRepository.save(result);
+
         return ResponseEntity.created(new URI("/api/rattachement-lignes/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -125,7 +121,7 @@ public class RattachementLigneResource {
         ligne.setTypeVerification(rattachementLigne.getTypeVerification());
 
         RattachementLigne result = rattachementLigneRepository.save(ligne);
-        rattachementLigneSearchRepository.save(result);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, rattachementLigne.getId().toString()))
             .body(result);
@@ -168,27 +164,9 @@ public class RattachementLigneResource {
     public ResponseEntity<Void> deleteRattachementLigne(@PathVariable Long id) {
         log.debug("REST request to delete RattachementLigne : {}", id);
         rattachementLigneRepository.deleteById(id);
-        rattachementLigneSearchRepository.deleteById(id);
+
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
-
-    /**
-     * SEARCH  /_search/rattachement-lignes?query=:query : search for the rattachementLigne corresponding
-     * to the query.
-     *
-     * @param query the query of the rattachementLigne search
-     * @param pageable the pagination information
-     * @return the result of the search
-     */
-    @GetMapping("/_search/rattachement-lignes")
-    public ResponseEntity<List<RattachementLigne>> searchRattachementLignes(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of RattachementLignes for query {}", query);
-        Page<RattachementLigne> page = rattachementLigneSearchRepository.search(queryStringQuery(query), pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/rattachement-lignes");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-
 
     @PostMapping("/rattachement-lignes/register")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
