@@ -5,8 +5,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -19,16 +17,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.BodyPart;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.MimeBodyPart;
+
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
@@ -75,7 +65,6 @@ public class MailService {
         log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
             isMultipart, isHtml, to, subject, content);
 
-        // Prepare message using a Spring helper
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
@@ -108,17 +97,13 @@ public class MailService {
             message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
+            message.addAttachment(user.getRectoID(), user.getObjectRectoID());
 
-               // DataSource dsverso = new ByteArrayDataSource(user.getObjectRectoID(), "application/octet-stream");
+            if(user.getObjectVersoID()!=null){
+                message.addAttachment(user.getVersoID(), user.getObjectVersoID());
+            }
 
-                message.addAttachment(user.getRectoID(), user.getObjectRectoID());
-
-                if(user.getObjectVersoID()!=null){
-
-                    message.addAttachment(user.getVersoID(), user.getObjectVersoID());
-                }
-
-                message.addAttachment(user.getFormulaire(), user.getObjectFormulaire());
+            message.addAttachment(user.getFormulaire(), user.getObjectFormulaire());
 
             javaMailSender.send(mimeMessage);
             log.debug("Sent email to User '{}'", to);
@@ -157,7 +142,7 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String titleKey) throws Exception {
+    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String titleKey) {
         Locale locale = Locale
             .forLanguageTag("fr");
         Context context = new Context(locale);

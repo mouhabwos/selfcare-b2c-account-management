@@ -20,8 +20,6 @@ public final class Constants {
 
     public static final String FIX_REGEX_VALID_NUMBER = "^(00221|\\+221|221)? ?(33) ?([0-9]{3}) ?([0-9]{2}) ?([0-9]{2})$";
 
-    //public static final String NAME_REGEX = "^[^0-9_!¡?÷?¿/\\\\+=,.@#$%ˆ&*(){}|~<>;:\\[\\]-]{1,}$";
-
     public static final String NAME_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$";
@@ -45,5 +43,7 @@ public final class Constants {
     public static final String EMAIL_SERVICE_CLIENT = "bouyakandee@gmail.com";
 
     private Constants() {
+
+        //Default constructor
     }
 }

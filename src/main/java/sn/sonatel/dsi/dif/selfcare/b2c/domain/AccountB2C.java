@@ -11,6 +11,7 @@ import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.Document;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RecapUserAccount;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -25,7 +26,7 @@ import java.util.Objects;
 @Table(name = "account_b_2_c")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "accountb2c")
-public class AccountB2C implements Serializable {
+public class AccountB2C extends RecapUserAccount implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -42,28 +43,10 @@ public class AccountB2C implements Serializable {
     @Column(name = "numero", nullable = false)
     private String numero;
 
-    @NotNull
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
 
-    @NotNull
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @ApiModelProperty(required = false)
-    @Email
-    @Size(min = 5, max = 254)
-    @Column(name = "email")
-    private String email;
 
     @Column(name = "image_profil")
     private String imageProfil;
-
-    @Size(max = 20)
-    private String activationKey;
-
-    @Size(min = 2, max = 6)
-    private String langKey;
 
     private int attempts=0;
 
@@ -92,44 +75,6 @@ public class AccountB2C implements Serializable {
         this.numero = numero;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public AccountB2C firstName(String firstName) {
-        this.firstName = firstName;
-        return this;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public AccountB2C lastName(String lastName) {
-        this.lastName = lastName;
-        return this;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public AccountB2C email(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getImageProfil() {
         return imageProfil;
@@ -153,21 +98,6 @@ public class AccountB2C implements Serializable {
         return this;
     }
 
-    public String getActivationKey() {
-        return activationKey;
-    }
-
-    public void setActivationKey(String activationKey) {
-        this.activationKey = activationKey;
-    }
-
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public void setLangKey(String langKey) {
-        this.langKey = langKey;
-    }
 
     public int getAttempts() {
         return attempts;

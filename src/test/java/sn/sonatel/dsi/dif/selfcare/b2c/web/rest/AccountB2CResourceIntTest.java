@@ -13,7 +13,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.FileManagerService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
