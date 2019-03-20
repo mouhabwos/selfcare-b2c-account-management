@@ -30,7 +30,7 @@ public class ElasticsearchConfiguration {
 
     @Bean
     public EntityMapper getEntityMapper() {
-        return new CustomEntityMapper(mapper);
+        return new CustomEntityMapper ( mapper );
     }
 
     @Bean
@@ -39,10 +39,10 @@ public class ElasticsearchConfiguration {
                                                          final ElasticsearchConverter elasticsearchConverter,
                                                          final SimpleElasticsearchMappingContext simpleElasticsearchMappingContext,
                                                          EntityMapper mapper) {
-        return new JestElasticsearchTemplate(
+        return new JestElasticsearchTemplate (
             jestClient,
             elasticsearchConverter,
-            new DefaultJestResultsMapper(simpleElasticsearchMappingContext, mapper));
+            new DefaultJestResultsMapper ( simpleElasticsearchMappingContext, mapper ) );
     }
 
     public class CustomEntityMapper implements EntityMapper {
@@ -51,21 +51,21 @@ public class ElasticsearchConfiguration {
 
         public CustomEntityMapper(ObjectMapper objectMapper) {
             this.objectMapper = objectMapper;
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-            objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
-            objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+            objectMapper.configure ( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
+            objectMapper.configure ( DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true );
+            objectMapper.configure ( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true );
+            objectMapper.configure ( SerializationFeature.INDENT_OUTPUT, false );
+            objectMapper.configure ( DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true );
         }
 
         @Override
         public String mapToString(Object object) throws IOException {
-            return objectMapper.writeValueAsString(object);
+            return objectMapper.writeValueAsString ( object );
         }
 
         @Override
         public <T> T mapToObject(String source, Class<T> clazz) throws IOException {
-            return objectMapper.readValue(source, clazz);
+            return objectMapper.readValue ( source, clazz );
         }
     }
 

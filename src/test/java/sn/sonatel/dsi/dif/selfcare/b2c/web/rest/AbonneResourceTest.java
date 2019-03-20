@@ -39,33 +39,32 @@ public class AbonneResourceTest {
     private RestTemplate restTemplate;
 
 
-
     @Before
     public void setUp() throws Exception {
 
-        MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource(restTemplate);
-        this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
+        MockitoAnnotations.initMocks ( this );
+        final AbonneResource abonneResource = new AbonneResource ( restTemplate );
+        this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup ( abonneResource ).build ();
     }
 
     @Test
     public void getSouscription() throws Exception {
 
-        restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isOk());
+        restAbonneMockMvc.perform ( get ( "/api/abonne/souscription/{msisdn}", DEFAULT_NUMERO ) )
+            .andExpect ( status ().isOk () );
     }
 
     @Test
     public void getAbonne() throws Exception {
 
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isOk());
+        restAbonneMockMvc.perform ( get ( "/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO ) )
+            .andExpect ( status ().isOk () );
     }
 
     @Test
     public void getAbonneWithStatusNOT_FOUND() throws Exception {
 
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isOk());
+        restAbonneMockMvc.perform ( get ( "/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO ) )
+            .andExpect ( status ().isOk () );
     }
 }

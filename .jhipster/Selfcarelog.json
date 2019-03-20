@@ -1,0 +1,49 @@
+{
+    "name": "Selfcarelog",
+    "fields": [
+        {
+            "fieldName": "userName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "browser",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "ip",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "action",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "date",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "typeAction",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "perimetre",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "params",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20190319083019",
+    "javadoc": "The CodeOTPInfos entity.",
+    "entityTableName": "selfcarelog",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "selfcare-b2c-account-management",
+    "applications": "*",
+    "microserviceName": "selfcare-b2c-account-management"
+}

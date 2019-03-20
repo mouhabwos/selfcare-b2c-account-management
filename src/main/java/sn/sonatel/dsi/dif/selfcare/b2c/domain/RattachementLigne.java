@@ -5,16 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import org.springframework.data.elasticsearch.annotations.Document;
-import java.io.Serializable;
-import java.util.Objects;
-
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A RattachementLigne.
@@ -71,17 +72,21 @@ public class RattachementLigne implements Serializable {
         return numero;
     }
 
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
     public RattachementLigne numero(String numero) {
         this.numero = numero;
         return this;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
     public String getTypeVerification() {
         return typeVerification;
+    }
+
+    public void setTypeVerification(String typeVerification) {
+        this.typeVerification = typeVerification;
     }
 
     public RattachementLigne typeVerification(String typeVerification) {
@@ -89,21 +94,17 @@ public class RattachementLigne implements Serializable {
         return this;
     }
 
-    public void setTypeVerification(String typeVerification) {
-        this.typeVerification = typeVerification;
-    }
-
     public String getCodeVerification() {
         return codeVerification;
+    }
+
+    public void setCodeVerification(String codeVerification) {
+        this.codeVerification = codeVerification;
     }
 
     public RattachementLigne codeVerification(String codeVerification) {
         this.codeVerification = codeVerification;
         return this;
-    }
-
-    public void setCodeVerification(String codeVerification) {
-        this.codeVerification = codeVerification;
     }
 
     public Boolean isStatut() {
@@ -124,26 +125,26 @@ public class RattachementLigne implements Serializable {
         return typeNumero;
     }
 
+    public void setTypeNumero(TypeNumero typeNumero) {
+        this.typeNumero = typeNumero;
+    }
+
     public RattachementLigne typeNumero(TypeNumero typeNumero) {
         this.typeNumero = typeNumero;
         return this;
-    }
-
-    public void setTypeNumero(TypeNumero typeNumero) {
-        this.typeNumero = typeNumero;
     }
 
     public AccountB2C getAccountB2C() {
         return accountB2C;
     }
 
+    public void setAccountB2C(AccountB2C accountB2C) {
+        this.accountB2C = accountB2C;
+    }
+
     public RattachementLigne accountB2C(AccountB2C accountB2C) {
         this.accountB2C = accountB2C;
         return this;
-    }
-
-    public void setAccountB2C(AccountB2C accountB2C) {
-        this.accountB2C = accountB2C;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -152,30 +153,30 @@ public class RattachementLigne implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass () != o.getClass ()) {
             return false;
         }
         RattachementLigne rattachementLigne = (RattachementLigne) o;
-        if (rattachementLigne.getId() == null || getId() == null) {
+        if (rattachementLigne.getId () == null || getId () == null) {
             return false;
         }
-        return Objects.equals(getId(), rattachementLigne.getId());
+        return Objects.equals ( getId (), rattachementLigne.getId () );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode ( getId () );
     }
 
     @Override
     public String toString() {
         return "RattachementLigne{" +
-            "id=" + getId() +
-            ", numero='" + getNumero() + "'" +
-            ", typeVerification='" + getTypeVerification() + "'" +
-            ", codeVerification='" + getCodeVerification() + "'" +
-            ", statut='" + isStatut() + "'" +
-            ", typeNumero='" + getTypeNumero() + "'" +
+            "id=" + getId () +
+            ", numero='" + getNumero () + "'" +
+            ", typeVerification='" + getTypeVerification () + "'" +
+            ", codeVerification='" + getCodeVerification () + "'" +
+            ", statut='" + isStatut () + "'" +
+            ", typeNumero='" + getTypeNumero () + "'" +
             "}";
     }
 }

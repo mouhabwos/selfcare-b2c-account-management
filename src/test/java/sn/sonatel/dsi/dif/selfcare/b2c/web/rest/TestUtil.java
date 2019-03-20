@@ -22,28 +22,29 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TestUtil {
 
-    /** MediaType for JSON UTF8 */
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(
-            MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
+    /**
+     * MediaType for JSON UTF8
+     */
+    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType (
+        MediaType.APPLICATION_JSON.getType (),
+        MediaType.APPLICATION_JSON.getSubtype (), StandardCharsets.UTF_8 );
 
     /**
      * Convert an object to JSON byte array.
      *
-     * @param object
-     *            the object to convert
+     * @param object the object to convert
      * @return the JSON byte array
      * @throws IOException
      */
     public static byte[] convertObjectToJsonBytes(Object object)
-            throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        throws IOException {
+        ObjectMapper mapper = new ObjectMapper ();
+        mapper.setSerializationInclusion ( JsonInclude.Include.NON_EMPTY );
 
-        JavaTimeModule module = new JavaTimeModule();
-        mapper.registerModule(module);
+        JavaTimeModule module = new JavaTimeModule ();
+        mapper.registerModule ( module );
 
-        return mapper.writeValueAsBytes(object);
+        return mapper.writeValueAsBytes ( object );
     }
 
     /**
@@ -56,9 +57,50 @@ public class TestUtil {
     public static byte[] createByteArray(int size, String data) {
         byte[] byteArray = new byte[size];
         for (int i = 0; i < size; i++) {
-            byteArray[i] = Byte.parseByte(data, 2);
+            byteArray[i] = Byte.parseByte ( data, 2 );
         }
         return byteArray;
+    }
+
+    /**
+     * Creates a matcher that matches when the examined string reprensents the same instant as the reference datetime
+     *
+     * @param date the reference datetime against which the examined string is checked
+     */
+    public static ZonedDateTimeMatcher sameInstant(ZonedDateTime date) {
+        return new ZonedDateTimeMatcher ( date );
+    }
+
+    /**
+     * Verifies the equals/hashcode contract on the domain object.
+     */
+    public static <T> void equalsVerifier(Class<T> clazz) throws Exception {
+        T domainObject1 = clazz.getConstructor ().newInstance ();
+        assertThat ( domainObject1.toString () ).isNotNull ();
+        assertThat ( domainObject1 ).isEqualTo ( domainObject1 );
+        assertThat ( domainObject1.hashCode () ).isEqualTo ( domainObject1.hashCode () );
+        // Test with an instance of another class
+        Object testOtherObject = new Object ();
+        assertThat ( domainObject1 ).isNotEqualTo ( testOtherObject );
+        assertThat ( domainObject1 ).isNotEqualTo ( null );
+        // Test with an instance of the same class
+        T domainObject2 = clazz.getConstructor ().newInstance ();
+        assertThat ( domainObject1 ).isNotEqualTo ( domainObject2 );
+        // HashCodes are equals because the objects are not persisted yet
+        assertThat ( domainObject1.hashCode () ).isEqualTo ( domainObject2.hashCode () );
+    }
+
+    /**
+     * Create a FormattingConversionService which use ISO date format, instead of the localized one.
+     *
+     * @return the FormattingConversionService
+     */
+    public static FormattingConversionService createFormattingConversionService() {
+        DefaultFormattingConversionService dfcs = new DefaultFormattingConversionService ();
+        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar ();
+        registrar.setUseIsoFormat ( true );
+        registrar.registerFormatters ( dfcs );
+        return dfcs;
     }
 
     /**
@@ -75,14 +117,14 @@ public class TestUtil {
         @Override
         protected boolean matchesSafely(String item, Description mismatchDescription) {
             try {
-                if (!date.isEqual(ZonedDateTime.parse(item))) {
-                    mismatchDescription.appendText("was ").appendValue(item);
+                if (!date.isEqual ( ZonedDateTime.parse ( item ) )) {
+                    mismatchDescription.appendText ( "was " ).appendValue ( item );
                     return false;
                 }
                 return true;
             } catch (DateTimeParseException e) {
-                mismatchDescription.appendText("was ").appendValue(item)
-                    .appendText(", which could not be parsed as a ZonedDateTime");
+                mismatchDescription.appendText ( "was " ).appendValue ( item )
+                    .appendText ( ", which could not be parsed as a ZonedDateTime" );
                 return false;
             }
 
@@ -90,46 +132,7 @@ public class TestUtil {
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("a String representing the same Instant as ").appendValue(date);
+            description.appendText ( "a String representing the same Instant as " ).appendValue ( date );
         }
-    }
-
-    /**
-     * Creates a matcher that matches when the examined string reprensents the same instant as the reference datetime
-     * @param date the reference datetime against which the examined string is checked
-     */
-    public static ZonedDateTimeMatcher sameInstant(ZonedDateTime date) {
-        return new ZonedDateTimeMatcher(date);
-    }
-
-    /**
-     * Verifies the equals/hashcode contract on the domain object.
-     */
-    public static <T> void equalsVerifier(Class<T> clazz) throws Exception {
-        T domainObject1 = clazz.getConstructor().newInstance();
-        assertThat(domainObject1.toString()).isNotNull();
-        assertThat(domainObject1).isEqualTo(domainObject1);
-        assertThat(domainObject1.hashCode()).isEqualTo(domainObject1.hashCode());
-        // Test with an instance of another class
-        Object testOtherObject = new Object();
-        assertThat(domainObject1).isNotEqualTo(testOtherObject);
-        assertThat(domainObject1).isNotEqualTo(null);
-        // Test with an instance of the same class
-        T domainObject2 = clazz.getConstructor().newInstance();
-        assertThat(domainObject1).isNotEqualTo(domainObject2);
-        // HashCodes are equals because the objects are not persisted yet
-        assertThat(domainObject1.hashCode()).isEqualTo(domainObject2.hashCode());
-    }
-
-    /**
-     * Create a FormattingConversionService which use ISO date format, instead of the localized one.
-     * @return the FormattingConversionService
-     */
-    public static FormattingConversionService createFormattingConversionService() {
-        DefaultFormattingConversionService dfcs = new DefaultFormattingConversionService ();
-        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
-        registrar.setUseIsoFormat(true);
-        registrar.registerFormatters(dfcs);
-        return dfcs;
     }
 }

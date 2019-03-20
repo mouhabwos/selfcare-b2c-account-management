@@ -18,27 +18,26 @@ public class ServiceSelfcareb2cSOAP {
         //Default constructor
     }
 
-    public static ResponseEntity<SouscriptionDto> getSouscription(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<SOAPRequest> request){
+    public static ResponseEntity<SouscriptionDto> getSouscription(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<SOAPRequest> request) {
 
 
-            return restTemplate
-                .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
+        return restTemplate
+            .exchange ( Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class );
     }
 
-        public static ResponseEntity<List<AbonneDTO>> getAbonne(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate ,HttpEntity<SOAPRequest> request){
+    public static ResponseEntity<List<AbonneDTO>> getAbonne(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<SOAPRequest> request) {
 
-                return restTemplate
-                    .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_ABONNE, HttpMethod.POST, request,(Class) List.class);
+        return restTemplate
+            .exchange ( Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_ABONNE, HttpMethod.POST, request, (Class) List.class );
 
-        }
-
-    public static ResponseEntity<String> getFormuleByMsisdn(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate ,String msisdn){
-
-        String url = Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_FORMULE_BY_MSISDN+msisdn;
-
-        return restTemplate.getForEntity(url, String.class);
     }
 
+    public static ResponseEntity<String> getFormuleByMsisdn(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, String msisdn) {
+
+        String url = Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_FORMULE_BY_MSISDN + msisdn;
+
+        return restTemplate.getForEntity ( url, String.class );
+    }
 
 
 }

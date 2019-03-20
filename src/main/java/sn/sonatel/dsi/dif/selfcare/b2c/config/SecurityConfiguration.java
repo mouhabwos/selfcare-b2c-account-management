@@ -1,10 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2JwtAccessTokenConverter;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2Properties;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2SignatureVerifierClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.AuthoritiesConstants;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +12,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2JwtAccessTokenConverter;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2Properties;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.AuthoritiesConstants;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2SignatureVerifierClient;
 
 @Configuration
 @EnableResourceServer
@@ -34,43 +32,43 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         //authenticated()
         http
-            .csrf()
-            .disable()
-            .headers()
-            .frameOptions()
-            .disable()
-        .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-            .authorizeRequests()
-            .antMatchers("/api/**").permitAll()
-            .antMatchers("/management/health").permitAll()
-            .antMatchers("/management/info").permitAll()
-            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
+            .csrf ()
+            .disable ()
+            .headers ()
+            .frameOptions ()
+            .disable ()
+            .and ()
+            .sessionManagement ()
+            .sessionCreationPolicy ( SessionCreationPolicy.STATELESS )
+            .and ()
+            .authorizeRequests ()
+            .antMatchers ( "/api/**" ).permitAll ()
+            .antMatchers ( "/management/health" ).permitAll ()
+            .antMatchers ( "/management/info" ).permitAll ()
+            .antMatchers ( "/management/**" ).hasAuthority ( AuthoritiesConstants.ADMIN );
     }
 
     @Bean
     public TokenStore tokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {
-        return new JwtTokenStore(jwtAccessTokenConverter);
+        return new JwtTokenStore ( jwtAccessTokenConverter );
     }
 
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter(OAuth2SignatureVerifierClient signatureVerifierClient) {
-        return new OAuth2JwtAccessTokenConverter(oAuth2Properties, signatureVerifierClient);
+        return new OAuth2JwtAccessTokenConverter ( oAuth2Properties, signatureVerifierClient );
     }
 
     @Bean
-	@Qualifier("loadBalancedRestTemplate")
+    @Qualifier("loadBalancedRestTemplate")
     public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer) {
-        RestTemplate restTemplate = new RestTemplate();
-        customizer.customize(restTemplate);
+        RestTemplate restTemplate = new RestTemplate ();
+        customizer.customize ( restTemplate );
         return restTemplate;
     }
 
     @Bean
     @Qualifier("vanillaRestTemplate")
     public RestTemplate vanillaRestTemplate() {
-        return new RestTemplate();
+        return new RestTemplate ();
     }
 }

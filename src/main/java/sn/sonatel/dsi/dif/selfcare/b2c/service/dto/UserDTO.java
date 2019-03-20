@@ -11,44 +11,43 @@ import java.util.Set;
  */
 public class UserDTO extends Same {
 
-	private Long id;
+    private Long id;
 
-	@ApiModelProperty(required = true)
-	@NotNull(message = "Le numero ne peut pas être vide")
-	@NotBlank(message = "Le numéro ne doit pas être vide")
-	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-	@Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
-	private String login;
+    @ApiModelProperty(required = true)
+    @NotNull(message = "Le numero ne peut pas être vide")
+    @NotBlank(message = "Le numéro ne doit pas être vide")
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
+    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+    private String login;
 
-	@NotNull(message = "Le prénom ne doit pas être vide")
-	@ApiModelProperty(required = true)
-	@Pattern(regexp = Constants.NAME_REGEX, message = "La saisie du prénom est incorrecte")
-	@Size(max = 50)
-	private String firstName;
+    @NotNull(message = "Le prénom ne doit pas être vide")
+    @ApiModelProperty(required = true)
+    @Pattern(regexp = Constants.NAME_REGEX, message = "La saisie du prénom est incorrecte")
+    @Size(max = 50)
+    private String firstName;
 
-	@NotNull(message = "Le nom ne doit pas être vide")
-	@ApiModelProperty(required = true)
-	@Pattern(regexp = Constants.NAME_REGEX, message = "La saisie du nom est incorrecte")
-	@Size(max = 50)
-	private String lastName;
+    @NotNull(message = "Le nom ne doit pas être vide")
+    @ApiModelProperty(required = true)
+    @Pattern(regexp = Constants.NAME_REGEX, message = "La saisie du nom est incorrecte")
+    @Size(max = 50)
+    private String lastName;
 
-	@Email(message = "L'email doit être une adresse email bien formée")
-	@Size(min = 5, max = 254)
-	private String email;
+    @Email(message = "L'email doit être une adresse email bien formée")
+    @Size(min = 5, max = 254)
+    private String email;
 
-	@Size(max = 256)
-	private String imageUrl;
+    @Size(max = 256)
+    private String imageUrl;
 
-	private boolean activated = false;
+    private boolean activated = false;
 
-	@Size(min = 2, max = 6)
-	private String langKey;
+    @Size(min = 2, max = 6)
+    private String langKey;
 
 
+    private Set<String> authorities;
 
-	private Set<String> authorities;
-
-	private String imageprofil;
+    private String imageprofil;
 
     public UserDTO login(String login) {
         this.login = login;
@@ -64,83 +63,83 @@ public class UserDTO extends Same {
     }
 
     public String getLogin() {
-		return login;
-	}
+        return login;
+    }
 
-	public void setLogin(String login) {
-		this.login = login;
-	}
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public boolean isActivated() {
-		return activated;
-	}
+    public boolean isActivated() {
+        return activated;
+    }
 
-	public void setActivated(boolean activated) {
-		this.activated = activated;
-	}
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
-	public String getLangKey() {
-		return langKey;
-	}
+    public String getLangKey() {
+        return langKey;
+    }
 
-	public void setLangKey(String langKey) {
-		this.langKey = langKey;
-	}
+    public void setLangKey(String langKey) {
+        this.langKey = langKey;
+    }
 
-	public Set<String> getAuthorities() {
-		return authorities;
-	}
+    public Set<String> getAuthorities() {
+        return authorities;
+    }
 
-	public void setAuthorities(Set<String> authorities) {
-		this.authorities = authorities;
-	}
+    public void setAuthorities(Set<String> authorities) {
+        this.authorities = authorities;
+    }
 
-	public String getImageprofil() {
-		return imageprofil;
-	}
+    public String getImageprofil() {
+        return imageprofil;
+    }
 
-	public void setImageprofil(String imageprofil) {
-		this.imageprofil = imageprofil;
-	}
+    public void setImageprofil(String imageprofil) {
+        this.imageprofil = imageprofil;
+    }
 
-	@Override
-	public String toString() {
-		return "UserDTO{" + "login='" + login + '\'' + ", firstName='" + firstName + '\''
-				+ ", lastName='" + lastName + '\'' + ", email='" + email + '\''
-				+ ", imageUrl='" + imageUrl + '\'' + ", activated=" + activated
-				+ ", langKey='" + langKey  + "}";
-	}
+    @Override
+    public String toString() {
+        return "UserDTO{" + "login='" + login + '\'' + ", firstName='" + firstName + '\''
+            + ", lastName='" + lastName + '\'' + ", email='" + email + '\''
+            + ", imageUrl='" + imageUrl + '\'' + ", activated=" + activated
+            + ", langKey='" + langKey + "}";
+    }
 
 }

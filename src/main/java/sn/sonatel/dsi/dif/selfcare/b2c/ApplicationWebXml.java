@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.config.DefaultProfileUtil;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.DefaultProfileUtil;
 
 /**
  * This is a helper Java class that provides an alternative to creating a web.xml.
@@ -15,7 +15,7 @@ public class ApplicationWebXml extends SpringBootServletInitializer {
         /**
          * set a default to use when no profile is configured.
          */
-        DefaultProfileUtil.addDefaultProfile(application.application());
-        return application.sources(SelfcareB2CApp.class);
+        DefaultProfileUtil.addDefaultProfile ( application.application () );
+        return application.sources ( SelfcareB2CApp.class );
     }
 }

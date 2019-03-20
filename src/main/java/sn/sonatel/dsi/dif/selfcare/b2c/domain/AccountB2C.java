@@ -4,17 +4,15 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import org.springframework.data.elasticsearch.annotations.Document;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A AccountB2C.
@@ -26,7 +24,7 @@ import java.util.Objects;
 public class AccountB2C implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,7 +57,8 @@ public class AccountB2C implements Serializable {
 
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<RattachementLigne> users = new HashSet<>();
+    private Set<RattachementLigne> users = new HashSet<> ();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -73,17 +72,21 @@ public class AccountB2C implements Serializable {
         return numero;
     }
 
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
     public AccountB2C numero(String numero) {
         this.numero = numero;
         return this;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
     public String getFirstName() {
         return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public AccountB2C firstName(String firstName) {
@@ -91,12 +94,12 @@ public class AccountB2C implements Serializable {
         return this;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public AccountB2C lastName(String lastName) {
@@ -104,12 +107,12 @@ public class AccountB2C implements Serializable {
         return this;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public AccountB2C email(String email) {
@@ -117,12 +120,12 @@ public class AccountB2C implements Serializable {
         return this;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getImagePrfil() {
         return imagePrfil;
+    }
+
+    public void setImagePrfil(String imagePrfil) {
+        this.imagePrfil = imagePrfil;
     }
 
     public AccountB2C imagePrfil(String imagePrfil) {
@@ -130,12 +133,12 @@ public class AccountB2C implements Serializable {
         return this;
     }
 
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
-    }
-
     public Set<RattachementLigne> getUsers() {
         return users;
+    }
+
+    public void setUsers(Set<RattachementLigne> rattachementLignes) {
+        this.users = rattachementLignes;
     }
 
     public AccountB2C users(Set<RattachementLigne> rattachementLignes) {
@@ -144,19 +147,15 @@ public class AccountB2C implements Serializable {
     }
 
     public AccountB2C addUser(RattachementLigne rattachementLigne) {
-        this.users.add(rattachementLigne);
-        rattachementLigne.setAccountB2C(this);
+        this.users.add ( rattachementLigne );
+        rattachementLigne.setAccountB2C ( this );
         return this;
     }
 
     public AccountB2C removeUser(RattachementLigne rattachementLigne) {
-        this.users.remove(rattachementLigne);
-        rattachementLigne.setAccountB2C(null);
+        this.users.remove ( rattachementLigne );
+        rattachementLigne.setAccountB2C ( null );
         return this;
-    }
-
-    public void setUsers(Set<RattachementLigne> rattachementLignes) {
-        this.users = rattachementLignes;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -165,30 +164,30 @@ public class AccountB2C implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass () != o.getClass ()) {
             return false;
         }
         AccountB2C accountB2C = (AccountB2C) o;
-        if (accountB2C.getId() == null || getId() == null) {
+        if (accountB2C.getId () == null || getId () == null) {
             return false;
         }
-        return Objects.equals(getId(), accountB2C.getId());
+        return Objects.equals ( getId (), accountB2C.getId () );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode ( getId () );
     }
 
     @Override
     public String toString() {
         return "AccountB2C{" +
-            "id=" + getId() +
-            ", numero='" + getNumero() + "'" +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", imagePrfil='" + getImagePrfil() + "'" +
+            "id=" + getId () +
+            ", numero='" + getNumero () + "'" +
+            ", firstName='" + getFirstName () + "'" +
+            ", lastName='" + getLastName () + "'" +
+            ", email='" + getEmail () + "'" +
+            ", imagePrfil='" + getImagePrfil () + "'" +
             "}";
     }
 }
