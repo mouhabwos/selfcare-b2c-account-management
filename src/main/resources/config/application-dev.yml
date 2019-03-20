@@ -73,7 +73,7 @@ spring:
     liquibase:
         contexts: dev
     mail:
-        host: localhost
+        host: localhost #10.100.56.56
         port: 25
         username:
         password:

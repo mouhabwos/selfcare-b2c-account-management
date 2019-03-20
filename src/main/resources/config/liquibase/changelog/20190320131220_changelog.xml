@@ -1,0 +1,36 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-1">
+        <addColumn tableName="account_b_2_c">
+            <column name="activation_key" type="varchar(20)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-2">
+        <addColumn tableName="account_b_2_c">
+            <column name="attempts" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-3">
+        <addColumn tableName="account_b_2_c">
+            <column name="derniere_connnexion_date" type="tinyblob"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-4">
+        <addColumn tableName="account_b_2_c">
+            <column name="image_profil" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-5">
+        <addColumn tableName="account_b_2_c">
+            <column name="lang_key" type="varchar(6)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-6">
+        <dropColumn columnName="image_prfil" tableName="account_b_2_c"/>
+    </changeSet>
+    <changeSet author="BOUYA KANDE (generated)" id="1553087561195-7">
+        <dropColumn columnName="image_prfil" tableName="rattachement_ligne"/>
+    </changeSet>
+</databaseChangeLog>

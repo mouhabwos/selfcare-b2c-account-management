@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{email.opening.greeting}">JHipster activation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+</head>
+<body>
+<p th:text="#{email.opening.greeting}">
+    Cher
+</p>
+<p th:text="#{email.opening.text1(${user.operation})}">
+    Cher
+</p>
+<p th:text="#{email.opening.text2}">
+</p>
+<p th:text="#{email.opening.text4 (${user.numero})}">
+</p>
+<p th:text="#{email.opening.firstName (${user.firstName})}">
+</p>
+<p th:text="#{email.opening.lastName (${user.lastName})}">
+</p>
+<p th:text="#{email.opening.operation (${user.operation})}">
+</p>
+
+<p>
+    <span th:text="#{email.opening.text3}">Cordialement, </span>
+    <br/>
+    <em th:text="#{email.opening.signature}">Le service Client.</em>
+</p>
+</body>
+</html>

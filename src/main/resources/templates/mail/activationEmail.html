@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{email.activation.title}">JHipster activation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+</head>
+<body>
+<p th:text="#{email.activation.greeting(${user.lastName})}">
+    Cher
+</p>
+<p th:text="#{email.activation.text1}">
+    Votre compte sur Selfcare a été créé, pour l'activer merci de cliquer sur le lien ci-dessous :
+</p>
+<p>
+    <a th:with="url=(@{|${baseUrl}/#/activate?key=${user.activationKey}|})" th:href="${url}"
+       th:text="${url}">Activation link</a>
+</p>
+<p>
+    <span th:text="#{email.activation.text2}">Cordialement, </span>
+    <br/>
+    <em th:text="#{email.signature}">Le service Client.</em>
+</p>
+</body>
+</html>
