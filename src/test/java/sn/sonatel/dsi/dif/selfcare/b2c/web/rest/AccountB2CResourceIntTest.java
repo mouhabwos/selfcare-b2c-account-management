@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
@@ -133,12 +134,12 @@ public class AccountB2CResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static AccountB2C createEntity(EntityManager em) {
-        AccountB2C accountB2C = new AccountB2C()
-            .numero(DEFAULT_NUMERO)
-            .firstName(DEFAULT_FIRST_NAME)
-            .lastName(DEFAULT_LAST_NAME)
-            .email(DEFAULT_EMAIL)
-            .imageProfil(DEFAULT_IMAGE_PRFIL);
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(DEFAULT_NUMERO);
+        accountB2C.setFirstName(DEFAULT_FIRST_NAME);
+        accountB2C.setLastName(DEFAULT_LAST_NAME);
+        accountB2C.setEmail(DEFAULT_EMAIL);
+        accountB2C.setImageProfil(DEFAULT_IMAGE_PRFIL);
         return accountB2C;
     }
 
@@ -313,12 +314,12 @@ public class AccountB2CResourceIntTest {
         // Disconnect from session so that the updates on updatedAccountB2C are not directly saved in db
         em.detach(updatedAccountB2C);
 
-        updatedAccountB2C
-            .numero(UPDATED_NUMERO)
-            .firstName(UPDATED_FIRST_NAME)
-            .lastName(UPDATED_LAST_NAME)
-            .email(UPDATED_EMAIL)
-            .imageProfil(UPDATED_IMAGE_PRFIL);
+        updatedAccountB2C.setLastName(UPDATED_LAST_NAME);
+        updatedAccountB2C.setNumero(UPDATED_NUMERO);
+        updatedAccountB2C.setFirstName(UPDATED_FIRST_NAME);
+        updatedAccountB2C.setLastName(UPDATED_LAST_NAME);
+        updatedAccountB2C.setEmail(UPDATED_EMAIL);
+        updatedAccountB2C.setImageProfil(UPDATED_IMAGE_PRFIL);
 
         restAccountB2CMockMvc.perform(put("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -506,5 +507,36 @@ public class AccountB2CResourceIntTest {
             .andExpect(status().isOk());
     }
 
+
+    public ManagedUserVM addDataManagedUserVM(){
+
+        ManagedUserVM vm = new ManagedUserVM();
+
+        vm.setEmail("value@gmail.com");
+        vm.setLastName("lastname");
+        vm.setFirstName("firsname");
+        vm.setLogin("771234545");
+        vm.setPassword("Passer12");
+        vm.setActivated(true);
+        vm.setActivationKey("fr");
+        vm.setCreatedDate(null);
+        vm.setLangKey("fr");
+
+        return vm;
+    }
+
+    @Test
+    @Transactional
+    public void registerAccountB2C() throws Exception {
+        addData();
+        ManagedUserVM vm =addDataManagedUserVM();
+        vm.setLogin("778522323");
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(vm)))
+            .andExpect(status().isBadRequest());
+
+
+    }
 
 }

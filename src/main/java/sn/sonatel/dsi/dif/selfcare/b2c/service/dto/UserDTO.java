@@ -20,8 +20,32 @@ public class UserDTO extends Same {
 	@Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
 	private String login;
 
+    @NotNull(message = "Le prénom ne doit pas être vide")
+    @ApiModelProperty(required = true)
+    @Size(max = 50)
+    private String firstName;
+
+    @NotNull(message = "Le nom ne doit pas être vide")
+    @ApiModelProperty(required = true)
+    @Size(max = 50)
+    private String lastName;
+
+    @ApiModelProperty(required = false)
+    @Email(message = "L'email doit être une adresse email bien formée")
+    @Size(min = 5, max = 254)
+    private String email;
+
+    @Size(max = 20)
+    private String activationKey;
+
+    @Size(min = 2, max = 6)
+    private String langKey;
+
+
 	@Size(max = 256)
 	private String imageUrl;
+
+	private boolean activated = false;
 
 	private Set<String> authorities;
 
@@ -49,6 +73,14 @@ public class UserDTO extends Same {
 	}
 
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -57,6 +89,21 @@ public class UserDTO extends Same {
 		this.imageUrl = imageUrl;
 	}
 
+	public boolean isActivated() {
+		return activated;
+	}
+
+	public void setActivated(boolean activated) {
+		this.activated = activated;
+	}
+
+	public String getLangKey() {
+		return langKey;
+	}
+
+	public void setLangKey(String langKey) {
+		this.langKey = langKey;
+	}
 
 	public Set<String> getAuthorities() {
 		return authorities;
@@ -74,12 +121,40 @@ public class UserDTO extends Same {
 		this.imageprofil = imageprofil;
 	}
 
-	@Override
 	public String toString() {
 		return "UserDTO{" + "login='" + login + '\'' + ", firstName='" + firstName + '\''
 				+ ", lastName='" + lastName + '\'' + ", email='" + email + '\''
-				+ ", imageUrl='" + imageUrl + '\''
+				+ ", imageUrl='" + imageUrl + '\'' + ", activated=" + activated
 				+ ", langKey='" + langKey  + "}";
 	}
 
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+
+    public String getLastName() {
+        return lastName;
+    }
+
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+
+    public String getActivationKey() {
+        return activationKey;
+    }
+
+
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
+    }
 }

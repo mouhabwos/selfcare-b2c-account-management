@@ -9,7 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.Column;
 import java.time.Instant;
 
-public class Same extends RecapUserAccount{
+public class Same{
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, length = 50, updatable = false)
