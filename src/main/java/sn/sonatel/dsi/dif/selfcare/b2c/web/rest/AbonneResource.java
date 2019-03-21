@@ -2,7 +2,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
@@ -79,11 +77,8 @@ public class AbonneResource {
         try {
 
             ResponseEntity<List<AbonneDTO>> response = selfcareSoapService.getAbonne( request);
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
 
-                return null;
-            }
-            else if (response.getStatusCode() == HttpStatus.OK) {
+            if (response.getStatusCode() == HttpStatus.OK) {
 
                 return response;
             }
@@ -93,7 +88,7 @@ public class AbonneResource {
             log.debug("Exception get information abonne : {}", msisdn);
         }
 
-        return null;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
 
     }

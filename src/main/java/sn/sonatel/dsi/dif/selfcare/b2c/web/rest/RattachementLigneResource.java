@@ -59,7 +59,7 @@ public class RattachementLigneResource {
     private final SelfcareSoapService selfcareSoapService;
 
 
-    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, SelfcareSoapService selfcareSoapService) {
+    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository,SelfcareSoapService selfcareSoapService) {
         this.rattachementLigneRepository = rattachementLigneRepository;
 
         this.accountB2CRepository = accountB2CRepository;

@@ -59,13 +59,13 @@ public class AbonneResourceIntTest {
     public void getAbonne() throws Exception {
 
         restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isOk());
+            .andExpect(status().isNotFound());
     }
 
     @Test
     public void getAbonneWithStatusNOT_FOUND() throws Exception {
 
         restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isOk());
+            .andExpect(status().isNotFound());
     }
 }
