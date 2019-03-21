@@ -241,6 +241,19 @@ public class RattachementLigneResourceIntTest {
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
+
+    @Test
+    @Transactional
+    public void getAllRattachementLignesByMsisdn() throws Exception {
+        // Initialize the database
+        rattachementLigneRepository.saveAndFlush(rattachementLigne);
+        addRattachement();
+
+        // Get all the rattachementLigneList
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
+            .andExpect(status().isOk());
+    }
+
     @Test
     @Transactional
     public void getRattachementLigne() throws Exception {
@@ -464,7 +477,7 @@ public class RattachementLigneResourceIntTest {
 
         RattachementLigneVM ligneVM = new RattachementLigneVM();
 
-        ligneVM.setLogin("774502525");
+        ligneVM.setLogin("770236606");
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
 
@@ -541,5 +554,7 @@ public class RattachementLigneResourceIntTest {
 
 
     }
+
+
 
 }
