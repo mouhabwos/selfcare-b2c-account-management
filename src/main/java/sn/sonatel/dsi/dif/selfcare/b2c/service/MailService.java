@@ -162,7 +162,7 @@ public class MailService {
      * @param user
      */
     @Async
-    public void sendEmailFromServiceClient(UserInfoOuvertureCompte user) throws Exception {
+    public void sendEmailFromServiceClient(UserInfoOuvertureCompte user) {
         log.debug("Sending activation email to '{}'", "");
         sendEmailToServiceClient(user, "mail/ouverturCompteEmail", EMAIL_ACTIVATION_TITLE);
     }

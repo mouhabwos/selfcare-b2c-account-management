@@ -1,21 +1,17 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A AccountB2C.

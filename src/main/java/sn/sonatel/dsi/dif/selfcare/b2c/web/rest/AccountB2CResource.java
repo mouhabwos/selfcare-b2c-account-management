@@ -306,9 +306,9 @@ public class AccountB2CResource {
     }
 
     @PostMapping("/mail/ouverture-compte")
-    public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) throws Exception {
+    public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
-        try{
+
             ResponseEntity<Resource> responseFormulaire = service.downloadFile(b2C.getFormulaire());
 
             ResponseEntity<Resource> responseRecto = service.downloadFile(b2C.getFormulaire());
@@ -321,13 +321,6 @@ public class AccountB2CResource {
                 b2C.setObjectVersoID(responseVerso.getBody());
             }
             mailService.sendEmailFromServiceClient(b2C);
-        }catch (Exception e){
-
-            throw new BadRequestAlertException("Mail non envoyé", ENTITY_NAME, "MailNotSent");
-
-        }
-
-
 
     }
 

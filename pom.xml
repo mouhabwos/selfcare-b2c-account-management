@@ -104,7 +104,15 @@
 
         <!-- Sonar properties -->
         <sonar.host.url>http://sonar.tools.orange-sonatel.com</sonar.host.url>
-        <sonar.exclusions>src/main/webapp/content/**/*.*, src/main/webapp/i18n/*.js, target/www/**/*.*,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/interceptor/RestTemplateAddTokenInterceptor.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/SecurityUtils.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/audit/AuditEventConverter.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/SelfcareB2CApp.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/LoggingAspect.java,  src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/oauth2/OAuth2JwtAccessTokenConverter.java,  src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/client/UserFeignClientInterceptor.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/DefaultProfileUtil.java,  src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/LiquibaseConfiguration.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/MetricsConfiguration.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/oauth2/UaaSignatureVerifierClient.java</sonar.exclusions>
+        <sonar.exclusions>src/main/webapp/content/**/*.*, src/main/webapp/i18n/*.js, target/www/**/*.*,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/interceptor/RestTemplateAddTokenInterceptor.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/SecurityUtils.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/audit/AuditEventConverter.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/SelfcareB2CApp.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/LoggingAspect.java,  src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/oauth2/OAuth2JwtAccessTokenConverter.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/client/UserFeignClientInterceptor.java, src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/DefaultProfileUtil.java,  src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/LiquibaseConfiguration.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/MetricsConfiguration.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/oauth2/UaaSignatureVerifierClient.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/rest/errors/ExceptionTranslator.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/rest/util/PaginationUtil.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/client/*.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/*.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/oauth2/*.java
+        </sonar.exclusions>
         <sonar.issue.ignore.multicriteria>S3437,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
         <!-- Rule https://sonarcloud.io/coding_rules?open=Web%3ABoldAndItalicTagsCheck&rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
         <sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.resourceKey>src/main/webapp/app/**/*.*</sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.resourceKey>

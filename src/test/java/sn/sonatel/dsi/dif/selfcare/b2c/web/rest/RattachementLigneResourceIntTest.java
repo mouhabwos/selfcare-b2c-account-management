@@ -106,7 +106,7 @@ public class RattachementLigneResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, restTemplate, selfcareSoapService);
+        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, selfcareSoapService);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
