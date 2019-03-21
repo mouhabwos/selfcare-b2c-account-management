@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareb2cSOAP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import java.util.List;
@@ -24,13 +24,10 @@ public class AbonneResource {
 
     private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
 
+    private final SelfcareSoapService selfcareSoapService;
 
-    @Qualifier("loadBalancedRestTemplate")
-    private final RestTemplate restTemplate;
-
-    public AbonneResource(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate) {
-
-        this.restTemplate = restTemplate;
+    public AbonneResource(SelfcareSoapService selfcareSoapService) {
+        this.selfcareSoapService = selfcareSoapService;
     }
 
     /**
@@ -46,7 +43,7 @@ public class AbonneResource {
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
         try {
 
-            ResponseEntity<SouscriptionDto> response = ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
+            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(request);
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return null;
             }
@@ -81,7 +78,7 @@ public class AbonneResource {
 
         try {
 
-            ResponseEntity<List<AbonneDTO>> response = ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
+            ResponseEntity<List<AbonneDTO>> response = selfcareSoapService.getAbonne( request);
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
 
                 return null;
@@ -107,7 +104,7 @@ public class AbonneResource {
 
         try {
 
-            ResponseEntity<String> response = ServiceSelfcareb2cSOAP.getFormuleByMsisdn(restTemplate, msisdn);
+            ResponseEntity<String> response = selfcareSoapService.getFormuleByMsisdn( msisdn);
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
 
                 return null;

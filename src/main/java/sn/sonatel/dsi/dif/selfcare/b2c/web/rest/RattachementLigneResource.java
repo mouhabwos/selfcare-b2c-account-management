@@ -11,7 +11,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareb2cSOAP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
@@ -56,16 +56,15 @@ public class RattachementLigneResource {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    @Qualifier("loadBalancedRestTemplate")
-    private final RestTemplate restTemplate;
+    private final SelfcareSoapService selfcareSoapService;
 
 
-    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, @Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
+    public RattachementLigneResource(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, SelfcareSoapService selfcareSoapService) {
         this.rattachementLigneRepository = rattachementLigneRepository;
 
         this.accountB2CRepository = accountB2CRepository;
 
-        this.restTemplate = restTemplate;
+        this.selfcareSoapService = selfcareSoapService;
     }
 
     /**
@@ -295,7 +294,7 @@ public class RattachementLigneResource {
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
         try {
 
-            ResponseEntity<SouscriptionDto> response = ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
+            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription( request);
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return null;
             }

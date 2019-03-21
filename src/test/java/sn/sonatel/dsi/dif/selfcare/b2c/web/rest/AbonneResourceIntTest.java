@@ -11,12 +11,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Validator;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AbonneResourceTest {
+public class AbonneResourceIntTest {
 
     private static final String DEFAULT_NUMERO = "778505050";
 
@@ -35,16 +36,15 @@ public class AbonneResourceTest {
     @Autowired
     private Validator validator;
 
-    @Qualifier("loadBalancedRestTemplate")
-    private RestTemplate restTemplate;
-
+    @Autowired
+    private SelfcareSoapService selfcareSoapService;
 
 
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource(restTemplate);
+        final AbonneResource abonneResource = new AbonneResource(selfcareSoapService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
     }
 
