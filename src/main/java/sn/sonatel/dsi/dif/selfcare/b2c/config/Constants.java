@@ -20,13 +20,17 @@ public final class Constants {
 
     public static final String FIX_REGEX_VALID_NUMBER = "^(00221|\\+221|221)? ?(33) ?([0-9]{3}) ?([0-9]{2}) ?([0-9]{2})$";
 
-    public static final String NAME_REGEX = "^[^0-9_!¡?÷?¿/\\\\+=,.@#$%ˆ&*(){}|~<>;:\\[\\]-]{1,}$";
+    public static final String NAME_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$";
 
     public static final String SELFCARE_B2C_SOAP_SERVICE = "http://selfcare-b2c-soap";
 
     public static final String SELFCARE_UAA_SERVICE = "http://selfcare-uaa";
+
+    public static final String SELFCARE_FILE_MANAGER_SERVICE = "http://selfcare-file-manager";
+
+    public static final String FILE_DOWNLOAD = "/api/download/";
 
     public static final String GET_ABONNE = "/api/soap/information-client";
 
@@ -36,6 +40,10 @@ public final class Constants {
 
     public static final String GET_FORMULE_BY_MSISDN = "/api/soap/achats/formules/";
 
+    public static final String EMAIL_SERVICE_CLIENT = "bouyakandee@gmail.com";
+
     private Constants() {
+
+        //Default constructor
     }
 }

@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
@@ -10,8 +11,11 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
@@ -53,14 +57,20 @@ public class AccountB2CResource {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
+    private final ServiceFile service;
+
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate) {
+    private final MailService mailService;
+
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository, ServiceFile service, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService) {
         this.accountB2CRepository = accountB2CRepository;
         this.accountB2CSearchRepository = accountB2CSearchRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
+        this.service = service;
         this.restTemplate = restTemplate;
+        this.mailService = mailService;
     }
 
     /**
@@ -79,18 +89,12 @@ public class AccountB2CResource {
         AccountB2C b2C = new AccountB2C();
 
         b2C.setNumero(accountB2C.getNumero());
-        if(accountB2C.getEmail()!= null){
 
-            b2C.setEmail(accountB2C.getEmail());
-
-        }else {
-
-            b2C.setEmail("selfcate-b2c-"+accountB2C.getNumero()+"@selfcare.com");
-        }
+        b2C.setEmail(accountB2C.getEmail());
 
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImagePrfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImagePrfil());
         AccountB2C result = accountB2CRepository.save(b2C);
         accountB2CSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -149,8 +153,9 @@ public class AccountB2CResource {
 
                 account.setFirstName(managedUserVM.getFirstName());
                 account.setLastName(managedUserVM.getLastName());
-                account.setImagePrfil(managedUserVM.getImageprofil());
+                account.setImageProfil(managedUserVM.getImageprofil());
                 result = accountB2CRepository.save(account);
+                mailService.sendActivationEmail(result);
             }
             else {
                 throw new UserNoCreatedException();
@@ -187,7 +192,7 @@ public class AccountB2CResource {
         b2C.setEmail(accountB2C.getEmail());
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImagePrfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImagePrfil());
         AccountB2C result = accountB2CRepository.save(b2C);
         accountB2CSearchRepository.save(result);
         return ResponseEntity.ok()
@@ -319,6 +324,32 @@ public class AccountB2CResource {
         }
 
         return null;
+    }
+
+    @PostMapping("/mail/ouverture-compte")
+    public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) throws Exception {
+
+        try{
+            ResponseEntity<Resource> responseFormulaire = service.downloadFile(b2C.getFormulaire());
+
+            ResponseEntity<Resource> responseRecto = service.downloadFile(b2C.getFormulaire());
+
+            b2C.setObjectFormulaire(responseFormulaire.getBody());
+
+            b2C.setObjectRectoID(responseRecto.getBody());
+            if(b2C.getVersoID() != null){
+                ResponseEntity<Resource> responseVerso = service.downloadFile(b2C.getFormulaire());
+                b2C.setObjectVersoID(responseVerso.getBody());
+            }
+            mailService.sendEmailFromServiceClient(b2C);
+        }catch (Exception e){
+
+            throw new BadRequestAlertException("Mail non envoyé", ENTITY_NAME, "MailNotSent");
+
+        }
+
+
+
     }
 
 }

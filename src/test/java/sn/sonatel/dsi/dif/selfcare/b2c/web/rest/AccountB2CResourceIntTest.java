@@ -11,7 +11,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -30,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
@@ -106,11 +109,16 @@ public class AccountB2CResourceIntTest {
     @Qualifier("loadBalancedRestTemplate")
     private RestTemplate restTemplate;
 
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
+    private ServiceFile service;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository, restTemplate);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, mockAccountB2CSearchRepository, rattachementLigneRepository, service, restTemplate, mailService);
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -126,12 +134,12 @@ public class AccountB2CResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static AccountB2C createEntity(EntityManager em) {
-        AccountB2C accountB2C = new AccountB2C()
-            .numero(DEFAULT_NUMERO)
-            .firstName(DEFAULT_FIRST_NAME)
-            .lastName(DEFAULT_LAST_NAME)
-            .email(DEFAULT_EMAIL)
-            .imagePrfil(DEFAULT_IMAGE_PRFIL);
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(DEFAULT_NUMERO);
+        accountB2C.setFirstName(DEFAULT_FIRST_NAME);
+        accountB2C.setLastName(DEFAULT_LAST_NAME);
+        accountB2C.setEmail(DEFAULT_EMAIL);
+        accountB2C.setImageProfil(DEFAULT_IMAGE_PRFIL);
         return accountB2C;
     }
 
@@ -150,7 +158,7 @@ public class AccountB2CResourceIntTest {
         b2C.setEmail(accountB2C.getEmail());
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImagePrfil(accountB2C.getImagePrfil());
+        b2C.setImagePrfil(accountB2C.getImageProfil());
 
         // Create the AccountB2C
         restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
@@ -166,7 +174,7 @@ public class AccountB2CResourceIntTest {
         assertThat(testAccountB2C.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
         assertThat(testAccountB2C.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
         assertThat(testAccountB2C.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(testAccountB2C.getImagePrfil()).isEqualTo(DEFAULT_IMAGE_PRFIL);
+        assertThat(testAccountB2C.getImageProfil()).isEqualTo(DEFAULT_IMAGE_PRFIL);
 
         // Validate the AccountB2C in Elasticsearch
         verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
@@ -264,7 +272,7 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
+            .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
     
     @Test
@@ -282,7 +290,7 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()))
             .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.imagePrfil").value(DEFAULT_IMAGE_PRFIL.toString()));
+            .andExpect(jsonPath("$.imageProfil").value(DEFAULT_IMAGE_PRFIL.toString()));
     }
 
     @Test
@@ -306,12 +314,12 @@ public class AccountB2CResourceIntTest {
         // Disconnect from session so that the updates on updatedAccountB2C are not directly saved in db
         em.detach(updatedAccountB2C);
 
-        updatedAccountB2C
-            .numero(UPDATED_NUMERO)
-            .firstName(UPDATED_FIRST_NAME)
-            .lastName(UPDATED_LAST_NAME)
-            .email(UPDATED_EMAIL)
-            .imagePrfil(UPDATED_IMAGE_PRFIL);
+        updatedAccountB2C.setLastName(UPDATED_LAST_NAME);
+        updatedAccountB2C.setNumero(UPDATED_NUMERO);
+        updatedAccountB2C.setFirstName(UPDATED_FIRST_NAME);
+        updatedAccountB2C.setLastName(UPDATED_LAST_NAME);
+        updatedAccountB2C.setEmail(UPDATED_EMAIL);
+        updatedAccountB2C.setImageProfil(UPDATED_IMAGE_PRFIL);
 
         restAccountB2CMockMvc.perform(put("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -326,7 +334,6 @@ public class AccountB2CResourceIntTest {
         assertThat(testAccountB2C.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
         assertThat(testAccountB2C.getLastName()).isEqualTo(UPDATED_LAST_NAME);
         assertThat(testAccountB2C.getEmail()).isEqualTo(UPDATED_EMAIL);
-        assertThat(testAccountB2C.getImagePrfil()).isEqualTo(UPDATED_IMAGE_PRFIL);
 
         // Validate the AccountB2C in Elasticsearch
         verify(mockAccountB2CSearchRepository, times(1)).save(testAccountB2C);
@@ -390,7 +397,7 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
+            .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
 
     @Test
@@ -444,4 +451,92 @@ public class AccountB2CResourceIntTest {
         restAccountB2CMockMvc.perform(get("/api/account-management/check_number/{msisdn}","779853232"))
             .andExpect(status().isOk());
     }
+
+    public void addData(){
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setEmail("test@gmail.com");
+        accountB2C.setFirstName("test1");
+        accountB2C.setLastName("test2");
+        accountB2C.setNumero("778522323");
+
+        accountB2CRepository.save(accountB2C);
+    }
+
+    @Test
+    @Transactional
+    public void getAccountWithNumberValid() throws Exception{
+        addData();
+        String login = "778522323";
+        restAccountB2CMockMvc.perform(get("/api/account-management/account/{msisdn}",login ))
+            .andExpect(status().isOk());
+
+    }
+    @Test
+    @Transactional
+    public void getAccountWithEmailValid() throws Exception{
+        addData();
+        String login = "test@gmail.com";
+        restAccountB2CMockMvc.perform(get("/api/account-management/account/{msisdn}",login ))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    public void getAccountWithLoginInvalid() throws Exception{
+        addData();
+        String login = "value";
+        restAccountB2CMockMvc.perform(get("/api/account-management/account/{msisdn}",login ))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    public void getAccountWithNumberNotFound() throws Exception{
+        addData();
+        String login = "779606060";
+        restAccountB2CMockMvc.perform(get("/api/account-management/account/{msisdn}",login ))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    public void getAccountWithEmailNotFound() throws Exception{
+        addData();
+        String login = "vamos@gmail.com";
+        restAccountB2CMockMvc.perform(get("/api/account-management/account/{msisdn}",login ))
+            .andExpect(status().isOk());
+    }
+
+
+    public ManagedUserVM addDataManagedUserVM(){
+
+        ManagedUserVM vm = new ManagedUserVM();
+
+        vm.setEmail("value@gmail.com");
+        vm.setLastName("lastname");
+        vm.setFirstName("firsname");
+        vm.setLogin("771234545");
+        vm.setPassword("Passer12");
+        vm.setActivated(true);
+        vm.setActivationKey("fr");
+        vm.setCreatedDate(null);
+        vm.setLangKey("fr");
+
+        return vm;
+    }
+
+    @Test
+    @Transactional
+    public void registerAccountB2C() throws Exception {
+        addData();
+        ManagedUserVM vm =addDataManagedUserVM();
+        vm.setLogin("778522323");
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(vm)))
+            .andExpect(status().isBadRequest());
+
+
+    }
+
 }
