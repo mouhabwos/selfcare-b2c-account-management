@@ -308,17 +308,18 @@ public class AccountB2CResource {
     @PostMapping("/mail/ouverture-compte")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
+        ResponseEntity<Resource> responseFormulaire = service.downloadFile(b2C.getFormulaire());
 
-            ResponseEntity<Resource> responseFormulaire = service.downloadFile(b2C.getFormulaire());
+        ResponseEntity<Resource> responseRecto = service.downloadFile(b2C.getFormulaire());
 
-            ResponseEntity<Resource> responseRecto = service.downloadFile(b2C.getFormulaire());
+        b2C.setObjectFormulaire(responseFormulaire.getBody());
 
-            b2C.setObjectFormulaire(responseFormulaire.getBody());
+        b2C.setObjectRectoID(responseRecto.getBody());
+        if(b2C.getVersoID() != null){
 
-            b2C.setObjectRectoID(responseRecto.getBody());
-            if(b2C.getVersoID() != null){
-                ResponseEntity<Resource> responseVerso = service.downloadFile(b2C.getFormulaire());
-                b2C.setObjectVersoID(responseVerso.getBody());
+            ResponseEntity<Resource> responseVerso = service.downloadFile(b2C.getFormulaire());
+            b2C.setObjectVersoID(responseVerso.getBody());
+
             }
             mailService.sendEmailFromServiceClient(b2C);
 

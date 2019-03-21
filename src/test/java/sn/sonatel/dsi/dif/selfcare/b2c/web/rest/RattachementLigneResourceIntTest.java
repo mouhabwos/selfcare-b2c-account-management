@@ -123,11 +123,11 @@ public class RattachementLigneResourceIntTest {
      */
     public static RattachementLigne createEntity(EntityManager em) {
         RattachementLigne rattachementLigne = new RattachementLigne()
-            .numero(DEFAULT_NUMERO)
             .typeVerification(DEFAULT_TYPE_VERIFICATION)
             .codeVerification(DEFAULT_CODE_VERIFICATION)
             .statut(DEFAULT_STATUT)
             .typeNumero(DEFAULT_TYPE_NUMERO);
+        rattachementLigne.setNumero(UPDATED_NUMERO);
         return rattachementLigne;
     }
 
@@ -160,7 +160,7 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate + 1);
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
-        assertThat(testRattachementLigne.getNumero()).isEqualTo(DEFAULT_NUMERO);
+        assertThat(testRattachementLigne.getNumero()).isEqualTo("778505052");
         assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
         assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
@@ -234,7 +234,7 @@ public class RattachementLigneResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
-            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO.toString())))
+            .andExpect(jsonPath("$.[*].numero").value(hasItem("778505052")))
             .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION.toString())))
             .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION.toString())))
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
@@ -252,9 +252,9 @@ public class RattachementLigneResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(rattachementLigne.getId().intValue()))
-            .andExpect(jsonPath("$.numero").value(DEFAULT_NUMERO.toString()))
-            .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION.toString()))
-            .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION.toString()))
+            .andExpect(jsonPath("$.numero").value("778505052"))
+            .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION))
+            .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION))
             .andExpect(jsonPath("$.statut").value(DEFAULT_STATUT.booleanValue()))
             .andExpect(jsonPath("$.typeNumero").value(DEFAULT_TYPE_NUMERO.toString()));
     }
@@ -280,11 +280,11 @@ public class RattachementLigneResourceIntTest {
         // Disconnect from session so that the updates on updatedRattachementLigne are not directly saved in db
         em.detach(updatedRattachementLigne);
         updatedRattachementLigne
-            .numero(UPDATED_NUMERO)
             .typeVerification(UPDATED_TYPE_VERIFICATION)
             .codeVerification(UPDATED_CODE_VERIFICATION)
             .statut(UPDATED_STATUT)
             .typeNumero(UPDATED_TYPE_NUMERO);
+        updatedRattachementLigne.setNumero(UPDATED_NUMERO);
 
         restRattachementLigneMockMvc.perform(put("/api/rattachement-lignes")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

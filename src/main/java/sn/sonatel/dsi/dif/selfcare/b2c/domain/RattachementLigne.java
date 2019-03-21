@@ -2,17 +2,13 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,22 +18,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "rattachement_ligne")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RattachementLigne implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-
-    @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero doit être vide")
-    @NotBlank(message = "Le numéro ne peut pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro saisi doit etre un numéro orange valide")
-    @Size(min = 9, max = 18, message = "Le numéro doit être au minimum de 9 chiffres")
-    @Column(name = "numero", nullable = false)
-    private String numero;
+public class RattachementLigne extends NumeroDTO implements Serializable {
 
     @Column(name = "type_verification")
     private String typeVerification;
@@ -48,6 +29,7 @@ public class RattachementLigne implements Serializable {
     @Column(name = "statut")
     private Boolean statut;
 
+
     @NotNull(message = "Le type de numéro ne peut pas être vide")
     @Enumerated(EnumType.STRING)
     @Column(name = "type_numero", nullable = false)
@@ -57,27 +39,7 @@ public class RattachementLigne implements Serializable {
     @JsonIgnoreProperties("users")
     private AccountB2C accountB2C;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public RattachementLigne numero(String numero) {
-        this.numero = numero;
-        return this;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
 
     public String getTypeVerification() {
         return typeVerification;

@@ -148,7 +148,6 @@ public class MailServiceIntTest {
             verify(javaMailSender).send(messageCaptor.capture());
             MimeMessage message = messageCaptor.getValue();
             assertThat(message.getAllRecipients()[0].toString()).isEqualTo(user.getEmail());
-            //   assertThat(message.getFrom()[0].toString()).isNotEmpty();
             assertThat(message.getContent().toString()).isNotEmpty();
             assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");
         }
@@ -157,8 +156,8 @@ public class MailServiceIntTest {
 
     @Test
     public void testSendEmailFromServiceClient() throws Exception {
-        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-      /*  user.setNumero("771326617");
+       /* UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+        user.setNumero("771326617");
         user.setFirstName("bouya");
         user.setLastName("kande");
         user.setOperation("Ouverture compte OM");
@@ -166,13 +165,26 @@ public class MailServiceIntTest {
         user.setRectoID("1.PNG");
         user.setVersoID("1.PNG");
         mailService.sendEmailFromServiceClient(user);
-        verify(javaMailSender).send(messageCaptor.capture());
+//        verify(javaMailSender).send(messageCaptor.capture());
         MimeMessage message = messageCaptor.getValue();
         assertThat(message.getAllRecipients()[0].toString()).isEqualTo(Constants.EMAIL_SERVICE_CLIENT);
         assertThat(message.getContent().toString()).isNotEmpty();
         assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");*/
     }
 
+  @Test
+    public void testSendEmailFromServiceClientWithException() throws Exception {
+        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+        user.setNumero("771326617");
+        user.setFirstName("bouya");
+        user.setLastName("kande");
+        user.setOperation("Ouverture compte OM");
+        user.setFormulaire("formulaire_inscription_om_original.pdf");
+        user.setRectoID("1.PNG");
+        user.setVersoID("1.PNG");
+        doThrow(MailSendException.class).when(javaMailSender).send(any(MimeMessage.class));
+        mailService.sendEmailWithAttachement("john.doe@example.com", "testSubject", "testContent", true, false, user);
+    }
 
         @Test
         public void testSendEmailWithException() throws Exception {

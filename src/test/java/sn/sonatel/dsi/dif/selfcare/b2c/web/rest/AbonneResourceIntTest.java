@@ -4,6 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.mockserver.client.server.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +26,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,6 +62,7 @@ public class AbonneResourceIntTest {
     @Autowired
     private AbonneResource abonneResource;
 
+    private ClientAndServer mockServer;;
 
 
     @Before
@@ -64,6 +71,12 @@ public class AbonneResourceIntTest {
         MockitoAnnotations.initMocks(this);
         final AbonneResource abonneResource = new AbonneResource(selfcareSoapService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
+        try {
+            mockServer = ClientAndServer.startClientAndServer(8715);
+        }
+        catch (Exception e) {
+            System.out.println("e = " + e);
+        }
     }
 
     @Test
@@ -88,20 +101,22 @@ public class AbonneResourceIntTest {
     }
 
     @Test
+    public void mockGetAbonneNotFound() throws Exception {
+
+        new MockServerClient("localhost", 8715)
+            .when(HttpRequest.request().withMethod("GET")
+                .withPath("/api/abonne/information-abonne/776713165"))
+            .respond(HttpResponse.response().withStatusCode(404)
+                .withDelay(TimeUnit.SECONDS, 1));
+    }
+
+    @Test
     public void mockGetAbonne() throws Exception {
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(DEFAULT_NUMERO));
-        // Mocking service
-       // when(selfcareSoapService.getAbonne(request)).thenReturn();
-        MvcResult result = restAbonneMockMvc.perform(get("/api/abonne/information-abonne/", DEFAULT_NUMERO).contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isNotFound())
-            //.andDo(print())
-            // .andExpect(status().is2xxSuccessful()).andReturn();
-            .andReturn();
-//        restAbonneMockMvc.perform(asyncDispatch(result))
-           // .andDo(print())
-          //  .andExpect(status().isOk());
-            //.andExpect(jsonPath("$[0].title", is("Hokuto no ken")));
+        new MockServerClient("localhost", 8715)
+            .when(HttpRequest.request().withMethod("GET")
+                .withPath("/api/abonne/information-abonne/776713165"))
+            .respond(HttpResponse.response().withStatusCode(200)
+                .withDelay(TimeUnit.SECONDS, 1));
     }
 }
