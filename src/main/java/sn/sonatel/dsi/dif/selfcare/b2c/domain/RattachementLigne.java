@@ -32,10 +32,10 @@ public class RattachementLigne implements Serializable {
 
 
     @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+    @NotNull(message = "Le numero doit être vide")
+    @NotBlank(message = "Le numéro ne peut pas être vide")
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro saisi doit etre un numéro orange valide")
+    @Size(min = 9, max = 18, message = "Le numéro doit être au minimum de 9 chiffres")
     @Column(name = "numero", nullable = false)
     private String numero;
 

@@ -46,10 +46,7 @@ public class AbonneResource {
                 return null;
             }
             else if (response.getStatusCode() == HttpStatus.OK) {
-                String code = getCodeFormule(msisdn);
-                if(code!= null){
-                    response.getBody().setCodeOffre(code);
-                }
+
                 return response;
             }
 
@@ -89,32 +86,6 @@ public class AbonneResource {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
-
-    }
-
-    public String getCodeFormule(String msisdn) {
-        log.debug("REST request to get abonne : {}", msisdn);
-
-
-        try {
-
-            ResponseEntity<String> response = selfcareSoapService.getFormuleByMsisdn( msisdn);
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-
-                return null;
-            }
-            else if (response.getStatusCode() == HttpStatus.OK) {
-
-                return response.getBody();
-            }
-
-        }catch (Exception e){
-
-            log.debug("Exception get information abonne : {}", msisdn);
-        }
-
-        return null;
 
 
     }

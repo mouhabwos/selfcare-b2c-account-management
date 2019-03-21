@@ -12,6 +12,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
@@ -486,6 +487,26 @@ public class AccountB2CResourceIntTest {
         return vm;
     }
 
+    public void adRattachement(){
+
+        RattachementLigne ligne = new RattachementLigne();
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setEmail("test@gmail.com");
+        accountB2C.setFirstName("test1");
+        accountB2C.setLastName("test2");
+        accountB2C.setNumero("778522323");
+
+        accountB2C = accountB2CRepository.save(accountB2C);
+        ligne.setAccountB2C(accountB2C);
+        ligne.setNumero("770256363");
+        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
+        ligne.setTypeVerification("test");
+        ligne.setCodeVerification("test");
+        ligne.setStatut(true);
+        rattachementLigneRepository.save(ligne);
+
+    }
+
     @Test
     @Transactional
     public void registerAccountB2C() throws Exception {
@@ -497,6 +518,34 @@ public class AccountB2CResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(vm)))
             .andExpect(status().isBadRequest());
 
+    }
+
+    @Test
+    @Transactional
+    public void registerAccountB2CWithNumberRattached() throws Exception {
+        adRattachement();
+        ManagedUserVM vm =addDataManagedUserVM();
+        vm.setLogin("770256363");
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(vm)))
+            .andExpect(status().isBadRequest());
+
+    }
+
+
+
+    @Transactional
+    @Test
+    public void emailExistingVerify() throws Exception {
+        addData();
+        EmailExistDTO existDTO = new EmailExistDTO();
+         existDTO.setEmail("test@gmail.com");
+        restAccountB2CMockMvc.perform(post("/api/account-management/email-already-exist" )
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(existDTO)))
+            .andExpect(status().isOk());
 
     }
 

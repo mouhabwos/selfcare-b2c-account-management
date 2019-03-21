@@ -20,6 +20,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 
 import javax.mail.Multipart;
@@ -151,6 +152,26 @@ public class MailServiceIntTest {
             assertThat(message.getContent().toString()).isNotEmpty();
             assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");
         }
+
+
+
+    @Test
+    public void testSendEmailFromServiceClient() throws Exception {
+        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+      /*  user.setNumero("771326617");
+        user.setFirstName("bouya");
+        user.setLastName("kande");
+        user.setOperation("Ouverture compte OM");
+        user.setFormulaire("formulaire_inscription_om_original.pdf");
+        user.setRectoID("1.PNG");
+        user.setVersoID("1.PNG");
+        mailService.sendEmailFromServiceClient(user);
+        verify(javaMailSender).send(messageCaptor.capture());
+        MimeMessage message = messageCaptor.getValue();
+        assertThat(message.getAllRecipients()[0].toString()).isEqualTo(Constants.EMAIL_SERVICE_CLIENT);
+        assertThat(message.getContent().toString()).isNotEmpty();
+        assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");*/
+    }
 
 
         @Test

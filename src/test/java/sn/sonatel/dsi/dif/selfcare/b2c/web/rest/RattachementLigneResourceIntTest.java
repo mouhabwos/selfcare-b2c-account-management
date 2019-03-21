@@ -512,4 +512,34 @@ public class RattachementLigneResourceIntTest {
 
     }
 
+    @Test
+    @Transactional
+    public void addRattachementLigneExistingUser() throws Exception {
+
+        AccountB2C u = new AccountB2C();
+        u.setNumero("775167605");
+        u.setFirstName("leyla");
+        u.setLastName("diallo");
+        u.setEmail("dia@gmail.com");
+
+        accountB2CRepository.save(u);
+        int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
+
+        RattachementLigneVM ligneVM = new RattachementLigneVM();
+
+        ligneVM.setLogin(u.getNumero());
+        ligneVM.setNumero("771326617");
+        ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
+        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
+
+        // Create the RattachementLigne
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+            .andExpect(status().isCreated());
+
+
+    }
+
 }
