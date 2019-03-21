@@ -3,7 +3,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,23 +38,8 @@ public class AbonneResource {
         log.debug("REST request to get souscription : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        try {
 
-            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(request);
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return null;
-            }
-            else if (response.getStatusCode() == HttpStatus.OK) {
-
-                return response;
-            }
-
-        }catch (Exception e){
-
-            log.debug("Exception get souscription abonne : {}", msisdn);
-        }
-
-        return null;
+        return selfcareSoapService.getSouscription(request);
 
     }
 
@@ -71,24 +55,12 @@ public class AbonneResource {
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
 
-        try {
-
-            ResponseEntity<List<AbonneDTO>> response = selfcareSoapService.getAbonne( request);
-
-            if (response.getStatusCode() == HttpStatus.OK) {
-
-                return response;
-            }
-
-        }catch (Exception e){
-
-            log.debug("Exception get information abonne : {}", msisdn);
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return selfcareSoapService.getAbonne( request);
 
 
     }
+
+
 
 
 }

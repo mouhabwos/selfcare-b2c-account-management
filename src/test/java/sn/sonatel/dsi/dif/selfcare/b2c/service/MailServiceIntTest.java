@@ -5,16 +5,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -32,8 +30,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URL;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,11 +68,29 @@ public class MailServiceIntTest {
         @Autowired
         private ServiceFile service;
 
+        @Mock
+        private JHipsterProperties mockJHipsterProperties;
+        @Mock
+        private JavaMailSender mockJavaMailSender;
+        @Mock
+        private MessageSource mockMessageSource;
+        @Mock
+        private SpringTemplateEngine mockTemplateEngine;
+        @Mock
+        private ApplicationProperties mockApplicationProperties;
+        @Mock
+        private ServiceFile mockService;
+
+
+    private MailService mailServiceUnderTest;
+
         @Before
         public void setup() {
             MockitoAnnotations.initMocks(this);
             doNothing().when(javaMailSender).send(any(MimeMessage.class));
             mailService = new MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine, applicationProperties, service);
+            mailServiceUnderTest = new MailService(mockJHipsterProperties, mockJavaMailSender, mockMessageSource, mockTemplateEngine, mockApplicationProperties, mockService);
+
         }
 
         @Test
@@ -163,8 +178,8 @@ public class MailServiceIntTest {
 
 
     @Test
-    public void testSendEmailFromServiceClient() throws Exception {
-       /* UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+    public void testSendEmailToServiceClient() throws Exception {
+      UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
         user.setNumero("771326617");
         user.setFirstName("bouya");
         user.setLastName("kande");
@@ -172,22 +187,11 @@ public class MailServiceIntTest {
         user.setFormulaire("formulaire_inscription_om_original.pdf");
         user.setRectoID("1.PNG");
         user.setVersoID("1.PNG");
-        mailService.sendEmailFromServiceClient(user);
-//        verify(javaMailSender).send(messageCaptor.capture());
-        MimeMessage message = messageCaptor.getValue();
-        assertThat(message.getAllRecipients()[0].toString()).isEqualTo(Constants.EMAIL_SERVICE_CLIENT);
-        assertThat(message.getContent().toString()).isNotEmpty();
-        assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");*/
+        mailService.sendEmailToServiceClient(user, "mail/ouverturCompteEmail","email.activation.title");
+
     }
 
-    /*public Resource recupFile() throws Exception {
-        final File f = new File(MailServiceIntTest.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
-        String filename = f+"\\logback.xml";
-        filename = filename.replaceAll("\\", "/");
-        File file = new File(filename);
-        return new InputStreamResource(new FileInputStream(file));
-    }*/
   @Test
     public void testSendEmailFromServiceClientWithException() throws Exception {
         UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
@@ -206,9 +210,85 @@ public class MailServiceIntTest {
 
     }
 
+
+    public Resource recupFile() throws Exception {
+        File file = new File("pom.xml");
+        String path = file.getAbsolutePath();
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        return resource;
+    }
+
         @Test
         public void testSendEmailWithException() throws Exception {
+
             doThrow(MailSendException.class).when(javaMailSender).send(any(MimeMessage.class));
-            mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", false, false);
+            UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+            File file = new File("pom.xml");
+            String path = file.getAbsolutePath();
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+            user.setNumero("771326617");
+            user.setFirstName("bouya");
+            user.setLastName("kande");
+            user.setOperation("Ouverture compte OM");
+            user.setFormulaire("formulaire_inscription_om_original.pdf");
+            user.setRectoID("1.PNG");
+            user.setVersoID("1.PNG");
+            user.setObjectVersoID(recupFile());
+            user.setObjectFormulaire(recupFile());
+            user.setObjectRectoID(recupFile());
+            user.setNumero("774565252");
+
+            //when(mailServiceUnderTest.sendEmailWithAttachement((Constants.EMAIL_SERVICE_CLIENT,"testSubject", "testContent", true, true, user)).getMock());
+
+            mailService.sendEmailWithAttachement(Constants.EMAIL_SERVICE_CLIENT,"testSubject", "testContent", true, true, user);
+
+
         }
+
+    @Test
+    public void testSendEmailWithAttachement() throws Exception {
+        // Setup
+        final String to = "to";
+        final String subject = "subject";
+        final String content = "content";
+        final boolean isMultipart = false;
+        final boolean isHtml = false;
+        final UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+        user.setNumero("771326617");
+        user.setFirstName("bouya");
+        user.setLastName("kande");
+        user.setOperation("Ouverture compte OM");
+        user.setFormulaire("formulaire_inscription_om_original.pdf");
+        user.setRectoID("1.PNG");
+        user.setVersoID("1.PNG");
+        user.setObjectVersoID(recupFile());
+        user.setObjectFormulaire(recupFile());
+        user.setObjectRectoID(recupFile());
+        user.setNumero("774565252");
+
+        // Run the test
+        mailServiceUnderTest.sendEmailWithAttachement(to, subject, content, isMultipart, isHtml, user);
+
+        // Verify the results
     }
+
+    @Test
+    public void sendEmailFromServiceClient() throws Exception {
+        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+
+        user.setNumero("771326617");
+        user.setFirstName("bouya");
+        user.setLastName("kande");
+        user.setOperation("Ouverture compte OM");
+        user.setFormulaire("formulaire_inscription_om_original.pdf");
+        user.setRectoID("1.PNG");
+        user.setVersoID("1.PNG");
+        user.setObjectVersoID(null);
+        user.setObjectFormulaire(null);
+        user.setObjectRectoID(null);
+        user.setNumero("774565252");
+        mailService.sendEmailFromServiceClient(user);
+    }
+
+}

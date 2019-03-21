@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
@@ -133,17 +132,6 @@ public class AccountB2CResource {
             if (response.getStatusCode() == HttpStatus.CREATED) {
                 managedUserVM.setActivated(true);
                 AccountB2C account =  new AccountB2C();
-                if(managedUserVM.getEmail() != null){
-
-                    account.setEmail(managedUserVM.getEmail());
-
-                }else{
-
-                    managedUserVM.setEmail("selfcare-b2c-"+account.getNumero()+"@selfcare.com");
-
-                    account.setEmail(managedUserVM.getEmail());
-
-                }
                 account.setNumero(managedUserVM.getLogin());
 
                 account.setFirstName(managedUserVM.getFirstName());
@@ -287,40 +275,17 @@ public class AccountB2CResource {
                 throw new LigneNotFoundException();
             }
 
-        }else if(login.matches(Constants.EMAIL_VALIDATION)){
-
-            Optional<AccountB2C> account = accountB2CRepository.findOneByEmail(login);
-
-            if(account.isPresent()){
-
-                return account.get();
-
-            }else {
+        }else {
 
                 throw new LigneNotFoundException();
             }
 
-        }
 
-        return null;
     }
 
     @PostMapping("/mail/ouverture-compte")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
-        ResponseEntity<Resource> responseFormulaire = service.downloadFile(b2C.getFormulaire());
-
-        ResponseEntity<Resource> responseRecto = service.downloadFile(b2C.getFormulaire());
-
-        b2C.setObjectFormulaire(responseFormulaire.getBody());
-
-        b2C.setObjectRectoID(responseRecto.getBody());
-        if(b2C.getVersoID() != null){
-
-            ResponseEntity<Resource> responseVerso = service.downloadFile(b2C.getFormulaire());
-            b2C.setObjectVersoID(responseVerso.getBody());
-
-            }
             mailService.sendEmailFromServiceClient(b2C);
 
     }

@@ -23,6 +23,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
@@ -62,7 +63,10 @@ public class AbonneResourceIntTest {
     @Autowired
     private AbonneResource abonneResource;
 
-    private ClientAndServer mockServer;;
+    private ClientAndServer mockServer;
+
+    @Autowired
+    private AbonneResource abonneResources;
 
 
     @Before
@@ -71,12 +75,7 @@ public class AbonneResourceIntTest {
         MockitoAnnotations.initMocks(this);
         final AbonneResource abonneResource = new AbonneResource(selfcareSoapService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
-        try {
-            mockServer = ClientAndServer.startClientAndServer(8715);
-        }
-        catch (Exception e) {
-            System.out.println("e = " + e);
-        }
+
     }
 
     @Test
@@ -90,33 +89,41 @@ public class AbonneResourceIntTest {
     public void getAbonne() throws Exception {
 
         restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isOk());
     }
 
     @Test
     public void getAbonneWithStatusNOT_FOUND() throws Exception {
 
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
+        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", ""))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getSouscriptionWithStatusNOT_FOUND() throws Exception {
+
+        restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", ""))
             .andExpect(status().isNotFound());
     }
 
     @Test
     public void mockGetAbonneNotFound() throws Exception {
 
-        new MockServerClient("localhost", 8715)
-            .when(HttpRequest.request().withMethod("GET")
-                .withPath("/api/abonne/information-abonne/776713165"))
+     /*  ClientAndServer.startClientAndServer(8715).when(HttpRequest.request().withMethod("GET")
+                .withPath("/api/abonne/information-abonne/770000000"))
             .respond(HttpResponse.response().withStatusCode(404)
-                .withDelay(TimeUnit.SECONDS, 1));
+                .withDelay(TimeUnit.SECONDS, 1));*/
     }
 
     @Test
-    public void mockGetAbonne() throws Exception {
+    public void getSouscriptionMock() throws Exception {
 
-        new MockServerClient("localhost", 8715)
-            .when(HttpRequest.request().withMethod("GET")
-                .withPath("/api/abonne/information-abonne/776713165"))
+        ClientAndServer.startClientAndServer(8715).when(HttpRequest.request().withMethod("GET")
+            .withPath("/api/abonne/souscription/771326617"))
             .respond(HttpResponse.response().withStatusCode(200)
                 .withDelay(TimeUnit.SECONDS, 1));
+
     }
+
+
 }

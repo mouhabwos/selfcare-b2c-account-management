@@ -15,7 +15,9 @@
 
 eureka:
     client:
-        enabled: false
+        service-url:
+            defaultZone: http://admin:admin@10.137.52.11:8760/eureka/
+        enabled: true
     instance:
         appname: selfcare-b2c-account-management
         instanceId: selfcare-b2c-account-management:${spring.application.instance-id:${random.value}}
