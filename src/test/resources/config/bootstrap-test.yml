@@ -15,7 +15,7 @@ spring:
         config:
             fail-fast: false # if not in "prod" profile, do not force to use Spring Cloud Config
             #uri: http://admin:${jhipster.registry.password}@10.137.52.11:8760/config
-            uri: http://admin:${jhipster.registry.password}@10.137.52.11:8760/config
+            uri: http://admin:${jhipster.registry.password}@10.137.52.11:8761/config
             # name of the config server's property source (file.yml) that we want to use
             name: selfcare-b2c-account-management
             profile: dev # profile(s) of the property source

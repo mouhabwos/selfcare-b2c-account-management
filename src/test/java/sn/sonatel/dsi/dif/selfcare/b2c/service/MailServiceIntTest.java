@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.mockito.invocation.InvocationOnMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
@@ -35,7 +36,7 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
 @RunWith(SpringRunner.class)
@@ -81,8 +82,11 @@ public class MailServiceIntTest {
         @Mock
         private ServiceFile mockService;
 
+        @Mock
+        private MailService serviceMailMock;
 
-    private MailService mailServiceUnderTest;
+
+         private MailService mailServiceUnderTest;
 
         @Before
         public void setup() {
@@ -213,7 +217,8 @@ public class MailServiceIntTest {
 
     public Resource recupFile() throws Exception {
         File file = new File("pom.xml");
-        String path = file.getAbsolutePath();
+        String path = file.getAbsolutePath()+"/src/test/resources";
+        System.out.println("==========> "+file);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         return resource;
     }
@@ -221,12 +226,9 @@ public class MailServiceIntTest {
         @Test
         public void testSendEmailWithException() throws Exception {
 
+            MailService mailServicem = mock(MailService.class);
             doThrow(MailSendException.class).when(javaMailSender).send(any(MimeMessage.class));
             UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-            File file = new File("pom.xml");
-            String path = file.getAbsolutePath();
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
             user.setNumero("771326617");
             user.setFirstName("bouya");
             user.setLastName("kande");
@@ -236,12 +238,10 @@ public class MailServiceIntTest {
             user.setVersoID("1.PNG");
             user.setObjectVersoID(recupFile());
             user.setObjectFormulaire(recupFile());
-            user.setObjectRectoID(recupFile());
+           user.setObjectRectoID(recupFile());
             user.setNumero("774565252");
-
-            //when(mailServiceUnderTest.sendEmailWithAttachement((Constants.EMAIL_SERVICE_CLIENT,"testSubject", "testContent", true, true, user)).getMock());
-
             mailService.sendEmailWithAttachement(Constants.EMAIL_SERVICE_CLIENT,"testSubject", "testContent", true, true, user);
+
 
 
         }
@@ -252,16 +252,16 @@ public class MailServiceIntTest {
         final String to = "to";
         final String subject = "subject";
         final String content = "content";
-        final boolean isMultipart = false;
+        final boolean isMultipart = true;
         final boolean isHtml = false;
         final UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
         user.setNumero("771326617");
         user.setFirstName("bouya");
         user.setLastName("kande");
         user.setOperation("Ouverture compte OM");
-        user.setFormulaire("formulaire_inscription_om_original.pdf");
-        user.setRectoID("1.PNG");
-        user.setVersoID("1.PNG");
+        user.setFormulaire("pom.xml");
+        user.setRectoID("pom.xml");
+        user.setVersoID("pom.xml");
         user.setObjectVersoID(recupFile());
         user.setObjectFormulaire(recupFile());
         user.setObjectRectoID(recupFile());

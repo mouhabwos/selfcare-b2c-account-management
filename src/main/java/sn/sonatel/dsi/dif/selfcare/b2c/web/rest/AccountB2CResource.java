@@ -9,6 +9,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
@@ -52,19 +53,19 @@ public class AccountB2CResource {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    private final ServiceFile service;
-
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
     private final MailService mailService;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository,  RattachementLigneRepository rattachementLigneRepository, ServiceFile service, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService) {
+    private final DowloadManager dowloadManager;
+
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.service = service;
         this.restTemplate = restTemplate;
         this.mailService = mailService;
+        this.dowloadManager = dowloadManager;
     }
 
     /**
@@ -286,6 +287,7 @@ public class AccountB2CResource {
     @PostMapping("/mail/ouverture-compte")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
+        b2C = dowloadManager.addResources(b2C);
             mailService.sendEmailFromServiceClient(b2C);
 
     }

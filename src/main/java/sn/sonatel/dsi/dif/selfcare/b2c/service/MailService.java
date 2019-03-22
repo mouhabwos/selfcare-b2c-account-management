@@ -5,8 +5,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -89,7 +87,7 @@ public class MailService {
         log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
             isMultipart, isHtml, to, subject, content);
 
-        // Prepare message using a Spring helper
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
 
@@ -98,20 +96,7 @@ public class MailService {
             message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
-            ResponseEntity<Resource> responseFormulaire = service.downloadFile(user.getFormulaire());
 
-            ResponseEntity<Resource> responseRecto = service.downloadFile(user.getFormulaire());
-
-            if(user.getVersoID() != null){
-
-                ResponseEntity<Resource> responseVerso = service.downloadFile(user.getFormulaire());
-                user.setObjectVersoID(responseVerso.getBody());
-
-            }
-
-            user.setObjectFormulaire(responseFormulaire.getBody());
-
-            user.setObjectRectoID(responseRecto.getBody());
             message.addAttachment(user.getRectoID(), user.getObjectRectoID());
 
             if(user.getObjectVersoID()!=null){

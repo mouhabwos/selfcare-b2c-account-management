@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c;
 
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.OAuth2InterceptedFeignConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.DefaultProfileUtil;
@@ -30,6 +31,7 @@ import java.util.Collection;
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 @EnableDiscoveryClient
+@EnableFeignClients
 public class SelfcareB2CApp {
 
     private static final Logger log = LoggerFactory.getLogger(SelfcareB2CApp.class);
