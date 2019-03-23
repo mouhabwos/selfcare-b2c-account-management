@@ -10,6 +10,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.MailSendException;
@@ -88,13 +89,34 @@ public class MailServiceIntTest {
 
          private MailService mailServiceUnderTest;
 
+         private UserInfoOuvertureCompte userInfoWithResources;
+
         @Before
         public void setup() {
             MockitoAnnotations.initMocks(this);
             doNothing().when(javaMailSender).send(any(MimeMessage.class));
             mailService = new MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine, applicationProperties, service);
             mailServiceUnderTest = new MailService(mockJHipsterProperties, mockJavaMailSender, mockMessageSource, mockTemplateEngine, mockApplicationProperties, mockService);
+            userInfoWithResources=initUserInfoWithResources();
+        }
 
+        private UserInfoOuvertureCompte initUserInfoWithResources(){
+
+            Resource resource = new DefaultResourceLoader().getResource("classpath:mail/activationEmail.html");
+
+            UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+            user.setNumero("771326617");
+            user.setFirstName("bouya");
+            user.setLastName("kande");
+            user.setOperation("Ouverture compte OM");
+            user.setFormulaire("1.PNG");
+            user.setRectoID("1.PNG");
+            user.setVersoID("1.PNG");
+            user.setObjectFormulaire(resource);
+            user.setObjectRectoID(resource);
+            user.setObjectVersoID(resource);
+
+            return user;
         }
 
         @Test
@@ -183,7 +205,7 @@ public class MailServiceIntTest {
 
     @Test
     public void testSendEmailToServiceClient() throws Exception {
-      UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
         user.setNumero("771326617");
         user.setFirstName("bouya");
         user.setLastName("kande");
@@ -243,7 +265,6 @@ public class MailServiceIntTest {
             mailService.sendEmailWithAttachement(Constants.EMAIL_SERVICE_CLIENT,"testSubject", "testContent", true, true, user);
 
 
-
         }
 
     @Test
@@ -291,4 +312,40 @@ public class MailServiceIntTest {
         mailService.sendEmailFromServiceClient(user);
     }
 
+    @Test
+    public void testSendDefaultEmailWithException() throws Exception {
+        doThrow(MailSendException.class).when(javaMailSender).send(any(MimeMessage.class));
+        mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", false, false);
+    }
+
+    @Test
+    public void testSendEmailWithAttachement2() throws Exception {
+
+        mailService.sendEmailWithAttachement("john.doe@example.com", "testSubject", "testContent", true, true,userInfoWithResources);
+        verify(javaMailSender).send(messageCaptor.capture());
+        MimeMessage message = messageCaptor.getValue();
+        /*assertThat(message.getSubject()).isEqualTo("testSubject");
+        assertThat(message.getAllRecipients()[0].toString()).isEqualTo("john.doe@example.com");
+        assertThat(message.getFrom()[0].toString()).isEqualTo("test@localhost");
+        assertThat(message.getContent()).isInstanceOf(String.class);
+        assertThat(message.getContent().toString()).isEqualTo("testContent");
+        assertThat(message.getDataHandler().getContentType()).isEqualTo("text/plain; charset=UTF-8");*/
+    }
+
+    @Test
+    public void testSendEmailWithAttachementOptional2() throws Exception {
+
+
+        UserInfoOuvertureCompte userOptional  = initUserInfoWithResources();
+        userOptional.setObjectVersoID(null);
+        mailService.sendEmailWithAttachement("john.doe@example.com", "testSubject", "testContent", true, true,userOptional);
+        verify(javaMailSender).send(messageCaptor.capture());
+        MimeMessage message = messageCaptor.getValue();
+        /*assertThat(message.getSubject()).isEqualTo("testSubject");
+        assertThat(message.getAllRecipients()[0].toString()).isEqualTo("john.doe@example.com");
+        assertThat(message.getFrom()[0].toString()).isEqualTo("test@localhost");
+        assertThat(message.getContent()).isInstanceOf(String.class);
+        assertThat(message.getContent().toString()).isEqualTo("testContent");
+        assertThat(message.getDataHandler().getContentType()).isEqualTo("text/plain; charset=UTF-8");*/
+    }
 }

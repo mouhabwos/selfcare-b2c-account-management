@@ -1,13 +1,23 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockserver.integration.ClientAndServer;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
-
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
@@ -18,38 +28,17 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFileFallBackFactory;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
-
-import org.mockserver.client.server.MockServerClient;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-
-import static org.mockito.ArgumentMatchers.any;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
 /**
  * Test class for the AccountB2CResource REST controller.
@@ -57,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see AccountB2CResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { SelfcareB2CApp.class})
+@SpringBootTest(classes = {SelfcareB2CApp.class})
 public class AccountB2CResourceIntTest {
 
     private static final String DEFAULT_NUMERO = "778505050";
@@ -597,6 +586,26 @@ public class AccountB2CResourceIntTest {
 
     }
 
+    @Test
+    public void testSendMailWithEmptyAttachment() throws Exception {
 
+        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+        user.setNumero("771326617");
+        user.setFirstName("bouya");
+        user.setLastName("kande");
+        user.setOperation("Ouverture compte OM");
+        user.setFormulaire("1.PNG");
+        user.setRectoID("1.PNG");
+        //user.setVersoID("1.PNG");
+        //  accountBCResource.sendmail(user);
+
+        // Mockito.doNothing().when(accountBCResource).sendmail(any(UserInfoOuvertureCompte.class));
+        restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(user)))
+            .andExpect(status().isOk());
+
+
+    }
 
 }
