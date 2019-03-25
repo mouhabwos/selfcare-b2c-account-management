@@ -15,11 +15,18 @@
 
 eureka:
     client:
-        enabled: false
+        service-url:
+            defaultZone: http://admin:admin@10.137.52.11:8761/eureka/
+        enabled: true
     instance:
         appname: selfcare-b2c-account-management
         instanceId: selfcare-b2c-account-management:${spring.application.instance-id:${random.value}}
-
+#ribbon:
+#    eureka:
+#        enabled: true
+feign:
+    hystrix:
+        enabled: true
 spring:
     application:
         name: selfcare-b2c-account-management
@@ -50,11 +57,7 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
             hibernate.hbm2ddl.auto: validate
-    data:
-        elasticsearch:
-            properties:
-                path:
-                    home: target/elasticsearch
+
     liquibase:
         contexts: test
     mail:
@@ -63,7 +66,7 @@ spring:
         basename: i18n/messages
     mvc:
         favicon:
-            enabled: false
+            enabled: true
     thymeleaf:
         mode: HTML
 

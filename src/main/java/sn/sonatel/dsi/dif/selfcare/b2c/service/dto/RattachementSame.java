@@ -32,9 +32,31 @@ public class RattachementSame {
     @Enumerated(EnumType.STRING)
     private TypeNumero typeNumero;
 
-    public RattachementSame() {
-        //Default constructeur
+    public RattachementSame numero(String numero) {
+        this.numero = numero;
+        return this;
     }
+
+    public RattachementSame typeVerification(String typeVerification) {
+        this.typeVerification = typeVerification;
+        return this;
+    }
+
+    public RattachementSame codeVerification(String codeVerification) {
+        this.codeVerification = codeVerification;
+        return this;
+    }
+
+    public RattachementSame statut(boolean statut) {
+        this.statut = statut;
+        return this;
+    }
+
+    public RattachementSame typeNumero(TypeNumero typeNumero) {
+        this.typeNumero = typeNumero;
+        return this;
+    }
+
 
     public String getNumero() {
         return numero;

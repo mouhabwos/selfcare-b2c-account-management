@@ -42,11 +42,32 @@ public class AccountB2CDTO {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
 
-    public AccountB2CDTO() {
 
-        //Default Constructor
-
+    public AccountB2CDTO numero(String numero) {
+        this.numero = numero;
+        return this;
     }
+
+    public AccountB2CDTO firstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public AccountB2CDTO lastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public AccountB2CDTO email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public AccountB2CDTO imagePrfil(String imagePrfil) {
+        this.imagePrfil = imagePrfil;
+        return this;
+    }
+
 
     public Long getId() {
         return id;

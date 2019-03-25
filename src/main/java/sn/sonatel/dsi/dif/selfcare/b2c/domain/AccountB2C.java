@@ -1,22 +1,17 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A AccountB2C.
@@ -24,23 +19,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "account_b_2_c")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "accountb2c")
-public class AccountB2C implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class AccountB2C extends NumeroDTO implements Serializable {
 
 
-    @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
-    @Column(name = "numero", nullable = false)
-    private String numero;
 
     @NotNull
     @Column(name = "first_name", nullable = false)
@@ -71,26 +52,7 @@ public class AccountB2C implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public AccountB2C numero(String numero) {
-        this.numero = numero;
-        return this;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
 
     public String getFirstName() {
         return firstName;

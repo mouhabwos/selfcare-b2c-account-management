@@ -76,11 +76,9 @@ public class MailService {
             javaMailSender.send(mimeMessage);
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
+
                 log.warn("Email could not be sent to user '{}'", to, e);
-            } else {
-                log.warn("Email could not be sent to user '{}': {}", to, e.getMessage());
-            }
+
         }
     }
 
@@ -89,14 +87,16 @@ public class MailService {
         log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
             isMultipart, isHtml, to, subject, content);
 
-        // Prepare message using a Spring helper
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
+
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
             message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
+
             message.addAttachment(user.getRectoID(), user.getObjectRectoID());
 
             if(user.getObjectVersoID()!=null){
@@ -108,11 +108,8 @@ public class MailService {
             javaMailSender.send(mimeMessage);
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
                 log.warn("Email could not be sent to user '{}'", to, e);
-            } else {
-                log.warn("Email could not be sent to user '{}': {}", to, e.getMessage());
-            }
+
         }
     }
 
@@ -162,7 +159,7 @@ public class MailService {
      * @param user
      */
     @Async
-    public void sendEmailFromServiceClient(UserInfoOuvertureCompte user) throws Exception {
+    public void sendEmailFromServiceClient(UserInfoOuvertureCompte user) {
         log.debug("Sending activation email to '{}'", "");
         sendEmailToServiceClient(user, "mail/ouverturCompteEmail", EMAIL_ACTIVATION_TITLE);
     }

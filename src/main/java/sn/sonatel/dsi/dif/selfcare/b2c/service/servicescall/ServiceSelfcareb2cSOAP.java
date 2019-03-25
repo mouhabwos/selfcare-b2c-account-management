@@ -12,7 +12,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import java.util.List;
 
-public class ServiceSelfcareb2cSOAP {
+class ServiceSelfcareb2cSOAP {
 
     private ServiceSelfcareb2cSOAP() {
         //Default constructor
