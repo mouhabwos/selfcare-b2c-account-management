@@ -2,18 +2,15 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareUAA;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareb2cSOAP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import java.util.List;
@@ -24,14 +21,10 @@ public class AbonneResource {
 
     private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
 
-   // private final ServiceSelfcareb2cSOAP serviceSelfcare;
+    private final SelfcareSoapService selfcareSoapService;
 
-    @Qualifier("loadBalancedRestTemplate")
-    private final RestTemplate restTemplate;
-
-    public AbonneResource(@Qualifier("loadBalancedRestTemplate")RestTemplate restTemplate) {
-
-        this.restTemplate = restTemplate;
+    public AbonneResource(SelfcareSoapService selfcareSoapService) {
+        this.selfcareSoapService = selfcareSoapService;
     }
 
     /**
@@ -45,9 +38,8 @@ public class AbonneResource {
         log.debug("REST request to get souscription : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        ResponseEntity<SouscriptionDto> response = ServiceSelfcareb2cSOAP.getSouscription(restTemplate, request);
 
-            return response;
+        return selfcareSoapService.getSouscription(request);
 
     }
 
@@ -62,10 +54,13 @@ public class AbonneResource {
         log.debug("REST request to get abonne : {}", msisdn);
 
         HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-        ResponseEntity<List<AbonneDTO>> response = ServiceSelfcareb2cSOAP.getAbonne(restTemplate, request);
 
-        return response;
+        return selfcareSoapService.getAbonne( request);
+
+
     }
+
+
 
 
 }

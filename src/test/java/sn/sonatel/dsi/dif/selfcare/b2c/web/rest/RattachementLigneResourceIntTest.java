@@ -10,7 +10,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -19,8 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -32,16 +31,13 @@ import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -70,8 +66,6 @@ public class RattachementLigneResourceIntTest {
     private static final Boolean DEFAULT_STATUT = false;
     private static final Boolean UPDATED_STATUT = true;
 
-    private static final String DEFAULT_IMAGE_PRFIL = "AAAAAAAAAA";
-    private static final String UPDATED_IMAGE_PRFIL = "BBBBBBBBBB";
 
     private static final TypeNumero DEFAULT_TYPE_NUMERO = TypeNumero.FIX;
     private static final TypeNumero UPDATED_TYPE_NUMERO = TypeNumero.MOBILE;
@@ -79,13 +73,6 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
-    /**
-     * This repository is mocked in the sn.sonatel.dsi.dif.selfcare.b2c.repository.search test package.
-     *
-     * @see sn.sonatel.dsi.dif.selfcare.b2c.repository.search.RattachementLigneSearchRepositoryMockConfiguration
-     */
-    @Autowired
-    private RattachementLigneSearchRepository mockRattachementLigneSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -112,12 +99,14 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     @Qualifier("loadBalancedRestTemplate")
     private RestTemplate restTemplate;
+    @Autowired
+    private SelfcareSoapService selfcareSoapService;
 
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, mockRattachementLigneSearchRepository, accountB2CRepository, restTemplate);
+        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, selfcareSoapService);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -134,12 +123,11 @@ public class RattachementLigneResourceIntTest {
      */
     public static RattachementLigne createEntity(EntityManager em) {
         RattachementLigne rattachementLigne = new RattachementLigne()
-            .numero(DEFAULT_NUMERO)
             .typeVerification(DEFAULT_TYPE_VERIFICATION)
             .codeVerification(DEFAULT_CODE_VERIFICATION)
             .statut(DEFAULT_STATUT)
-            .imagePrfil(DEFAULT_IMAGE_PRFIL)
             .typeNumero(DEFAULT_TYPE_NUMERO);
+        rattachementLigne.setNumero(UPDATED_NUMERO);
         return rattachementLigne;
     }
 
@@ -153,25 +141,30 @@ public class RattachementLigneResourceIntTest {
     public void createRattachementLigne() throws Exception {
         int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
 
+        RattachementLigneDTO ligne = new RattachementLigneDTO();
+        ligne.setTypeNumero(rattachementLigne.getTypeNumero());
+        ligne.setAccountB2C(rattachementLigne.getAccountB2C());
+        ligne.setNumero(rattachementLigne.getNumero());
+        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
+        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
+
+
+
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigne)))
+            .content(TestUtil.convertObjectToJsonBytes(ligne)))
             .andExpect(status().isCreated());
 
         // Validate the RattachementLigne in the database
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate + 1);
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
-        assertThat(testRattachementLigne.getNumero()).isEqualTo(DEFAULT_NUMERO);
+        assertThat(testRattachementLigne.getNumero()).isEqualTo("778505052");
         assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
         assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
-        assertThat(testRattachementLigne.isStatut()).isEqualTo(DEFAULT_STATUT);
-        assertThat(testRattachementLigne.getImagePrfil()).isEqualTo(DEFAULT_IMAGE_PRFIL);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(1)).save(testRattachementLigne);
     }
 
     @Test
@@ -192,8 +185,6 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(0)).save(rattachementLigne);
     }
 
     @Test
@@ -243,14 +234,26 @@ public class RattachementLigneResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
-            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO.toString())))
+            .andExpect(jsonPath("$.[*].numero").value(hasItem("778505052")))
             .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION.toString())))
             .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION.toString())))
             .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL.toString())))
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
-    
+
+
+    @Test
+    @Transactional
+    public void getAllRattachementLignesByMsisdn() throws Exception {
+        // Initialize the database
+        rattachementLigneRepository.saveAndFlush(rattachementLigne);
+        addRattachement();
+
+        // Get all the rattachementLigneList
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
+            .andExpect(status().isOk());
+    }
+
     @Test
     @Transactional
     public void getRattachementLigne() throws Exception {
@@ -262,11 +265,10 @@ public class RattachementLigneResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(rattachementLigne.getId().intValue()))
-            .andExpect(jsonPath("$.numero").value(DEFAULT_NUMERO.toString()))
-            .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION.toString()))
-            .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION.toString()))
+            .andExpect(jsonPath("$.numero").value("778505052"))
+            .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION))
+            .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION))
             .andExpect(jsonPath("$.statut").value(DEFAULT_STATUT.booleanValue()))
-            .andExpect(jsonPath("$.imagePrfil").value(DEFAULT_IMAGE_PRFIL.toString()))
             .andExpect(jsonPath("$.typeNumero").value(DEFAULT_TYPE_NUMERO.toString()));
     }
 
@@ -291,12 +293,11 @@ public class RattachementLigneResourceIntTest {
         // Disconnect from session so that the updates on updatedRattachementLigne are not directly saved in db
         em.detach(updatedRattachementLigne);
         updatedRattachementLigne
-            .numero(UPDATED_NUMERO)
             .typeVerification(UPDATED_TYPE_VERIFICATION)
             .codeVerification(UPDATED_CODE_VERIFICATION)
             .statut(UPDATED_STATUT)
-            .imagePrfil(UPDATED_IMAGE_PRFIL)
             .typeNumero(UPDATED_TYPE_NUMERO);
+        updatedRattachementLigne.setNumero(UPDATED_NUMERO);
 
         restRattachementLigneMockMvc.perform(put("/api/rattachement-lignes")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -311,11 +312,9 @@ public class RattachementLigneResourceIntTest {
         assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(UPDATED_TYPE_VERIFICATION);
         assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(UPDATED_CODE_VERIFICATION);
         assertThat(testRattachementLigne.isStatut()).isEqualTo(UPDATED_STATUT);
-        assertThat(testRattachementLigne.getImagePrfil()).isEqualTo(UPDATED_IMAGE_PRFIL);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(1)).save(testRattachementLigne);
+
     }
 
     @Test
@@ -335,8 +334,6 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeUpdate);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(0)).save(rattachementLigne);
     }
 
     @Test
@@ -356,28 +353,6 @@ public class RattachementLigneResourceIntTest {
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeDelete - 1);
 
-        // Validate the RattachementLigne in Elasticsearch
-        verify(mockRattachementLigneSearchRepository, times(1)).deleteById(rattachementLigne.getId());
-    }
-
-    @Test
-    @Transactional
-    public void searchRattachementLigne() throws Exception {
-        // Initialize the database
-        rattachementLigneRepository.saveAndFlush(rattachementLigne);
-        when(mockRattachementLigneSearchRepository.search(queryStringQuery("id:" + rattachementLigne.getId()), PageRequest.of(0, 20)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(rattachementLigne), PageRequest.of(0, 1), 1));
-        // Search the rattachementLigne
-        restRattachementLigneMockMvc.perform(get("/api/_search/rattachement-lignes?query=id:" + rattachementLigne.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
-            .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO)))
-            .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION)))
-            .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION)))
-            .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
-            .andExpect(jsonPath("$.[*].imagePrfil").value(hasItem(DEFAULT_IMAGE_PRFIL)))
-            .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
     @Test
@@ -474,7 +449,8 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-
+        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
+        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
 
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
@@ -488,6 +464,8 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("771326617");
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
+        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
+        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
 
     }
 
@@ -499,7 +477,7 @@ public class RattachementLigneResourceIntTest {
 
         RattachementLigneVM ligneVM = new RattachementLigneVM();
 
-        ligneVM.setLogin("774502525");
+        ligneVM.setLogin("770236606");
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
 
@@ -531,6 +509,8 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
+        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
          rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
          rattachementLigne.setNumero("771326617");
          rattachementLigne.setAccountB2C(u);
@@ -544,5 +524,37 @@ public class RattachementLigneResourceIntTest {
 
 
     }
+
+    @Test
+    @Transactional
+    public void addRattachementLigneExistingUser() throws Exception {
+
+        AccountB2C u = new AccountB2C();
+        u.setNumero("775167605");
+        u.setFirstName("leyla");
+        u.setLastName("diallo");
+        u.setEmail("dia@gmail.com");
+
+        accountB2CRepository.save(u);
+        int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
+
+        RattachementLigneVM ligneVM = new RattachementLigneVM();
+
+        ligneVM.setLogin(u.getNumero());
+        ligneVM.setNumero("771326617");
+        ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
+        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
+
+        // Create the RattachementLigne
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+            .andExpect(status().isCreated());
+
+
+    }
+
+
 
 }

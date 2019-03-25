@@ -2,19 +2,15 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
-
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 
 /**
  * A RattachementLigne.
@@ -22,23 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 @Entity
 @Table(name = "rattachement_ligne")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "rattachementligne")
-public class RattachementLigne implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-
-    @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
-    @Column(name = "numero", nullable = false)
-    private String numero;
+public class RattachementLigne extends NumeroDTO implements Serializable {
 
     @Column(name = "type_verification")
     private String typeVerification;
@@ -49,8 +29,6 @@ public class RattachementLigne implements Serializable {
     @Column(name = "statut")
     private Boolean statut;
 
-    @Column(name = "image_prfil")
-    private String imagePrfil;
 
     @NotNull(message = "Le type de numéro ne peut pas être vide")
     @Enumerated(EnumType.STRING)
@@ -61,27 +39,7 @@ public class RattachementLigne implements Serializable {
     @JsonIgnoreProperties("users")
     private AccountB2C accountB2C;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public RattachementLigne numero(String numero) {
-        this.numero = numero;
-        return this;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
 
     public String getTypeVerification() {
         return typeVerification;
@@ -122,18 +80,6 @@ public class RattachementLigne implements Serializable {
         this.statut = statut;
     }
 
-    public String getImagePrfil() {
-        return imagePrfil;
-    }
-
-    public RattachementLigne imagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
-        return this;
-    }
-
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
-    }
 
     public TypeNumero getTypeNumero() {
         return typeNumero;
@@ -190,7 +136,6 @@ public class RattachementLigne implements Serializable {
             ", typeVerification='" + getTypeVerification() + "'" +
             ", codeVerification='" + getCodeVerification() + "'" +
             ", statut='" + isStatut() + "'" +
-            ", imagePrfil='" + getImagePrfil() + "'" +
             ", typeNumero='" + getTypeNumero() + "'" +
             "}";
     }

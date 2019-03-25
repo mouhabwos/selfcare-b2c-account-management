@@ -11,4 +11,24 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private String baseUrlAdmin;
+    private String emailAdmin;
+
+    public String getBaseUrlAdmin() {
+        return baseUrlAdmin;
+    }
+
+    public void setBaseUrlAdmin(String baseUrlAdmin) {
+        this.baseUrlAdmin = baseUrlAdmin;
+    }
+
+    public String getEmailAdmin() {
+        return emailAdmin;
+    }
+
+    public void setEmailAdmin(String emailAdmin) {
+        this.emailAdmin = emailAdmin;
+    }
+
+
 }

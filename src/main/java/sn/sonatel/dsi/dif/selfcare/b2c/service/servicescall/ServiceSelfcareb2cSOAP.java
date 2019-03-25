@@ -1,4 +1,4 @@
-package sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall;
+package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -12,34 +12,33 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import java.util.List;
 
-public class ServiceSelfcareb2cSOAP {
+class ServiceSelfcareb2cSOAP {
 
+    private ServiceSelfcareb2cSOAP() {
+        //Default constructor
+    }
 
     public static ResponseEntity<SouscriptionDto> getSouscription(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<SOAPRequest> request){
 
-        try {
-            ResponseEntity<SouscriptionDto> response = restTemplate
+
+            return restTemplate
                 .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
-            return response;
-
-        }catch (Exception e){
-
-
-        }
-       return null;
     }
 
-    public static ResponseEntity<List<AbonneDTO>> getAbonne(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate ,HttpEntity<SOAPRequest> request){
+        public static ResponseEntity<List<AbonneDTO>> getAbonne(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate ,HttpEntity<SOAPRequest> request){
 
-        try {
-            ResponseEntity<List<AbonneDTO>> response = restTemplate
-                .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_ABONNE, HttpMethod.POST, request,(Class) List.class);
-            return response;
-
-        }catch (Exception e){
-
+                return restTemplate
+                    .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_ABONNE, HttpMethod.POST, request,(Class) List.class);
 
         }
-        return null;
+
+    public static ResponseEntity<String> getFormuleByMsisdn(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate ,String msisdn){
+
+        String url = Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_FORMULE_BY_MSISDN+msisdn;
+
+        return restTemplate.getForEntity(url, String.class);
     }
+
+
+
 }

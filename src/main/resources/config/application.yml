@@ -37,9 +37,9 @@ eureka:
             git-version: ${git.commit.id.describe:}
             git-commit: ${git.commit.id.abbrev:}
             git-branch: ${git.branch:}
-ribbon:
-    eureka:
-        enabled: true
+#ribbon:
+#    eureka:
+#        enabled: true
 feign:
     hystrix:
         enabled: true

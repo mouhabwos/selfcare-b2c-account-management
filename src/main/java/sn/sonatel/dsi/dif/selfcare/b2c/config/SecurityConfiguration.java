@@ -1,5 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2JwtAccessTokenConverter;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2Properties;
 import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2SignatureVerifierClient;
@@ -19,6 +22,9 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.interceptor.RestTemplateAddTokenInterceptor;
+
+import java.util.Collections;
 
 @Configuration
 @EnableResourceServer
@@ -61,9 +67,12 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
     }
 
     @Bean
-	@Qualifier("loadBalancedRestTemplate")
+    @Qualifier("loadBalancedRestTemplate")
     public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer) {
         RestTemplate restTemplate = new RestTemplate();
+        ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
+        restTemplate.setRequestFactory(factory);
+        restTemplate.setInterceptors( Collections.singletonList(new RestTemplateAddTokenInterceptor()) );
         customizer.customize(restTemplate);
         return restTemplate;
     }

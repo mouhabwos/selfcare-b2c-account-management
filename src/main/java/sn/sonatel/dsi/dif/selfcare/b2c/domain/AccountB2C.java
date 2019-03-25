@@ -1,21 +1,17 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A AccountB2C.
@@ -23,23 +19,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "account_b_2_c")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "accountb2c")
-public class AccountB2C implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class AccountB2C extends NumeroDTO implements Serializable {
 
 
-    @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
-    @Column(name = "numero", nullable = false)
-    private String numero;
 
     @NotNull
     @Column(name = "first_name", nullable = false)
@@ -49,37 +31,28 @@ public class AccountB2C implements Serializable {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @ApiModelProperty(required = false)
     @Email
+    @Size(min = 5, max = 254)
     @Column(name = "email")
     private String email;
 
-    @Column(name = "image_prfil")
-    private String imagePrfil;
+    @Column(name = "image_profil")
+    private String imageProfil;
+
+    @Size(max = 20)
+    private String activationKey;
+
+    @Size(min = 2, max = 6)
+    private String langKey;
+
+    private int attempts=0;
 
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public AccountB2C numero(String numero) {
-        this.numero = numero;
-        return this;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -120,17 +93,17 @@ public class AccountB2C implements Serializable {
         this.email = email;
     }
 
-    public String getImagePrfil() {
-        return imagePrfil;
+    public String getImageProfil() {
+        return imageProfil;
     }
 
-    public AccountB2C imagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
+    public AccountB2C imageProfil(String imageProfil) {
+        this.imageProfil = imageProfil;
         return this;
     }
 
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
+    public void setImageProfil(String imageProfil) {
+        this.imageProfil = imageProfil;
     }
 
     public Set<RattachementLigne> getUsers() {
@@ -140,6 +113,30 @@ public class AccountB2C implements Serializable {
     public AccountB2C users(Set<RattachementLigne> rattachementLignes) {
         this.users = rattachementLignes;
         return this;
+    }
+
+    public String getActivationKey() {
+        return activationKey;
+    }
+
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
+    }
+
+    public String getLangKey() {
+        return langKey;
+    }
+
+    public void setLangKey(String langKey) {
+        this.langKey = langKey;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
     }
 
     public AccountB2C addUser(RattachementLigne rattachementLigne) {
@@ -187,7 +184,7 @@ public class AccountB2C implements Serializable {
             ", firstName='" + getFirstName() + "'" +
             ", lastName='" + getLastName() + "'" +
             ", email='" + getEmail() + "'" +
-            ", imagePrfil='" + getImagePrfil() + "'" +
+            ", imagePrfil='" + getImageProfil() + "'" +
             "}";
     }
 }

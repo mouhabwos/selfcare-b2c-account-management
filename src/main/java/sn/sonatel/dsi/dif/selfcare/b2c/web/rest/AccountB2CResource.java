@@ -1,37 +1,41 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
+
+import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.search.AccountB2CSearchRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicesCall.ServiceSelfcareUAA;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareUAA;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing AccountB2C.
@@ -46,18 +50,21 @@ public class AccountB2CResource {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    private final AccountB2CSearchRepository accountB2CSearchRepository;
-
     private final RattachementLigneRepository rattachementLigneRepository;
 
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, AccountB2CSearchRepository accountB2CSearchRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate) {
+    private final MailService mailService;
+
+    private final DowloadManager dowloadManager;
+
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager) {
         this.accountB2CRepository = accountB2CRepository;
-        this.accountB2CSearchRepository = accountB2CSearchRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.restTemplate = restTemplate;
+        this.mailService = mailService;
+        this.dowloadManager = dowloadManager;
     }
 
     /**
@@ -68,13 +75,22 @@ public class AccountB2CResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/account-b-2-cs")
-    public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2C accountB2C) throws URISyntaxException {
+    public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to save AccountB2C : {}", accountB2C);
         if (accountB2C.getId() != null) {
             throw new BadRequestAlertException("A new accountB2C cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        AccountB2C result = accountB2CRepository.save(accountB2C);
-        accountB2CSearchRepository.save(result);
+        AccountB2C b2C = new AccountB2C();
+
+        b2C.setNumero(accountB2C.getNumero());
+
+        b2C.setEmail(accountB2C.getEmail());
+
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setImageProfil(accountB2C.getImagePrfil());
+        AccountB2C result = accountB2CRepository.save(b2C);
+
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -103,24 +119,35 @@ public class AccountB2CResource {
         }
 
         AccountB2C result =  new AccountB2C();
-        try{
+        try {
 
-            managedUserVM.setActivated(true);
             HttpEntity<ManagedUserVM> request = new HttpEntity<>(managedUserVM);
-            ServiceSelfcareUAA.regiserAccount(restTemplate, request);
-            AccountB2C account =  new AccountB2C();
-            account.setNumero(managedUserVM.getLogin());
-            account.setEmail(managedUserVM.getEmail());
-            account.setFirstName(managedUserVM.getFirstName());
-            account.setLastName(managedUserVM.getLastName());
-            account.setImagePrfil(managedUserVM.getImageprofil());
-            result = accountB2CRepository.save(account);
-    }catch (Exception e){
+            if(managedUserVM.getEmail() == null){
 
-        throw new BadRequestAlertException("Utilisateur non enregistré", ENTITY_NAME, "");
+                managedUserVM.setEmail("selfcare-b2c-"+managedUserVM.getLogin()+"@selfcare.com");
 
-    }
+            }
+            ResponseEntity response = ServiceSelfcareUAA.regiserAccount(restTemplate, request);
 
+            if (response.getStatusCode() == HttpStatus.CREATED) {
+                managedUserVM.setActivated(true);
+                AccountB2C account =  new AccountB2C();
+                account.setNumero(managedUserVM.getLogin());
+
+                account.setFirstName(managedUserVM.getFirstName());
+                account.setLastName(managedUserVM.getLastName());
+                account.setImageProfil(managedUserVM.getImageprofil());
+                result = accountB2CRepository.save(account);
+                mailService.sendActivationEmail(result);
+            }
+            else {
+                throw new UserNoCreatedException();
+            }
+
+        }catch (Exception e){
+
+            log.debug(" exception for creation Account : {}", e);
+        }
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -137,13 +164,20 @@ public class AccountB2CResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/account-b-2-cs")
-    public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2C accountB2C) throws URISyntaxException {
+    public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        AccountB2C result = accountB2CRepository.save(accountB2C);
-        accountB2CSearchRepository.save(result);
+        AccountB2C b2C = new AccountB2C();
+        b2C.setId(accountB2C.getId());
+        b2C.setNumero(accountB2C.getNumero());
+        b2C.setEmail(accountB2C.getEmail());
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setImageProfil(accountB2C.getImagePrfil());
+        AccountB2C result = accountB2CRepository.save(b2C);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, accountB2C.getId().toString()))
             .body(result);
@@ -186,24 +220,8 @@ public class AccountB2CResource {
     public ResponseEntity<Void> deleteAccountB2C(@PathVariable Long id) {
         log.debug("REST request to delete AccountB2C : {}", id);
         accountB2CRepository.deleteById(id);
-        accountB2CSearchRepository.deleteById(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-    }
 
-    /**
-     * SEARCH  /_search/account-b-2-cs?query=:query : search for the accountB2C corresponding
-     * to the query.
-     *
-     * @param query the query of the accountB2C search
-     * @param pageable the pagination information
-     * @return the result of the search
-     */
-    @GetMapping("/_search/account-b-2-cs")
-    public ResponseEntity<List<AccountB2C>> searchAccountB2CS(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of AccountB2CS for query {}", query);
-        Page<AccountB2C> page = accountB2CSearchRepository.search(queryStringQuery(query), pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/account-b-2-cs");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
 
@@ -221,6 +239,56 @@ public class AccountB2CResource {
             throw new LigneAlreadyRattachedException();
         }
         return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/email-already-exist")
+    @Timed
+    public boolean emailExistingVerify(@Valid @RequestBody EmailExistDTO email) {
+
+        if (email != null) {
+
+            Optional<AccountB2C> user = accountB2CRepository.findOneByEmail(email.getEmail());
+
+            if (user.isPresent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @GetMapping("/account/{login}")
+    @Timed
+    public AccountB2C getAccount(@PathVariable String login) {
+
+        if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
+
+            login = FormatNumberPhoneUtil.getNumberFormat(login);
+
+            Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
+            if(account.isPresent()){
+
+                return account.get();
+
+            }else {
+
+                throw new LigneNotFoundException();
+            }
+
+        }else {
+
+                throw new LigneNotFoundException();
+            }
+
+
+    }
+
+    @PostMapping("/mail/ouverture-compte")
+    public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
+
+        b2C = dowloadManager.addResources(b2C);
+            mailService.sendEmailFromServiceClient(b2C);
+
     }
 
 }
