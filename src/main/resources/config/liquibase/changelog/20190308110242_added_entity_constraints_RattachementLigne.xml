@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <!--
         Added the constraints for entity RattachementLigne.
     -->
     <changeSet id="20190308110242-2" author="jhipster">
-        
+
         <addForeignKeyConstraint baseColumnNames="accountb2c_id"
                                  baseTableName="rattachement_ligne"
                                  constraintName="fk_rattachement_ligne_accountb2c_id"

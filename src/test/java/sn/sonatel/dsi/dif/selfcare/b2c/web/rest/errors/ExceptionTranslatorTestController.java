@@ -16,7 +16,7 @@ public class ExceptionTranslatorTestController {
 
     @GetMapping("/test/concurrency-failure")
     public void concurrencyFailure() {
-        throw new ConcurrencyFailureException("test concurrency failure");
+        throw new ConcurrencyFailureException ( "test concurrency failure" );
     }
 
     @PostMapping("/test/method-argument")
@@ -25,15 +25,15 @@ public class ExceptionTranslatorTestController {
 
     @GetMapping("/test/parameterized-error")
     public void parameterizedError() {
-        throw new CustomParameterizedException("test parameterized error", "param0_value", "param1_value");
+        throw new CustomParameterizedException ( "test parameterized error", "param0_value", "param1_value" );
     }
 
     @GetMapping("/test/parameterized-error2")
     public void parameterizedError2() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("foo", "foo_value");
-        params.put("bar", "bar_value");
-        throw new CustomParameterizedException("test parameterized error", params);
+        Map<String, Object> params = new HashMap<> ();
+        params.put ( "foo", "foo_value" );
+        params.put ( "bar", "bar_value" );
+        throw new CustomParameterizedException ( "test parameterized error", params );
     }
 
     @GetMapping("/test/missing-servlet-request-part")
@@ -46,22 +46,22 @@ public class ExceptionTranslatorTestController {
 
     @GetMapping("/test/access-denied")
     public void accessdenied() {
-        throw new AccessDeniedException("test access denied!");
+        throw new AccessDeniedException ( "test access denied!" );
     }
 
     @GetMapping("/test/unauthorized")
     public void unauthorized() {
-        throw new BadCredentialsException("test authentication failed!");
+        throw new BadCredentialsException ( "test authentication failed!" );
     }
 
     @GetMapping("/test/response-status")
     public void exceptionWithReponseStatus() {
-        throw new TestResponseStatusException();
+        throw new TestResponseStatusException ();
     }
 
     @GetMapping("/test/internal-server-error")
     public void internalServerError() {
-        throw new RuntimeException();
+        throw new RuntimeException ();
     }
 
     public static class TestDTO {

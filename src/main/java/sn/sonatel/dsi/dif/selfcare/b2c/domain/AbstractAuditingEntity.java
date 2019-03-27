@@ -4,9 +4,9 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.Same;
 
-import java.io.Serializable;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
 
 /**
  * Base abstract class for entities which will hold definitions for created, last modified by and created,
@@ -18,7 +18,6 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractAuditingEntity extends Same implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
 
 
 }

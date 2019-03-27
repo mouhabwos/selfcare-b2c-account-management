@@ -8,22 +8,22 @@ import javax.validation.constraints.Pattern;
 
 public class SOAPRequest {
 
-	@NotNull
-	@NotBlank
-	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER)
-	public String msisdn;
+    @NotNull
+    @NotBlank
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER)
+    public String msisdn;
 
-	public SOAPRequest(String msisdn) {
-		this.msisdn = msisdn;
-		// Default Constructor
-	}
+    public SOAPRequest(String msisdn) {
+        this.msisdn = msisdn;
+        // Default Constructor
+    }
 
-	public String getMsisdn() {
-		return msisdn;
-	}
+    public String getMsisdn() {
+        return msisdn;
+    }
 
-	public void setMsisdn(String msisdn) {
-		this.msisdn = msisdn;
-	}
+    public void setMsisdn(String msisdn) {
+        this.msisdn = msisdn;
+    }
 
 }
