@@ -88,7 +88,7 @@ public class AccountB2CResource {
 
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImageProfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -137,7 +137,9 @@ public class AccountB2CResource {
                 account.setFirstName(managedUserVM.getFirstName());
                 account.setLastName(managedUserVM.getLastName());
                 account.setImageProfil(managedUserVM.getImageprofil());
+                account.setEmail(managedUserVM.getEmail());
                 result = accountB2CRepository.save(account);
+                System.out.println(" utilisateur  =====================> "+result);
                 mailService.sendActivationEmail(result);
             }
             else {
@@ -175,7 +177,7 @@ public class AccountB2CResource {
         b2C.setEmail(accountB2C.getEmail());
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImageProfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.ok()
@@ -287,7 +289,14 @@ public class AccountB2CResource {
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
         b2C = dowloadManager.addResources(b2C);
-            mailService.sendEmailFromServiceClient(b2C);
+          mailService.sendEmailFromServiceClient(b2C);
+
+    }
+
+    @PostMapping("/mail/send")
+    public void sendmailsend(@Valid @RequestBody AccountB2C b2C) {
+
+        mailService.sendActivationEmail(b2C);
 
     }
 

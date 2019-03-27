@@ -36,7 +36,7 @@ public class AccountB2CDTO {
     private String email;
 
     @Column(name = "image_prfil")
-    private String imagePrfil;
+    private String imageProfil;
 
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -63,8 +63,8 @@ public class AccountB2CDTO {
         return this;
     }
 
-    public AccountB2CDTO imagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
+    public AccountB2CDTO imageProfil(String imageProfil) {
+        this.imageProfil = imageProfil;
         return this;
     }
 
@@ -109,12 +109,12 @@ public class AccountB2CDTO {
         this.email = email;
     }
 
-    public String getImagePrfil() {
-        return imagePrfil;
+    public String getImageProfil() {
+        return imageProfil;
     }
 
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
+    public void setImageProfil(String imageProfil) {
+        this.imageProfil = imageProfil;
     }
 
     public Set<RattachementLigne> getUsers() {

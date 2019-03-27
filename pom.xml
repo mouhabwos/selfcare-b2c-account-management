@@ -828,7 +828,7 @@
                 <profile.tls>,tls</profile.tls>
             </properties>
         </profile>
-        <profile>
+        <!-- profile>
             <id>vm</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -856,10 +856,10 @@
                 </plugins>
             </build>
             <properties>
-                <!-- default Spring profiles -->
+
                 <spring.profiles.active>dev${profile.tls}</spring.profiles.active>
             </properties>
-        </profile>
+        </profile -->
         <profile>
             <id>dev</id>
             <activation>
@@ -874,6 +874,17 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-devtools</artifactId>
                     <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.java-json-tools</groupId>
+                    <artifactId>json-schema-validator</artifactId>
+                    <version>2.2.8</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>javax.mail</groupId>
+                            <artifactId>mailapi</artifactId>
+                        </exclusion>
+                    </exclusions>
                 </dependency>
             </dependencies>
             <build>
@@ -1043,7 +1054,7 @@
                 <spring.profiles.active>prod${profile.swagger}${profile.no-liquibase}</spring.profiles.active>
             </properties>
         </profile>
-        <!-- profile>
+        <profile>
             <id>vm</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -1075,7 +1086,7 @@
 
                 <spring.profiles.active>vm${profile.tls}${profile.no-liquibase}</spring.profiles.active>
             </properties>
-        </profile -->
+        </profile>
 
         <profile>
             <!--
