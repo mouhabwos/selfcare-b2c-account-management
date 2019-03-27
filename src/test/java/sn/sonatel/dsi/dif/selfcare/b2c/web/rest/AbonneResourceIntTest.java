@@ -115,15 +115,6 @@ public class AbonneResourceIntTest {
                 .withDelay(TimeUnit.SECONDS, 1));*/
     }
 
-    @Test
-    public void getSouscriptionMock() throws Exception {
-
-        ClientAndServer.startClientAndServer(8715).when(HttpRequest.request().withMethod("GET")
-            .withPath("/api/abonne/souscription/771326617"))
-            .respond(HttpResponse.response().withStatusCode(200)
-                .withDelay(TimeUnit.SECONDS, 1));
-
-    }
 
 
 }
