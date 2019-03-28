@@ -139,7 +139,6 @@ public class AccountB2CResource {
                 account.setImageProfil(managedUserVM.getImageprofil());
                 account.setEmail(managedUserVM.getEmail());
                 result = accountB2CRepository.save(account);
-                System.out.println(" utilisateur  =====================> "+result);
                 mailService.sendActivationEmail(result);
             }
             else {
@@ -293,11 +292,6 @@ public class AccountB2CResource {
 
     }
 
-    @PostMapping("/mail/send")
-    public void sendmailsend(@Valid @RequestBody AccountB2C b2C) {
 
-        mailService.sendActivationEmail(b2C);
-
-    }
 
 }
