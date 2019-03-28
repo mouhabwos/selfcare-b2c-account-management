@@ -35,7 +35,7 @@ public class AccountB2CDTO {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "image_prfil")
+    @Column(name = "image_profil")
     private String imageProfil;
 
     @OneToMany(mappedBy = "accountB2C")
