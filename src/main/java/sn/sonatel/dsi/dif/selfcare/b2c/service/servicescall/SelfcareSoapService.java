@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -25,12 +26,28 @@ public class SelfcareSoapService {
 
     public ResponseEntity<SouscriptionDto> getSouscription( HttpEntity<SOAPRequest> request){
 
-        return ServiceSelfcareb2cSOAP.getSouscription(restTemplate,request);
+        ResponseEntity<SouscriptionDto> responseEntity = ServiceSelfcareb2cSOAP.getSouscription(restTemplate,request);
+
+        if(responseEntity.getStatusCode() == HttpStatus.OK) {
+
+            return responseEntity;
+
+        }else {
+            return ResponseEntity.status(503).build();
+        }
 
     }
 
     public ResponseEntity<List<AbonneDTO>> getAbonne(HttpEntity<SOAPRequest> request){
-        return ServiceSelfcareb2cSOAP.getAbonne(restTemplate,request);
+
+        ResponseEntity<List<AbonneDTO>> responseEntity = ServiceSelfcareb2cSOAP.getAbonne(restTemplate,request);
+        if(responseEntity.getStatusCode() == HttpStatus.OK){
+
+            return responseEntity;
+        }else {
+            return ResponseEntity.status(503).build();
+        }
+
     }
 
     public ResponseEntity<String> getFormuleByMsisdn(String msisdn){
