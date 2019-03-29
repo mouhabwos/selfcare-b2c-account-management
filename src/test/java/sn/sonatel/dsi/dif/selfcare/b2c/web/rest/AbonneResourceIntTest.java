@@ -4,36 +4,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.mockserver.client.server.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
-import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Validator;
-import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
-
-import java.util.concurrent.TimeUnit;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -88,7 +72,7 @@ public class AbonneResourceIntTest {
     @Test
     public void getAbonne() throws Exception {
 
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", DEFAULT_NUMERO))
+        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", "771326617"))
             .andExpect(status().isOk());
     }
 
@@ -104,15 +88,6 @@ public class AbonneResourceIntTest {
 
         restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", ""))
             .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void mockGetAbonneNotFound() throws Exception {
-
-     /*  ClientAndServer.startClientAndServer(8715).when(HttpRequest.request().withMethod("GET")
-                .withPath("/api/abonne/information-abonne/770000000"))
-            .respond(HttpResponse.response().withStatusCode(404)
-                .withDelay(TimeUnit.SECONDS, 1));*/
     }
 
 

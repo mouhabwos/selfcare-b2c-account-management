@@ -33,7 +33,7 @@ public class SelfcareSoapService {
             return responseEntity;
 
         }else {
-            return ResponseEntity.status(503).build();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
     }
@@ -44,8 +44,9 @@ public class SelfcareSoapService {
         if(responseEntity.getStatusCode() == HttpStatus.OK){
 
             return responseEntity;
+
         }else {
-            return ResponseEntity.status(503).build();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
     }
