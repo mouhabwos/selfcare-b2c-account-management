@@ -152,7 +152,7 @@ public class AccountB2CResourceIntTest {
         b2C.setEmail(accountB2C.getEmail());
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImagePrfil(accountB2C.getImageProfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
 
         // Create the AccountB2C
         restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")

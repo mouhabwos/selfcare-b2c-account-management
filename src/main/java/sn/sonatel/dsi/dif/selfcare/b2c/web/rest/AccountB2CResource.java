@@ -88,7 +88,7 @@ public class AccountB2CResource {
 
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImageProfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -137,6 +137,7 @@ public class AccountB2CResource {
                 account.setFirstName(managedUserVM.getFirstName());
                 account.setLastName(managedUserVM.getLastName());
                 account.setImageProfil(managedUserVM.getImageprofil());
+                account.setEmail(managedUserVM.getEmail());
                 result = accountB2CRepository.save(account);
                 mailService.sendActivationEmail(result);
             }
@@ -175,7 +176,7 @@ public class AccountB2CResource {
         b2C.setEmail(accountB2C.getEmail());
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImageProfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.ok()
