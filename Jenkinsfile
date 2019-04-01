@@ -55,7 +55,7 @@ pipeline {
 
 
     stage(' [DEV2] Build & Run Docker image') {
-        agent  { label 'docker-builder-dev' }
+        agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
                        anyOf { branch 'develop'; branch 'staging' }
@@ -76,7 +76,7 @@ pipeline {
 
 
     stage(' [REC] Build & Run Docker image') {
-          agent  { label 'docker-builder-rec' }
+          agent  { label 'docker-builder-rec3' }
           options { skipDefaultCheckout() }
           when { branch 'staging' }
           steps {
@@ -210,7 +210,7 @@ pipeline {
 
       stage('Push Docker image') {
         when { branch 'release' }
-        agent  { label 'docker-builder-rec' }
+        agent  { label 'docker-builder-rec3' }
         steps {
           sh 'docker push ${IMAGE}:${VERSION}.${BUILD_NUMBER}'
         }
