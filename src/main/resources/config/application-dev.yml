@@ -26,15 +26,15 @@ eureka:
         hostname: 10.137.52.10 #@eureka.instance.dev.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8760/eureka/
 
 spring:
     profiles:
         active: dev
         include:
-            - swagger
-            # Uncomment to activate TLS for the dev profile
-            #- tls
+        - swagger
+        # Uncomment to activate TLS for the dev profile
+        #- tls
     devtools:
         restart:
             enabled: true
