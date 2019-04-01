@@ -2,9 +2,12 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
@@ -17,6 +20,7 @@ import java.util.List;
 @Service
 public class SelfcareSoapService {
 
+
     private final RestTemplate restTemplate;
 
     public SelfcareSoapService(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate) {
@@ -25,15 +29,33 @@ public class SelfcareSoapService {
 
     public ResponseEntity<SouscriptionDto> getSouscription( HttpEntity<SOAPRequest> request){
 
-        return ServiceSelfcareb2cSOAP.getSouscription(restTemplate,request);
+        ResponseEntity<SouscriptionDto> responseEntity = restTemplate
+            .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
+
+        if(responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+
+            return responseEntity;
+
+        }else {
+
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
 
     }
 
     public ResponseEntity<List<AbonneDTO>> getAbonne(HttpEntity<SOAPRequest> request){
-        return ServiceSelfcareb2cSOAP.getAbonne(restTemplate,request);
+
+        ResponseEntity<List<AbonneDTO>> responseEntity = restTemplate
+            .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_ABONNE, HttpMethod.POST, request,(Class) List.class);
+        if(responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK){
+
+            return responseEntity;
+
+        }else {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
+
     }
 
-    public ResponseEntity<String> getFormuleByMsisdn(String msisdn){
-        return ServiceSelfcareb2cSOAP.getFormuleByMsisdn(restTemplate,msisdn);
-    }
+
 }

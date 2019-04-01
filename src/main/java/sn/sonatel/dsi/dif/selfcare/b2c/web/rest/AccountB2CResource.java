@@ -288,8 +288,10 @@ public class AccountB2CResource {
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
         b2C = dowloadManager.addResources(b2C);
-            mailService.sendEmailFromServiceClient(b2C);
+          mailService.sendEmailFromServiceClient(b2C);
 
     }
+
+
 
 }

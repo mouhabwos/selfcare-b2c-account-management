@@ -72,7 +72,6 @@ public class MailService {
             message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
-
             javaMailSender.send(mimeMessage);
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
