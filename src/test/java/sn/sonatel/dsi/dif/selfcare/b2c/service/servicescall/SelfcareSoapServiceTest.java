@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +19,12 @@ import static org.mockito.Mockito.when;
 
 public class SelfcareSoapServiceTest {
 
+    private static final String DEFAULT_NUMERO = "771326617";
 
     private SelfcareSoapService soapService;
 
-    //@Autowired
-   // @Qualifier("loadBalancedRestTemplate")
     @Mock
-    //@Autowired
     private RestTemplate restTemplate;
-
 
 
     @Before
@@ -41,25 +37,25 @@ public class SelfcareSoapServiceTest {
 
     @Test
     public void getSouscription() {
+
         ResponseEntity<SouscriptionDto> response = ResponseEntity.status(HttpStatus.OK).build();
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest("771326617"));
-        //Mockito.any()
+        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(DEFAULT_NUMERO));
+
         when(soapService.getSouscription(request)).thenReturn(response);
 
         ResponseEntity<SouscriptionDto> entity = soapService.getSouscription(request);
-
-        //System.out.println("===========<<<<<<>>>>>> "+entity.getStatusCode());
 
         assertTrue(entity.equals(response));
     }
 
     @Test
     public void getSouscriptionServiceUnavailable() {
+
         ResponseEntity<SouscriptionDto> response = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest("771326617"));
-        //Mockito.any()
+        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(DEFAULT_NUMERO));
+
         when(soapService.getSouscription(request)).thenReturn(response);
 
         ResponseEntity<SouscriptionDto> entity = soapService.getSouscription(request);
@@ -67,14 +63,13 @@ public class SelfcareSoapServiceTest {
         assertTrue(entity.equals(response));
     }
 
-
-
     @Test
     public void getAbonne() {
+
         ResponseEntity<List<AbonneDTO>> response = ResponseEntity.status(HttpStatus.OK).build();
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest("771326617"));
-        //Mockito.any()
+        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(DEFAULT_NUMERO));
+
         when(soapService.getAbonne(request)).thenReturn(response);
 
         ResponseEntity<List<AbonneDTO>> entity = soapService.getAbonne(request);
@@ -84,10 +79,11 @@ public class SelfcareSoapServiceTest {
 
     @Test
     public void getAbonneServiceUnavailable() {
+
         ResponseEntity<List<AbonneDTO>> response = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest("771326617"));
-        //Mockito.any()
+        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(DEFAULT_NUMERO));
+
         when(soapService.getAbonne(request)).thenReturn(response);
 
         ResponseEntity<List<AbonneDTO>> entity = soapService.getAbonne(request);
