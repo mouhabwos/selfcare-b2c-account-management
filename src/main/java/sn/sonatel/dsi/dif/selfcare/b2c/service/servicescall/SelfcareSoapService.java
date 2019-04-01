@@ -33,7 +33,9 @@ public class SelfcareSoapService {
             return responseEntity;
 
         }else {
+
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+
         }
 
     }
@@ -51,7 +53,4 @@ public class SelfcareSoapService {
 
     }
 
-    public ResponseEntity<String> getFormuleByMsisdn(String msisdn){
-        return ServiceSelfcareb2cSOAP.getFormuleByMsisdn(restTemplate,msisdn);
-    }
 }
