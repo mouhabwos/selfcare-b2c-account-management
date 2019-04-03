@@ -11,13 +11,13 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 public class ServiceSelfcareUAA {
 
-    private ServiceSelfcareUAA(){
+    private ServiceSelfcareUAA() {
         //Default constructor
     }
 
-    public static ResponseEntity regiserAccount(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<ManagedUserVM> request){
+    public static ResponseEntity regiserAccount(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, HttpEntity<ManagedUserVM> request) {
 
-            return restTemplate
-                .exchange(Constants.SELFCARE_UAA_SERVICE+""+Constants.REGISTER_ACCOUNT, HttpMethod.POST, request, ManagedUserVM.class);
+        return restTemplate
+            .exchange ( Constants.SELFCARE_UAA_SERVICE + "" + Constants.REGISTER_ACCOUNT, HttpMethod.POST, request, ManagedUserVM.class );
     }
 }

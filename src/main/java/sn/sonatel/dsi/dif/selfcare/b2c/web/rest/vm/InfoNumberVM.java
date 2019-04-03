@@ -2,34 +2,34 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm;
 
 public class InfoNumberVM {
 
-	private String msisdn;
+    private String msisdn;
 
-	private String profil;
+    private String profil;
 
-	private String formule;
+    private String formule;
 
-	public String getMsisdn() {
-		return msisdn;
-	}
+    public String getMsisdn() {
+        return msisdn;
+    }
 
-	public void setMsisdn(String msisdn) {
-		this.msisdn = msisdn;
-	}
+    public void setMsisdn(String msisdn) {
+        this.msisdn = msisdn;
+    }
 
-	public String getProfil() {
-		return profil;
-	}
+    public String getProfil() {
+        return profil;
+    }
 
-	public void setProfil(String profil) {
-		this.profil = profil;
-	}
+    public void setProfil(String profil) {
+        this.profil = profil;
+    }
 
-	public String getFormule() {
-		return formule;
-	}
+    public String getFormule() {
+        return formule;
+    }
 
-	public void setFormule(String formule) {
-		this.formule = formule;
-	}
+    public void setFormule(String formule) {
+        this.formule = formule;
+    }
 
 }

@@ -12,8 +12,8 @@ public class LoggerVM {
     private String level;
 
     public LoggerVM(Logger logger) {
-        this.name = logger.getName();
-        this.level = logger.getEffectiveLevel().toString();
+        this.name = logger.getName ();
+        this.level = logger.getEffectiveLevel ().toString ();
     }
 
     public LoggerVM() {

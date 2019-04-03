@@ -1,10 +1,9 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config.audit;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.PersistentAuditEvent;
-
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.PersistentAuditEvent;
 
 import java.util.*;
 
@@ -19,11 +18,11 @@ public class AuditEventConverter {
      */
     public List<AuditEvent> convertToAuditEvent(Iterable<PersistentAuditEvent> persistentAuditEvents) {
         if (persistentAuditEvents == null) {
-            return Collections.emptyList();
+            return Collections.emptyList ();
         }
-        List<AuditEvent> auditEvents = new ArrayList<>();
+        List<AuditEvent> auditEvents = new ArrayList<> ();
         for (PersistentAuditEvent persistentAuditEvent : persistentAuditEvents) {
-            auditEvents.add(convertToAuditEvent(persistentAuditEvent));
+            auditEvents.add ( convertToAuditEvent ( persistentAuditEvent ) );
         }
         return auditEvents;
     }
@@ -38,8 +37,8 @@ public class AuditEventConverter {
         if (persistentAuditEvent == null) {
             return null;
         }
-        return new AuditEvent(persistentAuditEvent.getAuditEventDate(), persistentAuditEvent.getPrincipal(),
-            persistentAuditEvent.getAuditEventType(), convertDataToObjects(persistentAuditEvent.getData()));
+        return new AuditEvent ( persistentAuditEvent.getAuditEventDate (), persistentAuditEvent.getPrincipal (),
+            persistentAuditEvent.getAuditEventType (), convertDataToObjects ( persistentAuditEvent.getData () ) );
     }
 
     /**
@@ -49,11 +48,11 @@ public class AuditEventConverter {
      * @return a map of String, Object
      */
     public Map<String, Object> convertDataToObjects(Map<String, String> data) {
-        Map<String, Object> results = new HashMap<>();
+        Map<String, Object> results = new HashMap<> ();
 
         if (data != null) {
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                results.put(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, String> entry : data.entrySet ()) {
+                results.put ( entry.getKey (), entry.getValue () );
             }
         }
         return results;
@@ -67,17 +66,17 @@ public class AuditEventConverter {
      * @return a map of String, String
      */
     public Map<String, String> convertDataToStrings(Map<String, Object> data) {
-        Map<String, String> results = new HashMap<>();
+        Map<String, String> results = new HashMap<> ();
 
         if (data != null) {
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
+            for (Map.Entry<String, Object> entry : data.entrySet ()) {
                 // Extract the data that will be saved.
-                if (entry.getValue() instanceof WebAuthenticationDetails) {
-                    WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) entry.getValue();
-                    results.put("remoteAddress", authenticationDetails.getRemoteAddress());
-                    results.put("sessionId", authenticationDetails.getSessionId());
+                if (entry.getValue () instanceof WebAuthenticationDetails) {
+                    WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) entry.getValue ();
+                    results.put ( "remoteAddress", authenticationDetails.getRemoteAddress () );
+                    results.put ( "sessionId", authenticationDetails.getSessionId () );
                 } else {
-                    results.put(entry.getKey(), Objects.toString(entry.getValue()));
+                    results.put ( entry.getKey (), Objects.toString ( entry.getValue () ) );
                 }
             }
         }

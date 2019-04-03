@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -25,6 +26,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
@@ -46,7 +48,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class RattachementLigneResource {
 
-    private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
+    private final Logger log = LoggerFactory.getLogger ( RattachementLigneResource.class );
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementRattachementLigne";
 
@@ -65,217 +67,191 @@ public class RattachementLigneResource {
         this.selfcareSoapService = selfcareSoapService;
     }
 
-    /**
-     * POST  /rattachement-lignes : Create a new rattachementLigne.
-     *
-     * @param rattachementLigne the rattachementLigne to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new rattachementLigne, or with status 400 (Bad Request) if the rattachementLigne has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
+    @Auditable(description = Message.Rattachement.ADD)
     @PostMapping("/rattachement-lignes")
     public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
-        log.debug("REST request to save RattachementLigne : {}", rattachementLigne);
-        if (rattachementLigne.getId() != null) {
-            throw new BadRequestAlertException("A new rattachementLigne cannot already have an ID", ENTITY_NAME, "idexists");
+        log.debug ( "REST request to save RattachementLigne : {}", rattachementLigne );
+        if (rattachementLigne.getId () != null) {
+            throw new BadRequestAlertException ( "A new rattachementLigne cannot already have an ID", ENTITY_NAME, "idexists" );
         }
-        RattachementLigne ligne = new RattachementLigne();
-        ligne.setTypeNumero(rattachementLigne.getTypeNumero());
-        ligne.setAccountB2C(rattachementLigne.getAccountB2C());
-        ligne.setNumero(rattachementLigne.getNumero());
-        ligne.setStatut(rattachementLigne.getStatut());
-        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
-        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
+        RattachementLigne ligne = new RattachementLigne ();
+        ligne.setTypeNumero ( rattachementLigne.getTypeNumero () );
+        ligne.setAccountB2C ( rattachementLigne.getAccountB2C () );
+        ligne.setNumero ( rattachementLigne.getNumero () );
+        ligne.setStatut ( rattachementLigne.getStatut () );
+        ligne.setCodeVerification ( rattachementLigne.getCodeVerification () );
+        ligne.setTypeVerification ( rattachementLigne.getTypeVerification () );
 
-        RattachementLigne result = rattachementLigneRepository.save(ligne);
+        RattachementLigne result = rattachementLigneRepository.save ( ligne );
 
-        return ResponseEntity.created(new URI("/api/rattachement-lignes/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        return ResponseEntity.created ( new URI ( "/api/rattachement-lignes/" + result.getId () ) )
+            .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, result.getId ().toString () ) )
+            .body ( result );
     }
 
-    /**
-     * PUT  /rattachement-lignes : Updates an existing rattachementLigne.
-     *
-     * @param rattachementLigne the rattachementLigne to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated rattachementLigne,
-     * or with status 400 (Bad Request) if the rattachementLigne is not valid,
-     * or with status 500 (Internal Server Error) if the rattachementLigne couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
+    @Auditable(description = Message.Rattachement.UPDATE)
     @PutMapping("/rattachement-lignes")
     public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
-        log.debug("REST request to update RattachementLigne : {}", rattachementLigne);
-        if (rattachementLigne.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        log.debug ( "REST request to update RattachementLigne : {}", rattachementLigne );
+        if (rattachementLigne.getId () == null) {
+            throw new BadRequestAlertException ( "Invalid id", ENTITY_NAME, "idnull" );
         }
-        RattachementLigne ligne = new RattachementLigne();
-        ligne.setId(rattachementLigne.getId());
-        ligne.setTypeNumero(rattachementLigne.getTypeNumero());
-        ligne.setAccountB2C(rattachementLigne.getAccountB2C());
-        ligne.setNumero(rattachementLigne.getNumero());
-        ligne.setStatut(rattachementLigne.getStatut());
-        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
-        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
+        RattachementLigne ligne = new RattachementLigne ();
+        ligne.setId ( rattachementLigne.getId () );
+        ligne.setTypeNumero ( rattachementLigne.getTypeNumero () );
+        ligne.setAccountB2C ( rattachementLigne.getAccountB2C () );
+        ligne.setNumero ( rattachementLigne.getNumero () );
+        ligne.setStatut ( rattachementLigne.getStatut () );
+        ligne.setCodeVerification ( rattachementLigne.getCodeVerification () );
+        ligne.setTypeVerification ( rattachementLigne.getTypeVerification () );
 
-        RattachementLigne result = rattachementLigneRepository.save(ligne);
+        RattachementLigne result = rattachementLigneRepository.save ( ligne );
 
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, rattachementLigne.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok ()
+            .headers ( HeaderUtil.createEntityUpdateAlert ( ENTITY_NAME, rattachementLigne.getId ().toString () ) )
+            .body ( result );
     }
 
-    /**
-     * GET  /rattachement-lignes : get all the rattachementLignes.
-     *
-     * @param pageable the pagination information
-     * @return the ResponseEntity with status 200 (OK) and the list of rattachementLignes in body
-     */
+    @Auditable(description = Message.Rattachement.LIST)
     @GetMapping("/rattachement-lignes")
     public ResponseEntity<List<RattachementLigne>> getAllRattachementLignes(Pageable pageable) {
-        log.debug("REST request to get a page of RattachementLignes");
-        Page<RattachementLigne> page = rattachementLigneRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/rattachement-lignes");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        log.debug ( "REST request to get a page of RattachementLignes" );
+        Page<RattachementLigne> page = rattachementLigneRepository.findAll ( pageable );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders ( page, "/api/rattachement-lignes" );
+        return ResponseEntity.ok ().headers ( headers ).body ( page.getContent () );
     }
 
-    /**
-     * GET  /rattachement-lignes/:id : get the "id" rattachementLigne.
-     *
-     * @param id the id of the rattachementLigne to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the rattachementLigne, or with status 404 (Not Found)
-     */
+
+    @Auditable(description = Message.Rattachement.LIST_BY_ID)
     @GetMapping("/rattachement-lignes/{id}")
     public ResponseEntity<RattachementLigne> getRattachementLigne(@PathVariable Long id) {
-        log.debug("REST request to get RattachementLigne : {}", id);
-        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(rattachementLigne);
+        log.debug ( "REST request to get RattachementLigne : {}", id );
+        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findById ( id );
+        return ResponseUtil.wrapOrNotFound ( rattachementLigne );
     }
 
-    /**
-     * DELETE  /rattachement-lignes/:id : delete the "id" rattachementLigne.
-     *
-     * @param id the id of the rattachementLigne to delete
-     * @return the ResponseEntity with status 200 (OK)
-     */
+    @Auditable(description = Message.Rattachement.DELETE)
     @DeleteMapping("/rattachement-lignes/{id}")
     public ResponseEntity<Void> deleteRattachementLigne(@PathVariable Long id) {
-        log.debug("REST request to delete RattachementLigne : {}", id);
-        rattachementLigneRepository.deleteById(id);
+        log.debug ( "REST request to delete RattachementLigne : {}", id );
+        rattachementLigneRepository.deleteById ( id );
 
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        return ResponseEntity.ok ().headers ( HeaderUtil.createEntityDeletionAlert ( ENTITY_NAME, id.toString () ) ).build ();
     }
 
+    @Auditable(description = Message.Rattachement.SAVE)
     @PostMapping("/rattachement-lignes/register")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
         @Valid @RequestBody RattachementLigneVM ligneVM) throws URISyntaxException {
 
-        ligneVM.setNumero(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getNumero()));
+        ligneVM.setNumero ( FormatNumberPhoneUtil.getNumberFormat ( ligneVM.getNumero () ) );
 
-        ligneVM.setLogin(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getLogin()));
-        RattachementLigne rattachement = new RattachementLigne();
-        if (ligneVM.getNumero().matches(Constants.LOGIN_REGEX_VALID_NUMBER)) {
+        ligneVM.setLogin ( FormatNumberPhoneUtil.getNumberFormat ( ligneVM.getLogin () ) );
+        RattachementLigne rattachement = new RattachementLigne ();
+        if (ligneVM.getNumero ().matches ( Constants.LOGIN_REGEX_VALID_NUMBER )) {
 
-            checkNumberIfUsed(ligneVM.getNumero(), ligneVM.getLogin());
+            checkNumberIfUsed ( ligneVM.getNumero (), ligneVM.getLogin () );
 
-            Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
+            Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero ( ligneVM.getLogin () );
 
-            if (!accountB2C.isPresent()) {
-                throw new LigneNotFoundException();
+            if (!accountB2C.isPresent ()) {
+                throw new LigneNotFoundException ();
             }
 
-            rattachement.setNumero(ligneVM.getNumero());
-            rattachement.setTypeNumero(ligneVM.getTypeNumero());
-            rattachement.setCodeVerification(ligneVM.getCodeVerification());
-            rattachement.setTypeVerification(ligneVM.getTypeVerification());
-            rattachement.setStatut(ligneVM.getStatut());
-            rattachement.setAccountB2C(accountB2C.get());
+            rattachement.setNumero ( ligneVM.getNumero () );
+            rattachement.setTypeNumero ( ligneVM.getTypeNumero () );
+            rattachement.setCodeVerification ( ligneVM.getCodeVerification () );
+            rattachement.setTypeVerification ( ligneVM.getTypeVerification () );
+            rattachement.setStatut ( ligneVM.getStatut () );
+            rattachement.setAccountB2C ( accountB2C.get () );
 
-            rattachement = rattachementLigneRepository.save(rattachement);
+            rattachement = rattachementLigneRepository.save ( rattachement );
 
         }
 
-        return ResponseEntity.created(new URI("/api/rattachement-lignes/" + rattachement.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, rattachement.getId().toString()))
-            .body(rattachement);
+        return ResponseEntity.created ( new URI ( "/api/rattachement-lignes/" + rattachement.getId () ) )
+            .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
+            .body ( rattachement );
     }
 
-
+    @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
-        log.debug("REST request to get RattachementLigne : {}", msisdn);
+        log.debug ( "REST request to get RattachementLigne : {}", msisdn );
 
-        List<InfoNumberVM> infoNumberVMList = new ArrayList<>();
+        List<InfoNumberVM> infoNumberVMList = new ArrayList<> ();
 
-        msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
+        msisdn = FormatNumberPhoneUtil.getNumberFormat ( msisdn );
 
-        Optional<AccountB2C> user = accountB2CRepository.findOneByNumero(msisdn);
+        Optional<AccountB2C> user = accountB2CRepository.findOneByNumero ( msisdn );
 
-        if (user.isPresent()) {
-            List<RattachementLigne> list = rattachementLigneRepository.findAllByAccountB2C(user.get());
+        if (user.isPresent ()) {
+            List<RattachementLigne> list = rattachementLigneRepository.findAllByAccountB2C ( user.get () );
 
             for (RattachementLigne rattachementLigne : list) {
 
-                InfoNumberVM infoNumberVMS = new InfoNumberVM();
+                InfoNumberVM infoNumberVMS = new InfoNumberVM ();
 
-                infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
+                infoNumberVMS.setMsisdn ( rattachementLigne.getNumero () );
 
-                SouscriptionDto dto = getSouscription(rattachementLigne.getNumero());
+                SouscriptionDto dto = getSouscription ( rattachementLigne.getNumero () );
                 if (dto != null) {
 
-                    infoNumberVMS.setProfil(dto.getProfil());
-                    infoNumberVMS.setFormule(dto.getNomOffre());
+                    infoNumberVMS.setProfil ( dto.getProfil () );
+                    infoNumberVMS.setFormule ( dto.getNomOffre () );
 
                 } else {
-                    infoNumberVMS.setProfil("");
-                    infoNumberVMS.setFormule("");
+                    infoNumberVMS.setProfil ( "" );
+                    infoNumberVMS.setFormule ( "" );
 
                 }
 
-                infoNumberVMList.add(infoNumberVMS);
+                infoNumberVMList.add ( infoNumberVMS );
             }
         }
-        return ResponseEntity.ok(infoNumberVMList);
+        return ResponseEntity.ok ( infoNumberVMList );
     }
 
 
+    @Auditable(description = Message.Rattachement.DELETE_ALL)
     @PostMapping("/rattachement-lignes/delete-multiple")
     @Timed
     public ResponseEntity<RattachementLignesDeleteMultipleVM> deleteMultipleRattachementLigne(
         @Valid @RequestBody RattachementLignesDeleteMultipleVM deleteListe) {
 
-        for (String numero : deleteListe.getListMsisdn()) {
+        for (String numero : deleteListe.getListMsisdn ()) {
             Optional<RattachementLigne> ligne = rattachementLigneRepository
-                .findByNumero(numero);
-            if (ligne.isPresent()) {
-                rattachementLigneRepository.delete(ligne.get());
-                deleteListe.setDeleted(true);
+                .findByNumero ( numero );
+            if (ligne.isPresent ()) {
+                rattachementLigneRepository.delete ( ligne.get () );
+                deleteListe.setDeleted ( true );
             }
         }
-        return ResponseEntity.ok(deleteListe);
+        return ResponseEntity.ok ( deleteListe );
 
     }
 
     public void checkNumberIfUsed(String number, String login) {
 
-        number = FormatNumberPhoneUtil.getNumberFormat(number);
+        number = FormatNumberPhoneUtil.getNumberFormat ( number );
         Optional<RattachementLigne> ligne = rattachementLigneRepository
-            .findByNumero(number);
+            .findByNumero ( number );
 
-        if (ligne.isPresent()) {
-            throw new LigneAlreadyRattachedException();
+        if (ligne.isPresent ()) {
+            throw new LigneAlreadyRattachedException ();
         }
 
-        Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
+        Optional<AccountB2C> account = accountB2CRepository.findOneByNumero ( login );
 
-        if (!account.isPresent()) {
-            throw new LigneNotFoundException();
+        if (!account.isPresent ()) {
+            throw new LigneNotFoundException ();
         }
 
-        Optional<AccountB2C> rattachementLigne = accountB2CRepository.findOneByNumero(number);
-        if (rattachementLigne.isPresent()) {
-            throw new LoginAlreadyUsedException();
+        Optional<AccountB2C> rattachementLigne = accountB2CRepository.findOneByNumero ( number );
+        if (rattachementLigne.isPresent ()) {
+            throw new LoginAlreadyUsedException ();
         }
 
     }
@@ -283,19 +259,19 @@ public class RattachementLigneResource {
 
     public SouscriptionDto getSouscription(String msisdn) {
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
+        HttpEntity<SOAPRequest> request = new HttpEntity<> ( new SOAPRequest ( msisdn ) );
         try {
 
-            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(request);
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription ( request );
+            if (response.getStatusCode () == HttpStatus.NOT_FOUND) {
                 return null;
-            } else if (response.getStatusCode() == HttpStatus.OK) {
-                return response.getBody();
+            } else if (response.getStatusCode () == HttpStatus.OK) {
+                return response.getBody ();
             }
 
         } catch (Exception e) {
 
-            log.debug("Exception get souscription abonne : {}", msisdn);
+            log.debug ( "Exception get souscription abonne : {}", msisdn );
         }
 
         return null;

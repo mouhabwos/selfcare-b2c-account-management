@@ -2,14 +2,15 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 public class RattachementLigneDTO extends RattachementSame {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
 
     private AccountB2C accountB2C;

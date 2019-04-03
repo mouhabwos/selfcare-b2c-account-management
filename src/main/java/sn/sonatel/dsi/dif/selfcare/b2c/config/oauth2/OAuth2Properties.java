@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "oauth2", ignoreUnknownFields = false)
 public class OAuth2Properties {
-    private WebClientConfiguration webClientConfiguration = new WebClientConfiguration();
+    private WebClientConfiguration webClientConfiguration = new WebClientConfiguration ();
 
-    private SignatureVerification signatureVerification = new SignatureVerification();
+    private SignatureVerification signatureVerification = new SignatureVerification ();
 
     public WebClientConfiguration getWebClientConfiguration() {
         return webClientConfiguration;
