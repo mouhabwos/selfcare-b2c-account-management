@@ -22,19 +22,19 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: 10.137.52.10 #@eureka.instance.dev.hostname@
-        hostname: 10.137.52.10 #@eureka.instance.dev.hostname@
+        ip-address: @eureka.instance.dev.hostname@
+        hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8760/eureka/
 
 spring:
     profiles:
         active: dev
         include:
-            - swagger
-            # Uncomment to activate TLS for the dev profile
-            #- tls
+        - swagger
+        # Uncomment to activate TLS for the dev profile
+        #- tls
     devtools:
         restart:
             enabled: true
@@ -100,9 +100,9 @@ jhipster:
         ehcache: # Ehcache configuration
             time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
             max-entries: 100 # Number of objects in each cache entry
-    # CORS is disabled by default on microservices, as you should access them through a gateway.
-    # If you want to enable it, please uncomment the configuration below.
-    # cors:
+        # CORS is disabled by default on microservices, as you should access them through a gateway.
+        # If you want to enable it, please uncomment the configuration below.
+        # cors:
         # allowed-origins: "*"
         # allowed-methods: "*"
         # allowed-headers: "*"

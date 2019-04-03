@@ -1,15 +1,14 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.client;
 
-import java.io.IOException;
-
+import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 
-import feign.RequestInterceptor;
+import java.io.IOException;
 
 public class OAuth2UserClientFeignConfiguration {
 
     @Bean(name = "userFeignClientInterceptor")
     public RequestInterceptor getUserFeignClientInterceptor() throws IOException {
-        return new UserFeignClientInterceptor();
+        return new UserFeignClientInterceptor ();
     }
 }
