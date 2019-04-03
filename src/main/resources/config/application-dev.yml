@@ -22,8 +22,8 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: 10.137.52.10 #@eureka.instance.dev.hostname@
-        hostname: 10.137.52.10 #@eureka.instance.dev.hostname@
+        ip-address: @eureka.instance.dev.hostname@
+        hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
             defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8760/eureka/
