@@ -9,6 +9,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,8 +21,6 @@ import java.util.Set;
 @Table(name = "account_b_2_c")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AccountB2C extends NumeroDTO implements Serializable {
-
-
 
     @NotNull
     @Column(name = "first_name", nullable = false)
@@ -46,6 +45,7 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Size(min = 2, max = 6)
     private String langKey;
 
+    @Column(name = "attempts", nullable = false)
     private int attempts=0;
 
     @OneToMany(mappedBy = "accountB2C")
@@ -53,6 +53,16 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     private Set<RattachementLigne> users = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
+    @Column(name = "derniere_connnexion_date", nullable = true)
+    private Instant derniereConnnexionDate;
+
+    public Instant getDerniereConnnexionDate() {
+        return derniereConnnexionDate;
+    }
+
+    public void setDerniereConnnexionDate(Instant derniereConnnexionDate) {
+        this.derniereConnnexionDate = derniereConnnexionDate;
+    }
 
     public String getFirstName() {
         return firstName;

@@ -8,6 +8,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +43,27 @@ public class AccountB2CDTO {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
 
+    @Column(name = "derniere_connnexion_date", nullable = true)
+    private Instant derniereConnnexionDate;
+
+    @Column(name = "attempts", nullable = false)
+    private int attempts=0;
+
+    public Instant getDerniereConnnexionDate() {
+        return derniereConnnexionDate;
+    }
+
+    public void setDerniereConnnexionDate(Instant derniereConnnexionDate) {
+        this.derniereConnnexionDate = derniereConnnexionDate;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
 
     public AccountB2CDTO numero(String numero) {
         this.numero = numero;

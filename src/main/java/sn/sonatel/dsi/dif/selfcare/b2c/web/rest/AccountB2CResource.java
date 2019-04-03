@@ -89,6 +89,8 @@ public class AccountB2CResource {
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImageProfil(accountB2C.getImageProfil());
+        b2C.setAttempts(accountB2C.getAttempts());
+        b2C.setDerniereConnnexionDate(accountB2C.getDerniereConnnexionDate());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -177,6 +179,8 @@ public class AccountB2CResource {
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImageProfil(accountB2C.getImageProfil());
+        b2C.setAttempts(accountB2C.getAttempts());
+        b2C.setDerniereConnnexionDate(accountB2C.getDerniereConnnexionDate());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.ok()
