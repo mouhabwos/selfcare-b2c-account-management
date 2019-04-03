@@ -1,10 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
-import java.net.InetSocketAddress;
-import java.util.Iterator;
-
-import io.github.jhipster.config.JHipsterProperties;
-
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -15,6 +10,7 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.filter.EvaluatorFilter;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.spi.FilterReply;
+import io.github.jhipster.config.JHipsterProperties;
 import net.logstash.logback.appender.LogstashTcpSocketAppender;
 import net.logstash.logback.encoder.LogstashEncoder;
 import net.logstash.logback.stacktrace.ShortenedThrowableConverter;
@@ -24,6 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.InetSocketAddress;
+import java.util.Iterator;
+
 @Configuration
 @RefreshScope
 public class LoggingConfiguration {
@@ -32,96 +31,91 @@ public class LoggingConfiguration {
 
     private static final String ASYNC_LOGSTASH_APPENDER_NAME = "ASYNC_LOGSTASH";
 
-    private final Logger log = LoggerFactory.getLogger(LoggingConfiguration.class);
-
-    private LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-
+    private final Logger log = LoggerFactory.getLogger ( LoggingConfiguration.class );
     private final String appName;
-
     private final String serverPort;
-
     private final String version;
-
     private final JHipsterProperties jHipsterProperties;
+    private LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory ();
 
     public LoggingConfiguration(@Value("${spring.application.name}") String appName, @Value("${server.port}") String serverPort,
-         @Value("${info.project.version:}") String version, JHipsterProperties jHipsterProperties) {
+                                @Value("${info.project.version:}") String version, JHipsterProperties jHipsterProperties) {
         this.appName = appName;
         this.serverPort = serverPort;
         this.version = version;
         this.jHipsterProperties = jHipsterProperties;
-        if (jHipsterProperties.getLogging().getLogstash().isEnabled()) {
-            addLogstashAppender(context);
-            addContextListener(context);
+        if (jHipsterProperties.getLogging ().getLogstash ().isEnabled ()) {
+            addLogstashAppender ( context );
+            addContextListener ( context );
         }
-        if (jHipsterProperties.getMetrics().getLogs().isEnabled()) {
-            setMetricsMarkerLogbackFilter(context);
+        if (jHipsterProperties.getMetrics ().getLogs ().isEnabled ()) {
+            setMetricsMarkerLogbackFilter ( context );
         }
     }
 
     private void addContextListener(LoggerContext context) {
-        LogbackLoggerContextListener loggerContextListener = new LogbackLoggerContextListener();
-        loggerContextListener.setContext(context);
-        context.addListener(loggerContextListener);
+        LogbackLoggerContextListener loggerContextListener = new LogbackLoggerContextListener ();
+        loggerContextListener.setContext ( context );
+        context.addListener ( loggerContextListener );
     }
 
     private void addLogstashAppender(LoggerContext context) {
-        log.info("Initializing Logstash logging");
+        log.info ( "Initializing Logstash logging" );
 
-        LogstashTcpSocketAppender logstashAppender = new LogstashTcpSocketAppender();
-        logstashAppender.setName(LOGSTASH_APPENDER_NAME);
-        logstashAppender.setContext(context);
+        LogstashTcpSocketAppender logstashAppender = new LogstashTcpSocketAppender ();
+        logstashAppender.setName ( LOGSTASH_APPENDER_NAME );
+        logstashAppender.setContext ( context );
         String optionalFields = "";
         String customFields = "{\"app_name\":\"" + appName + "\",\"app_port\":\"" + serverPort + "\"," +
             optionalFields + "\"version\":\"" + version + "\"}";
 
         // More documentation is available at: https://github.com/logstash/logstash-logback-encoder
-        LogstashEncoder logstashEncoder = new LogstashEncoder();
+        LogstashEncoder logstashEncoder = new LogstashEncoder ();
         // Set the Logstash appender config from JHipster properties
-        logstashEncoder.setCustomFields(customFields);
+        logstashEncoder.setCustomFields ( customFields );
         // Set the Logstash appender config from JHipster properties
-        logstashAppender.addDestinations(new InetSocketAddress(jHipsterProperties.getLogging().getLogstash().getHost(), jHipsterProperties.getLogging().getLogstash().getPort()));
+        logstashAppender.addDestinations ( new InetSocketAddress ( jHipsterProperties.getLogging ().getLogstash ().getHost (), jHipsterProperties.getLogging ().getLogstash ().getPort () ) );
 
-        ShortenedThrowableConverter throwableConverter = new ShortenedThrowableConverter();
-        throwableConverter.setRootCauseFirst(true);
-        logstashEncoder.setThrowableConverter(throwableConverter);
-        logstashEncoder.setCustomFields(customFields);
+        ShortenedThrowableConverter throwableConverter = new ShortenedThrowableConverter ();
+        throwableConverter.setRootCauseFirst ( true );
+        logstashEncoder.setThrowableConverter ( throwableConverter );
+        logstashEncoder.setCustomFields ( customFields );
 
-        logstashAppender.setEncoder(logstashEncoder);
-        logstashAppender.start();
+        logstashAppender.setEncoder ( logstashEncoder );
+        logstashAppender.start ();
 
         // Wrap the appender in an Async appender for performance
-        AsyncAppender asyncLogstashAppender = new AsyncAppender();
-        asyncLogstashAppender.setContext(context);
-        asyncLogstashAppender.setName(ASYNC_LOGSTASH_APPENDER_NAME);
-        asyncLogstashAppender.setQueueSize(jHipsterProperties.getLogging().getLogstash().getQueueSize());
-        asyncLogstashAppender.addAppender(logstashAppender);
-        asyncLogstashAppender.start();
+        AsyncAppender asyncLogstashAppender = new AsyncAppender ();
+        asyncLogstashAppender.setContext ( context );
+        asyncLogstashAppender.setName ( ASYNC_LOGSTASH_APPENDER_NAME );
+        asyncLogstashAppender.setQueueSize ( jHipsterProperties.getLogging ().getLogstash ().getQueueSize () );
+        asyncLogstashAppender.addAppender ( logstashAppender );
+        asyncLogstashAppender.start ();
 
-        context.getLogger("ROOT").addAppender(asyncLogstashAppender);
+        context.getLogger ( "ROOT" ).addAppender ( asyncLogstashAppender );
     }
 
     // Configure a log filter to remove "metrics" logs from all appenders except the "LOGSTASH" appender
     private void setMetricsMarkerLogbackFilter(LoggerContext context) {
-        log.info("Filtering metrics logs from all appenders except the {} appender", LOGSTASH_APPENDER_NAME);
-        OnMarkerEvaluator onMarkerMetricsEvaluator = new OnMarkerEvaluator();
-        onMarkerMetricsEvaluator.setContext(context);
-        onMarkerMetricsEvaluator.addMarker("metrics");
-        onMarkerMetricsEvaluator.start();
-        EvaluatorFilter<ILoggingEvent> metricsFilter = new EvaluatorFilter<>();
-        metricsFilter.setContext(context);
-        metricsFilter.setEvaluator(onMarkerMetricsEvaluator);
-        metricsFilter.setOnMatch(FilterReply.DENY);
-        metricsFilter.start();
+        log.info ( "Filtering metrics logs from all appenders except the {} appender", LOGSTASH_APPENDER_NAME );
+        OnMarkerEvaluator onMarkerMetricsEvaluator = new OnMarkerEvaluator ();
+        onMarkerMetricsEvaluator.setContext ( context );
+        onMarkerMetricsEvaluator.addMarker ( "metrics" );
+        onMarkerMetricsEvaluator.start ();
+        EvaluatorFilter<ILoggingEvent> metricsFilter = new EvaluatorFilter<> ();
+        metricsFilter.setContext ( context );
+        metricsFilter.setEvaluator ( onMarkerMetricsEvaluator );
+        metricsFilter.setOnMatch ( FilterReply.DENY );
+        metricsFilter.start ();
 
-        for (ch.qos.logback.classic.Logger logger : context.getLoggerList()) {
-            for (Iterator<Appender<ILoggingEvent>> it = logger.iteratorForAppenders(); it.hasNext();) {
-                Appender<ILoggingEvent> appender = it.next();
-                if (!appender.getName().equals(ASYNC_LOGSTASH_APPENDER_NAME)) {
-                    log.debug("Filter metrics logs from the {} appender", appender.getName());
-                    appender.setContext(context);
-                    appender.addFilter(metricsFilter);
-                    appender.start();
+        for (ch.qos.logback.classic.Logger logger : context.getLoggerList ()) {
+            for (Iterator<Appender<ILoggingEvent>> it = logger.iteratorForAppenders (); it.hasNext (); ) {
+                Appender<ILoggingEvent> appender = it.next ();
+                if (!appender.getName ().equals ( ASYNC_LOGSTASH_APPENDER_NAME )) {
+                    log.debug ( "Filter metrics logs from the {} appender", appender.getName () );
+                    appender.setContext ( context );
+                    appender.addFilter ( metricsFilter );
+                    appender.start ();
                 }
             }
         }
@@ -141,12 +135,12 @@ public class LoggingConfiguration {
 
         @Override
         public void onStart(LoggerContext context) {
-            addLogstashAppender(context);
+            addLogstashAppender ( context );
         }
 
         @Override
         public void onReset(LoggerContext context) {
-            addLogstashAppender(context);
+            addLogstashAppender ( context );
         }
 
         @Override
