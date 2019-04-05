@@ -22,11 +22,11 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: 10.137.52.10 #@eureka.instance.dev.hostname@
-        hostname: 10.137.52.10 #@eureka.instance.dev.hostname@
+        ip-address: localhost #10.137.52.32 #@eureka.instance.dev.hostname@
+        hostname: localhost #10.137.52.32 #@eureka.instance.dev.hostname@ 10.137.52.11
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/ #10.137.52.11:8760
+            defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 spring:
     profiles:
@@ -46,7 +46,7 @@ spring:
         type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:mysql://localhost:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password: #digitalfactory 10.137.52.11:3305
+        password: #digitalfactory #10.137.52.11:3305
         hikari:
             auto-commit: false
             data-source-properties:
@@ -155,12 +155,3 @@ oauth2:
 application:
     max-attempts: 4
     authentication-authorisation-user-server-host: http://selfcare-uaa
-    #recaptcha-secret: 6LcPenUUAAAAAE681MCwmpHL4KNzRol5uVEYUWBU
-    #ecaptcha-verify-url: https://www.google.com/recaptcha/api/siteverify
-   #dossierjasper: /tmp/selfcare/jasper-file
-    # base-url-admin: http://10.137.52.10:8704
-    #email-admin: bouya.KANDE@orange-sonatel.com
-    #max-attempts: 3
-    #test-email: VieuxMamadou.KASSE@orange-sonatel.com
-    #test-username: VieuxMamadou.KASSE@orange-sonatel.com
-#test-password: Passer12

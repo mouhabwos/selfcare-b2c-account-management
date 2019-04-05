@@ -44,6 +44,10 @@ public final class Constants {
 
     public static final String EMAIL_SERVICE_CLIENT = "bouyakandee@gmail.com";
 
+    public static final long MAX_DELAY_TO_TRY_CONNEXION = 300;
+
+    public static final int getMaxAttempts = 4;
+
     private Constants() {
 
         //Default constructor

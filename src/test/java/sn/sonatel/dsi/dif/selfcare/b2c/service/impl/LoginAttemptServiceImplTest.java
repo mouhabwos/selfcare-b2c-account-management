@@ -1,0 +1,114 @@
+package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
+
+import javax.persistence.EntityManager;
+import java.time.ZonedDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
+public class LoginAttemptServiceImplTest {
+
+    private static final String DEFAULT_USERNAME = "781326617";
+    private static final String DEFAULT_USERNAME2 = "781301010";
+
+    private LoginAttemptServiceImpl loginAttemptService;
+
+    private AccountB2C accountB2C;
+
+    @Mock
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private AccountB2CRepository b2CRepository;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
+    @Autowired
+    private EntityManager em;
+
+    private void createEntity() {
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(DEFAULT_USERNAME);
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test77@gmail.com");
+        accountB2C.setImageProfil("image");
+        b2CRepository.save(accountB2C);
+
+    }
+
+    private void createEntity2() {
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(DEFAULT_USERNAME2);
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test70@gmail.com");
+        accountB2C.setImageProfil("image");
+        accountB2C.setDerniereConnnexionDate(ZonedDateTime.now());
+        accountB2C.setAttempts(0);
+        b2CRepository.save(accountB2C);
+
+    }
+
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        loginAttemptService = new LoginAttemptServiceImpl(restTemplate, b2CRepository, applicationProperties);
+
+    }
+
+
+
+    @Test
+    public void loginSucceeded() throws AccountB2CException {
+
+        createEntity2();
+        loginAttemptService.loginSucceeded(DEFAULT_USERNAME);
+    }
+
+    @Test
+    public void loginFailedIsBlocked() throws AccountB2CException {
+        createEntity2();
+        for (int i=0; i<=4; i++){
+
+            loginAttemptService.loginFailed(DEFAULT_USERNAME);
+
+        }
+
+    }
+
+
+
+
+
+    @Test
+    public void isBlocked() {
+        createEntity();
+        boolean  check = loginAttemptService.isBlocked(DEFAULT_USERNAME);
+
+    }
+}
