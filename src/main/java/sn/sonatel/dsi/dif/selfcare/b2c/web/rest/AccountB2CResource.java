@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -27,6 +28,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
@@ -67,13 +69,8 @@ public class AccountB2CResource {
         this.dowloadManager = dowloadManager;
     }
 
-    /**
-     * POST  /account-b-2-cs : Create a new accountB2C.
-     *
-     * @param accountB2C the accountB2C to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new accountB2C, or with status 400 (Bad Request) if the accountB2C has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
+
+    @Auditable(description = Message.Account.ADD)
     @PostMapping("/account-b-2-cs")
     public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to save AccountB2C : {}", accountB2C);
@@ -88,7 +85,7 @@ public class AccountB2CResource {
 
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImageProfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -96,13 +93,7 @@ public class AccountB2CResource {
             .body(result);
     }
 
-    /**
-     * POST  /account-b-2-cs/register : Create a new accountB2C.
-     *
-     * @param managedUserVM the accountB2C to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new accountB2C, or with status 400 (Bad Request) if the accountB2C has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
+    @Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
 
@@ -137,6 +128,7 @@ public class AccountB2CResource {
                 account.setFirstName(managedUserVM.getFirstName());
                 account.setLastName(managedUserVM.getLastName());
                 account.setImageProfil(managedUserVM.getImageprofil());
+                account.setEmail(managedUserVM.getEmail());
                 result = accountB2CRepository.save(account);
                 mailService.sendActivationEmail(result);
             }
@@ -154,15 +146,8 @@ public class AccountB2CResource {
             .body(result);
     }
 
-    /**
-     * PUT  /account-b-2-cs : Updates an existing accountB2C.
-     *
-     * @param accountB2C the accountB2C to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated accountB2C,
-     * or with status 400 (Bad Request) if the accountB2C is not valid,
-     * or with status 500 (Internal Server Error) if the accountB2C couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
+
+    @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
@@ -175,7 +160,7 @@ public class AccountB2CResource {
         b2C.setEmail(accountB2C.getEmail());
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
-        b2C.setImageProfil(accountB2C.getImagePrfil());
+        b2C.setImageProfil(accountB2C.getImageProfil());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.ok()
@@ -183,12 +168,8 @@ public class AccountB2CResource {
             .body(result);
     }
 
-    /**
-     * GET  /account-b-2-cs : get all the accountB2CS.
-     *
-     * @param pageable the pagination information
-     * @return the ResponseEntity with status 200 (OK) and the list of accountB2CS in body
-     */
+
+    @Auditable(description = Message.Account.LIST)
     @GetMapping("/account-b-2-cs")
     public ResponseEntity<List<AccountB2C>> getAllAccountB2CS(Pageable pageable) {
         log.debug("REST request to get a page of AccountB2CS");
@@ -197,12 +178,8 @@ public class AccountB2CResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * GET  /account-b-2-cs/:id : get the "id" accountB2C.
-     *
-     * @param id the id of the accountB2C to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the accountB2C, or with status 404 (Not Found)
-     */
+
+    @Auditable(description = Message.Account.LIST_BY_ID)
     @GetMapping("/account-b-2-cs/{id}")
     public ResponseEntity<AccountB2C> getAccountB2C(@PathVariable Long id) {
         log.debug("REST request to get AccountB2C : {}", id);
@@ -210,12 +187,7 @@ public class AccountB2CResource {
         return ResponseUtil.wrapOrNotFound(accountB2C);
     }
 
-    /**
-     * DELETE  /account-b-2-cs/:id : delete the "id" accountB2C.
-     *
-     * @param id the id of the accountB2C to delete
-     * @return the ResponseEntity with status 200 (OK)
-     */
+    @Auditable(description = Message.Account.DELETE)
     @DeleteMapping("/account-b-2-cs/{id}")
     public ResponseEntity<Void> deleteAccountB2C(@PathVariable Long id) {
         log.debug("REST request to delete AccountB2C : {}", id);
@@ -224,7 +196,7 @@ public class AccountB2CResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
-
+    @Auditable(description = Message.Account.CHECK_Numero)
     @GetMapping("/check_number/{msisdn}")
     public ResponseEntity checkNumber(@PathVariable String msisdn) {
         msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
@@ -241,7 +213,7 @@ public class AccountB2CResource {
         return ResponseEntity.ok().build();
     }
 
-
+    @Auditable(description = Message.Account.CHECK_Email)
     @PostMapping("/email-already-exist")
     @Timed
     public boolean emailExistingVerify(@Valid @RequestBody EmailExistDTO email) {
@@ -257,6 +229,8 @@ public class AccountB2CResource {
         return false;
     }
 
+
+    @Auditable(description = Message.Account.Authent)
     @GetMapping("/account/{login}")
     @Timed
     public AccountB2C getAccount(@PathVariable String login) {
@@ -287,8 +261,10 @@ public class AccountB2CResource {
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
         b2C = dowloadManager.addResources(b2C);
-            mailService.sendEmailFromServiceClient(b2C);
+          mailService.sendEmailFromServiceClient(b2C);
 
     }
+
+
 
 }

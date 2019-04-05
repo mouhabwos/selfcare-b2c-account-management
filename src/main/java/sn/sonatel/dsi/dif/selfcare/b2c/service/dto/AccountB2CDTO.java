@@ -7,7 +7,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,12 +38,12 @@ public class AccountB2CDTO {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "image_prfil")
-    private String imagePrfil;
+    @Column(name = "image_profil")
+    private String imageProfil;
 
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<RattachementLigne> users = new HashSet<>();
+    private Set<RattachementLigne> users = new HashSet<> ();
 
 
     public AccountB2CDTO numero(String numero) {
@@ -63,8 +66,8 @@ public class AccountB2CDTO {
         return this;
     }
 
-    public AccountB2CDTO imagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
+    public AccountB2CDTO imageProfil(String imageProfil) {
+        this.imageProfil = imageProfil;
         return this;
     }
 
@@ -109,12 +112,12 @@ public class AccountB2CDTO {
         this.email = email;
     }
 
-    public String getImagePrfil() {
-        return imagePrfil;
+    public String getImageProfil() {
+        return imageProfil;
     }
 
-    public void setImagePrfil(String imagePrfil) {
-        this.imagePrfil = imagePrfil;
+    public void setImageProfil(String imageProfil) {
+        this.imageProfil = imageProfil;
     }
 
     public Set<RattachementLigne> getUsers() {

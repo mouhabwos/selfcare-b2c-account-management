@@ -322,11 +322,13 @@
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-netty</artifactId>
             <version>3.10.8</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-client-java</artifactId>
             <version>3.10.8</version>
+            <scope>test</scope>
         </dependency>
         <!--<dependency>
             <groupId>org.springframework.boot</groupId>
@@ -800,7 +802,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -830,6 +832,7 @@
             </properties>
         </profile>
         <profile>
+<<<<<<< HEAD
             <id>vm</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -862,6 +865,8 @@
             </properties>
         </profile>
         <profile>
+=======
+>>>>>>> cbfdffdf793088c4abe92f01155bd8bb088594e1
             <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -876,6 +881,7 @@
                     <artifactId>spring-boot-devtools</artifactId>
                     <optional>true</optional>
                 </dependency>
+
             </dependencies>
             <build>
                 <plugins>
@@ -1044,7 +1050,7 @@
                 <spring.profiles.active>prod${profile.swagger}${profile.no-liquibase}</spring.profiles.active>
             </properties>
         </profile>
-        <!-- profile>
+        <profile>
             <id>vm</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -1076,7 +1082,7 @@
 
                 <spring.profiles.active>vm${profile.tls}${profile.no-liquibase}</spring.profiles.active>
             </properties>
-        </profile -->
+        </profile>
 
         <profile>
             <!--
