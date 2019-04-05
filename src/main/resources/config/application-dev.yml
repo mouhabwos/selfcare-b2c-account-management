@@ -22,11 +22,11 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: 10.137.52.10 #@eureka.instance.dev.hostname@
-        hostname: 10.137.52.10 #@eureka.instance.dev.hostname@
+        ip-address: @eureka.instance.dev.hostname@
+        hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.100.97.175:8761/eureka/
 
 spring:
     profiles:
@@ -44,9 +44,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://localhost:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password: digitalfactory
+        password: Selfcare@2019
         hikari:
             auto-commit: false
             data-source-properties:

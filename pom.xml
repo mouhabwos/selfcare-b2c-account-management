@@ -46,7 +46,8 @@
 
         <!-- Docker compliance port range allocation -->
         <server.port.docker.expose>8715</server.port.docker.expose>
-        <eureka.instance.dev.hostname>10.137.52.10</eureka.instance.dev.hostname>
+        <eureka.instance.vm.hostname>10.100.97.175</eureka.instance.vm.hostname>
+        <eureka.instance.dev.hostname>10.100.97.175</eureka.instance.dev.hostname>
         <eureka.instance.rec.hostname>10.137.52.12</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
 
@@ -857,7 +858,7 @@
             </build>
             <properties>
                 <!-- default Spring profiles -->
-                <spring.profiles.active>dev${profile.tls}</spring.profiles.active>
+                <spring.profiles.active>vm${profile.tls}</spring.profiles.active>
             </properties>
         </profile>
         <profile>
