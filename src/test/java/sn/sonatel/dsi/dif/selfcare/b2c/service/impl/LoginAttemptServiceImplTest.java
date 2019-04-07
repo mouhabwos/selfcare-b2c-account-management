@@ -30,12 +30,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
 public class LoginAttemptServiceImplTest {
 
-    private static final String DEFAULT_USERNAME = "781326617";
-    private static final String DEFAULT_USERNAME2 = "781301010";
+    private static final String DEFAULT_USERNAME = "781320607";
+    private static final String DEFAULT_USERNAME2 = "781300101";
 
     private LoginAttemptServiceImpl loginAttemptService;
-
-    private AccountB2C accountB2C;
 
     @Mock
     private RestTemplate restTemplate;
@@ -43,18 +41,15 @@ public class LoginAttemptServiceImplTest {
     @Autowired
     private AccountB2CRepository b2CRepository;
 
-    @Autowired
+    @Mock
     private ApplicationProperties applicationProperties;
 
-    @Autowired
-    private EntityManager em;
-
-    private void createEntity() {
+    private void createEntity4() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setNumero(DEFAULT_USERNAME);
         accountB2C.setFirstName("test");
         accountB2C.setLastName("test");
-        accountB2C.setEmail("test77@gmail.com");
+        accountB2C.setEmail("test07@gmail.com");
         accountB2C.setImageProfil("image");
         b2CRepository.save(accountB2C);
 
@@ -73,6 +68,19 @@ public class LoginAttemptServiceImplTest {
 
     }
 
+    private void createEntity3() {
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("789009090");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test90@gmail.com");
+        accountB2C.setImageProfil("image");
+        accountB2C.setDerniereConnnexionDate(ZonedDateTime.now());
+        accountB2C.setAttempts(0);
+        b2CRepository.save(accountB2C);
+
+    }
+
 
     @Before
     public void setUp() throws Exception {
@@ -81,18 +89,16 @@ public class LoginAttemptServiceImplTest {
 
     }
 
-
-
     @Test
     public void loginSucceeded() throws AccountB2CException {
 
         createEntity2();
-        loginAttemptService.loginSucceeded(DEFAULT_USERNAME);
+        loginAttemptService.loginSucceeded(DEFAULT_USERNAME2);
     }
 
     @Test
     public void loginFailedIsBlocked() throws AccountB2CException {
-        createEntity2();
+    createEntity4();
         for (int i=0; i<=4; i++){
 
             loginAttemptService.loginFailed(DEFAULT_USERNAME);
@@ -101,14 +107,12 @@ public class LoginAttemptServiceImplTest {
 
     }
 
-
-
-
-
     @Test
     public void isBlocked() {
-        createEntity();
-        boolean  check = loginAttemptService.isBlocked(DEFAULT_USERNAME);
+        createEntity3();
+        boolean  check = loginAttemptService.isBlocked("789009090");
+
+        assertThat(check).isEqualTo(false);
 
     }
 }
