@@ -1,7 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
@@ -11,6 +16,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
@@ -35,6 +41,8 @@ import java.util.List;
 import java.util.Optional;
 
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -44,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 /**
  * Test class for the RattachementLigneResource REST controller.
@@ -99,14 +108,15 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     @Qualifier("loadBalancedRestTemplate")
     private RestTemplate restTemplate;
-    @Autowired
+    @Mock
     private SelfcareSoapService selfcareSoapService;
 
+    private RattachementLigneResource rattachementLigneResource;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RattachementLigneResource rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, selfcareSoapService);
+        rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, selfcareSoapService);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -553,6 +563,20 @@ public class RattachementLigneResourceIntTest {
             .andExpect(status().isCreated());
 
 
+    }
+
+    @Test
+    public void getSouscription() {
+
+        SouscriptionDto dto = new SouscriptionDto();
+        dto.setNomOffre("Diamano Allo");
+        dto.setProfil("PREPAID");
+
+      //  when(rattachementLigneResource.getSouscription(Mockito.any())).thenReturn(dto);
+
+        SouscriptionDto entity = rattachementLigneResource.getSouscription("774505050");
+
+        //assertTrue(entity.equals(dto));
     }
 
 

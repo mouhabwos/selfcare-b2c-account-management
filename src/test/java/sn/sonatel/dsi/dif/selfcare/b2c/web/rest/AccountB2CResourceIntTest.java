@@ -4,12 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +39,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
@@ -169,6 +173,28 @@ public class AccountB2CResourceIntTest {
         assertThat(testAccountB2C.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
         assertThat(testAccountB2C.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testAccountB2C.getImageProfil()).isEqualTo(DEFAULT_IMAGE_PRFIL);
+
+    }
+
+    @Test
+    @Transactional
+    public void createAccountB2CMock() throws Exception {
+        int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
+
+        AccountB2CDTO b2C = new AccountB2CDTO();
+        b2C.setNumero(accountB2C.getNumero());
+        b2C.setEmail(accountB2C.getEmail());
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setImageProfil(accountB2C.getImageProfil());
+        ResponseEntity<AccountB2C>  response = ResponseEntity.status(HttpStatus.CREATED).build();
+        when(accountB2CResource.registerAccountB2C(Mockito.any())).thenReturn(response);
+        // Create the AccountB2C
+        restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(b2C)))
+            .andExpect(status().isCreated());
+
 
     }
 
@@ -517,16 +543,11 @@ public class AccountB2CResourceIntTest {
         account.setFirstName(b2C.getFirstName());
         account.setLastName(b2C.getLastName());
         account.setImageProfil(b2C.getImageprofil());
-/*
+       // ResponseEntity<AccountB2C>  response = ResponseEntity.status(HttpStatus.CREATED).body(account);
+       // when(accountB2CResource.registerAccountB2C(Mockito.any())).thenReturn(response);
+        // Create the AccountB2C
 
-        when(accountB2CResource.registerAccountB2C(b2C).getBody()).thenReturn(account);
-        assertThat(account.getNumero()).isEqualTo(b2C.getLogin());
-        assertThat(account.getFirstName()).isEqualTo(b2C.getFirstName());
-        assertThat(account.getLastName()).isEqualTo(b2C.getLastName());
-        assertThat(account.getEmail()).isEqualTo(b2C.getEmail());
-        assertThat(account.getImageProfil()).isEqualTo(b2C.getImageprofil());
-*/
-      /*  restAccountB2CMockMvc.perform(post("/api/account-management/register")
+       /*restAccountB2CMockMvc.perform(post("/api/account-management/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
             .andExpect(status().isCreated());*/
