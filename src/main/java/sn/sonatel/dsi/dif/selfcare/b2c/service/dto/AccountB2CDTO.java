@@ -11,6 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +46,27 @@ public class AccountB2CDTO {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<> ();
 
+    @Column(name = "derniere_connnexion_date", nullable = true)
+    private ZonedDateTime derniereConnnexionDate;
+
+    @Column(name = "attempts", nullable = false)
+    private int attempts=0;
+
+    public ZonedDateTime getDerniereConnnexionDate() {
+        return derniereConnnexionDate;
+    }
+
+    public void setDerniereConnnexionDate(ZonedDateTime derniereConnnexionDate) {
+        this.derniereConnnexionDate = derniereConnnexionDate;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
 
     public AccountB2CDTO numero(String numero) {
         this.numero = numero;

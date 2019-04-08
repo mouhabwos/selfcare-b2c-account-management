@@ -71,15 +71,6 @@ public class AuditInterceptor {
 
         Object result = joinPoint.proceed ();
         try {
-           /* final String methodName = joinPoint.getSignature().getName();
-            final MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-            Method method = methodSignature.getMethod();
-            method = joinPoint.getTarget().getClass()
-                    .getDeclaredMethod(methodName, method.getParameterTypes());
-            Auditable annotation = method.getAnnotation(Auditable.class);
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            String ipAddress = "";
-             String browser = "";*/
             if (request != null) {
                 browser = request.getHeader ( "User-Agent" );
                 ipAddress = request.getHeader ( "X-FORWARDED-FOR" );
