@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.Scope;
 
 import javax.validation.constraints.*;
 import java.util.Set;
@@ -50,6 +51,8 @@ public class UserDTO extends Same {
 	private Set<String> authorities;
 
 	private String imageprofil;
+
+    private Scope scope = Scope.B2C;
 
     public UserDTO login(String login) {
         this.login = login;
@@ -121,7 +124,15 @@ public class UserDTO extends Same {
 		this.imageprofil = imageprofil;
 	}
 
-	public String toString() {
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
+    public String toString() {
 		return "UserDTO{" + "login='" + login + '\'' + ", firstName='" + firstName + '\''
 				+ ", lastName='" + lastName + '\'' + ", email='" + email + '\''
 				+ ", imageUrl='" + imageUrl + '\'' + ", activated=" + activated

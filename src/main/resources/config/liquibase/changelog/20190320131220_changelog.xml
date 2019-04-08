@@ -14,7 +14,7 @@
     </changeSet>
     <changeSet author="BOUYA KANDE (generated)" id="1553087561195-3">
         <addColumn tableName="account_b_2_c">
-            <column name="derniere_connnexion_date" type="tinyblob"/>
+            <column name="derniere_connnexion_date" type="datetime"/>
         </addColumn>
     </changeSet>
     <changeSet author="BOUYA KANDE (generated)" id="1553087561195-4">
