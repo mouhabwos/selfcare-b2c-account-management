@@ -5,6 +5,6 @@ public class LigneAlreadyRattachedException extends BadRequestAlertException {
     private static final long serialVersionUID = 1L;
 
     public LigneAlreadyRattachedException() {
-        super("Ce numéro est rattaché à un compte", "userManagement", "userRattached");
+        super ( "Ce numéro est rattaché à un compte", "userManagement", "userRattached" );
     }
 }

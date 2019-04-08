@@ -7,6 +7,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.*;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -42,7 +46,7 @@ public class AccountB2CDTO {
 
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<RattachementLigne> users = new HashSet<>();
+    private Set<RattachementLigne> users = new HashSet<> ();
 
     @Column(name = "derniere_connnexion_date", nullable = true)
     private ZonedDateTime derniereConnnexionDate;

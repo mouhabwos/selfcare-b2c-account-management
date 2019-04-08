@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +23,8 @@ import java.util.Optional;
 @Service
 public class LoginAttemptServiceImpl implements LoginAttemptService {
 
+    private final Logger log = LoggerFactory.getLogger(LoginAttemptServiceImpl.class);
+
     @Qualifier("loadBalancedRestTemplate")
     private final RestTemplate restTemplate;
 
@@ -37,6 +41,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     @Override
     public void loginSucceeded(String username) throws AccountB2CException {
 
+        log.debug("######################## Authentication Success ######################### " );
         Optional<AccountB2C> accountB2C= b2CRepository.findOneByNumero(username);
 
         if (accountB2C.isPresent()){
@@ -49,6 +54,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     @Override
     public void loginFailed(String username) throws AccountB2CException {
 
+        log.debug("@@@@@@@@@@@@@@@@@@@@@@@@@ Authentication Failure @@@@@@@@@@@@@@@@@@@@@@@@@ " );
         Optional<AccountB2C> accountB2C= b2CRepository.findOneByNumero(username);
 
 
@@ -78,7 +84,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
 
         }
-        if (isBlocked(username) ){
+       if (isBlocked(username) ){
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
             requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 public class FormatNumberPhoneUtilTest {
 
@@ -21,32 +20,32 @@ public class FormatNumberPhoneUtilTest {
     @Test
     public void getNumberFormatStart221() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat(NUMERO221);
-        assertThat(msisdn).isEqualTo("775622323");
+        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( NUMERO221 );
+        assertThat ( msisdn ).isEqualTo ( "775622323" );
 
     }
 
     @Test
     public void getNumberFormatStart00221() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat(NUMERO00221);
-        assertThat(msisdn).isEqualTo("775622323");
+        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( NUMERO00221 );
+        assertThat ( msisdn ).isEqualTo ( "775622323" );
 
     }
 
     @Test
     public void getNumberFormatStartPlus221() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat(NUMEROPLUS221);
-        assertThat(msisdn).isEqualTo("775622323");
+        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( NUMEROPLUS221 );
+        assertThat ( msisdn ).isEqualTo ( "775622323" );
 
     }
 
     @Test
     public void getNumberFormatWithNull() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat(null);
-        assertThat(msisdn).isEqualTo("");
+        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( null );
+        assertThat ( msisdn ).isEqualTo ( "" );
 
     }
 }
