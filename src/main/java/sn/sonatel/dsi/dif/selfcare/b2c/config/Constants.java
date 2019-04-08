@@ -42,7 +42,7 @@ public final class Constants {
 
     public static final String GET_FORMULE_BY_MSISDN = "/api/soap/achats/formules/";
 
-    public static final String EMAIL_SERVICE_CLIENT = "bouyakandee@gmail.com";
+    public static final String EMAIL_SERVICE_CLIENT = "vieuxmamadou.kasse@orange-sonatel.com";
 
     public static final long MAX_DELAY_TO_TRY_CONNEXION = 300;
 
