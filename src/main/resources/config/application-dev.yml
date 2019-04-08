@@ -85,7 +85,7 @@ spring:
                 enabled: true
 
 server:
-    port: 8715 #@server.port.docker.expose@
+    port: @server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties
@@ -152,3 +152,6 @@ oauth2:
 # ===================================================================
 
 # application:
+application:
+    max-attempts: 4
+    authentication-authorisation-user-server-host: http://selfcare-uaa
