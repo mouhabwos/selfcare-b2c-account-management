@@ -5,13 +5,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p th:text="#{email.activation.greeting(${user.lastName})}">
+<p th:text="#{email.activation.greeting(${user.firstName})}">
     Cher
 </p>
 <p th:text="#{email.activation.text1}">
     Votre compte sur Selfcare a été créé, pour l'activer merci de cliquer sur le lien ci-dessous :
 </p>
-
+<p>
+    <a th:href="@{|${baseUrl}/#/activate-email;key=${user.activationKey}|}"
+       th:text="@{|${baseUrl}/#/activate-email;key=${user.activationKey}|}">Activation Link</a>
+</p>
 <p>
     <span th:text="#{email.activation.text2}">Cordialement, </span>
     <br/>
