@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcare-b2c-account-management</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -32,7 +32,7 @@
     <scm>
         <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</connection>
         <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</developerConnection>
-        <tag>v0.0.1</tag>
+        <tag>v0.0.3</tag>
         <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</url>
     </scm>
 
@@ -664,7 +664,7 @@
                     <url>jdbc:mysql://localhost:3306/selfcare_b2c_account_management</url>
                     <defaultSchemaName>selfcare_b2c_account_management</defaultSchemaName>
                     <username>root</username>
-                    <password></password>
+                    <password />
                     <referenceUrl>hibernate:spring:sn.sonatel.dsi.dif.selfcare.b2c.domain?dialect=org.hibernate.dialect.MySQL5InnoDBDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                     <verbose>true</verbose>
                     <logging>debug</logging>
