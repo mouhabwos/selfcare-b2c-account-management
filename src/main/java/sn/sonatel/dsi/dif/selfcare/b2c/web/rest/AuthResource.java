@@ -47,10 +47,10 @@ public class AuthResource {
     @Auditable(description = "login failed")
     @GetMapping(value = "/login-failed/{username}")
     @Timed
-    public ResponseEntity<String> loginFailed(@PathVariable String username) throws AccountB2CException {
+    public ResponseEntity loginFailed(@PathVariable String username) throws AccountB2CException {
         log.info("logging loginFailed {}", username);
-        loginAttemptService.loginFailed(username);
-        return ResponseEntity.ok().build();
+        int attemps = loginAttemptService.loginFailed(username);
+        return ResponseEntity.ok().body(attemps+"");
     }
 
 }

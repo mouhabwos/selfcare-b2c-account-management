@@ -6,7 +6,7 @@ public interface LoginAttemptService {
 
     void loginSucceeded(String key) throws AccountB2CException;
 
-    void loginFailed(String key) throws AccountB2CException;
+    int loginFailed(String key) throws AccountB2CException;
 
     boolean isBlocked(String key) ;
 }

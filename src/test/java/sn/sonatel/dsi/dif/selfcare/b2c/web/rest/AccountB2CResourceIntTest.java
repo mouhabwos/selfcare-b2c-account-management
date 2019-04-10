@@ -546,8 +546,8 @@ public class AccountB2CResourceIntTest {
        // ResponseEntity<AccountB2C>  response = ResponseEntity.status(HttpStatus.CREATED).body(account);
        // when(accountB2CResource.registerAccountB2C(Mockito.any())).thenReturn(response);
         // Create the AccountB2C
-
-       /*restAccountB2CMockMvc.perform(post("/api/account-management/register")
+/*
+       restAccountB2CMockMvc.perform(post("/api/account-management/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
             .andExpect(status().isCreated());*/
