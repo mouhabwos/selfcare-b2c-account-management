@@ -8,8 +8,8 @@ public final class Message {
 
     public static final class Abonne {
 
-        public static final String SOUSC_USER = "Recuperation Souscription de l'abonnet";
-        public static final String INFO_ABONNE = "Affichage information de l'aboone";
+        public static final String SOUSC_USER = "Recuperation Souscription de l'abonne";
+        public static final String INFO_ABONNE = "Affichage information de l'abonne";
 
         private Abonne() {
             super ();
