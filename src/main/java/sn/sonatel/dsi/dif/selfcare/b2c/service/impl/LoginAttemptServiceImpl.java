@@ -13,6 +13,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceOTP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -32,10 +34,13 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final ApplicationProperties applicationProperties;
 
-    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties) {
+    private final ServiceOTP serviceOTP;
+
+    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, ServiceOTP serviceOTP) {
         this.restTemplate = restTemplate;
         this.b2CRepository = b2CRepository;
         this.applicationProperties = applicationProperties;
+        this.serviceOTP = serviceOTP;
     }
 
     @Override
@@ -52,13 +57,13 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     }
 
     @Override
-    public void loginFailed(String username) throws AccountB2CException {
+    public int loginFailed(String username) throws AccountB2CException {
 
         log.debug("@@@@@@@@@@@@@@@@@@@@@@@@@ Authentication Failure @@@@@@@@@@@@@@@@@@@@@@@@@ " );
         Optional<AccountB2C> accountB2C= b2CRepository.findOneByNumero(username);
+        int attemps = 2;
 
-
-        if(accountB2C.isPresent() && accountB2C.get().getAttempts() < Constants.getMaxAttempts){
+        if(accountB2C.isPresent() && accountB2C.get().getAttempts() < applicationProperties.getMaxAttempts()){
 
             if(accountB2C.get().getDerniereConnnexionDate() != null){
                 boolean check = Duration.between (accountB2C.get().getDerniereConnnexionDate(), ZonedDateTime.now ()).getSeconds() < Constants.MAX_DELAY_TO_TRY_CONNEXION;
@@ -67,6 +72,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                     accountB2C.get().setAttempts(accountB2C.get().getAttempts()+1);
                     accountB2C.get().setDerniereConnnexionDate(ZonedDateTime.now());
                     b2CRepository.save(accountB2C.get());
+                    attemps = applicationProperties.getMaxAttempts() - accountB2C.get().getAttempts();
                 }else {
 
                     accountB2C.get().setAttempts(0);
@@ -78,10 +84,9 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                 accountB2C.get().setAttempts(accountB2C.get().getAttempts()+1);
                 accountB2C.get().setDerniereConnnexionDate(ZonedDateTime.now());
                 b2CRepository.save(accountB2C.get());
+                attemps = applicationProperties.getMaxAttempts() - accountB2C.get().getAttempts();
 
             }
-
-
 
         }
        if (isBlocked(username) ){
@@ -90,7 +95,13 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
             requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/api/disable?login="+username;
             restTemplate.getForEntity(url, Object.class);
+               MessageVM messageVM = new MessageVM();
+               messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
+               messageVM.setMsisdn(username);
+               serviceOTP.generateMessage(messageVM);
+           return 0;
         }
+        return attemps;
     }
 
     @Override
@@ -98,6 +109,6 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
         Optional<AccountB2C> accountB2C= b2CRepository.findOneByNumero(username);
 
-        return ( accountB2C.isPresent()) &&(accountB2C.get().getAttempts() >= Constants.getMaxAttempts);
+        return ( accountB2C.isPresent()) &&(accountB2C.get().getAttempts() >= applicationProperties.getMaxAttempts());
     }
 }
