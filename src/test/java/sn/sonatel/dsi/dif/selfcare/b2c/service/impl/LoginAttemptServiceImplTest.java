@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
@@ -16,15 +15,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceOTP;
 
-import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
@@ -43,6 +39,9 @@ public class LoginAttemptServiceImplTest {
 
     @Mock
     private ApplicationProperties applicationProperties;
+
+    @Mock
+    private ServiceOTP serviceOTP;
 
     private void createEntity4() {
         AccountB2C accountB2C = new AccountB2C();
@@ -85,7 +84,7 @@ public class LoginAttemptServiceImplTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        loginAttemptService = new LoginAttemptServiceImpl(restTemplate, b2CRepository, applicationProperties);
+        loginAttemptService = new LoginAttemptServiceImpl(restTemplate, b2CRepository, applicationProperties, serviceOTP);
 
     }
 
@@ -99,7 +98,7 @@ public class LoginAttemptServiceImplTest {
     @Test
     public void loginFailedIsBlocked() throws AccountB2CException {
     createEntity4();
-        for (int i=0; i<=4; i++){
+        for (int i=0; i<=3; i++){
 
             loginAttemptService.loginFailed(DEFAULT_USERNAME);
 
@@ -112,7 +111,7 @@ public class LoginAttemptServiceImplTest {
         createEntity3();
         boolean  check = loginAttemptService.isBlocked("789009090");
 
-        assertThat(check).isEqualTo(false);
+        assertThat(check).isEqualTo(true);
 
     }
 }
