@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
-    <artifactId>selfcare-b2c-account-management</artifactId>
+    <artifactId>selfcareb2c-accountmanagement</artifactId>
     <version>0.0.4-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
