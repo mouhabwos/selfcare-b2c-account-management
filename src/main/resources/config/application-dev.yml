@@ -22,11 +22,10 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: 10.137.52.32 #@eureka.instance.dev.hostname@
-        hostname: 10.137.52.32 #@eureka.instance.dev.hostname@
+        ip-address: @eureka.instance.dev.hostname@
+        hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
-            #defaultZone: http://admin:${jhipster.registry.password}@10.100.97.175:8761/eureka/
             defaultZone: http://admin:${jhipster.registry.password}@10.137.52.32:8761/eureka/
 
 spring:
@@ -45,7 +44,6 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        #url: jdbc:mysql://localhost:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
         password: digitalfactory
@@ -87,7 +85,7 @@ spring:
                 enabled: true
 
 server:
-    port: 8715 #@server.port.docker.expose@
+    port: @server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties
@@ -158,7 +156,7 @@ application:
     max-attempts: 3
     authentication-authorisation-user-server-host: http://selfcare-uaa
     url-otp: http://selfcare-otp
-    message-block-user: L' accès à votre compte Orange et moi a été bloqué veuillez contacter le service client.
-    service-client-orange:  Service Client Orange
+    message-block-user: L' accès à votre compte Orange et moi a été bloqué veuillez contacter le service client
+    service-client-orange: . Service Client Orange
     lien-ibou: #https://m.me/165622776799685
 
