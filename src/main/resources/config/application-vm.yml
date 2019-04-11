@@ -47,7 +47,7 @@ spring:
         type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:mysql://localhost:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password: Selfcare@2019
+        password: Son@tel2019
         hikari:
             auto-commit: false
             data-source-properties:

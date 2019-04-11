@@ -16,6 +16,16 @@ public final class Message {
         }
     }
 
+    public static final class Authentification {
+
+        public static final String CONN_SUCC = "Connexion Réussie";
+        public static final String CONN_ERR = "Erreur de Connexion";
+
+        private Authentification() {
+            super ();
+        }
+    }
+
     public static final class AccountB2C {
 
         public static final String CREATE_ACCOUNT = "Creation d'un nouveau compte";

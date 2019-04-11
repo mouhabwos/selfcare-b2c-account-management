@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.LoginAttemptServiceImpl;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
 
 @RestController
@@ -29,7 +30,7 @@ public class AuthResource {
      * @param username
      * @throws AccountB2CException
      */
-    @Auditable(description = "login succeeded")
+    @Auditable(description = Message.Authentification.CONN_SUCC)
     @GetMapping(value = "/login-succeeded/{username}")
     @Timed
     public ResponseEntity<String> loginSuccess(@PathVariable String username) throws AccountB2CException {
@@ -44,7 +45,7 @@ public class AuthResource {
      * @param username
      * @throws AccountB2CException
      */
-    @Auditable(description = "login failed")
+    @Auditable(description = Message.Authentification.CONN_ERR)
     @GetMapping(value = "/login-failed/{username}")
     @Timed
     public ResponseEntity loginFailed(@PathVariable String username) throws AccountB2CException {
