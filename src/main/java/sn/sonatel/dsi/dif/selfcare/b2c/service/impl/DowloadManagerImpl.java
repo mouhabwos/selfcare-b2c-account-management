@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.FileNullException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.FileManagerException;
 
 @Service
 public class DowloadManagerImpl implements DowloadManager {
+
+    private static final String ENTITY_NAME = "selfcareB2CAccountManagementDowloadManagerImpl";
 
     private final ServiceFile serviceFile;
 
@@ -36,7 +38,7 @@ public class DowloadManagerImpl implements DowloadManager {
 
             return user;
         }else {
-            throw new FileNullException();
+            throw new FileManagerException("File Manager indisponible",ENTITY_NAME,"fileManager");
         }
 
 
