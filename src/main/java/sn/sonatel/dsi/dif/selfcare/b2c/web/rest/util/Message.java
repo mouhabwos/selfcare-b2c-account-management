@@ -8,8 +8,8 @@ public final class Message {
 
     public static final class Abonne {
 
-        public static final String SOUSC_USER = "Recuperation Souscription de l'abonnet";
-        public static final String INFO_ABONNE = "Affichage information de l'aboone";
+        public static final String SOUSC_USER = "Recuperation Souscription de l'abonne";
+        public static final String INFO_ABONNE = "Affichage information de l'abonne";
 
         private Abonne() {
             super ();
@@ -39,11 +39,11 @@ public final class Message {
         public static final String UPDATE = "Modification de ligne rattachée";
         public static final String LIST = "Lister les  lignes rattachées";
         public static final String LIST_BY_ID = "Lister une ligne rattachée";
-        public static final String DELETE = "Suppression d'une ligne rattachée";
+        public static final String DELETE = "Suppression de lignes rattachées de ligne mobile";
 
         public static final String DELETE_ALL = "Suppression multiple de ligne rattachée";
 
-        public static final String SAVE = "Ajout de rattachement de ligne";
+        public static final String SAVE = "Rattachement de ligne mobile";
         public static final String List_By_MSISDN = "Affichage d'une ligne rattachée";
 
         public static final String SEARCH = "Rechercher une ligne rattachée";
@@ -61,7 +61,7 @@ public final class Message {
         public static final String UPDATE = "Modification de compte";
         public static final String LIST = "Lister les  comptes créés";
         public static final String LIST_BY_ID = "Lister un compte";
-        public static final String DELETE = "Suppression d'un compte";
+        public static final String DELETE = "Suppression d'un compte utilisateur";
 
         public static final String DELETE_ALL = "Suppression multiple de ligne rattachée";
 
