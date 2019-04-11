@@ -105,7 +105,7 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private MailService mailService;
 
-    @Autowired
+    @Mock
     private DowloadManager dowloadManager;
 
     @Autowired

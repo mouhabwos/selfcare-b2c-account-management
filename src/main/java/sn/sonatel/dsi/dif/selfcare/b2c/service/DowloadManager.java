@@ -4,5 +4,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 
 public interface DowloadManager {
 
-    UserInfoOuvertureCompte addResources(UserInfoOuvertureCompte user);
+    UserInfoOuvertureCompte addResources(UserInfoOuvertureCompte user) ;
+
+
 }
