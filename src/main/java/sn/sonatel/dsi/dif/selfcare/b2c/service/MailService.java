@@ -138,7 +138,7 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String titleKey) {
+    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String subject) {
         Locale locale = Locale
             .forLanguageTag("fr");
         Context context = new Context(locale);
@@ -149,8 +149,8 @@ public class MailService {
         String random = RandomStringUtils.randomAlphabetic(20);
         context.setVariable(RANDOM, random);
         String content = templateEngine.process(templateName, context);
-        String subject = messageSource.getMessage(titleKey, null, locale);
-        sendEmailWithAttachement(Constants.EMAIL_SERVICE_CLIENT, subject, content, true, true, user);
+        //String subject = messageSource.getMessage(titleKey, null, locale);
+        sendEmailWithAttachement(applicationProperties.getEmailServiceClientOrange(), subject, content, true, true, user);
     }
 
     /**
@@ -158,9 +158,9 @@ public class MailService {
      * @param user
      */
     @Async
-    public void sendEmailFromServiceClient(UserInfoOuvertureCompte user) {
+    public void sendEmailToServiceClient(UserInfoOuvertureCompte user) {
         log.debug("Sending activation email to '{}'", "");
-        sendEmailToServiceClient(user, "mail/ouverturCompteEmail", EMAIL_ACTIVATION_TITLE);
+        sendEmailToServiceClient(user, "mail/ouverturCompteEmail", "[Orange et Moi ]"+user.getOperationTitle()+"- "+user.getNumero());
     }
 
 }
