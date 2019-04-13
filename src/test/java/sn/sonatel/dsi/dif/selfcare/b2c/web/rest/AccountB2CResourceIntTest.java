@@ -593,6 +593,7 @@ public class AccountB2CResourceIntTest {
         user.setFirstName("bouya");
         user.setLastName("kande");
         user.setOperation("Ouverture compte OM");
+        user.setOperationTitle("Ouverture compte OM");
         user.setFormulaire("1.PNG");
         user.setRectoID("1.PNG");
         user.setVersoID("1.PNG");
@@ -615,6 +616,7 @@ public class AccountB2CResourceIntTest {
         user.setFirstName("bouya");
         user.setLastName("kande");
         user.setOperation("Ouverture compte OM");
+        user.setOperationTitle("Ouverture compte OM");
         user.setFormulaire("1.PNG");
         user.setRectoID("1.PNG");
         //user.setVersoID("1.PNG");
