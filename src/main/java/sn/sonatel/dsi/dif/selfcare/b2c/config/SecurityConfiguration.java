@@ -52,7 +52,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/api/account-management/**").permitAll()
             .antMatchers("/api/auth/**").permitAll()
-            .antMatchers("/api/abonne/information-abonne").authenticated()
+            //.antMatchers("/api/abonne/information-abonne").authenticated()
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
