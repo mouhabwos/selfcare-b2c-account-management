@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
@@ -183,7 +184,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.LIST_BY_ID)
+/*    @Auditable(description = Message.Account.LIST_BY_ID)
     @GetMapping("/account-b-2-cs/{id}")
     public ResponseEntity<AccountB2C> getAccountB2C(@PathVariable Long id) {
         log.debug("REST request to get AccountB2C : {}", id);
@@ -198,7 +199,7 @@ public class AccountB2CResource {
         accountB2CRepository.deleteById(id);
 
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-    }
+    }*/
 
     @Auditable(description = Message.Account.CHECK_Numero)
     @GetMapping("/check_number/{msisdn}")
@@ -237,6 +238,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.Authent)
     @GetMapping("/account/{login}")
     @Timed
+    @PreAuthorize("#login== authentication.name")
     public AccountB2C getAccount(@PathVariable String login) {
 
         if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
