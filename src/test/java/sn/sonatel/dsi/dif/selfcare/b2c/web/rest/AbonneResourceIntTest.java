@@ -14,12 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 
-import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -63,7 +61,7 @@ public class AbonneResourceIntTest {
 
     @Test
     public void getAbonne() throws Exception {
-        ResponseEntity<List<AbonneDTO>> response = ResponseEntity.status(HttpStatus.OK).build();
+        ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
         when(resource.getAbonne(Mockito.anyString(),Mockito.anyString())).thenReturn(response);
 
         restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}/{code}", DEFAULT_NUMERO,DEFAULT_CODE))
