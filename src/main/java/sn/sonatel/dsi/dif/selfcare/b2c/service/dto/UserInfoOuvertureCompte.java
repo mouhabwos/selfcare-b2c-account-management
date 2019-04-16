@@ -24,7 +24,6 @@ public class UserInfoOuvertureCompte {
     @NotNull(message = "L'opération ne peut pas être vide")
     private String operation;
 
-   // @NotNull
     private String operationTitle;
 
     @NotNull(message = "Le formulaire ne peut pas être vide")
