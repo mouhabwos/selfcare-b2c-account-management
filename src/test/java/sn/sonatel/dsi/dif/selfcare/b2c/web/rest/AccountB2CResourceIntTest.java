@@ -597,6 +597,7 @@ public class AccountB2CResourceIntTest {
         user.setFormulaire("1.PNG");
         user.setRectoID("1.PNG");
         user.setVersoID("1.PNG");
+        user.setEmail("bouya@gmail.com");
       //  accountBCResource.sendmail(user);
 
         // Mockito.doNothing().when(accountBCResource).sendmail(any(UserInfoOuvertureCompte.class));
@@ -619,6 +620,7 @@ public class AccountB2CResourceIntTest {
         user.setOperationTitle("Ouverture compte OM");
         user.setFormulaire("1.PNG");
         user.setRectoID("1.PNG");
+        user.setEmail("bouya@gmail.com");
         //user.setVersoID("1.PNG");
         //  accountBCResource.sendmail(user);
 
