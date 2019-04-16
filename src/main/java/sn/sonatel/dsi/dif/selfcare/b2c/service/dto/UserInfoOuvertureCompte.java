@@ -27,6 +27,9 @@ public class UserInfoOuvertureCompte {
     @NotNull(message = "L'opération ne peut pas être vide")
     private String operation;
 
+    @NotNull
+    private String operationTitle;
+
     @NotNull(message = "Le formulaire ne peut pas être vide")
     private String formulaire;
 
@@ -119,5 +122,13 @@ public class UserInfoOuvertureCompte {
 
     public void setObjectVersoID(Resource objectVersoID) {
         this.objectVersoID = objectVersoID;
+    }
+
+    public String getOperationTitle() {
+        return operationTitle;
+    }
+
+    public void setOperationTitle(String operationTitle) {
+        this.operationTitle = operationTitle;
     }
 }

@@ -18,7 +18,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 
-import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,11 +28,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AbonneResourceIntTest {
 
     private static final String DEFAULT_NUMERO = "771326617";
+    private static final String DEFAULT_CODE = "123456";
 
     private MockMvc restAbonneMockMvc;
 
     @Mock
     private SelfcareSoapService soapService;
+
+
 
     @Mock
     private AbonneResource resource;
@@ -59,10 +61,10 @@ public class AbonneResourceIntTest {
 
     @Test
     public void getAbonne() throws Exception {
-        ResponseEntity<List<AbonneDTO>> response = ResponseEntity.status(HttpStatus.OK).build();
-        when(resource.getAbonne(Mockito.any())).thenReturn(response);
+        ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
+        when(resource.getAbonne(Mockito.anyString(),Mockito.anyString())).thenReturn(response);
 
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", "771326617"))
+        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}/{code}", DEFAULT_NUMERO,DEFAULT_CODE))
             .andExpect(status().isOk());
     }
 

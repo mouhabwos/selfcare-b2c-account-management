@@ -18,6 +18,7 @@ public class ApplicationProperties {
     private String urlOtp;
     private String messageBlockUser;
     private String serviceClientOrange;
+    private String emailServiceClientOrange;
     private String lienIbou;
 
     public String getAuthenticationAuthorisationUserServerHost() {
@@ -82,5 +83,13 @@ public class ApplicationProperties {
 
     public void setLienIbou(String lienIbou) {
         this.lienIbou = lienIbou;
+    }
+
+    public String getEmailServiceClientOrange() {
+        return emailServiceClientOrange;
+    }
+
+    public void setEmailServiceClientOrange(String emailServiceClientOrange) {
+        this.emailServiceClientOrange = emailServiceClientOrange;
     }
 }
