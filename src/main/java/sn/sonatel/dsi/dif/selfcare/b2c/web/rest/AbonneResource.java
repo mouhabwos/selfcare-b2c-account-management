@@ -43,13 +43,11 @@ public class AbonneResource {
 
 
     @Auditable(description = Message.Abonne.INFO_ABONNE)
-    @GetMapping("/information-abonne/{msisdn}")
-    public ResponseEntity<List<AbonneDTO>> getAbonne(@PathVariable String msisdn) {
+    @GetMapping("/information-abonne/{msisdn}/{code}")
+    public ResponseEntity<List<AbonneDTO>> getAbonne(@PathVariable String msisdn,@PathVariable String code) {
         log.debug ( "REST request to get abonne : {}", msisdn );
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<> ( new SOAPRequest ( msisdn ) );
-
-        return selfcareSoapService.getAbonne ( request );
+        return selfcareSoapService.getAbonne ( msisdn,code );
 
     }
 
