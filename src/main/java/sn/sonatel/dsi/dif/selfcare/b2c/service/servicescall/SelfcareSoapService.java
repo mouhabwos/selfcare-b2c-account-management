@@ -1,6 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -15,10 +14,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by centonni on 20/03/19.
  */
@@ -26,55 +21,52 @@ import java.util.List;
 public class SelfcareSoapService {
 
 
-    private final RestTemplate restTemplate;   
+    private final RestTemplate restTemplate;
     private final OTPService otpService;
 
 
-   
-
-    public SelfcareSoapService(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate,OTPService otpService) {
+    public SelfcareSoapService(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, OTPService otpService) {
         this.restTemplate = restTemplate;
         this.otpService = otpService;
     }
 
-    public ResponseEntity<SouscriptionDto> getSouscription( HttpEntity<SOAPRequest> request){
-        
-        
+    public ResponseEntity<SouscriptionDto> getSouscription(HttpEntity<SOAPRequest> request) {
+
 
         ResponseEntity<SouscriptionDto> responseEntity = restTemplate
-            .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
+            .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
 
-        if(responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+        if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
 
             return responseEntity;
 
-        }else {
+        } else {
 
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
     }
 
-    public ResponseEntity<List<AbonneDTO>> getAbonne(String msisdn, String code){
+    public ResponseEntity<AbonneDTO> getAbonne(String msisdn, String code) {
 
-        CodeOTPCheckDTO codeOTPCheckDTO= otpService.checkOPT(msisdn, code);
+        CodeOTPCheckDTO codeOTPCheckDTO = otpService.checkOPT(msisdn, code);
 
-        if(codeOTPCheckDTO.isValid()){
-            HttpEntity<SOAPRequest> request = new HttpEntity<> ( new SOAPRequest ( msisdn ) );
 
-            ResponseEntity<List<AbonneDTO>> responseEntity = restTemplate
-                    .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE+""+Constants.GET_ABONNE, HttpMethod.POST, request,(Class) List.class);
-            if(responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK){
+        if (codeOTPCheckDTO.isValid()) {
+            HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
+
+            ResponseEntity<AbonneDTO> responseEntity = restTemplate
+                .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_ABONNE, HttpMethod.POST, request, AbonneDTO.class);
+            if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+
 
                 return responseEntity;
 
-            }else {
+            } else {
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
             }
-        }
-        else
+        } else
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
 
 
     }
