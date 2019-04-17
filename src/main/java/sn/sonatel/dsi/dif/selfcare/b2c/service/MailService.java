@@ -30,7 +30,6 @@ public class MailService {
 
     private static final String USER = "user";
 
-
     private final ApplicationProperties applicationProperties;
 
     private final ServiceFile service;
@@ -92,7 +91,7 @@ public class MailService {
 
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
-            message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
+            message.setFrom(user.getEmail(),"Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
 
