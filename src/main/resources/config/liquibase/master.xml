@@ -16,6 +16,10 @@
              relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20190320131220_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190320132013_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190320133317_changelog.xml" relativeToChangelogFile="false"/>
-</databaseChangeLog>
+
+<!--
+Add emailActivated,tutoViewed field
+-->
+    <include file="config/liquibase/changelog/20190320131111111111_changelog.xml" relativeToChangelogFile="false"/>
+
+ </databaseChangeLog>
