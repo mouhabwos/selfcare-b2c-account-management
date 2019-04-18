@@ -56,6 +56,12 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Column(name = "derniere_connnexion_date", nullable = true)
     private ZonedDateTime derniereConnnexionDate;
 
+    @Column(name = "tuto_viewed")
+    private boolean tutoViewed = false;
+
+    @Column(name = "email_activated")
+    private boolean emailActivated = false;
+
     public ZonedDateTime getDerniereConnnexionDate() {
         return derniereConnnexionDate;
     }
@@ -161,6 +167,22 @@ public class AccountB2C extends NumeroDTO implements Serializable {
         return this;
     }
 
+    public boolean isTutoViewed() {
+        return tutoViewed;
+    }
+
+    public void setTutoViewed(boolean tutoViewed) {
+        this.tutoViewed = tutoViewed;
+    }
+
+    public boolean isEmailActivated() {
+        return emailActivated;
+    }
+
+    public void setEmailActivated(boolean emailActivated) {
+        this.emailActivated = emailActivated;
+    }
+
     public void setUsers(Set<RattachementLigne> rattachementLignes) {
         this.users = rattachementLignes;
     }
@@ -189,12 +211,18 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Override
     public String toString() {
         return "AccountB2C{" +
-            "id=" + getId() +
-            ", numero='" + getNumero() + "'" +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", imagePrfil='" + getImageProfil() + "'" +
-            "}";
+            "firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", email='" + email + '\'' +
+            ", imageProfil='" + imageProfil + '\'' +
+            ", activationKey='" + activationKey + '\'' +
+            ", langKey='" + langKey + '\'' +
+            ", attempts=" + attempts +
+            ", users=" + users +
+            ", derniereConnnexionDate=" + derniereConnnexionDate +
+            ", tutoViewed=" + tutoViewed +
+            ", emailActivated=" + emailActivated +
+            ", numero='" + numero + '\'' +
+            '}';
     }
 }
