@@ -73,6 +73,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/account-b-2-cs")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to save AccountB2C : {}", accountB2C);
         if (accountB2C.getId() != null) {
@@ -96,6 +97,7 @@ public class AccountB2CResource {
             .body(result);
     }
 
+    //TO-DO IMPLEMENT CAPTCHA
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
@@ -152,6 +154,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
+    @PreAuthorize("#accountB2C.numero == authentication.name")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
@@ -176,6 +179,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.LIST)
     @GetMapping("/account-b-2-cs")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<AccountB2C>> getAllAccountB2CS(Pageable pageable) {
         log.debug("REST request to get a page of AccountB2CS");
         Page<AccountB2C> page = accountB2CRepository.findAll(pageable);
@@ -238,7 +242,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.Authent)
     @GetMapping("/account/{login}")
     @Timed
-    @PreAuthorize("#login== authentication.name")
+    @PreAuthorize("#login == authentication.name")
     public AccountB2C getAccount(@PathVariable String login) {
 
         if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
@@ -264,6 +268,7 @@ public class AccountB2CResource {
     }
 
     @PostMapping("/mail/ouverture-compte")
+    @PreAuthorize("#b2C.numero== authentication.name")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
         b2C = dowloadManager.addResources(b2C);

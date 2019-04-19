@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class AbonneResource {
 
     @Auditable(description = Message.Abonne.SOUSC_USER)
     @GetMapping("/souscription/{msisdn}")
+    @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<SouscriptionDto> getSouscription(@PathVariable String msisdn) {
         log.debug ( "REST request to get souscription : {}", msisdn );
 
