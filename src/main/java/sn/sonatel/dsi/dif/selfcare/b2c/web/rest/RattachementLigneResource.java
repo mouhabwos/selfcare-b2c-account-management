@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
@@ -69,6 +70,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.ADD)
     @PostMapping("/rattachement-lignes")
+    @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
         log.debug ( "REST request to save RattachementLigne : {}", rattachementLigne );
         if (rattachementLigne.getId () != null) {
@@ -91,6 +93,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.UPDATE)
     @PutMapping("/rattachement-lignes")
+    @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
         log.debug ( "REST request to update RattachementLigne : {}", rattachementLigne );
         if (rattachementLigne.getId () == null) {
@@ -114,6 +117,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.LIST)
     @GetMapping("/rattachement-lignes")
+    @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<List<RattachementLigne>> getAllRattachementLignes(Pageable pageable) {
         log.debug ( "REST request to get a page of RattachementLignes" );
         Page<RattachementLigne> page = rattachementLigneRepository.findAll ( pageable );
@@ -124,6 +128,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.LIST_BY_ID)
     @GetMapping("/rattachement-lignes/{id}")
+    @PreAuthorize("isFullyAuthenticated()")
     public ResponseEntity<RattachementLigne> getRattachementLigne(@PathVariable Long id) {
         log.debug ( "REST request to get RattachementLigne : {}", id );
         Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findById ( id );
@@ -132,6 +137,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.DELETE)
     @DeleteMapping("/rattachement-lignes/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRattachementLigne(@PathVariable Long id) {
         log.debug ( "REST request to delete RattachementLigne : {}", id );
         rattachementLigneRepository.deleteById ( id );
@@ -141,6 +147,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.SAVE)
     @PostMapping("/rattachement-lignes/register")
+    @PreAuthorize("#ligneVM.login==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
         @Valid @RequestBody RattachementLigneVM ligneVM) throws URISyntaxException {
 
@@ -177,6 +184,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
+    @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "REST request to get RattachementLigne : {}", msisdn );
@@ -218,6 +226,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.DELETE_ALL)
     @PostMapping("/rattachement-lignes/delete-multiple")
     @Timed
+    @PreAuthorize("#deleteListe.login == authentication.name")
     public ResponseEntity<RattachementLignesDeleteMultipleVM> deleteMultipleRattachementLigne(
         @Valid @RequestBody RattachementLignesDeleteMultipleVM deleteListe) {
 
