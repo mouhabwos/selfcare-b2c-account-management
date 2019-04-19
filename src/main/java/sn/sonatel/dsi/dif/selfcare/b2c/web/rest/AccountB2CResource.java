@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -62,12 +62,15 @@ public class AccountB2CResource {
 
     private final DowloadManager dowloadManager;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager) {
+    private final AccountB2CService accountB2CService;
+
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager, AccountB2CService accountB2CService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.restTemplate = restTemplate;
         this.mailService = mailService;
         this.dowloadManager = dowloadManager;
+        this.accountB2CService = accountB2CService;
     }
 
 
@@ -274,6 +277,20 @@ public class AccountB2CResource {
         b2C = dowloadManager.addResources(b2C);
           mailService.sendEmailToServiceClient(b2C);
 
+    }
+
+    /**
+     * GET / view-tutorial : change the status of user for view tutorial
+     * @param msisdn
+     * @return Response ok if
+     */
+    @GetMapping("/view-tutorial/{msisdn}")
+    @Timed
+    public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
+
+        accountB2CService.tutorialView(msisdn);
+
+        return ResponseEntity.ok().build();
     }
 
 
