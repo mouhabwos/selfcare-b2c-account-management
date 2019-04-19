@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
@@ -148,7 +147,7 @@ public class MailService {
         String random = RandomStringUtils.randomAlphabetic(20);
         context.setVariable(RANDOM, random);
         String content = templateEngine.process(templateName, context);
-        //String subject = messageSource.getMessage(titleKey, null, locale);
+
         sendEmailWithAttachement(applicationProperties.getEmailServiceClientOrange(), subject, content, true, true, user);
     }
 

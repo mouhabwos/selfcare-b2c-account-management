@@ -49,7 +49,6 @@
         <eureka.instance.dev.hostname>10.137.52.32</eureka.instance.dev.hostname>
         <eureka.instance.rec.hostname>10.137.52.31</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
-        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
@@ -323,22 +322,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-netty</artifactId>
-            <version>3.10.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-client-java</artifactId>
-            <version>3.10.8</version>
-            <scope>test</scope>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>-->
+        <!--  <dependency>
+              <groupId>org.mock-server</groupId>
+              <artifactId>mockserver-netty</artifactId>
+              <version>3.10.8</version>
+              <scope>test</scope>
+          </dependency>
+          <dependency>
+              <groupId>org.mock-server</groupId>
+              <artifactId>mockserver-client-java</artifactId>
+              <version>3.10.8</version>
+              <scope>test</scope>
+          </dependency>
+          <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+          </dependency>-->
         <!-- Spring Data Jest dependencies for Elasticsearch -->
         <!--<dependency>
             <groupId>com.github.vanroy</groupId>
