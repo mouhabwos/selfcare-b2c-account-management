@@ -26,6 +26,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -111,12 +112,15 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private AccountB2CResource accountBCResource;
 
+    @Autowired
+    private AccountB2CService accountB2CService;
+
 
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, rattachementLigneRepository, restTemplate, mailService, dowloadManager);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository, rattachementLigneRepository, restTemplate, mailService, dowloadManager, accountB2CService);
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -633,4 +637,29 @@ public class AccountB2CResourceIntTest {
 
     }
 
+
+    /**
+     * test for end point :: /view-tutorial/{msisdn}
+     */
+
+    @Test
+    public void testTutorialView() throws Exception {
+
+        AccountB2C b2C = new AccountB2C();
+        b2C.setTutoViewed(false);
+        b2C.setNumero("770502595");
+        b2C.setLastName("hello");
+        b2C.setFirstName("hello");
+        b2C.setEmail("hello95@gmail.com");
+        b2C = accountB2CRepository.save(b2C);
+        restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/{msisdn}", b2C.getNumero()))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testTutorialViewBadRequest() throws Exception {
+
+        restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/{msisdn}", "770565053"))
+            .andExpect(status().isBadRequest());
+    }
 }
