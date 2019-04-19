@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
@@ -38,21 +37,6 @@ public class OTPService {
      * Generate a OTP code for User to reset password
      * @param login
      */
-
-  /*  @Async
-    public GenererCodeOTPVM generateOPT(String login) {
-
-        log.debug("generateOPT {}", login);
-
-        GenererCodeOTPVM genererCodeOTPVM = new GenererCodeOTPVM();
-        genererCodeOTPVM.setMsisdn(login);
-         HttpEntity<GenererCodeOTPVM> request = new HttpEntity<>(genererCodeOTPVM);
-         genererCodeOTPVM = restTemplate.postForObject(applicationProperties.getUrlOtp()+"/api/code-otp-infos/generate", request, GenererCodeOTPVM.class);
-
-        return  genererCodeOTPVM;
-
-    }*/
-
    public CodeOTPCheckDTO checkOPT(String msisdn, String code) {
         log.debug("checkOPT {}", msisdn);
        CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
