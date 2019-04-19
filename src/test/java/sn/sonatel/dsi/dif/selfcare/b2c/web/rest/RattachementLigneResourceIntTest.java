@@ -416,6 +416,7 @@ public class RattachementLigneResourceIntTest {
         RattachementLignesDeleteMultipleVM deleteVM = new RattachementLignesDeleteMultipleVM();
 
         deleteVM.setListMsisdn(numberToDelete);
+        deleteVM.setLogin(DEFAULT_NUMERO);
 
         restRattachementLigneMockMvc
             .perform(post("/api/rattachement-lignes/delete-multiple")
