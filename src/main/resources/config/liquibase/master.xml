@@ -20,5 +20,5 @@
 <!--
 Add emailActivated,tutoViewed field
 -->
-    <include file="config/liquibase/changelog/20190419091701_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190423105208_changelog.xml" relativeToChangelogFile="false"/>
  </databaseChangeLog>
