@@ -46,9 +46,8 @@
 
         <!-- Docker compliance port range allocation -->
         <server.port.docker.expose>8715</server.port.docker.expose>
-        <eureka.instance.vm.hostname>10.100.97.175</eureka.instance.vm.hostname>
-        <eureka.instance.dev.hostname>10.100.97.175</eureka.instance.dev.hostname>
-        <eureka.instance.rec.hostname>10.137.52.12</eureka.instance.rec.hostname>
+        <eureka.instance.dev.hostname>10.137.52.32</eureka.instance.dev.hostname>
+        <eureka.instance.rec.hostname>10.137.52.31</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
 
         <!-- Build properties -->
