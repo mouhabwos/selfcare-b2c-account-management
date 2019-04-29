@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
@@ -19,6 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -61,17 +62,21 @@ public class AccountB2CResource {
 
     private final DowloadManager dowloadManager;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager) {
+    private final AccountB2CService accountB2CService;
+
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager, AccountB2CService accountB2CService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.restTemplate = restTemplate;
         this.mailService = mailService;
         this.dowloadManager = dowloadManager;
+        this.accountB2CService = accountB2CService;
     }
 
 
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/account-b-2-cs")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to save AccountB2C : {}", accountB2C);
         if (accountB2C.getId() != null) {
@@ -86,6 +91,8 @@ public class AccountB2CResource {
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImageProfil(accountB2C.getImageProfil());
+        b2C.setAttempts(accountB2C.getAttempts());
+        b2C.setDerniereConnnexionDate(accountB2C.getDerniereConnnexionDate());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -93,6 +100,7 @@ public class AccountB2CResource {
             .body(result);
     }
 
+    //TO-DO IMPLEMENT CAPTCHA
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
@@ -149,6 +157,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
+    @PreAuthorize("#accountB2C.numero == authentication.name")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
@@ -161,6 +170,8 @@ public class AccountB2CResource {
         b2C.setFirstName(accountB2C.getFirstName());
         b2C.setLastName(accountB2C.getLastName());
         b2C.setImageProfil(accountB2C.getImageProfil());
+        b2C.setAttempts(accountB2C.getAttempts());
+        b2C.setDerniereConnnexionDate(accountB2C.getDerniereConnnexionDate());
         AccountB2C result = accountB2CRepository.save(b2C);
 
         return ResponseEntity.ok()
@@ -171,6 +182,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.LIST)
     @GetMapping("/account-b-2-cs")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<AccountB2C>> getAllAccountB2CS(Pageable pageable) {
         log.debug("REST request to get a page of AccountB2CS");
         Page<AccountB2C> page = accountB2CRepository.findAll(pageable);
@@ -179,7 +191,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.LIST_BY_ID)
+/*    @Auditable(description = Message.Account.LIST_BY_ID)
     @GetMapping("/account-b-2-cs/{id}")
     public ResponseEntity<AccountB2C> getAccountB2C(@PathVariable Long id) {
         log.debug("REST request to get AccountB2C : {}", id);
@@ -194,7 +206,7 @@ public class AccountB2CResource {
         accountB2CRepository.deleteById(id);
 
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
-    }
+    }*/
 
     @Auditable(description = Message.Account.CHECK_Numero)
     @GetMapping("/check_number/{msisdn}")
@@ -233,6 +245,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.Authent)
     @GetMapping("/account/{login}")
     @Timed
+    @PreAuthorize("#login == authentication.name")
     public AccountB2C getAccount(@PathVariable String login) {
 
         if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
@@ -258,11 +271,26 @@ public class AccountB2CResource {
     }
 
     @PostMapping("/mail/ouverture-compte")
+    @PreAuthorize("#b2C.numero== authentication.name")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
 
         b2C = dowloadManager.addResources(b2C);
-          mailService.sendEmailFromServiceClient(b2C);
+          mailService.sendEmailToServiceClient(b2C);
 
+    }
+
+    /**
+     * GET / view-tutorial : change the status of user for view tutorial
+     * @param msisdn
+     * @return Response ok if
+     */
+    @GetMapping("/view-tutorial/{msisdn}")
+    @Timed
+    public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
+
+        accountB2CService.tutorialView(msisdn);
+
+        return ResponseEntity.ok().build();
     }
 
 

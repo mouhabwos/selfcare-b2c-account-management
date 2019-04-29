@@ -11,8 +11,31 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private String authenticationAuthorisationUserServerHost;
     private String baseUrlAdmin;
     private String emailAdmin;
+    private Integer maxAttempts;
+    private String urlOtp;
+    private String messageBlockUser;
+    private String serviceClientOrange;
+    private String emailServiceClientOrange;
+    private String lienIbou;
+
+    public String getAuthenticationAuthorisationUserServerHost() {
+        return authenticationAuthorisationUserServerHost;
+    }
+
+    public void setAuthenticationAuthorisationUserServerHost(String authenticationAuthorisationUserServerHost) {
+        this.authenticationAuthorisationUserServerHost = authenticationAuthorisationUserServerHost;
+    }
+
+    public Integer getMaxAttempts() {
+        return maxAttempts;
+    }
+
+    public void setMaxAttempts(Integer maxAttempts) {
+        this.maxAttempts = maxAttempts;
+    }
 
     public String getBaseUrlAdmin() {
         return baseUrlAdmin;
@@ -30,5 +53,43 @@ public class ApplicationProperties {
         this.emailAdmin = emailAdmin;
     }
 
+    public String getUrlOtp() {
+        return urlOtp;
+    }
 
+    public void setUrlOtp(String urlOtp) {
+        this.urlOtp = urlOtp;
+    }
+
+    public String getMessageBlockUser() {
+        return messageBlockUser;
+    }
+
+    public void setMessageBlockUser(String messageBlockUser) {
+        this.messageBlockUser = messageBlockUser;
+    }
+
+    public String getServiceClientOrange() {
+        return serviceClientOrange;
+    }
+
+    public void setServiceClientOrange(String serviceClientOrange) {
+        this.serviceClientOrange = serviceClientOrange;
+    }
+
+    public String getLienIbou() {
+        return lienIbou;
+    }
+
+    public void setLienIbou(String lienIbou) {
+        this.lienIbou = lienIbou;
+    }
+
+    public String getEmailServiceClientOrange() {
+        return emailServiceClientOrange;
+    }
+
+    public void setEmailServiceClientOrange(String emailServiceClientOrange) {
+        this.emailServiceClientOrange = emailServiceClientOrange;
+    }
 }

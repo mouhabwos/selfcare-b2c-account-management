@@ -26,7 +26,7 @@ eureka:
         hostname: @eureka.instance.rec.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.11:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.31:8761/eureka/
 
 spring:
     devtools:
@@ -158,3 +158,12 @@ oauth2:
 # ===================================================================
 
 # application:
+application:
+    max-attempts: 3
+    authentication-authorisation-user-server-host: http://selfcare-uaa
+    url-otp: http://selfcare-otp
+    message-block-user: L' accès à votre compte Orange et moi a été bloqué veuillez contacter le service client.
+    service-client-orange:  Service Client Orange
+    lien-ibou: #https://m.me/165622776799685
+    email-service-client-orange: vieuxmamadou.kasse@orange-sonatel.com
+

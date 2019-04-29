@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +16,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/abonne")
@@ -32,6 +32,7 @@ public class AbonneResource {
 
     @Auditable(description = Message.Abonne.SOUSC_USER)
     @GetMapping("/souscription/{msisdn}")
+    @PostAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<SouscriptionDto> getSouscription(@PathVariable String msisdn) {
         log.debug ( "REST request to get souscription : {}", msisdn );
 
@@ -43,13 +44,11 @@ public class AbonneResource {
 
 
     @Auditable(description = Message.Abonne.INFO_ABONNE)
-    @GetMapping("/information-abonne/{msisdn}")
-    public ResponseEntity<List<AbonneDTO>> getAbonne(@PathVariable String msisdn) {
+    @GetMapping("/information-abonne/{msisdn}/{code}")
+    public ResponseEntity<AbonneDTO> getAbonne(@PathVariable String msisdn,@PathVariable String code) {
         log.debug ( "REST request to get abonne : {}", msisdn );
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<> ( new SOAPRequest ( msisdn ) );
-
-        return selfcareSoapService.getAbonne ( request );
+        return selfcareSoapService.getAbonne(msisdn, code);
 
     }
 

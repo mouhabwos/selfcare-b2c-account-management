@@ -4,10 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.springframework.core.io.Resource;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 public class UserInfoOuvertureCompte {
 
@@ -27,6 +24,8 @@ public class UserInfoOuvertureCompte {
     @NotNull(message = "L'opération ne peut pas être vide")
     private String operation;
 
+    private String operationTitle;
+
     @NotNull(message = "Le formulaire ne peut pas être vide")
     private String formulaire;
 
@@ -40,6 +39,12 @@ public class UserInfoOuvertureCompte {
     private Resource objectRectoID;
 
     private Resource objectVersoID;
+
+    @NotNull(message = "L'email ne peut pas être vide")
+    @ApiModelProperty(required = true)
+    @Email
+    @Size(min = 5, max = 254)
+    private String email;
 
     public String getNumero() {
         return numero;
@@ -119,5 +124,21 @@ public class UserInfoOuvertureCompte {
 
     public void setObjectVersoID(Resource objectVersoID) {
         this.objectVersoID = objectVersoID;
+    }
+
+    public String getOperationTitle() {
+        return operationTitle;
+    }
+
+    public void setOperationTitle(String operationTitle) {
+        this.operationTitle = operationTitle;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

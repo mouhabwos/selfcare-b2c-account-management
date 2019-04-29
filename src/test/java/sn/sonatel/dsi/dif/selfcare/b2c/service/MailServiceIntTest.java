@@ -105,6 +105,7 @@ public class MailServiceIntTest {
             Resource resource = new DefaultResourceLoader().getResource("classpath:mail/activationEmail.html");
 
             UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
+            user.setEmail("test@gmail.com");
             user.setNumero("771326617");
             user.setFirstName("bouya");
             user.setLastName("kande");
@@ -295,7 +296,7 @@ public class MailServiceIntTest {
     }
 
     @Test
-    public void sendEmailFromServiceClient() throws Exception {
+    public void sendEmailToServiceClient() throws Exception {
         UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
 
         user.setNumero("771326617");
@@ -309,7 +310,7 @@ public class MailServiceIntTest {
         user.setObjectFormulaire(null);
         user.setObjectRectoID(null);
         user.setNumero("774565252");
-        mailService.sendEmailFromServiceClient(user);
+        mailService.sendEmailToServiceClient(user);
     }
 
     @Test
@@ -337,6 +338,7 @@ public class MailServiceIntTest {
 
 
         UserInfoOuvertureCompte userOptional  = initUserInfoWithResources();
+        userOptional.setEmail("test@gmail.com");
         userOptional.setObjectVersoID(null);
         mailService.sendEmailWithAttachement("john.doe@example.com", "testSubject", "testContent", true, true,userOptional);
         verify(javaMailSender).send(messageCaptor.capture());

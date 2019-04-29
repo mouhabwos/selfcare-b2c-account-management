@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
@@ -29,7 +28,6 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
-
 
     private final ApplicationProperties applicationProperties;
 
@@ -92,7 +90,7 @@ public class MailService {
 
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
-            message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
+            message.setFrom(user.getEmail(),"Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
 
@@ -138,7 +136,7 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String titleKey) {
+    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String subject) {
         Locale locale = Locale
             .forLanguageTag("fr");
         Context context = new Context(locale);
@@ -149,8 +147,8 @@ public class MailService {
         String random = RandomStringUtils.randomAlphabetic(20);
         context.setVariable(RANDOM, random);
         String content = templateEngine.process(templateName, context);
-        String subject = messageSource.getMessage(titleKey, null, locale);
-        sendEmailWithAttachement(Constants.EMAIL_SERVICE_CLIENT, subject, content, true, true, user);
+
+        sendEmailWithAttachement(applicationProperties.getEmailServiceClientOrange(), subject, content, true, true, user);
     }
 
     /**
@@ -158,9 +156,9 @@ public class MailService {
      * @param user
      */
     @Async
-    public void sendEmailFromServiceClient(UserInfoOuvertureCompte user) {
+    public void sendEmailToServiceClient(UserInfoOuvertureCompte user) {
         log.debug("Sending activation email to '{}'", "");
-        sendEmailToServiceClient(user, "mail/ouverturCompteEmail", EMAIL_ACTIVATION_TITLE);
+        sendEmailToServiceClient(user, "mail/ouverturCompteEmail", "[Orange et Moi ]"+user.getOperationTitle()+"- "+user.getNumero());
     }
 
 }

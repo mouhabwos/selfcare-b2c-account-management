@@ -112,7 +112,12 @@
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/MetricsConfiguration.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/oauth2/UaaSignatureVerifierClient.java,
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/rest/errors/ExceptionTranslator.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/rest/util/PaginationUtil.java,
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/client/*.java,src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/config/*.java,
-            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/oauth2/*.java
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/oauth2/*.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/audit/AuditInterceptor.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/audit/SelfcareLog.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/web/rest/util/Message.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/audit/FileLogger.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/audit/SelfcareLogException.java
         </sonar.exclusions>
         <sonar.issue.ignore.multicriteria>S3437,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
         <!-- Rule https://sonarcloud.io/coding_rules?open=Web%3ABoldAndItalicTagsCheck&rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
@@ -318,22 +323,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-netty</artifactId>
-            <version>3.10.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-client-java</artifactId>
-            <version>3.10.8</version>
-            <scope>test</scope>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>-->
+        <!--  <dependency>
+              <groupId>org.mock-server</groupId>
+              <artifactId>mockserver-netty</artifactId>
+              <version>3.10.8</version>
+              <scope>test</scope>
+          </dependency>
+          <dependency>
+              <groupId>org.mock-server</groupId>
+              <artifactId>mockserver-client-java</artifactId>
+              <version>3.10.8</version>
+              <scope>test</scope>
+          </dependency>
+          <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+          </dependency>-->
         <!-- Spring Data Jest dependencies for Elasticsearch -->
         <!--<dependency>
             <groupId>com.github.vanroy</groupId>
@@ -658,7 +663,7 @@
                     <diffChangeLogFile>src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
                     <driver>com.mysql.jdbc.Driver</driver>
                     <url>jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management</url>
-                    <defaultSchemaName>selfcare-b2c-account-management</defaultSchemaName>
+                    <defaultSchemaName>selfcare_b2c_account_management</defaultSchemaName>
                     <username>root</username>
                     <password>digitalfactory</password>
                     <referenceUrl>hibernate:spring:sn.sonatel.dsi.dif.selfcare.b2c.domain?dialect=org.hibernate.dialect.MySQL5InnoDBDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>

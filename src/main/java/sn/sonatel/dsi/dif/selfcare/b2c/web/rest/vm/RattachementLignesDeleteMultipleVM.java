@@ -1,12 +1,16 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class RattachementLignesDeleteMultipleVM {
 
     @NotEmpty
     private List<String> listMsisdn;
+
+    @NotNull
+    private String login;
 
     private boolean deleted = false;
 
@@ -26,4 +30,11 @@ public class RattachementLignesDeleteMultipleVM {
         this.deleted = deleted;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 }
