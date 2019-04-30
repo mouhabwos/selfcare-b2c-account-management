@@ -43,6 +43,16 @@ pipeline {
 
     }
 
+        stage('Deploy Snapshots On Nexus') {
+
+           when { branch 'staging' }
+
+           steps {
+                   sh 'mvn clean deploy -Pprod'
+                 }
+         }
+
+
     stage('SonarQube Scan') {
       steps{
         script{
@@ -93,14 +103,6 @@ pipeline {
           }
         }
 
-    stage('Deploy Snapshots On Nexus') {
-
-       when { branch 'staging' }
-
-       steps {
-               sh 'mvn clean deploy -Pprod'
-             }
-     }
 
     stage('Functionnals Tests Phases') {
       steps {
