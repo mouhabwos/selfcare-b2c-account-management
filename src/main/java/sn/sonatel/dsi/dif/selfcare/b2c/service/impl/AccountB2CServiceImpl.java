@@ -226,20 +226,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void tutorialView(String msisdn) {
 
