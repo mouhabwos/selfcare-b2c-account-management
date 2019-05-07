@@ -66,7 +66,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         if(!accountB2C.isPresent()){
             return -1;
         }
-        if(accountB2C.get().getAttempts() < applicationProperties.getMaxAttempts()){
+        if(accountB2C.get().getAttempts() < 3){
 
             if(accountB2C.get().getDerniereConnnexionDate() != null){
                 boolean check = Duration.between (accountB2C.get().getDerniereConnnexionDate(), ZonedDateTime.now ()).getSeconds() < Constants.MAX_DELAY_TO_TRY_CONNEXION;

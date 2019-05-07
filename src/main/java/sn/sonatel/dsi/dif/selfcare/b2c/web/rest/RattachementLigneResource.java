@@ -65,7 +65,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.UPDATE)
     @PutMapping("/rattachement-lignes")
     @PreAuthorize("#rattachementLigne.login == authentication.name")
-    public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
+    public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) {
         log.debug ( "REST request to update RattachementLigne : {}", rattachementLigne );
 
         RattachementLigne result = rattachementLigneService.updateRattachementLigne(rattachementLigne);

@@ -51,22 +51,26 @@ public class SelfcareSoapService {
 
         CodeOTPCheckDTO codeOTPCheckDTO = otpService.checkOPT(msisdn, code);
 
+        if(codeOTPCheckDTO != null){
+            if (codeOTPCheckDTO.isValid()) {
+                HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
 
-        if (codeOTPCheckDTO.isValid()) {
-            HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
-
-            ResponseEntity<AbonneDTO> responseEntity = restTemplate
-                .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_ABONNE, HttpMethod.POST, request, AbonneDTO.class);
-            if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+                ResponseEntity<AbonneDTO> responseEntity = restTemplate
+                    .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_ABONNE, HttpMethod.POST, request, AbonneDTO.class);
+                if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
 
 
-                return responseEntity;
+                    return responseEntity;
 
-            } else {
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-            }
-        } else
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                } else {
+                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                }
+            } else
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }else {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
+
 
 
     }
