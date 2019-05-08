@@ -23,9 +23,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class SelfcareSoapServiceTest {
@@ -81,44 +79,20 @@ public class SelfcareSoapServiceTest {
     @Test
     public void getAbonne() {
 
-
         CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
         codeOTPCheckDTO.setValid(true);
         codeOTPCheckDTO.setMsisdn(DEFAULT_NUMERO);
         codeOTPCheckDTO.setCode(DEFAULT_CODE);
-
-
-        //  ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
-
-
-//        Mockito.when(otpService.checkOPT(Mockito.anyString(),Mockito.anyString())).thenReturn(codeOTPCheckDTO);
-       // Mockito.when(otpService.checkOPT(Mockito.anyString(),Mockito.anyString())).thenReturn(response);
-
-
-       /* Mockito.when(restTemplate.exchange(
-            Matchers.eq(" http://selfcare-otp/api/code-otp-infos/check"),
-            Matchers.eq(HttpMethod.POST),
-            Matchers.<HttpEntity<CodeOTPCheckDTO>>any(),
-            Matchers.<ParameterizedTypeReference<CodeOTPCheckDTO>>any())
-        ).thenReturn(myEntityCodeOtp);*/
-
-
-
-
-        // call methode getAbonne
-
-       // soapService.getAbonne(DEFAULT_NUMERO, DEFAULT_CODE);
-
+        otpService = mock(OTPService.class);
+        when(otpService.checkOPT(anyString(), anyString())).thenReturn(codeOTPCheckDTO);
         ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
-
-       // doReturn(response).when(soapService).getAbonne(anyString(),anyString());
-            //soapService = mock(SelfcareSoapService.class);
-        //Mockito.when(soapService.getAbonne(anyString(), anyString())).thenReturn(response);
-        given(otpService.checkOPT(anyString(), anyString())).willReturn(codeOTPCheckDTO);
+        when(soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE)).thenReturn(response);
 
         ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
 
-       // assertTrue(HttpStatus.OK.equals(entity.getStatusCode()));
+        //verify(otpService).checkOPT(DEFAULT_NUMERO,DEFAULT_CODE);
+
+        //assertTrue(entity.equals(response));
     }
 
     @Test
