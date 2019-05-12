@@ -14,10 +14,10 @@ import javax.validation.constraints.Size;
 public class RattachementSame {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+    @NotNull(message = MessageValidation.FIELD_NUMERO)
+    @NotBlank(message = MessageValidation.FIELD_NUMERO)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
+    @Size(min = 9, max = 18, message = MessageValidation.FIELD_NUMERO_SIZE)
     private String numero;
 
     private String typeVerification;
@@ -28,7 +28,7 @@ public class RattachementSame {
 
     private String login;
 
-    @NotNull(message = "Le type de numéro ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_TYPE_NUMERO)
     @Enumerated(EnumType.STRING)
     private TypeNumero typeNumero;
 

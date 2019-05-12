@@ -15,24 +15,24 @@ public class UserDTO extends Same {
 	private Long id;
 
 	@ApiModelProperty(required = true)
-	@NotNull(message = "Le numero ne peut pas être vide")
-	@NotBlank(message = "Le numéro ne doit pas être vide")
-	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-	@Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+	@NotNull(message = MessageValidation.FIELD_NUMERO)
+	@NotBlank(message = MessageValidation.FIELD_NUMERO)
+	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
+	@Size(min = 9, max = 18, message = MessageValidation.FIELD_NUMERO_SIZE)
 	private String login;
 
-    @NotNull(message = "Le prénom ne doit pas être vide")
+    @NotNull(message = MessageValidation.FIELD_FIRSTNAME)
     @ApiModelProperty(required = true)
     @Size(max = 50)
     private String firstName;
 
-    @NotNull(message = "Le nom ne doit pas être vide")
+    @NotNull(message = MessageValidation.FIELD_LASTNAME)
     @ApiModelProperty(required = true)
     @Size(max = 50)
     private String lastName;
 
     @ApiModelProperty(required = false)
-    @Email(message = "L'email doit être une adresse email bien formée")
+    @Email(message = MessageValidation.FIELD_EMAIL_VALID)
     @Size(min = 5, max = 254)
     private String email;
 

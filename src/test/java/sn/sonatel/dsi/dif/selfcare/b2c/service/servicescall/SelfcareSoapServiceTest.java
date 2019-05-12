@@ -43,7 +43,7 @@ public class SelfcareSoapServiceTest {
     @Before
     public void setUp() throws Exception {
 
-       soapService = new SelfcareSoapService(restTemplate, otpService);
+       //soapService = new SelfcareSoapService(restTemplate, otpService);
         MockitoAnnotations.initMocks(this);
 
     }
@@ -85,11 +85,13 @@ public class SelfcareSoapServiceTest {
         codeOTPCheckDTO.setCode(DEFAULT_CODE);
         otpService = mock(OTPService.class);
         when(otpService.checkOPT(anyString(), anyString())).thenReturn(codeOTPCheckDTO);
-        ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
-        when(soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE)).thenReturn(response);
+       // soapService = mock(SelfcareSoapService.class);
 
-        ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
+           ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
+//           when(soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE)).thenReturn(response);
 
+       ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
+        System.out.println(entity);
         //verify(otpService).checkOPT(DEFAULT_NUMERO,DEFAULT_CODE);
 
         //assertTrue(entity.equals(response));

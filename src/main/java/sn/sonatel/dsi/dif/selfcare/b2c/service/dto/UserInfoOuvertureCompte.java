@@ -9,27 +9,27 @@ import javax.validation.constraints.*;
 public class UserInfoOuvertureCompte {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+    @NotNull(message = MessageValidation.FIELD_NUMERO)
+    @NotBlank(message = MessageValidation.FIELD_NUMERO)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
+    @Size(min = 9, max = 18, message = MessageValidation.FIELD_NUMERO_SIZE)
     private String numero;
 
-    @NotNull(message = "Le nom ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_LASTNAME)
     private String lastName;
 
-    @NotNull(message = "Le prénom ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_FIRSTNAME)
     private String firstName;
 
-    @NotNull(message = "L'opération ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_OPERATION)
     private String operation;
 
     private String operationTitle;
 
-    @NotNull(message = "Le formulaire ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_FORMULAIRE)
     private String formulaire;
 
-    @NotNull(message = "Le recto ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_RECTOID)
     private String rectoID;
 
     private String versoID;
@@ -40,7 +40,7 @@ public class UserInfoOuvertureCompte {
 
     private Resource objectVersoID;
 
-    @NotNull(message = "L'email ne peut pas être vide")
+    @NotNull(message = MessageValidation.FIELD_EMAIL)
     @ApiModelProperty(required = true)
     @Email
     @Size(min = 5, max = 254)
