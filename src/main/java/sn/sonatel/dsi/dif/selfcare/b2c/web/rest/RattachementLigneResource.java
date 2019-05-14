@@ -192,20 +192,7 @@ public class RattachementLigneResource {
     @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
-        log.debug ( "###REST request to get RattachementLigne : {}", msisdn );
-        String authorizationHeader = "";
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        if(securityContext != null) {
-            Authentication authentication = securityContext.getAuthentication();
-            log.info("@@@@@@@@@@@@@@@@@@@@@---------------@@@@@@@@@@@@@@@@@@@@@@@");
-            System.out.println(authorizationHeader);
-            log.info("@@@@@@@@@@@@@@@@@@@@@---------------@@@@@@@@@@@@@@@@@@@@@@@");
-            if(authentication != null  ) {
-                log.debug ( "@@@REST request to get RattachementLigne for : {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
-            }
-        }
-
+        log.debug ( "REST request to get RattachementLigne : {}", msisdn );
 
         List<InfoNumberVM> infoNumberVMList = new ArrayList<> ();
 
