@@ -1,7 +1,7 @@
 pipeline {
 
   agent  {
-      label 'sdd'
+      label 'gateway'
   }
   options {
       timeout(time: 120, unit: 'MINUTES')
@@ -30,6 +30,16 @@ pipeline {
         }
      }
 
+
+        stage('Deploy Snapshots On Nexus') {
+
+           when { branch 'staging' }
+
+           steps {
+                   sh 'mvn clean deploy -Pprod'
+                 }
+         }
+
     stage('Units Tests') {
       steps {
         sh 'mvn clean test -Dmaven.test.skip=false'
@@ -42,6 +52,7 @@ pipeline {
       }
 
     }
+
 
     stage('SonarQube Scan') {
       steps{
