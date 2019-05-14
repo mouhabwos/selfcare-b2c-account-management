@@ -189,7 +189,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-    @PreAuthorize("#msisdn == authentication.name")
+    @PostAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "REST request to get RattachementLigne : {}", msisdn );
@@ -224,6 +224,7 @@ public class RattachementLigneResource {
                 infoNumberVMList.add ( infoNumberVMS );
             }
         }
+
         return ResponseEntity.ok ( infoNumberVMList );
     }
 
