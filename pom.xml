@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.3-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -49,7 +49,7 @@
         <eureka.instance.dev.hostname>10.137.52.32</eureka.instance.dev.hostname>
         <eureka.instance.rec.hostname>10.137.52.31</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
-        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+              <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
 
         <!-- Build properties -->
