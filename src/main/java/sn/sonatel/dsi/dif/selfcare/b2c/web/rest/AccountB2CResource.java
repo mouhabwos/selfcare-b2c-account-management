@@ -21,6 +21,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
@@ -34,6 +35,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -53,6 +55,8 @@ public class AccountB2CResource {
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementAccountB2C";
 
+    private  final CaptchaService captchaService;
+
     private final AccountB2CRepository accountB2CRepository;
 
     private final RattachementLigneRepository rattachementLigneRepository;
@@ -69,8 +73,10 @@ public class AccountB2CResource {
     @Autowired
     private OTPService otpService;
 
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager, AccountB2CService accountB2CService) {
+    public AccountB2CResource(AccountB2CRepository accountB2CRepository,CaptchaService captchaService, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager, AccountB2CService accountB2CService) {
+
         this.accountB2CRepository = accountB2CRepository;
+        this.captchaService = captchaService;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.restTemplate = restTemplate;
         this.mailService = mailService;
@@ -219,9 +225,14 @@ public class AccountB2CResource {
     }*/
 
     @Auditable(description = Message.Account.CHECK_Numero)
-    @GetMapping("/check_number/{msisdn}")
-    public ResponseEntity checkNumber(@PathVariable String msisdn) {
-        msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
+    @PostMapping("/check_number")
+    public ResponseEntity checkNumber(@Valid @RequestBody NumberRequest numberRequest) {
+
+        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String msisdn = FormatNumberPhoneUtil.getNumberFormat(numberRequest.getMsisdn());
 
         Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(msisdn);
         if(account.isPresent()){
