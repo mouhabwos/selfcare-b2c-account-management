@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
@@ -63,6 +65,9 @@ public class AccountB2CResource {
     private final DowloadManager dowloadManager;
 
     private final AccountB2CService accountB2CService;
+
+    @Autowired
+    private OTPService otpService;
 
     public AccountB2CResource(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager, AccountB2CService accountB2CService) {
         this.accountB2CRepository = accountB2CRepository;
@@ -116,6 +121,11 @@ public class AccountB2CResource {
             throw new LigneAlreadyRattachedException();
 
         }
+
+        if (!otpService.checkRegisterValidity(managedUserVM.getLogin())){
+            return ResponseEntity.badRequest().build();
+        }
+
 
         AccountB2C result =  new AccountB2C();
         try {
