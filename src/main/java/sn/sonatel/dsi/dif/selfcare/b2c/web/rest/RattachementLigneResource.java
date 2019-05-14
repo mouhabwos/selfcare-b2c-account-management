@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
@@ -191,7 +193,19 @@ public class RattachementLigneResource {
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "###REST request to get RattachementLigne : {}", msisdn );
-        log.debug ( "@@@REST request to get RattachementLigne for : {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        String authorizationHeader = "";
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        if(securityContext != null) {
+            Authentication authentication = securityContext.getAuthentication();
+            log.info("@@@@@@@@@@@@@@@@@@@@@---------------@@@@@@@@@@@@@@@@@@@@@@@");
+            System.out.println(authorizationHeader);
+            log.info("@@@@@@@@@@@@@@@@@@@@@---------------@@@@@@@@@@@@@@@@@@@@@@@");
+            if(authentication != null  ) {
+                log.debug ( "@@@REST request to get RattachementLigne for : {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
+            }
+        }
+
 
         List<InfoNumberVM> infoNumberVMList = new ArrayList<> ();
 
