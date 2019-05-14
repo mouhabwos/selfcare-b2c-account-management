@@ -1,13 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
@@ -20,32 +15,17 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 @Service
 public class SelfcareSoapService {
 
-
-    private final RestTemplate restTemplate;
     private final OTPService otpService;
+    private final ServiceSOAP serviceSOAP;
 
 
-    public SelfcareSoapService(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, OTPService otpService) {
-        this.restTemplate = restTemplate;
+
+    public SelfcareSoapService( OTPService otpService, ServiceSOAP serviceSOAP) {
+
         this.otpService = otpService;
+        this.serviceSOAP = serviceSOAP;
     }
 
-    public ResponseEntity<SouscriptionDto> getSouscription(HttpEntity<SOAPRequest> request) {
-
-
-        ResponseEntity<SouscriptionDto> responseEntity = restTemplate
-            .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_SOUSCRIPTION_ABONNE, HttpMethod.POST, request, SouscriptionDto.class);
-
-        if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
-
-            return responseEntity;
-
-        } else {
-
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-        }
-
-    }
 
     public ResponseEntity<AbonneDTO> getAbonne(String msisdn, String code) {
 
@@ -53,27 +33,25 @@ public class SelfcareSoapService {
 
         if(codeOTPCheckDTO != null){
             if (codeOTPCheckDTO.isValid()) {
-                HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
 
-                ResponseEntity<AbonneDTO> responseEntity = restTemplate
-                    .exchange(Constants.SELFCARE_B2C_SOAP_SERVICE + "" + Constants.GET_ABONNE, HttpMethod.POST, request, AbonneDTO.class);
-                if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+                SOAPRequest soapRequest = new SOAPRequest(msisdn);
 
+                return serviceSOAP.getInformationClient(soapRequest);
 
-                    return responseEntity;
-
-                } else {
-                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-                }
             } else
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }else {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
-
-
     }
 
+    public ResponseEntity<SouscriptionDto> getSouscription(String msisdn) {
+
+        SOAPRequest soapRequest = new SOAPRequest(msisdn);
+
+        return serviceSOAP.getSouscription( soapRequest);
+
+    }
 
 }

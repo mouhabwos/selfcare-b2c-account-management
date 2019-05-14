@@ -75,7 +75,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
     @PreAuthorize("#accountB2C.numero == authentication.name")
-    public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) throws URISyntaxException {
+    public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         AccountB2C result = accountB2CService.updateAccountB2C(accountB2C);
 

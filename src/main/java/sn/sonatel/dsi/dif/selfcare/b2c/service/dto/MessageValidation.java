@@ -5,7 +5,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
  */
 public final class MessageValidation {
 
-    public MessageValidation() {
+    private MessageValidation() {
         // Default constructor
     }
 

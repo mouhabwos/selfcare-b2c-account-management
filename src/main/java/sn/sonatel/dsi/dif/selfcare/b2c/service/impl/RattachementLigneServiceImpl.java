@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
@@ -26,7 +24,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,13 +220,12 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     public SouscriptionDto getSouscription(String msisdn) {
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<>(new SOAPRequest(msisdn));
         try {
 
-            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(request);
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(msisdn);
+            if (response.getBody()!= null) {
                 return null;
-            } else if (response.getStatusCode() == HttpStatus.OK) {
+            } else {
                 return response.getBody();
             }
 
