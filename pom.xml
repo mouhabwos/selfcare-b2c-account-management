@@ -49,6 +49,8 @@
         <eureka.instance.dev.hostname>10.137.52.32</eureka.instance.dev.hostname>
         <eureka.instance.rec.hostname>10.137.52.31</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
+              <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
