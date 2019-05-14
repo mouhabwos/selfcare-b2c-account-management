@@ -1,7 +1,7 @@
 pipeline {
 
   agent  {
-      label 'gateway'
+      label 'java-dif-slave'
   }
   options {
       timeout(time: 120, unit: 'MINUTES')
