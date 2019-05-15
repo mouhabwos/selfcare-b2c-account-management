@@ -33,7 +33,7 @@ pipeline {
 
         stage('Deploy Snapshots On Nexus') {
 
-           when { branch 'staging' }
+           when { branch 'release' }
 
            steps {
                    sh 'mvn clean deploy -Pprod'
@@ -89,7 +89,7 @@ pipeline {
     stage(' [REC] Build & Run Docker image') {
           agent  { label 'docker-builder-rec3' }
           options { skipDefaultCheckout() }
-          when { branch 'staging' }
+          when { branch 'release' }
           steps {
 
               sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
@@ -209,7 +209,7 @@ pipeline {
 
     stage('Release On Nexus') {
      when {
-      branch 'release'
+      branch 'master'
      }
       steps {
         build job: 'selfcare-b2c-account-management-release'
@@ -218,7 +218,7 @@ pipeline {
 
 
       stage('Push Docker image') {
-        when { branch 'release' }
+        when { branch 'master' }
         agent  { label 'docker-builder-rec3' }
         steps {
           sh 'docker push ${IMAGE}:${VERSION}.${BUILD_NUMBER}'
