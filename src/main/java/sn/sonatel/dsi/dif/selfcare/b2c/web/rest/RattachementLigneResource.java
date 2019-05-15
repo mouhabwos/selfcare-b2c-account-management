@@ -12,6 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
@@ -185,7 +189,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-  //  @PreAuthorize("#msisdn == authentication.name")
+    @PostAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "REST request to get RattachementLigne : {}", msisdn );
@@ -220,6 +224,7 @@ public class RattachementLigneResource {
                 infoNumberVMList.add ( infoNumberVMS );
             }
         }
+
         return ResponseEntity.ok ( infoNumberVMList );
     }
 

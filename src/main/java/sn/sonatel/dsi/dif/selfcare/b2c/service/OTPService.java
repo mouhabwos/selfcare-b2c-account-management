@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 
+import java.util.Map;
+
 /**
  * Service for sending emails.
  * <p>
@@ -35,7 +37,8 @@ public class OTPService {
 
     /**
      * Generate a OTP code for User to reset password
-     * @param login
+     * @param msisdn
+     * @param code
      */
    public CodeOTPCheckDTO checkOPT(String msisdn, String code) {
         log.debug("checkOPT {}", msisdn);
@@ -47,6 +50,21 @@ public class OTPService {
        codeOTPCheckDTO = restTemplate.postForObject(applicationProperties.getUrlOtp()+"/api/code-otp-infos/check", request, CodeOTPCheckDTO.class);
 
         return  codeOTPCheckDTO;
+
+    }
+
+    /**
+     * Generate a OTP code for User to reset password
+     * @param msisdn
+     */
+    public boolean checkRegisterValidity(String msisdn) {
+        log.debug("check validity for register request for {}", msisdn);
+
+        Map<String,Object> response = restTemplate.getForObject(applicationProperties.getUrlOtp() + "/api/code-otp-infos/check-valid-request/" + msisdn, Map.class);
+
+        Boolean valid = (Boolean) response.get("valid");
+
+        return  valid;
 
     }
 
