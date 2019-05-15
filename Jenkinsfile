@@ -31,15 +31,7 @@ pipeline {
      }
 
 
-        stage('Deploy Snapshots On Nexus') {
-
-           when { branch 'release' }
-
-           steps {
-                   sh 'mvn clean deploy -Pprod'
-                 }
-         }
-
+      
     stage('Units Tests') {
       steps {
         sh 'mvn clean test -Dmaven.test.skip=false'
@@ -63,13 +55,28 @@ pipeline {
        }
      }
 	 }
+    
+      stage("SonarQube Quality Gate") {
+          steps{
+              script{
+                timeout(time: 10, unit: 'MINUTES') {
+                   sleep 5
+                   def qg = waitForQualityGate()
+                   if (qg.status != 'OK') {
+                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                   }
+                }
+
+              }
+            }
+        }
 
 
     stage(' [DEV2] Build & Run Docker image') {
         agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
-                       anyOf { branch 'develop'; branch 'staging' }
+                       anyOf { branch 'develop'; branch 'release' }
                     }
       steps {
 
@@ -103,6 +110,16 @@ pipeline {
               }
           }
         }
+    
+      stage('Deploy Snapshots On Nexus') {
+
+           when { branch 'release' }
+
+           steps {
+                   sh 'mvn clean deploy -Pprod'
+                 }
+         }
+
 
 
     stage('Functionnals Tests Phases') {
@@ -120,19 +137,7 @@ pipeline {
       }
     }
 
-    stage("SonarQube Quality Gate") {
-          steps{
-              script{
-                timeout(time: 10, unit: 'MINUTES') {
-                   def qg = waitForQualityGate()
-                   if (qg.status != 'OK') {
-                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                   }
-                }
-
-              }
-            }
-        }
+  
 
     stage('Deploy PréPROD') {
     when { branch 'release' }
