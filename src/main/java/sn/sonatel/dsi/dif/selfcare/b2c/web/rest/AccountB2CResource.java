@@ -116,8 +116,14 @@ public class AccountB2CResource {
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
 
-
         if (!otpService.checkRegisterValidity(managedUserVM.getLogin())){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(managedUserVM.getLogin());
+
+        if(accountB2C.isPresent() || ligne.isPresent()){
             return ResponseEntity.badRequest().build();
         }
 
