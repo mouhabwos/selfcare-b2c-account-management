@@ -31,15 +31,7 @@ pipeline {
      }
 
 
-        stage('Deploy Snapshots On Nexus') {
-
-           when { branch 'staging' }
-
-           steps {
-                   sh 'mvn clean deploy -Pprod'
-                 }
-         }
-
+      
     stage('Units Tests') {
       steps {
         sh 'mvn clean test -Dmaven.test.skip=false'
@@ -63,13 +55,28 @@ pipeline {
        }
      }
 	 }
+    
+    stage("SonarQube Quality Gate") {
+          steps{
+              script{
+                timeout(time: 10, unit: 'MINUTES') {
+                   sleep 5
+                   def qg = waitForQualityGate()
+                   if (qg.status != 'OK') {
+                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                   }
+                }
 
+              }
+            }
+        }
+      
 
     stage(' [DEV2] Build & Run Docker image') {
         agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
-                       anyOf { branch 'develop'; branch 'staging' }
+                       anyOf { branch 'develop'; branch 'release' }
                     }
       steps {
 
@@ -89,7 +96,7 @@ pipeline {
     stage(' [REC] Build & Run Docker image') {
           agent  { label 'docker-builder-rec3' }
           options { skipDefaultCheckout() }
-          when { branch 'staging' }
+          when { branch 'release' }
           steps {
 
               sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
@@ -103,6 +110,16 @@ pipeline {
               }
           }
         }
+    
+      stage('Deploy Snapshots On Nexus') {
+
+           when { branch 'release' }
+
+           steps {
+                   sh 'mvn clean deploy -Pprod'
+                 }
+         }
+
 
 
     stage('Functionnals Tests Phases') {
@@ -120,19 +137,7 @@ pipeline {
       }
     }
 
-    stage("SonarQube Quality Gate") {
-          steps{
-              script{
-                timeout(time: 10, unit: 'MINUTES') {
-                   def qg = waitForQualityGate()
-                   if (qg.status != 'OK') {
-                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                   }
-                }
-
-              }
-            }
-        }
+  
 
     stage('Deploy PréPROD') {
     when { branch 'release' }
@@ -209,7 +214,7 @@ pipeline {
 
     stage('Release On Nexus') {
      when {
-      branch 'release'
+      branch 'master'
      }
       steps {
         build job: 'selfcare-b2c-account-management-release'
@@ -218,7 +223,7 @@ pipeline {
 
 
       stage('Push Docker image') {
-        when { branch 'release' }
+        when { branch 'master' }
         agent  { label 'docker-builder-rec3' }
         steps {
           sh 'docker push ${IMAGE}:${VERSION}.${BUILD_NUMBER}'
