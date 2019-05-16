@@ -580,7 +580,7 @@ public class AccountB2CResourceIntTest {
 
 
     }
-
+/*
     @Test
     @Transactional
     public void registerAccountB2CWithNumberRattached() throws Exception {
@@ -593,7 +593,7 @@ public class AccountB2CResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(vm)))
             .andExpect(status().isBadRequest());
 
-    }
+    }*/
 
 
 

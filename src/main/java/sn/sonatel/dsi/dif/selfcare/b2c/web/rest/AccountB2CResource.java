@@ -121,19 +121,6 @@ public class AccountB2CResource {
             return ResponseEntity.badRequest().build();
         }
 
-        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(managedUserVM.getLogin());
-
-        if(accountB2C.isPresent()){
-            throw new LoginAlreadyUsedException();
-        }
-
-        if(ligne.isPresent()){
-            throw new LigneAlreadyRattachedException();
-
-        }
-
-
         AccountB2C result =  new AccountB2C();
         try {
 
