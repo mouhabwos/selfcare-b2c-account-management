@@ -1,24 +1,26 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback;
 
 import feign.FeignException;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
+
+import javax.validation.Valid;
 
 
-public class ServiceFileFallBack implements ServiceFile {
+public class ServiceOTPFallBack implements ServicesOTP {
 
     private final Throwable throwable;
 
-    public ServiceFileFallBack(Throwable throwable) {
+    public ServiceOTPFallBack(Throwable throwable) {
 
         this.throwable = throwable;
     }
 
-    @Override
-    public ResponseEntity<Resource> downloadFile(String filePath) {
 
+    @Override
+    public ResponseEntity<CodeOTPCheckDTO> registerOTP(@Valid CodeOTPCheckDTO checkVM) {
         if (throwable instanceof FeignException && ((FeignException) throwable).status() == 400) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -33,8 +35,5 @@ public class ServiceFileFallBack implements ServiceFile {
         }
 
         return ResponseEntity.ok().build();
-
     }
-
-
 }

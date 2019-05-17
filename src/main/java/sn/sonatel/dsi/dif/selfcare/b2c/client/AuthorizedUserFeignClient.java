@@ -41,6 +41,7 @@ public @interface AuthorizedUserFeignClient {
      * annotated by this annotation and be a valid Spring bean.
      */
     Class<?> fallback() default void.class;
+    Class<?> fallbackFactory() default void.class;
 
     /**
      * Path prefix to be used by all method-level mappings. Can be used with or without <code>@RibbonClient</code>.

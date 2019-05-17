@@ -24,11 +24,16 @@ public final class Constants {
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
+
+
     public static final String SELFCARE_B2C_SOAP_SERVICE = "http://selfcare-b2c-soap";
 
     public static final String SELFCARE_UAA_SERVICE = "http://selfcare-uaa";
 
     public static final String SELFCARE_FILE_MANAGER_SERVICE = "http://selfcare-file-manager";
+
+    public static final String SELFCARE_SERVICE_OTP = "http://selfcare-otp";
+
 
     public static final String FILE_DOWNLOAD = "/api/download/";
 
@@ -39,6 +44,8 @@ public final class Constants {
     public static final String URL_SEND_MESSAGE = "/api/message/send";
 
     public static final String REGISTER_ACCOUNT = "/api/register";
+
+    public static final String URL_CHECK_CODE_OTP = "/api/code-otp-infos/check";
 
 
     public static final String EMAIL_SERVICE_CLIENT = "vieuxmamadou.kasse@orange-sonatel.com";

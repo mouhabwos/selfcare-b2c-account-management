@@ -1,4 +1,4 @@
-package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
+package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +7,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSOAP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 /**
@@ -36,7 +37,7 @@ public class SelfcareSoapService {
 
                 SOAPRequest soapRequest = new SOAPRequest(msisdn);
 
-                return serviceSOAP.getInformationClient(soapRequest);
+                return serviceSOAP.getAbonne(soapRequest);
 
             } else
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

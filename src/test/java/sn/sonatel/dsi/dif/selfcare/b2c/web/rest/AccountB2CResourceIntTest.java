@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -604,8 +605,6 @@ public class AccountB2CResourceIntTest {
         user.setEmail("bouya@gmail.com");
       //  accountBCResource.sendmail(user);
 
-
-
         restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(user)));
@@ -626,10 +625,8 @@ public class AccountB2CResourceIntTest {
         user.setFormulaire("1.PNG");
         user.setRectoID("1.PNG");
         user.setEmail("bouya@gmail.com");
-        //user.setVersoID("1.PNG");
-        //  accountBCResource.sendmail(user);
+        //user.setObjectRectoID();
 
-        // Mockito.doNothing().when(accountBCResource).sendmail(any(UserInfoOuvertureCompte.class));
         restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(user)));

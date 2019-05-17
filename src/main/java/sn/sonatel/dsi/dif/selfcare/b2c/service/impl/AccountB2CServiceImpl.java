@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceSelfcareUAA;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
@@ -43,17 +42,16 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-
-    private final RestTemplate restTemplate;
+    private final SelfcareUAAService selfcareUAAService;
 
     private final MailService mailService;
 
     private final DowloadManager dowloadManager;
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository,@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager) {
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.restTemplate = restTemplate;
+        this.selfcareUAAService = selfcareUAAService;
         this.mailService = mailService;
         this.dowloadManager = dowloadManager;
     }
@@ -96,12 +94,11 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         AccountB2C result =  new AccountB2C();
 
         try {
-            HttpEntity<ManagedUserVM> request = new HttpEntity<>(managedUserVM);
             if(managedUserVM.getEmail() == null){
 
                 managedUserVM.setEmail("selfcare-b2c-"+managedUserVM.getLogin()+"@selfcare.com");
             }
-            ResponseEntity response = ServiceSelfcareUAA.regiserAccount(restTemplate, request);
+            ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
 
             if (response.getStatusCode() == HttpStatus.CREATED) {
                 managedUserVM.setActivated(true);
