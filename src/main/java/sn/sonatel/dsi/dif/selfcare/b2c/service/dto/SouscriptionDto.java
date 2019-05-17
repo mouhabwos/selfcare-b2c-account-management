@@ -7,8 +7,6 @@ public class SouscriptionDto {
 
     protected String msisdn;
 
-    protected String imsi;
-
     protected String profil;
 
     protected String nomOffre;
@@ -25,14 +23,6 @@ public class SouscriptionDto {
 
     public void setMsisdn(String msisdn) {
         this.msisdn = msisdn;
-    }
-
-    public String getImsi() {
-        return imsi;
-    }
-
-    public void setImsi(String imsi) {
-        this.imsi = imsi;
     }
 
     public String getProfil() {
@@ -77,10 +67,13 @@ public class SouscriptionDto {
 
     @Override
     public String toString() {
-        return "SouscriptionDto{" + "msisdn='" + msisdn + '\'' + ", imsi='" + imsi + '\''
-            + ", profil='" + profil + '\'' + ", nomOffre='" + nomOffre + '\''
-            + ", codeOffre='" + codeOffre + '\'' + ", code='" + code + '\''
-            + ", message='" + message + '\'' + '}';
+        return "SouscriptionDto{" +
+            "msisdn='" + msisdn + '\'' +
+            ", profil='" + profil + '\'' +
+            ", nomOffre='" + nomOffre + '\'' +
+            ", codeOffre='" + codeOffre + '\'' +
+            ", code='" + code + '\'' +
+            ", message='" + message + '\'' +
+            '}';
     }
-
 }
