@@ -16,12 +16,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 @Service
 public class SelfcareSoapService {
 
-    private final OTPService otpService;
+    private final SelfcareOTPService otpService;
     private final ServiceSOAP serviceSOAP;
 
 
 
-    public SelfcareSoapService( OTPService otpService, ServiceSOAP serviceSOAP) {
+    public SelfcareSoapService( SelfcareOTPService otpService, ServiceSOAP serviceSOAP) {
 
         this.otpService = otpService;
         this.serviceSOAP = serviceSOAP;

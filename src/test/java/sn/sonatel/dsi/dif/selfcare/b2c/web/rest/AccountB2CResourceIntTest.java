@@ -126,11 +126,9 @@ public class AccountB2CResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-<<<<<<< HEAD
+
         final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService);
-=======
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository,captchaService, rattachementLigneRepository, restTemplate, mailService, dowloadManager, accountB2CService);
->>>>>>> develop
+
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

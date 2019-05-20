@@ -16,7 +16,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
@@ -37,8 +36,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
 
-    private static final String ENTITY_NAME = "selfcareB2CAccountManagementRattachementLigneServiceImpl";
-
     private final RattachementLigneRepository rattachementLigneRepository;
 
     private final AccountB2CRepository accountB2CRepository;
@@ -57,9 +54,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     @Override
     public RattachementLigne createRattachementLigne(RattachementLigneDTO rattachementLigne) {
 
-        if (rattachementLigne.getId() != null) {
-            throw new BadRequestAlertException("A new rattachementLigne cannot already have an ID", ENTITY_NAME, "idexists");
-        }
+        log.debug ( "Service to save RattachementLigne : {}", rattachementLigne );
         RattachementLigne ligne = new RattachementLigne();
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
@@ -75,9 +70,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     @Override
     public RattachementLigne updateRattachementLigne(RattachementLigneDTO rattachementLigne) {
 
-        if (rattachementLigne.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
+        log.debug ( "Servvice to update RattachementLigne : {}", rattachementLigne );
         RattachementLigne ligne = new RattachementLigne();
         ligne.setId(rattachementLigne.getId());
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
@@ -93,26 +86,27 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     @Override
     public Page<RattachementLigne> getAllRattachementLignes(Pageable pageable) {
-        log.debug("REST request to get a page of RattachementLignes");
+        log.debug("Service to get a page of RattachementLignes");
         return rattachementLigneRepository.findAll(pageable);
     }
 
     @Override
     public Optional<RattachementLigne> getRattachementLigne(Long id) {
-        log.debug("REST request to get RattachementLigne : {}", id);
+        log.debug("Service to get RattachementLigne : {}", id);
         return rattachementLigneRepository.findById(id);
 
     }
 
     @Override
     public void deleteRattachementLigne(Long id) {
-        log.debug("REST request to delete RattachementLigne : {}", id);
+        log.debug("Service to delete RattachementLigne : {}", id);
         rattachementLigneRepository.deleteById(id);
     }
 
     @Override
     public RattachementLigne addRattachementLigne(RattachementLigneVM ligneVM) {
 
+        log.debug ( "Service to save RattachementLigne : {}", ligneVM );
         ligneVM.setNumero(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getNumero()));
 
         ligneVM.setLogin(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getLogin()));
@@ -124,6 +118,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
 
             if (!accountB2C.isPresent()) {
+                log.debug ( "Error login not found  : {}", ligneVM.getLogin() );
                 throw new LigneNotFoundException();
             }
 
@@ -143,7 +138,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     @Override
     public List<InfoNumberVM> getRattachementLignes(String msisdn) {
-        log.debug("REST request to get RattachementLigne : {}", msisdn);
+        log.debug("Service to get all RattachementLigne : {}", msisdn);
 
         List<InfoNumberVM> infoNumberVMList = new ArrayList<>();
 
@@ -181,6 +176,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     @Override
     public RattachementLignesDeleteMultipleVM deleteMultipleRattachementLigne( RattachementLignesDeleteMultipleVM deleteListe) {
 
+        log.debug ( "Service to delete RattachementLigne : {}", deleteListe );
         for (String numero : deleteListe.getListMsisdn()) {
             Optional<RattachementLigne> ligne = rattachementLigneRepository
                 .findByNumero(numero);
@@ -196,22 +192,27 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     public void checkNumberIfUsed(String number, String login) {
 
+        log.debug ( "Service to check status number for rattached : {}", number );
+        log.debug ( "Service to check status login : {}", login );
         number = FormatNumberPhoneUtil.getNumberFormat(number);
         Optional<RattachementLigne> ligne = rattachementLigneRepository
             .findByNumero(number);
 
         if (ligne.isPresent()) {
+            log.debug ( "error ligne already rattached : {}", number );
             throw new LigneAlreadyRattachedException();
         }
 
         Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
 
         if (!account.isPresent()) {
+            log.debug ( "error login not found : {}", login );
             throw new LigneNotFoundException();
         }
 
         Optional<AccountB2C> rattachementLigne = accountB2CRepository.findOneByNumero(number);
         if (rattachementLigne.isPresent()) {
+            log.debug ( "error ligne already use in a other account : {}", number );
             throw new LoginAlreadyUsedException();
         }
 
@@ -224,9 +225,9 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
             ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(msisdn);
             if (response.getBody()!= null) {
-                return null;
-            } else {
                 return response.getBody();
+            } else {
+                return null;
             }
 
         } catch (Exception e) {

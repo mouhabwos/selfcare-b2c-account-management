@@ -8,16 +8,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
@@ -57,6 +55,11 @@ public class RattachementLigneResource {
     public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
         log.debug ( "REST request to save RattachementLigne : {}", rattachementLigne );
 
+        if (rattachementLigne.getId() != null) {
+
+            throw new BadRequestAlertException("A new rattachementLigne cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+
         RattachementLigne result = rattachementLigneService.createRattachementLigne(rattachementLigne);
 
         return ResponseEntity.created ( new URI ( "/api/rattachement-lignes/" + result.getId () ) )
@@ -71,6 +74,9 @@ public class RattachementLigneResource {
     @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) {
         log.debug ( "REST request to update RattachementLigne : {}", rattachementLigne );
+        if (rattachementLigne.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
 
         RattachementLigne result = rattachementLigneService.updateRattachementLigne(rattachementLigne);
 
@@ -116,7 +122,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.SAVE)
     @PostMapping("/rattachement-lignes/register")
-    @PreAuthorize("#ligneVM.login==authentication.name")
+ //   @PreAuthorize("#ligneVM.login==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
         @Valid @RequestBody RattachementLigneVM ligneVM) throws URISyntaxException {
 
@@ -132,41 +138,13 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-    @PostAuthorize("#msisdn == authentication.name")
+    //@PostAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "REST request to get RattachementLigne : {}", msisdn );
 
         List<InfoNumberVM> infoNumberVMList = rattachementLigneService.getRattachementLignes(msisdn);
 
-<<<<<<< HEAD
-=======
-        if (user.isPresent ()) {
-            List<RattachementLigne> list = rattachementLigneRepository.findAllByAccountB2C ( user.get () );
-
-            for (RattachementLigne rattachementLigne : list) {
-
-                InfoNumberVM infoNumberVMS = new InfoNumberVM ();
-
-                infoNumberVMS.setMsisdn ( rattachementLigne.getNumero () );
-
-                SouscriptionDto dto = getSouscription ( rattachementLigne.getNumero () );
-                if (dto != null) {
-
-                    infoNumberVMS.setProfil ( dto.getProfil () );
-                    infoNumberVMS.setFormule ( dto.getNomOffre () );
-
-                } else {
-                    infoNumberVMS.setProfil ( "" );
-                    infoNumberVMS.setFormule ( "" );
-
-                }
-
-                infoNumberVMList.add ( infoNumberVMS );
-            }
-        }
-
->>>>>>> develop
         return ResponseEntity.ok ( infoNumberVMList );
     }
 

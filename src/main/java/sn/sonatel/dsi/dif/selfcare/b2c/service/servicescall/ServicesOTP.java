@@ -3,17 +3,21 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedFeignClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.ServiceUAAFallBackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.ServiceOTPFallBackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
 import javax.validation.Valid;
 
-@AuthorizedFeignClient(name = Constants.SELFCARE_SERVICE_OTP, fallbackFactory = ServiceUAAFallBackFactory.class)
+@AuthorizedUserFeignClient(name = Constants.SELFCARE_SERVICE_OTP, fallbackFactory = ServiceOTPFallBackFactory.class)
 public interface ServicesOTP {
 
-    @PostMapping(name = Constants.URL_CHECK_CODE_OTP)
-    ResponseEntity<CodeOTPCheckDTO> registerOTP(@Valid @RequestBody CodeOTPCheckDTO checkVM);
+    @PostMapping(Constants.URL_CHECK_CODE_OTP)
+    ResponseEntity<CodeOTPCheckDTO> checkOTP(@Valid @RequestBody CodeOTPCheckDTO checkVM);
+
+    @PostMapping( Constants.URL_SEND_MESSAGE)
+    boolean generateMessage(@Valid @RequestBody MessageVM messageVM);
 
 }

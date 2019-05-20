@@ -13,7 +13,7 @@ import javax.validation.Valid;
 @AuthorizedFeignClient(name = Constants.SELFCARE_UAA_SERVICE, fallbackFactory = ServiceUAAFallBackFactory.class)
 public interface ServiceUAA {
 
-    @PostMapping(name = Constants.REGISTER_ACCOUNT)
+    @PostMapping(Constants.REGISTER_ACCOUNT)
     ResponseEntity register(@Valid @RequestBody ManagedUserVM managedUserVM);
 
 }

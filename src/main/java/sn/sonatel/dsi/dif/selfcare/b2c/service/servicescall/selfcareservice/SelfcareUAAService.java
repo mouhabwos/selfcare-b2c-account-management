@@ -10,7 +10,7 @@ public class SelfcareUAAService {
 
     private final ServiceUAA serviceUAA;
 
-    private SelfcareUAAService(ServiceUAA serviceUAA) {
+    public SelfcareUAAService(ServiceUAA serviceUAA) {
 
         this.serviceUAA = serviceUAA;
     }

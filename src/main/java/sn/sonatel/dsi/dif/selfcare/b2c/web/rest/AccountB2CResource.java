@@ -4,11 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-<<<<<<< HEAD
-=======
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
->>>>>>> develop
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -18,16 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
-<<<<<<< HEAD
-=======
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
->>>>>>> develop
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
@@ -52,39 +41,12 @@ public class AccountB2CResource {
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementAccountB2C";
 
-<<<<<<< HEAD
+
     private final AccountB2CService accountB2CService;
+
 
     public AccountB2CResource(AccountB2CService accountB2CService) {
 
-=======
-    private  final CaptchaService captchaService;
-
-    private final AccountB2CRepository accountB2CRepository;
-
-    private final RattachementLigneRepository rattachementLigneRepository;
-
-    @Qualifier("loadBalancedRestTemplate")
-    private final RestTemplate restTemplate;
-
-    private final MailService mailService;
-
-    private final DowloadManager dowloadManager;
-
-    private final AccountB2CService accountB2CService;
-
-    @Autowired
-    private OTPService otpService;
-
-    public AccountB2CResource(AccountB2CRepository accountB2CRepository,CaptchaService captchaService, RattachementLigneRepository rattachementLigneRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, MailService mailService, DowloadManager dowloadManager, AccountB2CService accountB2CService) {
-
-        this.accountB2CRepository = accountB2CRepository;
-        this.captchaService = captchaService;
-        this.rattachementLigneRepository = rattachementLigneRepository;
-        this.restTemplate = restTemplate;
-        this.mailService = mailService;
-        this.dowloadManager = dowloadManager;
->>>>>>> develop
         this.accountB2CService = accountB2CService;
     }
 
@@ -94,6 +56,9 @@ public class AccountB2CResource {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2CDto) throws URISyntaxException {
         log.debug("REST request to save AccountB2C : {}", accountB2CDto);
+        if (accountB2CDto.getId() != null) {
+            throw new BadRequestAlertException("A new accountB2C cannot already have an ID", ENTITY_NAME, "idexists");
+        }
         AccountB2C result = accountB2CService.createAccountB2C(accountB2CDto);
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
@@ -101,57 +66,13 @@ public class AccountB2CResource {
             .body(result);
     }
 
-    //TO-DO IMPLEMENT CAPTCHA
+
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
+        log.debug("REST request to save AccountB2C : {}", managedUserVM);
 
-<<<<<<< HEAD
         AccountB2C result = accountB2CService.registerAccountB2C(managedUserVM);
-=======
-        if (!otpService.checkRegisterValidity(managedUserVM.getLogin())){
-            return ResponseEntity.badRequest().build();
-        }
-
-        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(managedUserVM.getLogin());
-
-        if(accountB2C.isPresent() || ligne.isPresent()){
-            return ResponseEntity.badRequest().build();
-        }
-
-        AccountB2C result =  new AccountB2C();
-        try {
-
-            HttpEntity<ManagedUserVM> request = new HttpEntity<>(managedUserVM);
-            if(managedUserVM.getEmail() == null){
-
-                managedUserVM.setEmail("selfcare-b2c-"+managedUserVM.getLogin()+"@selfcare.com");
-
-            }
-            ResponseEntity response = ServiceSelfcareUAA.regiserAccount(restTemplate, request);
-
-            if (response.getStatusCode() == HttpStatus.CREATED) {
-                managedUserVM.setActivated(true);
-                AccountB2C account =  new AccountB2C();
-                account.setNumero(managedUserVM.getLogin());
-
-                account.setFirstName(managedUserVM.getFirstName());
-                account.setLastName(managedUserVM.getLastName());
-                account.setImageProfil(managedUserVM.getImageprofil());
-                account.setEmail(managedUserVM.getEmail());
-                result = accountB2CRepository.save(account);
-                mailService.sendActivationEmail(result);
-            }
-            else {
-                throw new UserNoCreatedException();
-            }
-
-        }catch (Exception e){
-
-            log.debug(" exception for creation Account : {}", e);
-        }
->>>>>>> develop
 
         return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -164,6 +85,9 @@ public class AccountB2CResource {
     @PreAuthorize("#accountB2C.numero == authentication.name")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
+        if (accountB2C.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
         AccountB2C result = accountB2CService.updateAccountB2C(accountB2C);
 
         return ResponseEntity.ok()
@@ -177,7 +101,7 @@ public class AccountB2CResource {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<AccountB2C>> getAllAccountB2CS(Pageable pageable) {
         log.debug("REST request to get a page of AccountB2CS");
-        Page<AccountB2C> page = accountB2CService.getAllAccountB2CS(pageable);
+        Page<AccountB2C> page = accountB2CService.getAllAccountB2C(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/account-b-2-cs");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -194,32 +118,11 @@ public class AccountB2CResource {
 
 
     @Auditable(description = Message.Account.CHECK_Numero)
-<<<<<<< HEAD
-    @GetMapping("/check_number/{msisdn}")
-    public ResponseEntity checkNumber(@PathVariable String msisdn) {
-        log.debug("REST request to check number AccountB2C : {}", msisdn);
-        return accountB2CService.checkNumber(msisdn);
-=======
     @PostMapping("/check_number")
     public ResponseEntity checkNumber(@Valid @RequestBody NumberRequest numberRequest) {
 
-        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat(numberRequest.getMsisdn());
-
-        Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(msisdn);
-        if(account.isPresent()){
-            throw new LoginAlreadyUsedException();
-        }
-
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
-        if(ligne.isPresent()){
-            throw new LigneAlreadyRattachedException();
-        }
-        return ResponseEntity.ok().build();
->>>>>>> develop
+        return accountB2CService.checkNumber(numberRequest);
     }
 
     @Auditable(description = Message.Account.CHECK_Email)
@@ -258,7 +161,7 @@ public class AccountB2CResource {
     @Timed
     public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
         log.debug("REST request to update field turorialView AccountB2C : {}", msisdn);
-        accountB2CService.tutorialView(msisdn);
+        accountB2CService.updateTutorialView(msisdn);
 
         return ResponseEntity.ok().build();
     }

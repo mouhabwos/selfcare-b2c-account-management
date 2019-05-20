@@ -7,12 +7,13 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import java.util.Optional;
 
 public interface AccountB2CService {
 
-    void tutorialView(String msisdn);
+    void updateTutorialView(String msisdn);
 
     AccountB2C createAccountB2C(AccountB2CDTO accountB2C);
 
@@ -20,11 +21,11 @@ public interface AccountB2CService {
 
     AccountB2C updateAccountB2C(AccountB2CDTO accountB2C);
 
-    Page<AccountB2C> getAllAccountB2CS(Pageable pageable);
+    Page<AccountB2C> getAllAccountB2C(Pageable pageable);
 
     Optional<AccountB2C> getAccountB2C(Long id);
 
-    ResponseEntity checkNumber(String msisdn);
+    ResponseEntity checkNumber(NumberRequest numberRequest);
 
     boolean emailExistingVerify(String email);
 

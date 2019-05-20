@@ -2,20 +2,19 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -24,6 +23,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -48,20 +48,21 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final DowloadManager dowloadManager;
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager) {
+    private final CaptchaService captchaService;
+
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, CaptchaService captchaService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
         this.mailService = mailService;
         this.dowloadManager = dowloadManager;
+        this.captchaService = captchaService;
     }
 
     @Override
     public AccountB2C createAccountB2C(AccountB2CDTO accountB2C){
-        log.debug("REST request to save AccountB2C : {}", accountB2C);
-        if (accountB2C.getId() != null) {
-            throw new BadRequestAlertException("A new accountB2C cannot already have an ID", ENTITY_NAME, "idexists");
-        }
+        log.debug("Service for save AccountB2C : {}", accountB2C);
+
         AccountB2C b2C = new AccountB2C();
 
         b2C.setNumero(accountB2C.getNumero());
@@ -93,6 +94,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
         AccountB2C result =  new AccountB2C();
 
+        //ToDo revoir les cas d'erreurs
         try {
             if(managedUserVM.getEmail() == null){
 
@@ -127,10 +129,8 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     @Override
     public AccountB2C updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C){
-        log.debug("REST request to update AccountB2C : {}", accountB2C);
-        if (accountB2C.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
+        log.debug("Service to update AccountB2C : {}", accountB2C);
+
         AccountB2C b2C = new AccountB2C();
         b2C.setId(accountB2C.getId());
         b2C.setNumero(accountB2C.getNumero());
@@ -144,30 +144,41 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public Page<AccountB2C> getAllAccountB2CS(Pageable pageable) {
-        log.debug("REST request to get a page of AccountB2CS");
+    public Page<AccountB2C> getAllAccountB2C(Pageable pageable) {
+        log.debug("Service to get a page of AccountB2CS");
         return accountB2CRepository.findAll(pageable);
 
     }
 
     @Override
     public Optional<AccountB2C> getAccountB2C(Long id) {
-        log.debug("REST request to get AccountB2C : {}", id);
+        log.debug("Service to get AccountB2C : {}", id);
         return accountB2CRepository.findById(id);
 
     }
 
     @Override
-    public ResponseEntity checkNumber(String msisdn) {
-        msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
+    public ResponseEntity checkNumber(NumberRequest numberRequest) {
+
+        log.debug("Service to check number of AccountB2C : {}", numberRequest);
+        numberRequest.setMsisdn(FormatNumberPhoneUtil.getNumberFormat(numberRequest.getMsisdn()));
+
+        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
+            log.debug("Error invalid number to check number  : {}", numberRequest);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String msisdn = FormatNumberPhoneUtil.getNumberFormat(numberRequest.getMsisdn());
 
         Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(msisdn);
         if(account.isPresent()){
+            log.debug("Error number is already used  : {}", numberRequest);
             throw new LoginAlreadyUsedException();
         }
 
         Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
         if(ligne.isPresent()){
+            log.debug("Error number is already rattached  : {}", numberRequest);
             throw new LigneAlreadyRattachedException();
         }
         return ResponseEntity.ok().build();
@@ -203,11 +214,13 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
             }else {
 
+                log.debug("Error number is already used  : {}", login);
                 throw new LigneNotFoundException();
             }
 
         }else {
 
+            log.debug("Error number is not valid   : {}", login);
             throw new LigneNotFoundException();
         }
 
@@ -224,7 +237,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
 
     @Override
-    public void tutorialView(String msisdn) {
+    public void updateTutorialView(String msisdn) {
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
 
@@ -232,6 +245,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             accountB2C.get().setTutoViewed(true);
             accountB2CRepository.save(accountB2C.get());
         }else {
+            log.debug("Error number is not found in AccountB2C  : {}", msisdn);
             throw  new LigneNotFoundException();
         }
 
