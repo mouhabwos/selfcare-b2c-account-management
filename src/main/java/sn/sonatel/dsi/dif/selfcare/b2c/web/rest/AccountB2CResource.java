@@ -145,7 +145,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.Authent)
+    @Auditable(description = Message.Account.GET_ACCOUNT)
     @GetMapping("/account/{login}")
     @Timed
     @PreAuthorize("#login == authentication.name")
@@ -155,6 +155,7 @@ public class AccountB2CResource {
 
     }
 
+    @Auditable(description = Message.Account.OUVERTURE_COMPTE)
     @PostMapping("/mail/ouverture-compte")
     @PreAuthorize("#b2C.numero== authentication.name")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
@@ -168,6 +169,7 @@ public class AccountB2CResource {
      * @param msisdn
      * @return Response ok if
      */
+    @Auditable(description = Message.Account.UPDATE_TUTORIAL_VIEW)
     @GetMapping("/view-tutorial/{msisdn}")
     @Timed
     public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
