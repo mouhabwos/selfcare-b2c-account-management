@@ -547,9 +547,6 @@ public class AccountB2CResourceIntTest {
         ligne.setAccountB2C(accountB2C);
         ligne.setNumero("770256363");
         ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
-        ligne.setTypeVerification("test");
-        ligne.setCodeVerification("test");
-        ligne.setStatut(true);
         rattachementLigneRepository.save(ligne);
 
     }
