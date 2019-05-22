@@ -29,7 +29,7 @@ public class AbonneResource {
 
     @Auditable(description = Message.Abonne.SOUSC_USER)
     @GetMapping("/souscription/{msisdn}")
-    @PostAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
+    //@PostAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<SouscriptionDto> getSouscription(@PathVariable String msisdn) {
         log.debug ( "REST request to get souscription : {}", msisdn );
 
