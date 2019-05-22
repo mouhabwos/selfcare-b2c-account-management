@@ -23,9 +23,9 @@ public class AccountB2CDTO {
 
 
     @ApiModelProperty(required = true)
-    @NotNull(message = MessageValidation.FIELD_NUMERO)
-    @NotBlank(message = MessageValidation.FIELD_NUMERO)
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
+    @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+    @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
     @Column(name = "numero", nullable = false)
     private String numero;
 

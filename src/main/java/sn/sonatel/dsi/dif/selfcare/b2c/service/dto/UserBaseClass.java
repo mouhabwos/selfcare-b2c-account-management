@@ -9,7 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.Column;
 import java.time.Instant;
 
-public class Same{
+public class UserBaseClass {
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, length = 50, updatable = false)
@@ -31,7 +31,7 @@ public class Same{
     @JsonIgnore
     private Instant lastModifiedDate = Instant.now ();
 
-    public Same() {
+    public UserBaseClass() {
         // Do nothing
     }
 

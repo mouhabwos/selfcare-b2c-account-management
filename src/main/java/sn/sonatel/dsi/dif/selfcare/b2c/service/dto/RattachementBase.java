@@ -11,13 +11,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class RattachementSame {
+public class RattachementBase {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = MessageValidation.FIELD_NUMERO)
-    @NotBlank(message = MessageValidation.FIELD_NUMERO)
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
-    @Size(min = 9, max = 18, message = MessageValidation.FIELD_NUMERO_SIZE)
+    @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+    @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+    @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     private String numero;
 
     private String typeVerification;
@@ -28,31 +28,31 @@ public class RattachementSame {
 
     private String login;
 
-    @NotNull(message = MessageValidation.FIELD_TYPE_NUMERO)
+    @NotNull(message = MessageValidation.TYPE_NUMERO_NON_VIDE)
     @Enumerated(EnumType.STRING)
     private TypeNumero typeNumero;
 
-    public RattachementSame numero(String numero) {
+    public RattachementBase numero(String numero) {
         this.numero = numero;
         return this;
     }
 
-    public RattachementSame typeVerification(String typeVerification) {
+    public RattachementBase typeVerification(String typeVerification) {
         this.typeVerification = typeVerification;
         return this;
     }
 
-    public RattachementSame codeVerification(String codeVerification) {
+    public RattachementBase codeVerification(String codeVerification) {
         this.codeVerification = codeVerification;
         return this;
     }
 
-    public RattachementSame statut(boolean statut) {
+    public RattachementBase statut(boolean statut) {
         this.statut = statut;
         return this;
     }
 
-    public RattachementSame typeNumero(TypeNumero typeNumero) {
+    public RattachementBase typeNumero(TypeNumero typeNumero) {
         this.typeNumero = typeNumero;
         return this;
     }

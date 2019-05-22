@@ -10,29 +10,29 @@ import java.util.Set;
 /**
  * A DTO representing a user, with his authorities.
  */
-public class UserDTO extends Same {
+public class UserDTO extends UserBaseClass {
 
 	private Long id;
 
 	@ApiModelProperty(required = true)
-	@NotNull(message = MessageValidation.FIELD_NUMERO)
-	@NotBlank(message = MessageValidation.FIELD_NUMERO)
-	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
-	@Size(min = 9, max = 18, message = MessageValidation.FIELD_NUMERO_SIZE)
+	@NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+	@NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+	@Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
 	private String login;
 
-    @NotNull(message = MessageValidation.FIELD_FIRSTNAME)
+    @NotNull(message = MessageValidation.FIRSTNAME_NON_VIDE)
     @ApiModelProperty(required = true)
     @Size(max = 50)
     private String firstName;
 
-    @NotNull(message = MessageValidation.FIELD_LASTNAME)
+    @NotNull(message = MessageValidation.LASTNAME_NON_VIDE)
     @ApiModelProperty(required = true)
     @Size(max = 50)
     private String lastName;
 
     @ApiModelProperty(required = false)
-    @Email(message = MessageValidation.FIELD_EMAIL_VALID)
+    @Email(message = MessageValidation.EMAIL_VALID)
     @Size(min = 5, max = 254)
     private String email;
 

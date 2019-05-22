@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-public class RattachementLigneDTO extends RattachementSame {
+public class RattachementLigneDTO extends RattachementBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

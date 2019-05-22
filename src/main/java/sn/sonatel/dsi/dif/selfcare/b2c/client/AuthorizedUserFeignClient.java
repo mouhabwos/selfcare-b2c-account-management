@@ -41,6 +41,15 @@ public @interface AuthorizedUserFeignClient {
      * annotated by this annotation and be a valid Spring bean.
      */
     Class<?> fallback() default void.class;
+
+    /**
+     * Define a fallback factory for the specified Feign client interface. The fallback
+     * factory must produce instances of fallback classes that implement the interface
+     * annotated by {@link FeignClient}. The fallback factory must be a valid spring
+     * bean.
+     *
+     * @see feign.hystrix.FallbackFactory for details.
+     */
     Class<?> fallbackFactory() default void.class;
 
     /**

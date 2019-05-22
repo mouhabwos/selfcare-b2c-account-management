@@ -26,13 +26,13 @@ public final class Constants {
 
 
 
-    public static final String SELFCARE_B2C_SOAP_SERVICE = "http://selfcare-b2c-soap";
+    public static final String SELFCARE_B2C_SOAP_SERVICE = "selfcare-b2c-soap";
 
     public static final String SELFCARE_UAA_SERVICE = "selfcare-uaa";
 
-    public static final String SELFCARE_FILE_MANAGER_SERVICE = "http://selfcare-file-manager";
+    public static final String SELFCARE_FILE_MANAGER_SERVICE = "selfcare-file-manager";
 
-    public static final String SELFCARE_SERVICE_OTP = "http://selfcare-otp";
+    public static final String SELFCARE_SERVICE_OTP = "selfcare-otp";
 
 
     public static final String FILE_DOWNLOAD = "/api/download/";

@@ -80,16 +80,18 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
-
+        log.debug("Service for register AccountB2C : {}", managedUserVM);
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
         Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(managedUserVM.getLogin());
 
         if(accountB2C.isPresent()){
+            log.debug ( "Error this login is already used  : {}", managedUserVM.getLogin() );
             throw new LoginAlreadyUsedException();
         }
 
         if(ligne.isPresent()){
+            log.debug ( "Error this login is already rattached  : {}", managedUserVM.getLogin() );
             throw new LigneAlreadyRattachedException();
         }
 
@@ -116,6 +118,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 mailService.sendActivationEmail(result);
             }
             else {
+                log.debug ( "Error account is not created  : {}", managedUserVM );
                 throw new UserNoCreatedException();
             }
 
@@ -189,6 +192,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public boolean emailExistingVerify(String email) {
 
+        log.debug("Service to verify the status of email : {}", email);
         if (email != null) {
 
             Optional<AccountB2C> user = accountB2CRepository.findOneByEmail(email);
@@ -204,6 +208,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public AccountB2C getAccount(String login) {
 
+        log.debug("Service to get AccountB2C by MSISDN : {}", login);
         if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
 
             login = FormatNumberPhoneUtil.extractNumberWithoutSuffix(login);
@@ -230,6 +235,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public void sendmail(UserInfoOuvertureCompte b2C) {
 
+        log.debug("Service to get create an account : {}", b2C);
         b2C = dowloadManager.addResources(b2C);
         mailService.sendEmailToServiceClient(b2C);
 
@@ -240,6 +246,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public void updateTutorialView(String msisdn) {
 
+        log.debug("Service for update tutorialView in AccountB2C by : {}", msisdn);
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
 
         if(accountB2C.isPresent()){

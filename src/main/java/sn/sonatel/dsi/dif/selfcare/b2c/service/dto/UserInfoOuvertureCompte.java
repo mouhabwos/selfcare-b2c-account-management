@@ -9,27 +9,27 @@ import javax.validation.constraints.*;
 public class UserInfoOuvertureCompte {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = MessageValidation.FIELD_NUMERO)
-    @NotBlank(message = MessageValidation.FIELD_NUMERO)
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.FIELD_NUMERO_ORANGE)
-    @Size(min = 9, max = 18, message = MessageValidation.FIELD_NUMERO_SIZE)
+    @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+    @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+    @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     private String numero;
 
-    @NotNull(message = MessageValidation.FIELD_LASTNAME)
+    @NotNull(message = MessageValidation.LASTNAME_NON_VIDE)
     private String lastName;
 
-    @NotNull(message = MessageValidation.FIELD_FIRSTNAME)
+    @NotNull(message = MessageValidation.FIRSTNAME_NON_VIDE)
     private String firstName;
 
-    @NotNull(message = MessageValidation.FIELD_OPERATION)
+    @NotNull(message = MessageValidation.OPERATION_NON_VIDE)
     private String operation;
 
     private String operationTitle;
 
-    @NotNull(message = MessageValidation.FIELD_FORMULAIRE)
+    @NotNull(message = MessageValidation.FORMULAIRE_NON_VIDE)
     private String formulaire;
 
-    @NotNull(message = MessageValidation.FIELD_RECTOID)
+    @NotNull(message = MessageValidation.RECTOID_NON_VIDE)
     private String rectoID;
 
     private String versoID;
@@ -40,7 +40,7 @@ public class UserInfoOuvertureCompte {
 
     private Resource objectVersoID;
 
-    @NotNull(message = MessageValidation.FIELD_EMAIL)
+    @NotNull(message = MessageValidation.EMAIL_NON_VIDE)
     @ApiModelProperty(required = true)
     @Email
     @Size(min = 5, max = 254)
