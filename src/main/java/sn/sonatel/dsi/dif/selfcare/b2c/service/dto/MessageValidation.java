@@ -27,11 +27,11 @@ public final class MessageValidation {
 
     public static final String FORMULAIRE_NON_VIDE = "Le formulaire ne peut pas être vide";
 
-    public static final String RECTOID_NON_VIDE = "Le recto ne peut pas être vide";
+    public static final String RECTO_ID_NON_VIDE = "Le recto ne peut pas être vide";
 
-    public static final String CODEOTP_NON_VIDE = "Le code ne peut pas être vide";
+    public static final String CODE_OTP_NON_VIDE = "Le code ne peut pas être vide";
 
-    public static final String CODEOTP_TAILLE_VALIDE = "La taille du code doit être de 6 chiffres";
+    public static final String CODE_OTP_TAILLE_VALIDE = "La taille du code doit être de 6 chiffres";
 
     public static final String TYPE_NUMERO_NON_VIDE = "Le type de numéro ne peut pas être vide";
 }

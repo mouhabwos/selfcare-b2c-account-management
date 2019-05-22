@@ -20,9 +20,9 @@ public class CodeOTPCheckDTO {
     @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     private String msisdn;
 
-    @NotNull(message = MessageValidation.CODEOTP_NON_VIDE)
-    @NotBlank(message = MessageValidation.CODEOTP_NON_VIDE)
-    @Size(min = 6, max = 6, message = MessageValidation.CODEOTP_TAILLE_VALIDE)
+    @NotNull(message = MessageValidation.CODE_OTP_NON_VIDE)
+    @NotBlank(message = MessageValidation.CODE_OTP_NON_VIDE)
+    @Size(min = 6, max = 6, message = MessageValidation.CODE_OTP_TAILLE_VALIDE)
     private String code;
 
     private boolean valid = false;

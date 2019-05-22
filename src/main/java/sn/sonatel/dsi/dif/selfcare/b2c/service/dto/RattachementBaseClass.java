@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class RattachementBase {
+public class RattachementBaseClass {
 
     @ApiModelProperty(required = true)
     @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
@@ -32,27 +32,27 @@ public class RattachementBase {
     @Enumerated(EnumType.STRING)
     private TypeNumero typeNumero;
 
-    public RattachementBase numero(String numero) {
+    public RattachementBaseClass numero(String numero) {
         this.numero = numero;
         return this;
     }
 
-    public RattachementBase typeVerification(String typeVerification) {
+    public RattachementBaseClass typeVerification(String typeVerification) {
         this.typeVerification = typeVerification;
         return this;
     }
 
-    public RattachementBase codeVerification(String codeVerification) {
+    public RattachementBaseClass codeVerification(String codeVerification) {
         this.codeVerification = codeVerification;
         return this;
     }
 
-    public RattachementBase statut(boolean statut) {
+    public RattachementBaseClass statut(boolean statut) {
         this.statut = statut;
         return this;
     }
 
-    public RattachementBase typeNumero(TypeNumero typeNumero) {
+    public RattachementBaseClass typeNumero(TypeNumero typeNumero) {
         this.typeNumero = typeNumero;
         return this;
     }

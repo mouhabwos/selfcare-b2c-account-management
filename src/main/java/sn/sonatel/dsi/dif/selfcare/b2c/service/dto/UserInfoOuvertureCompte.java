@@ -29,7 +29,7 @@ public class UserInfoOuvertureCompte {
     @NotNull(message = MessageValidation.FORMULAIRE_NON_VIDE)
     private String formulaire;
 
-    @NotNull(message = MessageValidation.RECTOID_NON_VIDE)
+    @NotNull(message = MessageValidation.RECTO_ID_NON_VIDE)
     private String rectoID;
 
     private String versoID;
