@@ -36,7 +36,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final Logger log = LoggerFactory.getLogger(AccountB2CServiceImpl.class);
 
-    private static final String ENTITY_NAME = "selfcareB2CAccountManagementAccountB2CServiceImpl";
 
     private final AccountB2CRepository accountB2CRepository;
 
@@ -81,6 +80,8 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
+
+
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
         Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(managedUserVM.getLogin());
 
@@ -94,11 +95,11 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
         AccountB2C result =  new AccountB2C();
 
-        //ToDo revoir les cas d'erreurs
+
         try {
             if(managedUserVM.getEmail() == null){
 
-                managedUserVM.setEmail("selfcare-b2c-"+managedUserVM.getLogin()+"@selfcare.com");
+                managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
             }
             ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
 
@@ -161,14 +162,14 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public ResponseEntity checkNumber(NumberRequest numberRequest) {
 
         log.debug("Service to check number of AccountB2C : {}", numberRequest);
-        numberRequest.setMsisdn(FormatNumberPhoneUtil.getNumberFormat(numberRequest.getMsisdn()));
+        numberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getMsisdn()));
 
         if(!captchaService.verifyCaptcha(numberRequest.getToken())){
             log.debug("Error invalid number to check number  : {}", numberRequest);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat(numberRequest.getMsisdn());
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getMsisdn());
 
         Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(msisdn);
         if(account.isPresent()){
@@ -205,7 +206,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
         if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
 
-            login = FormatNumberPhoneUtil.getNumberFormat(login);
+            login = FormatNumberPhoneUtil.extractNumberWithoutSuffix(login);
 
             Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
             if(account.isPresent()){

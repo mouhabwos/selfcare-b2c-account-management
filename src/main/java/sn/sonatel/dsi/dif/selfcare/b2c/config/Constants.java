@@ -47,6 +47,14 @@ public final class Constants {
 
     public static final String URL_CHECK_CODE_OTP = "/api/code-otp-infos/check";
 
+    public static final String URL_CHECK_VALID_REQUEST_OTP = "/code-otp-infos/check-valid-request/{msisdn}";
+
+
+    public static final String VALIDE ="valid";
+
+    public static final String EMAIL_PART1 = "selfcare-b2c-";
+
+    public static final String EMAIL_PART2 = "@selfcare.com";
 
     public static final String EMAIL_SERVICE_CLIENT = "vieuxmamadou.kasse@orange-sonatel.com";
 

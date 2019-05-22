@@ -107,9 +107,9 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     public RattachementLigne addRattachementLigne(RattachementLigneVM ligneVM) {
 
         log.debug ( "Service to save RattachementLigne : {}", ligneVM );
-        ligneVM.setNumero(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getNumero()));
+        ligneVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getNumero()));
 
-        ligneVM.setLogin(FormatNumberPhoneUtil.getNumberFormat(ligneVM.getLogin()));
+        ligneVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getLogin()));
         RattachementLigne rattachement = new RattachementLigne();
         if (ligneVM.getNumero().matches(Constants.LOGIN_REGEX_VALID_NUMBER)) {
 
@@ -142,7 +142,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         List<InfoNumberVM> infoNumberVMList = new ArrayList<>();
 
-        msisdn = FormatNumberPhoneUtil.getNumberFormat(msisdn);
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         Optional<AccountB2C> user = accountB2CRepository.findOneByNumero(msisdn);
 
@@ -194,7 +194,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         log.debug ( "Service to check status number for rattached : {}", number );
         log.debug ( "Service to check status login : {}", login );
-        number = FormatNumberPhoneUtil.getNumberFormat(number);
+        number = FormatNumberPhoneUtil.extractNumberWithoutSuffix(number);
         Optional<RattachementLigne> ligne = rattachementLigneRepository
             .findByNumero(number);
 

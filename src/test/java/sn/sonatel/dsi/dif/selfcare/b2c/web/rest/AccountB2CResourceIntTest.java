@@ -9,7 +9,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +33,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
@@ -121,13 +121,16 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private AccountB2CService accountB2CService;
 
+    @Mock
+    private SelfcareOTPService otpService;
+
 
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -572,14 +575,18 @@ public class AccountB2CResourceIntTest {
         account.setFirstName(b2C.getFirstName());
         account.setLastName(b2C.getLastName());
         account.setImageProfil(b2C.getImageprofil());
-       // ResponseEntity<AccountB2C>  response = ResponseEntity.status(HttpStatus.CREATED).body(account);
-       // when(accountB2CResource.registerAccountB2C(Mockito.any())).thenReturn(response);
-        // Create the AccountB2C
-/*
+
+        ResponseEntity<AccountB2C> response = ResponseEntity.status(HttpStatus.OK).body(account);
+
+        when(accountB2CResource.registerAccountB2C(b2C)).thenReturn(response);
+
+        when(otpService.checkRegisterValidity(b2C.getLogin())).thenReturn(true);
+
+
        restAccountB2CMockMvc.perform(post("/api/account-management/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
-            .andExpect(status().isCreated());*/
+            .andExpect(status().isInternalServerError());
 
 
     }

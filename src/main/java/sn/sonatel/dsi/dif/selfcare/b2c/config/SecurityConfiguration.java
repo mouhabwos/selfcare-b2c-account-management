@@ -53,10 +53,10 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .antMatchers("/api/account-management/**").permitAll()
             .antMatchers("/api/account-management/account-b-2-cs").authenticated()
             .antMatchers("/api/account-management/mail/ouverture-compte").authenticated()
-            .antMatchers("/api/rattachement-lignes/**").permitAll()
-            .antMatchers("/api/abonne/souscription/**").permitAll()
+            .antMatchers("/api/rattachement-lignes/**").authenticated()
+            .antMatchers("/api/abonne/souscription/**").authenticated()
             .antMatchers("/api/auth/**").permitAll()
-            .antMatchers("/api/abonne/information-abonne").permitAll()
+            .antMatchers("/api/abonne/information-abonne").authenticated()
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);

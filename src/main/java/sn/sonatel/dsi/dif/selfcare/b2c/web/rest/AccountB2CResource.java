@@ -16,6 +16,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
@@ -44,10 +45,13 @@ public class AccountB2CResource {
 
     private final AccountB2CService accountB2CService;
 
+    private final SelfcareOTPService otpService;
 
-    public AccountB2CResource(AccountB2CService accountB2CService) {
+
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService) {
 
         this.accountB2CService = accountB2CService;
+        this.otpService = otpService;
     }
 
 
@@ -71,6 +75,13 @@ public class AccountB2CResource {
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
         log.debug("REST request to save AccountB2C : {}", managedUserVM);
+
+        if (!otpService.checkRegisterValidity(managedUserVM.getLogin())){
+            return ResponseEntity.badRequest().build();
+        }
+        if (managedUserVM.getId() != null) {
+            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, "idnull");
+        }
 
         AccountB2C result = accountB2CService.registerAccountB2C(managedUserVM);
 

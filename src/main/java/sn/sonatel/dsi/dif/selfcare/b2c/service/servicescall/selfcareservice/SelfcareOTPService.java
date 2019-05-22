@@ -1,9 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
+
+import java.util.Map;
 
 @Service
 public class SelfcareOTPService {
@@ -30,6 +34,23 @@ public class SelfcareOTPService {
         codeOTPCheckDTO = servicesOTP.checkOTP(codeOTPCheckDTO).getBody();
 
         return  codeOTPCheckDTO;
+
+    }
+
+    /**
+     * Generate a OTP code for User to reset password
+     * @param msisdn
+     */
+    public boolean checkRegisterValidity(String msisdn) {
+
+
+        ResponseEntity<Map<String, Boolean>> mapResponseEntity = servicesOTP.registerCheckValidRequest(msisdn);
+
+
+        Map<String,Boolean> response = mapResponseEntity.getBody();
+
+        return response.get(Constants.VALIDE);
+
 
     }
 

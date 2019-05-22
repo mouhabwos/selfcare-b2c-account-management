@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ public class AbonneResource {
 
     @Auditable(description = Message.Abonne.SOUSC_USER)
     @GetMapping("/souscription/{msisdn}")
-    //@PostAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
+    @PostAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<SouscriptionDto> getSouscription(@PathVariable String msisdn) {
         log.debug ( "REST request to get souscription : {}", msisdn );
 

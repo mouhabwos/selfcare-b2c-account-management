@@ -3,7 +3,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.OTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
