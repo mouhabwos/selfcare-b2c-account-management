@@ -218,7 +218,6 @@ public class AccountB2C extends NumeroDTO implements Serializable {
             ", activationKey='" + activationKey + '\'' +
             ", langKey='" + langKey + '\'' +
             ", attempts=" + attempts +
-            ", users=" + users +
             ", derniereConnnexionDate=" + derniereConnnexionDate +
             ", tutoViewed=" + tutoViewed +
             ", emailActivated=" + emailActivated +

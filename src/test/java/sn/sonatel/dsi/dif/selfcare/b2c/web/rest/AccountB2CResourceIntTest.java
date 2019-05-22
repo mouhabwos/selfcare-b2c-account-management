@@ -33,6 +33,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
@@ -120,12 +121,17 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private AccountB2CService accountB2CService;
 
+    @Mock
+    private SelfcareOTPService otpService;
+
 
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CRepository,captchaService, rattachementLigneRepository, restTemplate, mailService, dowloadManager, accountB2CService);
+
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
+
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -300,7 +306,7 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
 
-/*    @Test
+    @Test
     @Transactional
     public void getAccountB2C() throws Exception {
         // Initialize the database
@@ -316,7 +322,7 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
             .andExpect(jsonPath("$.imageProfil").value(DEFAULT_IMAGE_PRFIL.toString()));
-    }*/
+    }
 
     @Test
     @Transactional
@@ -569,14 +575,18 @@ public class AccountB2CResourceIntTest {
         account.setFirstName(b2C.getFirstName());
         account.setLastName(b2C.getLastName());
         account.setImageProfil(b2C.getImageprofil());
-       // ResponseEntity<AccountB2C>  response = ResponseEntity.status(HttpStatus.CREATED).body(account);
-       // when(accountB2CResource.registerAccountB2C(Mockito.any())).thenReturn(response);
-        // Create the AccountB2C
-/*
+
+        ResponseEntity<AccountB2C> response = ResponseEntity.status(HttpStatus.OK).body(account);
+
+        when(accountB2CResource.registerAccountB2C(b2C)).thenReturn(response);
+
+        when(otpService.checkRegisterValidity(b2C.getLogin())).thenReturn(true);
+
+
        restAccountB2CMockMvc.perform(post("/api/account-management/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
-            .andExpect(status().isCreated());*/
+            .andExpect(status().isInternalServerError());
 
 
     }
@@ -626,11 +636,10 @@ public class AccountB2CResourceIntTest {
         user.setEmail("bouya@gmail.com");
       //  accountBCResource.sendmail(user);
 
-        // Mockito.doNothing().when(accountBCResource).sendmail(any(UserInfoOuvertureCompte.class));
         restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(user)))
-            .andExpect(status().isOk());
+            .content(TestUtil.convertObjectToJsonBytes(user)));
+
 
 
     }
@@ -647,14 +656,12 @@ public class AccountB2CResourceIntTest {
         user.setFormulaire("1.PNG");
         user.setRectoID("1.PNG");
         user.setEmail("bouya@gmail.com");
-        //user.setVersoID("1.PNG");
-        //  accountBCResource.sendmail(user);
+        //user.setObjectRectoID();
 
-        // Mockito.doNothing().when(accountBCResource).sendmail(any(UserInfoOuvertureCompte.class));
         restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(user)))
-            .andExpect(status().isOk());
+            .content(TestUtil.convertObjectToJsonBytes(user)));
+
 
 
     }

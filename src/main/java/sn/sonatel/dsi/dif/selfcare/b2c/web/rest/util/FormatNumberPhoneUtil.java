@@ -1,36 +1,38 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class FormatNumberPhoneUtil {
+
+    private static final Pattern EXTRACT_MOBILE_NUMBER = Pattern.compile(Constants.LOGIN_REGEX_VALID_NUMBER);
 
     private FormatNumberPhoneUtil() {
         // default constructor
     }
 
-    public static String getNumberFormat(String msisdn) {
+    public static String extractNumberWithoutSuffix(String msisdn) {
 
-        if (msisdn == null) {
-            return "";
-        } else {
-            msisdn = msisdn.trim ();
+        if(msisdn != null){
+            Matcher matcher = EXTRACT_MOBILE_NUMBER.matcher(msisdn);
 
-            if (msisdn.startsWith ( "+221" )) {
+            if (matcher.matches()) {
+                StringBuilder numberbuilder = new StringBuilder();
 
-                msisdn = msisdn.substring ( 4 );
+                numberbuilder.append(matcher.group(2))
 
-            } else if (msisdn.startsWith ( "221" )) {
+                    .append(matcher.group(3))
 
-                msisdn = msisdn.substring ( 3 );
+                    .append(matcher.group(4))
 
-            } else if (msisdn.startsWith ( "00221" )) {
+                    .append(matcher.group(5));
 
-                msisdn = msisdn.substring ( 5 );
-
+                return numberbuilder.toString();
             }
-
-            msisdn = msisdn.replaceAll ( " ", "" );
-
-            return msisdn;
         }
+
+
+        return "";
 
     }
 

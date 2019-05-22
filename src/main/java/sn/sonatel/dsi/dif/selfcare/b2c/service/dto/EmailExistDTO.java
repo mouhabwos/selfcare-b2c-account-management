@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 
 public class EmailExistDTO {
 
-    @Email(message = "L'email doit être une adresse email bien formée")
+    @Email(message = MessageValidation.EMAIL_VALID)
     @Size(min = 5, max = 254)
     private String email;
 

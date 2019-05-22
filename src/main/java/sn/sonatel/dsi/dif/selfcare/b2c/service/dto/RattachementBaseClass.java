@@ -11,13 +11,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class RattachementSame {
+public class RattachementBaseClass {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+    @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+    @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+    @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     private String numero;
 
     private String typeVerification;
@@ -28,31 +28,31 @@ public class RattachementSame {
 
     private String login;
 
-    @NotNull(message = "Le type de numéro ne peut pas être vide")
+    @NotNull(message = MessageValidation.TYPE_NUMERO_NON_VIDE)
     @Enumerated(EnumType.STRING)
     private TypeNumero typeNumero;
 
-    public RattachementSame numero(String numero) {
+    public RattachementBaseClass numero(String numero) {
         this.numero = numero;
         return this;
     }
 
-    public RattachementSame typeVerification(String typeVerification) {
+    public RattachementBaseClass typeVerification(String typeVerification) {
         this.typeVerification = typeVerification;
         return this;
     }
 
-    public RattachementSame codeVerification(String codeVerification) {
+    public RattachementBaseClass codeVerification(String codeVerification) {
         this.codeVerification = codeVerification;
         return this;
     }
 
-    public RattachementSame statut(boolean statut) {
+    public RattachementBaseClass statut(boolean statut) {
         this.statut = statut;
         return this;
     }
 
-    public RattachementSame typeNumero(TypeNumero typeNumero) {
+    public RattachementBaseClass typeNumero(TypeNumero typeNumero) {
         this.typeNumero = typeNumero;
         return this;
     }

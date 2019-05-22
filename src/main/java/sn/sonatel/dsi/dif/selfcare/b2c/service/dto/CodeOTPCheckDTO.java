@@ -14,22 +14,18 @@ import javax.validation.constraints.Size;
 public class CodeOTPCheckDTO {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+    @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+    @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+    @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     private String msisdn;
 
-    @NotNull(message = "Le code ne peut pas être vide")
-    @NotBlank(message = "Le code ne doit pas être vide")
-    @Size(min = 6, max = 6, message = "La taille du code doit être de 6 chiffres")
+    @NotNull(message = MessageValidation.CODE_OTP_NON_VIDE)
+    @NotBlank(message = MessageValidation.CODE_OTP_NON_VIDE)
+    @Size(min = 6, max = 6, message = MessageValidation.CODE_OTP_TAILLE_VALIDE)
     private String code;
 
     private boolean valid = false;
-
-
-
-
 
     public String getMsisdn() {
         return msisdn;
