@@ -59,9 +59,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
         ligne.setNumero(rattachementLigne.getNumero());
-        ligne.setStatut(rattachementLigne.getStatut());
-        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
-        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
 
         return rattachementLigneRepository.save(ligne);
 
@@ -76,9 +73,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
         ligne.setNumero(rattachementLigne.getNumero());
-        ligne.setStatut(rattachementLigne.getStatut());
-        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
-        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
 
         return rattachementLigneRepository.save(ligne);
 
@@ -124,9 +118,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
             rattachement.setNumero(ligneVM.getNumero());
             rattachement.setTypeNumero(ligneVM.getTypeNumero());
-            rattachement.setCodeVerification(ligneVM.getCodeVerification());
-            rattachement.setTypeVerification(ligneVM.getTypeVerification());
-            rattachement.setStatut(ligneVM.getStatut());
+
             rattachement.setAccountB2C(accountB2C.get());
 
             rattachement = rattachementLigneRepository.save(rattachement);

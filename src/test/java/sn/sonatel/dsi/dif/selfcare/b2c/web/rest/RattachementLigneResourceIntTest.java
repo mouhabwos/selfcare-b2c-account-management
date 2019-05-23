@@ -130,9 +130,6 @@ public class RattachementLigneResourceIntTest {
      */
     public static RattachementLigne createEntity(EntityManager em) {
         RattachementLigne rattachementLigne = new RattachementLigne()
-            .typeVerification(DEFAULT_TYPE_VERIFICATION)
-            .codeVerification(DEFAULT_CODE_VERIFICATION)
-            .statut(DEFAULT_STATUT)
             .typeNumero(DEFAULT_TYPE_NUMERO);
         rattachementLigne.setNumero(UPDATED_NUMERO);
         return rattachementLigne;
@@ -152,8 +149,6 @@ public class RattachementLigneResourceIntTest {
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
         ligne.setNumero(rattachementLigne.getNumero());
-        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
-        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
 
 
 
@@ -168,8 +163,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate + 1);
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("778505052");
-        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
-        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
 
     }
@@ -242,9 +235,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
             .andExpect(jsonPath("$.[*].numero").value(hasItem("778505052")))
-            .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION.toString())))
-            .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION.toString())))
-            .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
@@ -273,9 +263,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(rattachementLigne.getId().intValue()))
             .andExpect(jsonPath("$.numero").value("778505052"))
-            .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION))
-            .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION))
-            .andExpect(jsonPath("$.statut").value(DEFAULT_STATUT.booleanValue()))
             .andExpect(jsonPath("$.typeNumero").value(DEFAULT_TYPE_NUMERO.toString()));
     }
 
@@ -300,9 +287,6 @@ public class RattachementLigneResourceIntTest {
         // Disconnect from session so that the updates on updatedRattachementLigne are not directly saved in db
         em.detach(updatedRattachementLigne);
         updatedRattachementLigne
-            .typeVerification(UPDATED_TYPE_VERIFICATION)
-            .codeVerification(UPDATED_CODE_VERIFICATION)
-            .statut(UPDATED_STATUT)
             .typeNumero(UPDATED_TYPE_NUMERO);
         updatedRattachementLigne.setNumero(UPDATED_NUMERO);
 
@@ -316,9 +300,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeUpdate);
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo(UPDATED_NUMERO);
-        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(UPDATED_TYPE_VERIFICATION);
-        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(UPDATED_CODE_VERIFICATION);
-        assertThat(testRattachementLigne.isStatut()).isEqualTo(UPDATED_STATUT);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
 
 
@@ -457,8 +438,6 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
-        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
 
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
@@ -472,8 +451,6 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("771326617");
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
-        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
-        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
 
     }
 
@@ -517,8 +494,6 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
-        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
          rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
          rattachementLigne.setNumero("771326617");
          rattachementLigne.setAccountB2C(u);
@@ -551,8 +526,6 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
-        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
 
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")

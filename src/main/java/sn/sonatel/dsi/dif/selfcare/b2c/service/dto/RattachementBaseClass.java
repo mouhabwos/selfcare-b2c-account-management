@@ -20,12 +20,6 @@ public class RattachementBaseClass {
     @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     private String numero;
 
-    private String typeVerification;
-
-    private String codeVerification;
-
-    private Boolean statut;
-
     private String login;
 
     @NotNull(message = MessageValidation.TYPE_NUMERO_NON_VIDE)
@@ -37,20 +31,7 @@ public class RattachementBaseClass {
         return this;
     }
 
-    public RattachementBaseClass typeVerification(String typeVerification) {
-        this.typeVerification = typeVerification;
-        return this;
-    }
 
-    public RattachementBaseClass codeVerification(String codeVerification) {
-        this.codeVerification = codeVerification;
-        return this;
-    }
-
-    public RattachementBaseClass statut(boolean statut) {
-        this.statut = statut;
-        return this;
-    }
 
     public RattachementBaseClass typeNumero(TypeNumero typeNumero) {
         this.typeNumero = typeNumero;
@@ -66,29 +47,6 @@ public class RattachementBaseClass {
         this.numero = numero;
     }
 
-    public String getTypeVerification() {
-        return typeVerification;
-    }
-
-    public void setTypeVerification(String typeVerification) {
-        this.typeVerification = typeVerification;
-    }
-
-    public String getCodeVerification() {
-        return codeVerification;
-    }
-
-    public void setCodeVerification(String codeVerification) {
-        this.codeVerification = codeVerification;
-    }
-
-    public Boolean getStatut() {
-        return statut;
-    }
-
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
-    }
 
     public String getLogin() {
         return login;
