@@ -165,9 +165,10 @@ public class RattachementLigneResource {
 
     /**
      *
-     * @since 23/05/2019
      * @param checkNumberFixVM
      * @return status ok (200)
+     *
+     * @since 1.1.4
      *
      */
     @Auditable(description = Message.Rattachement.CHECK_NUMBER_FIXE)

@@ -184,9 +184,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     /**
      *
-     * @since 23/05/2019
-     * @author Bouya Kande
-     *
      * @param numberRequest
      * @return statut 200 (ok)
      *
@@ -194,6 +191,8 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
      * @throws NoValideNumberFixeException 400 (Bad Request) : if the number is not an orange number
      * @throws LigneAlreadyRattachedException 400 (Bad Request) : if the number is already attached to an account
      * @throws AccountAlreadyHaveNumberFixeException 400 (Bad Request) : if already has a fixed fix number
+     *
+     * @since 1.1.4
      *
      */
     @Override
@@ -276,8 +275,9 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
     /**
-     * @since 23/05/2019
+     *
      * @param login
+     * @since 1.1.4
      */
 
     public void checkFixNumberAssociatedWithThisAccount(String login){

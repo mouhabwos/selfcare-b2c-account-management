@@ -7,8 +7,8 @@ import javax.validation.constraints.Pattern;
 
 /**
  *
- * @since 23/05/2019
  * @author Bouya Kande
+ * @since 1.1.4
  *
  */
 public class CheckNumberFixVM extends NumberRequest{

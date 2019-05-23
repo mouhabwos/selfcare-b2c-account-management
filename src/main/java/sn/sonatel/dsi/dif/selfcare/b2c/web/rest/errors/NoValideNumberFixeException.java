@@ -4,8 +4,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.MessageValidation;
 
 /**
  *
- * @since 23/05/2019
  * @author Bouya Kande
+ * @since 1.1.4
  *
  */
 public class NoValideNumberFixeException extends BadRequestAlertException {
