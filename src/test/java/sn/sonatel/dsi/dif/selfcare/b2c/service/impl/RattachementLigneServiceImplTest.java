@@ -27,6 +27,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+/**
+ *
+ * @since 23/05/2019
+ * @author Bouya Kande
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SelfcareB2CApp.class})
 public class RattachementLigneServiceImplTest {

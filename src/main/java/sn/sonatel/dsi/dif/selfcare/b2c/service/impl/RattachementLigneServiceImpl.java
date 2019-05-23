@@ -182,13 +182,27 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     }
 
+    /**
+     *
+     * @since 23/05/2019
+     * @author Bouya Kande
+     *
+     * @param numberRequest
+     * @return statut 200 (ok)
+     *
+     * @throws ResponseEntity 400 (Bad Request) : if token is invalid
+     * @throws NoValideNumberFixeException 400 (Bad Request) : if the number is not an orange number
+     * @throws LigneAlreadyRattachedException 400 (Bad Request) : if the number is already attached to an account
+     * @throws AccountAlreadyHaveNumberFixeException 400 (Bad Request) : if already has a fixed fix number
+     *
+     */
     @Override
     public ResponseEntity checkNumberFix(CheckNumberFixVM numberRequest) {
 
-        log.debug("Service to check number of AccountB2C : {}", numberRequest);
+        log.debug("Check number of AccountB2C : {}", numberRequest);
 
         if(!captchaService.verifyCaptcha(numberRequest.getToken())){
-            log.debug("Error invalid number to check number  : {}", numberRequest);
+            log.debug("Error invalid token  : {}", numberRequest);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -207,20 +221,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             throw new LigneAlreadyRattachedException();
         }
 
-            List<RattachementLigne> ligneList = rattachementLigneRepository.findByAccountB2C_Numero(login);
-            if(!ligneList.isEmpty()){
-
-                for (RattachementLigne ligne1: ligneList) {
-
-                    if(ligne1.getNumero().matches(Constants.FIX_REGEX_VALID_NUMBER)){
-                        log.debug("Error this account have a number fixe rattached  : {}", numberRequest);
-                        throw new AccountAlreadyHaveNumberFixeException();
-                    }
-
-                }
-
-            }
-
+        checkFixNumberAssociatedWithThisAccount(login);
 
         return ResponseEntity.ok().build();
     }
@@ -272,5 +273,28 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         }
 
         return null;
+    }
+
+    /**
+     * @since 23/05/2019
+     * @param login
+     */
+
+    public void checkFixNumberAssociatedWithThisAccount(String login){
+
+        List<RattachementLigne> ligneList = rattachementLigneRepository.findByAccountB2C_Numero(login);
+        if(!ligneList.isEmpty()){
+
+            for (RattachementLigne ligne1: ligneList) {
+
+                if(ligne1.getNumero().matches(Constants.FIX_REGEX_VALID_NUMBER)){
+                    log.debug("Error this account have a number fixe rattached  : {}", login);
+                    throw new AccountAlreadyHaveNumberFixeException();
+                }
+
+            }
+
+        }
+
     }
 }

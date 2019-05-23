@@ -5,6 +5,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.MessageValidation;
 
 import javax.validation.constraints.Pattern;
 
+/**
+ *
+ * @since 23/05/2019
+ * @author Bouya Kande
+ *
+ */
 public class CheckNumberFixVM extends NumberRequest{
 
     @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)

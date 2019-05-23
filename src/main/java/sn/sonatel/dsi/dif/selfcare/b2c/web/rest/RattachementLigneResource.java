@@ -163,6 +163,13 @@ public class RattachementLigneResource {
 
     }
 
+    /**
+     *
+     * @since 23/05/2019
+     * @param checkNumberFixVM
+     * @return status ok (200)
+     *
+     */
     @Auditable(description = Message.Rattachement.CHECK_NUMBER_FIXE)
     @PostMapping("/rattachement-lignes/check_number_fixe")
     @PreAuthorize("#ligneVM.login==authentication.name")
