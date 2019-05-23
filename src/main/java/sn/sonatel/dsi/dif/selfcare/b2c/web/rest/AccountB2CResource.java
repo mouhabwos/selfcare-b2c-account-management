@@ -252,6 +252,7 @@ public class AccountB2CResource {
             if (user.isPresent()) {
                 return true;
             }
+
         }
         return false;
     }
