@@ -58,6 +58,8 @@ public final class Message {
 
         public static final String SEARCH = "Rechercher une ligne rattachée";
 
+        public static final String CHECK_NUMBER_FIXE = "Verification de la disponibilité du numéro fix";
+
 
         private Rattachement() {
             super ();

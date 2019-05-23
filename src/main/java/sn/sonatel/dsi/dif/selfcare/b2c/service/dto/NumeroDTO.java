@@ -22,7 +22,7 @@ public class NumeroDTO {
     @ApiModelProperty(required = true)
     @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
     @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+   // @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
     @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
     @Column(name = "numero", nullable = false)
     protected String numero;
