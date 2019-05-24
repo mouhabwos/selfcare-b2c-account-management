@@ -166,8 +166,9 @@ public class RattachementLigneResource {
     /**
      *
      * @param checkNumberFixVM
-     * @return status ok (200)
+     * @return status ok
      *
+     * @author Bouya Kande
      * @since 1.1.4
      *
      */
