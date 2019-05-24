@@ -2,8 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors;
 
 /**
  *
- * @since 1.1.4
  * @author Bouya Kande
+ * @since 1.1.4
  *
  */
 public class AccountAlreadyHaveNumberFixeException extends BadRequestAlertException {
