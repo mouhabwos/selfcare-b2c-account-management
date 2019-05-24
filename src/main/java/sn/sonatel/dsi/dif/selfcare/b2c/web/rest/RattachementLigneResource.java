@@ -19,6 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
@@ -102,7 +103,7 @@ public class RattachementLigneResource {
     @GetMapping("/rattachement-lignes/{id}")
     @PreAuthorize("isFullyAuthenticated()")
     public ResponseEntity<RattachementLigne> getRattachementLigne(@PathVariable Long id) {
-        log.debug ( "REST request to get RattachementLigne : {}", id );
+        log.debug ( "REST request to get RattachementLigne ");
         Optional<RattachementLigne> rattachementLigne = rattachementLigneService.getRattachementLigne ( id );
         return ResponseUtil.wrapOrNotFound ( rattachementLigne );
     }
@@ -160,6 +161,23 @@ public class RattachementLigneResource {
         deleteListe = rattachementLigneService.deleteMultipleRattachementLigne(deleteListe);
         return ResponseEntity.ok ( deleteListe );
 
+    }
+
+    /**
+     *
+     * @param checkNumberFixVM
+     * @return status ok
+     *
+     * @author Bouya Kande
+     * @since 1.1.4
+     *
+     */
+    @Auditable(description = Message.Rattachement.CHECK_NUMBER_FIXE)
+    @PostMapping("/rattachement-lignes/check_number_fixe")
+    @PreAuthorize("#ligneVM.login==authentication.name")
+    public ResponseEntity checkNumberFix(@Valid @RequestBody CheckNumberFixVM checkNumberFixVM){
+        log.debug ( "REST request to get RattachementLigne : {}", checkNumberFixVM );
+        return rattachementLigneService.checkNumberFix(checkNumberFixVM);
     }
 
 }

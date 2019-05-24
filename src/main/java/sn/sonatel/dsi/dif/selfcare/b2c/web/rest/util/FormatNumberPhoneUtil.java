@@ -5,7 +5,9 @@ import java.util.regex.Pattern;
 
 public class FormatNumberPhoneUtil {
 
-    private static final Pattern EXTRACT_MOBILE_NUMBER = Pattern.compile(Constants.LOGIN_REGEX_VALID_NUMBER);
+    private static final Pattern EXTRACT_MOBILE_NUMBER = Pattern.compile(Constants.VALIDE_NUMBER_ORANGE_FIXE_MOBILE);
+
+
 
     private FormatNumberPhoneUtil() {
         // default constructor
