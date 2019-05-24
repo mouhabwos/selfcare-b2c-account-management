@@ -26,4 +26,10 @@ Add emailActivated,tutoViewed field
 Delete some field int rattachementLigne
 -->
     <include file="config/liquibase/changelog/20190522153132_changelog.xml" relativeToChangelogFile="false"/>
+
+    <!--
+Add idClient field
+-->
+    <include file="config/liquibase/changelog/20190524125929_changelog.xml" relativeToChangelogFile="false"/>
+
  </databaseChangeLog>

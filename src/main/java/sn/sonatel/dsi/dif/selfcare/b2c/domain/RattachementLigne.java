@@ -29,6 +29,9 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
     @JsonIgnoreProperties("users")
     private AccountB2C accountB2C;
 
+    @Column(name = "id_client", nullable = true)
+    private String idClient;
+
     public TypeNumero getTypeNumero() {
         return typeNumero;
     }
@@ -49,6 +52,14 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
     public RattachementLigne accountB2C(AccountB2C accountB2C) {
         this.accountB2C = accountB2C;
         return this;
+    }
+
+    public String getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(String idClient) {
+        this.idClient = idClient;
     }
 
     public void setAccountB2C(AccountB2C accountB2C) {

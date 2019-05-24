@@ -3,7 +3,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
@@ -33,14 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
 
@@ -64,16 +62,6 @@ public class RattachementLigneResourceIntTest {
 
     private static final String DEFAULT_NUMERO = "778505050";
     private static final String UPDATED_NUMERO = "778505052";
-
-    private static final String DEFAULT_TYPE_VERIFICATION = "AAAAAAAAAA";
-    private static final String UPDATED_TYPE_VERIFICATION = "BBBBBBBBBB";
-
-    private static final String DEFAULT_CODE_VERIFICATION = "AAAAAAAAAA";
-    private static final String UPDATED_CODE_VERIFICATION = "BBBBBBBBBB";
-
-    private static final Boolean DEFAULT_STATUT = false;
-    private static final Boolean UPDATED_STATUT = true;
-
 
     private static final TypeNumero DEFAULT_TYPE_NUMERO = TypeNumero.FIXE;
     private static final TypeNumero UPDATED_TYPE_NUMERO = TypeNumero.MOBILE;
@@ -553,6 +541,29 @@ public class RattachementLigneResourceIntTest {
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(numberRequest)))
             .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void testaAddRattachementLigneFixe() throws Exception {
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient("789562");
+        rattachementLigneFixeVM.setNumero("33 896 52 75");
+        rattachementLigneFixeVM.setLogin("779562521");
+        rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
+
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setIdClient(rattachementLigneFixeVM.getIdClient());
+        ligne.setNumero(rattachementLigneFixeVM.getNumero());
+
+
+         rattachementLigneService =  mock( RattachementLigneService.class);
+         when(rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM)).thenReturn(ligne);
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/ligne-fixe/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(rattachementLigneFixeVM)))
+            .andExpect(status().isNotFound());
 
     }
 

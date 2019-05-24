@@ -16,11 +16,14 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceGateway;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.AccountAlreadyHaveNumberFixeException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NoValideNumberFixeException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -33,6 +36,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
  * @since 1.1.4
  *
  */
+
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SelfcareB2CApp.class})
 public class RattachementLigneServiceImplTest {
@@ -52,10 +57,13 @@ public class RattachementLigneServiceImplTest {
 
     private RattachementLigneServiceImpl rattachementLigneServiceImpl;
 
+    @Mock
+    private ServiceGateway selfcareGateway;
+
     @Before
     public void setUp() {
         initMocks(this);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockSelfcareSoapService, mockCaptchaService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockSelfcareSoapService, mockCaptchaService, selfcareGateway);
     }
 
 
@@ -172,6 +180,153 @@ public class RattachementLigneServiceImplTest {
 
         ResponseEntity responseEntity = rattachementLigneServiceImpl.checkNumberFix(numberRequest);
         System.out.println(responseEntity);
+
+    }
+
+    @Test(expected = NoValideNumberFixeException.class)
+    public void testAddRattachementLigneFixeNoValid(){
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient("7895623");
+        rattachementLigneFixeVM.setNumero("3389652523");
+        rattachementLigneFixeVM.setLogin("777895666");
+        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
+
+
+    }
+
+    @Test
+    public void testAddRattachementLigneFixeSuccess(){
+        //creation account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("778965536");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test536@gmail.com");
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
+
+        String numeroclient = "7895612";
+
+        ResponseEntity<String> response = ResponseEntity.ok(numeroclient);
+        when(selfcareGateway.getNumeroClient(anyString())).thenReturn(response);
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient(numeroclient);
+        rattachementLigneFixeVM.setNumero("33 896 52 70");
+        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
+        rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
+        RattachementLigne ligne = rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
+
+        assertEquals(ligne.getNumero(), rattachementLigneFixeVM.getNumero());
+        assertEquals(ligne.getIdClient(), rattachementLigneFixeVM.getIdClient());
+
+
+    }
+
+    @Test(expected = NoValideNumberFixeException.class)
+    public void testAddRattachementLigneFixeNoValidIdClient(){
+        //creation account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("778965531");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test53@gmail.com");
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
+
+        //create rattachement ligne
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
+        ligne.setNumero("770312323");
+        ligne.setAccountB2C(accountB2C);
+        mockRattachementLigneRepository.save(ligne);
+
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient("7895623");
+        rattachementLigneFixeVM.setNumero("3389652523");
+        rattachementLigneFixeVM.setLogin("777895666");
+        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
+
+
+    }
+
+    @Test(expected = LigneAlreadyRattachedException.class)
+    public void testAddRattachementLigneFixeeAlreadyRattached(){
+        //creation account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("778965539");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test539@gmail.com");
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
+
+        //create rattachement ligne
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
+        ligne.setNumero("339952323");
+        ligne.setAccountB2C(accountB2C);
+        mockRattachementLigneRepository.save(ligne);
+
+        String numeroclient = "7895612";
+
+        ResponseEntity<String> response = ResponseEntity.ok(numeroclient);
+        when(selfcareGateway.getNumeroClient(anyString())).thenReturn(response);
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient(numeroclient);
+        rattachementLigneFixeVM.setNumero("339952323");
+        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
+        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
+
+
+    }
+
+    @Test(expected = AccountAlreadyHaveNumberFixeException.class)
+    public void testAddRattachementLigneFixeAccountAlreadyHaveNumberFixe(){
+        //creation account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("778965593");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test593@gmail.com");
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
+
+        //create rattachement ligne
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
+        ligne.setNumero("339952340");
+        ligne.setAccountB2C(accountB2C);
+        mockRattachementLigneRepository.save(ligne);
+
+        String numeroclient = "7895612";
+
+        ResponseEntity<String> response = ResponseEntity.ok(numeroclient);
+        when(selfcareGateway.getNumeroClient(anyString())).thenReturn(response);
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient(numeroclient);
+        rattachementLigneFixeVM.setNumero("339952356");
+        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
+        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
+
+
+    }
+
+
+    @Test(expected = LigneNotFoundException.class)
+    public void testAddRattachementLigneFixeLigneNotFound(){
+
+        String numeroclient = "7895612";
+
+        ResponseEntity<String> response = ResponseEntity.ok(numeroclient);
+        when(selfcareGateway.getNumeroClient(anyString())).thenReturn(response);
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient(numeroclient);
+        rattachementLigneFixeVM.setNumero("33 896 52 75");
+        rattachementLigneFixeVM.setLogin("779562521");
+        rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
+        RattachementLigne ligne = rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
+
 
     }
 

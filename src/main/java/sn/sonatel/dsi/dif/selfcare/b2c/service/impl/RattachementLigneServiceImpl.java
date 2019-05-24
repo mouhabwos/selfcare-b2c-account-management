@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceGateway;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
@@ -42,14 +44,18 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final CaptchaService captchaService;
 
+    private final ServiceGateway serviceGateway;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, SelfcareSoapService selfcareSoapService, CaptchaService captchaService) {
+
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, SelfcareSoapService selfcareSoapService, CaptchaService captchaService, ServiceGateway serviceGateway) {
         this.rattachementLigneRepository = rattachementLigneRepository;
 
         this.accountB2CRepository = accountB2CRepository;
 
         this.selfcareSoapService = selfcareSoapService;
         this.captchaService = captchaService;
+        this.serviceGateway = serviceGateway;
+
     }
 
     @Override
@@ -303,4 +309,91 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         return false;
 
     }
+
+
+    /**
+     *
+     * @param ligneVM
+     * @return ligne fixe rattached
+     *
+     * @author BOUYA KANDE
+     * @since 1.1.4
+     *
+     */
+    @Override
+    public RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneVM){
+
+        log.debug("Service for save Rattachement ligne fixe  : {}", ligneVM);
+
+        ligneVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getNumero()));
+
+        ligneVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getLogin()));
+
+        if(ligneVM.getNumero().matches(Constants.FIX_REGEX_VALID_NUMBER)){
+
+            Optional<RattachementLigne> ligneratt = rattachementLigneRepository.findByNumero(ligneVM.getNumero());
+            if(ligneratt.isPresent()){
+                log.debug("Error number is already rattached  : {}", ligneratt);
+                throw new LigneAlreadyRattachedException();
+            }
+
+            if(checkNumberClient(ligneVM.getIdClient(), ligneVM.getNumero())){
+
+                Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
+                if(accountB2C.isPresent()){
+
+                    if(checkFixNumberAssociatedWithThisAccount(accountB2C.get().getNumero())){
+                        log.debug("Error this account have a number fixe rattached  : {}", accountB2C.get());
+                        throw new AccountAlreadyHaveNumberFixeException();
+                    }
+                    RattachementLigne ligne = new RattachementLigne();
+
+                    ligne.setNumero(ligneVM.getNumero());
+                    ligne.setAccountB2C(accountB2C.get());
+                    ligne.setTypeNumero(TypeNumero.FIXE);
+                    ligne.setIdClient(ligneVM.getIdClient());
+                    return rattachementLigneRepository.save(ligne);
+
+                }else {
+
+                    log.debug ( "Error login not found  : {}", ligneVM.getLogin() );
+                    throw new LigneNotFoundException();
+                }
+
+            }else {
+                log.debug ( "Error id client not valid  : {}", ligneVM.getIdClient() );
+                throw new NumberClientFixeNotASameException();
+            }
+
+        }else {
+            log.debug("Error this number is not an valid number orange  : {}", ligneVM.getNumero());
+            throw  new  NoValideNumberFixeException();
+        }
+
+    }
+
+    /**
+     *
+     * @param idClient
+     * @return true or false
+     *
+     * @author Bouya Kande
+     * @since 1.1.4
+     *
+     */
+    public boolean checkNumberClient(String idClient, String numero){
+
+        String numberClient = serviceGateway.getNumeroClient(numero).getBody();
+        if(numberClient != null && !numberClient.isEmpty()){
+
+            return numberClient.equals(idClient);
+
+        }else {
+
+            log.debug("Error id client not found : {}", idClient);
+            throw new NumeroClientNotFoundException();
+        }
+
+    }
+
 }

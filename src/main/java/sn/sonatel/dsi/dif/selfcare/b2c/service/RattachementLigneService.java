@@ -31,4 +31,14 @@ public interface RattachementLigneService {
 
      ResponseEntity checkNumberFix(CheckNumberFixVM checkNumberFixVM);
 
+    /**
+     *
+     * @param ligneVM
+     * @return rattachementLigne
+     *
+     * @author Bouya Kande
+     * @since 1.1.4
+     */
+    RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneVM);
+
 }

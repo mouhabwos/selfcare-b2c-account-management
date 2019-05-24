@@ -19,10 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -178,6 +175,26 @@ public class RattachementLigneResource {
     public ResponseEntity checkNumberFix(@Valid @RequestBody CheckNumberFixVM checkNumberFixVM){
         log.debug ( "REST request to get RattachementLigne : {}", checkNumberFixVM );
         return rattachementLigneService.checkNumberFix(checkNumberFixVM);
+    }
+
+    /**
+     *
+     * @param rattachementLigneFixeVM
+     * @return responseEntity status ok
+     *
+     * @author Bouya Kande
+     * @since 1.1.4
+     *
+     */
+
+    @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
+    @PostMapping("/rattachement-lignes/ligne-fixe/register")
+    @PreAuthorize("#ligneVM.login==authentication.name")
+    public ResponseEntity<RattachementLigne> addRattachementLigneFixe(@Valid @RequestBody RattachementLigneFixeVM rattachementLigneFixeVM){
+        log.debug ( "REST request to save RattachementLigne : {}", rattachementLigneFixeVM );
+        RattachementLigne ligne = rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM);
+
+        return ResponseEntity.ok(ligne);
     }
 
 }

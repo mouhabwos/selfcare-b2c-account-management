@@ -34,4 +34,6 @@ public final class MessageValidation {
     public static final String CODE_OTP_TAILLE_VALIDE = "La taille du code doit être de 6 chiffres";
 
     public static final String TYPE_NUMERO_NON_VIDE = "Le type de numéro ne peut pas être vide";
+
+    public static final String ID_CLIENT = "L'id client ne peut pas être vide.";
 }

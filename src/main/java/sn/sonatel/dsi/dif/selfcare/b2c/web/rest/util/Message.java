@@ -60,6 +60,8 @@ public final class Message {
 
         public static final String CHECK_NUMBER_FIXE = "Verification de la disponibilité du numéro fix";
 
+        public static final String ADD_LIGNE_FIXE = "Creation de rattachement de ligne fixe";
+
 
         private Rattachement() {
             super ();
