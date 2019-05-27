@@ -375,6 +375,26 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     /**
      *
      * @param idClient
+     * @return accountB2C
+     *
+     * @author Bouya Kande
+     * @since 1.1.4
+     *
+     */
+    @Override
+    public AccountB2C getAccountB2CByIdClient(String idClient) {
+
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByIdClient(idClient);
+        if(ligne.isPresent()){
+            return ligne.get().getAccountB2C();
+        }
+        log.debug("Error id client not found : {}", idClient);
+        throw new NumeroClientNotFoundException();
+    }
+
+    /**
+     *
+     * @param idClient
      * @return true or false
      *
      * @author Bouya Kande

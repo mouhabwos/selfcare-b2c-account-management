@@ -567,6 +567,14 @@ public class RattachementLigneResourceIntTest {
 
     }
 
+    @Test
+    public void testGetAccountB2CByIdClient() throws Exception {
+
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-account/{idClient}", "167600"))
+            .andExpect(status().isNotFound());
+
+    }
+
 
 
 }
