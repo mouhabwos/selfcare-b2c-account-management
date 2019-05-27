@@ -18,10 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceGateway;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.AccountAlreadyHaveNumberFixeException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NoValideNumberFixeException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 
@@ -327,6 +324,39 @@ public class RattachementLigneServiceImplTest {
         rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
         RattachementLigne ligne = rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
 
+
+    }
+
+    @Test
+    public void testGetAccountB2CByIdClient(){
+
+        String idClient = "125634";
+        //creation account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("779965593");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test593@gmail.com");
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
+
+        //create rattachement ligne
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setTypeNumero(TYPE_NUMERO_FIX);
+        ligne.setNumero("339964340");
+        ligne.setAccountB2C(accountB2C);
+        ligne.setIdClient(idClient);
+        mockRattachementLigneRepository.save(ligne);
+        AccountB2C accountB2CByIdClient = rattachementLigneServiceImpl.getAccountB2CByIdClient(idClient);
+        assertEquals(accountB2C.getNumero(),accountB2CByIdClient.getNumero());
+
+    }
+
+    @Test(expected = NumeroClientNotFoundException.class)
+    public void testGetAccountB2CByIdClientNotFound(){
+
+        String idClient = "1256305";
+
+         rattachementLigneServiceImpl.getAccountB2CByIdClient(idClient);
 
     }
 
