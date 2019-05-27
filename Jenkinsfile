@@ -1,7 +1,7 @@
 pipeline {
 
   agent  {
-      label 'sdd'
+      label 'gateway'
   }
   options {
       timeout(time: 120, unit: 'MINUTES')
@@ -56,7 +56,7 @@ pipeline {
      }
 	 }
     
-   stage("SonarQube Quality Gate") {
+    stage("SonarQube Quality Gate") {
           steps{
               script{
                 timeout(time: 10, unit: 'MINUTES') {
@@ -70,6 +70,7 @@ pipeline {
               }
             }
         }
+
 
     stage(' [DEV2] Build & Run Docker image') {
         agent  { label 'docker-builder-dev3' }
@@ -110,8 +111,15 @@ pipeline {
           }
         }
     
-   
-      
+      stage('Deploy Snapshots On Nexus') {
+
+           when { branch 'release' }
+
+           steps {
+                   sh 'mvn clean deploy -Pprod'
+                 }
+         }
+
 
 
     stage('Functionnals Tests Phases') {

@@ -12,7 +12,7 @@ ADD entrypoint.sh entrypoint.sh
 RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
 USER jhipster
 
-ADD *.jar app.jar
+ADD *.war app.war
 
 ENTRYPOINT ["./entrypoint.sh"]
 
