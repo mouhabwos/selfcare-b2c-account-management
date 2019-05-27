@@ -42,6 +42,14 @@ public interface RattachementLigneService {
      */
     RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneVM);
 
+    /**
+     *
+     * @param idClient
+     * @return AccountB2C
+     *
+     * @author Bouya Kande
+     * @since 1.1.4
+     */
     AccountB2C getAccountB2CByIdClient(String idClient);
 
 }

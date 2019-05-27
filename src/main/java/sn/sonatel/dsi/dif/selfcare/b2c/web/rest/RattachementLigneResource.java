@@ -172,7 +172,7 @@ public class RattachementLigneResource {
      */
     @Auditable(description = Message.Rattachement.CHECK_NUMBER_FIXE)
     @PostMapping("/rattachement-lignes/check_number_fixe")
-    @PreAuthorize("#ligneVM.login==authentication.name")
+    @PreAuthorize("#checkNumberFixVM.login==authentication.name")
     public ResponseEntity checkNumberFix(@Valid @RequestBody CheckNumberFixVM checkNumberFixVM){
         log.debug ( "REST request to get RattachementLigne : {}", checkNumberFixVM );
         return rattachementLigneService.checkNumberFix(checkNumberFixVM);
@@ -190,7 +190,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
     @PostMapping("/rattachement-lignes/ligne-fixe/register")
-    @PreAuthorize("#ligneVM.login==authentication.name")
+    @PreAuthorize("#rattachementLigneFixeVM.numero==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigneFixe(@Valid @RequestBody RattachementLigneFixeVM rattachementLigneFixeVM){
         log.debug ( "REST request to save RattachementLigne : {}", rattachementLigneFixeVM );
         RattachementLigne ligne = rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM);
