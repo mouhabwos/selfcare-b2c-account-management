@@ -2,10 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import sn.sonatel.dsi.dif.selfcare.b2c.aop.logging.annotation.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 @RestController
 @RequestMapping("/api/abonne")
@@ -36,9 +33,7 @@ public class AbonneResource {
     public ResponseEntity<SouscriptionDto> getSouscription(@PathVariable String msisdn) {
         log.debug ( "REST request to get souscription : {}", msisdn );
 
-        HttpEntity<SOAPRequest> request = new HttpEntity<> ( new SOAPRequest ( msisdn ) );
-
-        return selfcareSoapService.getSouscription ( request );
+        return  selfcareSoapService.getSouscription ( msisdn );
 
     }
 

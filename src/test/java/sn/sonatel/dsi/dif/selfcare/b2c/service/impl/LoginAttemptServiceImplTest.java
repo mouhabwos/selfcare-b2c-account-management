@@ -15,7 +15,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceOTP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 
 import java.time.ZonedDateTime;
 
@@ -41,7 +41,7 @@ public class LoginAttemptServiceImplTest {
     private ApplicationProperties applicationProperties;
 
     @Mock
-    private ServiceOTP serviceOTP;
+    private SelfcareOTPService serviceOTP;
 
     private void createEntity4() {
         AccountB2C accountB2C = new AccountB2C();

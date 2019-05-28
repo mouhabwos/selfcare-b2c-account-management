@@ -2,11 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
@@ -15,9 +11,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.SelfcareSoapService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -41,7 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,9 +46,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 /**
  * Test class for the RattachementLigneResource REST controller.
@@ -66,17 +63,7 @@ public class RattachementLigneResourceIntTest {
     private static final String DEFAULT_NUMERO = "778505050";
     private static final String UPDATED_NUMERO = "778505052";
 
-    private static final String DEFAULT_TYPE_VERIFICATION = "AAAAAAAAAA";
-    private static final String UPDATED_TYPE_VERIFICATION = "BBBBBBBBBB";
-
-    private static final String DEFAULT_CODE_VERIFICATION = "AAAAAAAAAA";
-    private static final String UPDATED_CODE_VERIFICATION = "BBBBBBBBBB";
-
-    private static final Boolean DEFAULT_STATUT = false;
-    private static final Boolean UPDATED_STATUT = true;
-
-
-    private static final TypeNumero DEFAULT_TYPE_NUMERO = TypeNumero.FIX;
+    private static final TypeNumero DEFAULT_TYPE_NUMERO = TypeNumero.FIXE;
     private static final TypeNumero UPDATED_TYPE_NUMERO = TypeNumero.MOBILE;
 
     @Autowired
@@ -113,10 +100,13 @@ public class RattachementLigneResourceIntTest {
 
     private RattachementLigneResource rattachementLigneResource;
 
+    @Autowired
+    private RattachementLigneService rattachementLigneService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        rattachementLigneResource = new RattachementLigneResource(rattachementLigneRepository, accountB2CRepository, selfcareSoapService);
+        rattachementLigneResource = new RattachementLigneResource(rattachementLigneService);
         this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -133,9 +123,6 @@ public class RattachementLigneResourceIntTest {
      */
     public static RattachementLigne createEntity(EntityManager em) {
         RattachementLigne rattachementLigne = new RattachementLigne()
-            .typeVerification(DEFAULT_TYPE_VERIFICATION)
-            .codeVerification(DEFAULT_CODE_VERIFICATION)
-            .statut(DEFAULT_STATUT)
             .typeNumero(DEFAULT_TYPE_NUMERO);
         rattachementLigne.setNumero(UPDATED_NUMERO);
         return rattachementLigne;
@@ -155,8 +142,6 @@ public class RattachementLigneResourceIntTest {
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
         ligne.setNumero(rattachementLigne.getNumero());
-        ligne.setCodeVerification(rattachementLigne.getCodeVerification());
-        ligne.setTypeVerification(rattachementLigne.getTypeVerification());
 
 
 
@@ -171,8 +156,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate + 1);
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("778505052");
-        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
-        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
 
     }
@@ -245,9 +228,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
             .andExpect(jsonPath("$.[*].numero").value(hasItem("778505052")))
-            .andExpect(jsonPath("$.[*].typeVerification").value(hasItem(DEFAULT_TYPE_VERIFICATION.toString())))
-            .andExpect(jsonPath("$.[*].codeVerification").value(hasItem(DEFAULT_CODE_VERIFICATION.toString())))
-            .andExpect(jsonPath("$.[*].statut").value(hasItem(DEFAULT_STATUT.booleanValue())))
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
@@ -276,9 +256,6 @@ public class RattachementLigneResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(rattachementLigne.getId().intValue()))
             .andExpect(jsonPath("$.numero").value("778505052"))
-            .andExpect(jsonPath("$.typeVerification").value(DEFAULT_TYPE_VERIFICATION))
-            .andExpect(jsonPath("$.codeVerification").value(DEFAULT_CODE_VERIFICATION))
-            .andExpect(jsonPath("$.statut").value(DEFAULT_STATUT.booleanValue()))
             .andExpect(jsonPath("$.typeNumero").value(DEFAULT_TYPE_NUMERO.toString()));
     }
 
@@ -303,9 +280,6 @@ public class RattachementLigneResourceIntTest {
         // Disconnect from session so that the updates on updatedRattachementLigne are not directly saved in db
         em.detach(updatedRattachementLigne);
         updatedRattachementLigne
-            .typeVerification(UPDATED_TYPE_VERIFICATION)
-            .codeVerification(UPDATED_CODE_VERIFICATION)
-            .statut(UPDATED_STATUT)
             .typeNumero(UPDATED_TYPE_NUMERO);
         updatedRattachementLigne.setNumero(UPDATED_NUMERO);
 
@@ -319,9 +293,6 @@ public class RattachementLigneResourceIntTest {
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeUpdate);
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo(UPDATED_NUMERO);
-        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(UPDATED_TYPE_VERIFICATION);
-        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(UPDATED_CODE_VERIFICATION);
-        assertThat(testRattachementLigne.isStatut()).isEqualTo(UPDATED_STATUT);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
 
 
@@ -460,8 +431,6 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
-        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
 
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
@@ -475,8 +444,6 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("771326617");
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
-        assertThat(testRattachementLigne.getCodeVerification()).isEqualTo(DEFAULT_CODE_VERIFICATION);
-        assertThat(testRattachementLigne.getTypeVerification()).isEqualTo(DEFAULT_TYPE_VERIFICATION);
 
     }
 
@@ -520,8 +487,6 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
-        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
          rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
          rattachementLigne.setNumero("771326617");
          rattachementLigne.setAccountB2C(u);
@@ -554,8 +519,6 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-        ligneVM.setCodeVerification(DEFAULT_CODE_VERIFICATION);
-        ligneVM.setTypeVerification(DEFAULT_TYPE_VERIFICATION);
 
         // Create the RattachementLigne
         restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
@@ -567,17 +530,49 @@ public class RattachementLigneResourceIntTest {
     }
 
     @Test
-    public void getSouscription() {
+    public void testCheckNumberFixSucess() throws Exception {
 
-        SouscriptionDto dto = new SouscriptionDto();
-        dto.setNomOffre("Diamano Allo");
-        dto.setProfil("PREPAID");
+        CheckNumberFixVM numberRequest = new CheckNumberFixVM();
+        numberRequest.setLogin("774568989");
+        numberRequest.setMsisdn("339962217");
+        numberRequest.setToken("ndskdnslkdnksqnkjjezkjzebdlndlknqsozeoinzlkndlzknjnlsnflknkzlkzehfzebf");
 
-      //  when(rattachementLigneResource.getSouscription(Mockito.any())).thenReturn(dto);
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/check_number_fixe")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(numberRequest)))
+            .andExpect(status().isBadRequest());
 
-        SouscriptionDto entity = rattachementLigneResource.getSouscription("774505050");
+    }
 
-        //assertTrue(entity.equals(dto));
+    @Test
+    public void testaAddRattachementLigneFixe() throws Exception {
+
+        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
+        rattachementLigneFixeVM.setIdClient("789562");
+        rattachementLigneFixeVM.setNumero("33 896 52 75");
+        rattachementLigneFixeVM.setLogin("779562521");
+        rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
+
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setIdClient(rattachementLigneFixeVM.getIdClient());
+        ligne.setNumero(rattachementLigneFixeVM.getNumero());
+
+
+         rattachementLigneService =  mock( RattachementLigneService.class);
+         when(rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM)).thenReturn(ligne);
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/ligne-fixe/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(rattachementLigneFixeVM)))
+            .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    public void testGetAccountB2CByIdClient() throws Exception {
+
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-account/{idClient}", "167600"))
+            .andExpect(status().isNotFound());
+
     }
 
 

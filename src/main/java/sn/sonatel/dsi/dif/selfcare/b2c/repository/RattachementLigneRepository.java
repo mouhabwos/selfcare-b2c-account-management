@@ -21,4 +21,15 @@ public interface RattachementLigneRepository extends JpaRepository<RattachementL
     Optional<RattachementLigne> findByNumero(String numero);
 
     List<RattachementLigne> findByAccountB2C_Numero(String numero);
+
+    /**
+     *
+     * @param idClient
+     * @return optional
+     *
+     * @author Bouya KANDE
+     * 1.1.4
+     *
+     */
+    Optional<RattachementLigne> findByIdClient(String idClient);
 }
