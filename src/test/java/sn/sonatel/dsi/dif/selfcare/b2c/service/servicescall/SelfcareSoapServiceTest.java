@@ -1,10 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall;
 
 import feign.Response;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -18,16 +20,18 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class SelfcareSoapServiceTest {
 
     private static final String DEFAULT_NUMERO = "771326617";
     private static final String DEFAULT_CODE = "123456";
 
 
+    @InjectMocks
     private SelfcareSoapService soapService;
 
     @Mock
@@ -37,7 +41,7 @@ public class SelfcareSoapServiceTest {
     private ServiceSOAP serviceSOAP;
 
 
-    @Before
+   // @Before
     public void setUp() throws Exception {
 
        soapService = new SelfcareSoapService(otpService,serviceSOAP);
@@ -56,7 +60,7 @@ public class SelfcareSoapServiceTest {
 
         ResponseEntity<SouscriptionDto> entity = soapService.getSouscription(DEFAULT_NUMERO);
 
-       // assertTrue(entity.equals(response));
+        assertTrue(entity.equals(response));
     }
 
 
@@ -79,12 +83,12 @@ public class SelfcareSoapServiceTest {
 
 
        ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
-        System.out.println(entity);
+       Assert.assertEquals(entity.getStatusCode(),HttpStatus.OK);
 
     }
 
 
-    @Test
+   @Test
     public void getAbonneBadRequest() {
 
         Map<String, Collection<String>> headers = new LinkedHashMap<>();
@@ -102,9 +106,9 @@ public class SelfcareSoapServiceTest {
     @Test
     public void getAbonneServiceUnavailable() {
 
-      /*  ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
+         ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
 
-        assertTrue(HttpStatus.SERVICE_UNAVAILABLE.equals(entity.getStatusCode()));*/
+         assertTrue(HttpStatus.SERVICE_UNAVAILABLE.equals(entity.getStatusCode()));
     }
 
 }
