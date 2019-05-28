@@ -190,7 +190,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
     @PostMapping("/rattachement-lignes/ligne-fixe/register")
-    @PreAuthorize("#rattachementLigneFixeVM.numero==authentication.name")
+    @PreAuthorize("#rattachementLigneFixeVM.login==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigneFixe(@Valid @RequestBody RattachementLigneFixeVM rattachementLigneFixeVM){
         log.debug ( "REST request to save RattachementLigne : {}", rattachementLigneFixeVM );
         RattachementLigne ligne = rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM);
@@ -210,7 +210,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-account/{idClient}")
     @Timed
-    @PostAuthorize("#returnObject.body.numero == authentication.name ")
+    @PostAuthorize("returnObject.body.numero == authentication.name ")
     public ResponseEntity<AccountB2C> getAccountB2CByIdClient(@PathVariable String idClient){
 
         log.debug ( "REST request to get AccountB2C by id client : {}", idClient );
