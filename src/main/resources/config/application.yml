@@ -144,8 +144,8 @@ jhipster:
         contact-name:
         contact-url:
         contact-email:
-        license:
-        license-url:
+        license: Apache 2.0
+        license-url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 logging:
     file: target/selfcare-b2c-account-management.log
