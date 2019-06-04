@@ -111,14 +111,7 @@ pipeline {
               }
             }
         }
-      stage('Deploy Snapshots On Nexus') {
-
-           when { branch 'release' }
-
-           steps {
-                   sh 'mvn clean deploy -Pprod'
-                 }
-         }
+  
 
 
 
