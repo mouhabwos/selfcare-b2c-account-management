@@ -160,3 +160,6 @@ logging:
 # ===================================================================
 
 # application:
+application:
+    message-block-user: L' acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublié et suivez les instructions
+    service-client-orange: . Service Client Orange
