@@ -29,6 +29,10 @@ eureka:
             defaultZone: http://admin:${jhipster.registry.password}@10.137.52.31:8761/eureka/
 
 spring:
+    profiles:
+        active: dev
+        include:
+        - swagger
     devtools:
         restart:
             enabled: false
