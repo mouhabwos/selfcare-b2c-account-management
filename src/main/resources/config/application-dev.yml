@@ -156,8 +156,6 @@ application:
     max-attempts: 3
     authentication-authorisation-user-server-host: http://selfcare-uaa
     url-otp: http://selfcare-otp
-    message-block-user: L' accès à votre compte Orange et moi a été bloqué veuillez contacter le service client
-    service-client-orange: . Service Client Orange
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: fatou.diaw@orange-sonatel.com
 
