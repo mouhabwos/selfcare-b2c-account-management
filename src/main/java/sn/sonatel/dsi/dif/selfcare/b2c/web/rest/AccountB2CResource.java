@@ -157,7 +157,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.OUVERTURE_COMPTE)
     @PostMapping("/mail/ouverture-compte")
-    @PreAuthorize("#b2C.numero== authentication.name")
+   // @PreAuthorize("#b2C.numero== authentication.name")
     public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
         log.debug("REST request to register ouverture-compte : {}", b2C);
         accountB2CService.sendmail(b2C);
