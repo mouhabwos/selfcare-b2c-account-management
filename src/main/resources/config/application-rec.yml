@@ -65,7 +65,7 @@ spring:
     liquibase:
         contexts: rec
     mail:
-        host: localhost
+        host: 10.100.56.56
         port: 25
         username:
         password:
