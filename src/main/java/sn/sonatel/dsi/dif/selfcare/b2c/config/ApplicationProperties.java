@@ -21,6 +21,17 @@ public class ApplicationProperties {
     private String emailServiceClientOrange;
     private String lienIbou;
 
+
+    private final SelfcareMail selfcareMail = new SelfcareMail();
+
+    public SelfcareMail getSelfcareMail() {
+        return selfcareMail;
+    }
+
+
+
+
+
     public String getAuthenticationAuthorisationUserServerHost() {
         return authenticationAuthorisationUserServerHost;
     }
@@ -91,5 +102,34 @@ public class ApplicationProperties {
 
     public void setEmailServiceClientOrange(String emailServiceClientOrange) {
         this.emailServiceClientOrange = emailServiceClientOrange;
+    }
+
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.1.4
+     */
+    public static class SelfcareMail {
+
+        private String senderAddress;
+
+        private String senderName;
+
+        public String getSenderAddress() {
+            return senderAddress;
+        }
+
+        public void setSenderAddress(String senderAddress) {
+            this.senderAddress = senderAddress;
+        }
+
+        public String getSenderName() {
+            return senderName;
+        }
+
+        public void setSenderName(String senderName) {
+            this.senderName = senderName;
+        }
+
     }
 }

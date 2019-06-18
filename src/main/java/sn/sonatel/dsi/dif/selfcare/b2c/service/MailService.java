@@ -90,7 +90,7 @@ public class MailService {
 
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
-            message.setFrom(user.getEmail(),"Service Client Orange Business ");
+            message.setFrom(applicationProperties.getSelfcareMail().getSenderAddress(),applicationProperties.getSelfcareMail().getSenderName());
             message.setSubject(subject);
             message.setText(content, isHtml);
 
