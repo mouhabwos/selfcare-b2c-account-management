@@ -21,6 +21,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
@@ -41,7 +42,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = SelfcareB2CApp.class)
+@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class,SelfcareB2CApp.class})
 public class MailServiceIntTest {
 
     //private static final Resource FILE = "";
@@ -78,7 +79,7 @@ public class MailServiceIntTest {
         private MessageSource mockMessageSource;
         @Mock
         private SpringTemplateEngine mockTemplateEngine;
-        @Mock
+        @Autowired
         private ApplicationProperties mockApplicationProperties;
         @Mock
         private ServiceFile mockService;
