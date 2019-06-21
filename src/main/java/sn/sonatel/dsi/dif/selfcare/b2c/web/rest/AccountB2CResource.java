@@ -65,9 +65,7 @@ public class AccountB2CResource {
         }
         AccountB2C result = accountB2CService.createAccountB2C(accountB2CDto);
 
-        return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok(result);
     }
 
 
@@ -85,9 +83,8 @@ public class AccountB2CResource {
 
         AccountB2C result = accountB2CService.registerAccountB2C(managedUserVM);
 
-        return ResponseEntity.created(new URI("/api/account-b-2-cs/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok(result);
+
     }
 
 
