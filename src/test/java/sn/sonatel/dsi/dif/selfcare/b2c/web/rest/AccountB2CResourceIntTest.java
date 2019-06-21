@@ -178,7 +178,7 @@ public class AccountB2CResourceIntTest {
         restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isOk());
 
         // Validate the AccountB2C in the database
         List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
@@ -209,7 +209,7 @@ public class AccountB2CResourceIntTest {
         restAccountB2CMockMvc.perform(post("/api/account-management/account-b-2-cs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isOk());
 
 
     }
@@ -584,7 +584,7 @@ public class AccountB2CResourceIntTest {
        restAccountB2CMockMvc.perform(post("/api/account-management/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
-            .andExpect(status().isInternalServerError());
+            .andExpect(status().isOk());
 
 
     }
