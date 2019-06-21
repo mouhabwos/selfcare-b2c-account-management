@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ProfilType;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
@@ -63,6 +64,36 @@ public class SelfcareSoapServiceTest {
         assertTrue(entity.equals(response));
     }
 
+
+    @Test
+    public void isPostpaid() {
+        SouscriptionDto souscriptionDto= new SouscriptionDto();
+        souscriptionDto.setProfil(ProfilType.POSTPAID.name());
+
+        ResponseEntity<SouscriptionDto> response = new ResponseEntity<>(souscriptionDto,HttpStatus.OK);
+
+        when(serviceSOAP.getSouscription(any())).thenReturn(response);
+
+
+        Boolean result = soapService.isPostpaid(DEFAULT_NUMERO);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void isNotPostpaid() {
+        SouscriptionDto souscriptionDto= new SouscriptionDto();
+        souscriptionDto.setProfil(ProfilType.PREPAID.name());
+
+        ResponseEntity<SouscriptionDto> response = new ResponseEntity<>(souscriptionDto,HttpStatus.OK);
+
+        when(serviceSOAP.getSouscription(any())).thenReturn(response);
+
+
+        Boolean result = soapService.isPostpaid(DEFAULT_NUMERO);
+
+        Assert.assertFalse(result);
+    }
 
     @Test
     public void getAbonne() {
