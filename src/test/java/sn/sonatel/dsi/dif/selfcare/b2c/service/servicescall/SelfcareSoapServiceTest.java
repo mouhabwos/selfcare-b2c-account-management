@@ -114,7 +114,7 @@ public class SelfcareSoapServiceTest {
 
 
        ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
-       Assert.assertEquals(entity.getStatusCode(),HttpStatus.OK);
+       Assert.assertEquals(HttpStatus.OK,entity.getStatusCode());
 
     }
 
