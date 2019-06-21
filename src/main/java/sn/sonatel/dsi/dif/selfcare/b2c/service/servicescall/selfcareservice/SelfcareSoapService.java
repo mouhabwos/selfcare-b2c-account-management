@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ProfilType;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
@@ -51,6 +52,21 @@ public class SelfcareSoapService {
         SOAPRequest soapRequest = new SOAPRequest(msisdn);
 
         return serviceSOAP.getSouscription( soapRequest);
+
+    }
+
+    public boolean isPostpaid(String msisdn) {
+        boolean response=Boolean.FALSE;
+
+        ResponseEntity<SouscriptionDto> responseEntity = getSouscription(msisdn);
+        if(responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody()!=null && responseEntity.getBody().getProfil()!=null) {
+
+                String profil = responseEntity.getBody().getProfil();
+                response= profil.equalsIgnoreCase(ProfilType.POSTPAID.name())  ;
+
+        }
+
+        return response;
 
     }
 
