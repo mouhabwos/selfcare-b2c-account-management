@@ -120,6 +120,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.LIST_BY_ID)
     @GetMapping("/account-b-2-cs/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AccountB2C> getAccountB2C(@PathVariable Long id) {
         log.debug("REST request to get AccountB2C : {}", id);
         Optional<AccountB2C> accountB2C = accountB2CService.getAccountB2C(id);
