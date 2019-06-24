@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -413,6 +413,10 @@
             <artifactId>spring-security-jwt</artifactId>
         </dependency>
         <!-- Spring Cloud -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter</artifactId>
