@@ -10,29 +10,29 @@ import java.util.Set;
 /**
  * A DTO representing a user, with his authorities.
  */
-public class UserDTO extends Same {
+public class UserDTO extends UserBaseClass {
 
 	private Long id;
 
 	@ApiModelProperty(required = true)
-	@NotNull(message = "Le numero ne peut pas être vide")
-	@NotBlank(message = "Le numéro ne doit pas être vide")
-	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-	@Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
+	@NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+	@NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+	@Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+	@Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
 	private String login;
 
-    @NotNull(message = "Le prénom ne doit pas être vide")
+    @NotNull(message = MessageValidation.FIRSTNAME_NON_VIDE)
     @ApiModelProperty(required = true)
     @Size(max = 50)
     private String firstName;
 
-    @NotNull(message = "Le nom ne doit pas être vide")
+    @NotNull(message = MessageValidation.LASTNAME_NON_VIDE)
     @ApiModelProperty(required = true)
     @Size(max = 50)
     private String lastName;
 
     @ApiModelProperty(required = false)
-    @Email(message = "L'email doit être une adresse email bien formée")
+    @Email(message = MessageValidation.EMAIL_VALID)
     @Size(min = 5, max = 254)
     private String email;
 

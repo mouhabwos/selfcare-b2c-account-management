@@ -20,16 +20,6 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class RattachementLigne extends NumeroDTO implements Serializable {
 
-    @Column(name = "type_verification")
-    private String typeVerification;
-
-    @Column(name = "code_verification")
-    private String codeVerification;
-
-    @Column(name = "statut")
-    private Boolean statut;
-
-
     @NotNull(message = "Le type de numéro ne peut pas être vide")
     @Enumerated(EnumType.STRING)
     @Column(name = "type_numero", nullable = false)
@@ -39,47 +29,8 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
     @JsonIgnoreProperties("users")
     private AccountB2C accountB2C;
 
-
-
-    public String getTypeVerification() {
-        return typeVerification;
-    }
-
-    public RattachementLigne typeVerification(String typeVerification) {
-        this.typeVerification = typeVerification;
-        return this;
-    }
-
-    public void setTypeVerification(String typeVerification) {
-        this.typeVerification = typeVerification;
-    }
-
-    public String getCodeVerification() {
-        return codeVerification;
-    }
-
-    public RattachementLigne codeVerification(String codeVerification) {
-        this.codeVerification = codeVerification;
-        return this;
-    }
-
-    public void setCodeVerification(String codeVerification) {
-        this.codeVerification = codeVerification;
-    }
-
-    public Boolean isStatut() {
-        return statut;
-    }
-
-    public RattachementLigne statut(Boolean statut) {
-        this.statut = statut;
-        return this;
-    }
-
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
-    }
-
+    @Column(name = "id_client", nullable = true)
+    private String idClient;
 
     public TypeNumero getTypeNumero() {
         return typeNumero;
@@ -101,6 +52,14 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
     public RattachementLigne accountB2C(AccountB2C accountB2C) {
         this.accountB2C = accountB2C;
         return this;
+    }
+
+    public String getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(String idClient) {
+        this.idClient = idClient;
     }
 
     public void setAccountB2C(AccountB2C accountB2C) {
@@ -133,9 +92,6 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
         return "RattachementLigne{" +
             "id=" + getId() +
             ", numero='" + getNumero() + "'" +
-            ", typeVerification='" + getTypeVerification() + "'" +
-            ", codeVerification='" + getCodeVerification() + "'" +
-            ", statut='" + isStatut() + "'" +
             ", typeNumero='" + getTypeNumero() + "'" +
             "}";
     }

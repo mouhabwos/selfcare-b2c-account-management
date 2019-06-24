@@ -24,11 +24,18 @@ public final class Constants {
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
-    public static final String SELFCARE_B2C_SOAP_SERVICE = "http://selfcare-b2c-soap";
 
-    public static final String SELFCARE_UAA_SERVICE = "http://selfcare-uaa";
 
-    public static final String SELFCARE_FILE_MANAGER_SERVICE = "http://selfcare-file-manager";
+    public static final String SELFCARE_B2C_SOAP_SERVICE = "selfcare-b2c-soap";
+
+    public static final String SELFCARE_UAA_SERVICE = "selfcare-uaa";
+
+    public static final String SELFCARE_FILE_MANAGER_SERVICE = "selfcare-file-manager";
+
+    public static final String SELFCARE_SERVICE_OTP = "selfcare-otp";
+
+    public static final String SELFCARE_GATEWAY = "selfcare-gateway";
+
 
     public static final String FILE_DOWNLOAD = "/api/download/";
 
@@ -40,6 +47,18 @@ public final class Constants {
 
     public static final String REGISTER_ACCOUNT = "/api/register";
 
+    public static final String URL_CHECK_CODE_OTP = "/api/code-otp-infos/check";
+
+    public static final String URL_CHECK_VALID_REQUEST_OTP = "/api/code-otp-infos/check-valid-request/{msisdn}";
+
+    public static final String URL_GET_NUMERO_CLIENT = "/api/numero-client/{msisdn}";
+
+
+    public static final String VALIDE ="valid";
+
+    public static final String EMAIL_PART1 = "selfcare-b2c-";
+
+    public static final String EMAIL_PART2 = "@selfcare.com";
 
     public static final String EMAIL_SERVICE_CLIENT = "vieuxmamadou.kasse@orange-sonatel.com";
 

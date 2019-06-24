@@ -20,7 +20,7 @@ public class FormatNumberPhoneUtilTest {
     @Test
     public void getNumberFormatStart221() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( NUMERO221 );
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( NUMERO221 );
         assertThat ( msisdn ).isEqualTo ( "775622323" );
 
     }
@@ -28,7 +28,7 @@ public class FormatNumberPhoneUtilTest {
     @Test
     public void getNumberFormatStart00221() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( NUMERO00221 );
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( NUMERO00221 );
         assertThat ( msisdn ).isEqualTo ( "775622323" );
 
     }
@@ -36,7 +36,7 @@ public class FormatNumberPhoneUtilTest {
     @Test
     public void getNumberFormatStartPlus221() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( NUMEROPLUS221 );
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( NUMEROPLUS221 );
         assertThat ( msisdn ).isEqualTo ( "775622323" );
 
     }
@@ -44,7 +44,7 @@ public class FormatNumberPhoneUtilTest {
     @Test
     public void getNumberFormatWithNull() {
 
-        String msisdn = FormatNumberPhoneUtil.getNumberFormat ( null );
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( null );
         assertThat ( msisdn ).isEqualTo ( "" );
 
     }

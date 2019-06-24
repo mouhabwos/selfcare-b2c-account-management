@@ -29,6 +29,10 @@ eureka:
             defaultZone: http://admin:${jhipster.registry.password}@10.137.52.31:8761/eureka/
 
 spring:
+    profiles:
+        active: dev
+        include:
+        - swagger
     devtools:
         restart:
             enabled: false
@@ -61,7 +65,7 @@ spring:
     liquibase:
         contexts: rec
     mail:
-        host: localhost
+        host: 10.100.56.56
         port: 25
         username:
         password:
@@ -162,8 +166,6 @@ application:
     max-attempts: 3
     authentication-authorisation-user-server-host: http://selfcare-uaa
     url-otp: http://selfcare-otp
-    message-block-user: L' accès à votre compte Orange et moi a été bloqué veuillez contacter le service client.
-    service-client-orange:  Service Client Orange
     lien-ibou: #https://m.me/165622776799685
-    email-service-client-orange: vieuxmamadou.kasse@orange-sonatel.com
+    email-service-client-orange: fatou.diaw@orange-sonatel.com
 

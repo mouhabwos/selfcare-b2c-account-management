@@ -13,7 +13,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceOTP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
 import java.time.Duration;
@@ -34,9 +34,9 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final ApplicationProperties applicationProperties;
 
-    private final ServiceOTP serviceOTP;
+    private final SelfcareOTPService serviceOTP;
 
-    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, ServiceOTP serviceOTP) {
+    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SelfcareOTPService serviceOTP) {
         this.restTemplate = restTemplate;
         this.b2CRepository = b2CRepository;
         this.applicationProperties = applicationProperties;
@@ -66,7 +66,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         if(!accountB2C.isPresent()){
             return -1;
         }
-        if(accountB2C.get().getAttempts() < applicationProperties.getMaxAttempts()){
+        if(accountB2C.get().getAttempts() < 3){
 
             if(accountB2C.get().getDerniereConnnexionDate() != null){
                 boolean check = Duration.between (accountB2C.get().getDerniereConnnexionDate(), ZonedDateTime.now ()).getSeconds() < Constants.MAX_DELAY_TO_TRY_CONNEXION;
