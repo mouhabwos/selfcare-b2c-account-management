@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -25,10 +24,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
+ import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -115,14 +112,7 @@ public class AccountB2CResource {
     }
 
 
-/*    @Auditable(description = Message.Account.LIST_BY_ID)
-    @GetMapping("/account-b-2-cs/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AccountB2C> getAccountB2C(@PathVariable Long id) {
-        log.debug("REST request to get AccountB2C : {}", id);
-        Optional<AccountB2C> accountB2C = accountB2CService.getAccountB2C(id);
-        return ResponseUtil.wrapOrNotFound(accountB2C);
-    }*/
+
 
 
 

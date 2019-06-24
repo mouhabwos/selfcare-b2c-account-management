@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AbonneResourceIntTest {
 
     private static final String DEFAULT_NUMERO = "771326617";
+    private static final String DEFAULT_NUMERO_TO_VERIFIER = "771843646";
     private static final String DEFAULT_CODE = "123456";
 
     private MockMvc restAbonneMockMvc;
@@ -57,6 +58,16 @@ public class AbonneResourceIntTest {
 
        restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", DEFAULT_NUMERO))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    public void isPostpaid() throws Exception {
+
+        ResponseEntity<Boolean> response = ResponseEntity.status(HttpStatus.OK).build();
+        when(resource.isPostpaid(Mockito.any(),Mockito.any())).thenReturn(response);
+
+        restAbonneMockMvc.perform(get("/api/abonne/is-postpaid/{msisdn1}/{msisdn}", DEFAULT_NUMERO,DEFAULT_NUMERO_TO_VERIFIER))
+                .andExpect(status().isOk());
     }
 
     @Test
