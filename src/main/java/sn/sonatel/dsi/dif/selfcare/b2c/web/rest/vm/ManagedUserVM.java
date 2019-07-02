@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm;
 
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.MessageValidation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTO;
 
 import javax.validation.constraints.NotNull;
@@ -17,9 +18,9 @@ public class ManagedUserVM extends UserDTO {
 
     public static final int PASSWORD_MAX_LENGTH = 100;
 
-    @NotNull(message = "Le mot de passe ne doit pas être vide")
-    @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH, message = "Le password doit contenir au moins 8 caracteres")
-    @Pattern(regexp = Constants.MOTDEPASSE_REGEX, message = "Le mot de passe saisi est incorrect")
+    @NotNull(message = MessageValidation.MOTE_DE_PASSE_NON_VIDE)
+    @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH, message = MessageValidation.MOTE_DE_PASSE_TAILLE_VALIDE)
+    @Pattern(regexp = Constants.MOTDEPASSE_REGEX, message = MessageValidation.MOTE_DE_PASSE_PATTERN_VALIDE)
     @ApiModelProperty(required = true)
     private String password;
 

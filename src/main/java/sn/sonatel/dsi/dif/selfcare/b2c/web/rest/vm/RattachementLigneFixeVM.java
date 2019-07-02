@@ -17,7 +17,7 @@ public class RattachementLigneFixeVM extends RattachementBaseClass {
     @ApiModelProperty(required = true)
     @NotNull(message = MessageValidation.ID_CLIENT)
     @NotBlank(message = MessageValidation.ID_CLIENT)
-    private String idClient;
+    private String idClient = "";
 
     public RattachementLigneFixeVM() {
         //Default Constructor

@@ -36,4 +36,12 @@ public final class MessageValidation {
     public static final String TYPE_NUMERO_NON_VIDE = "Le type de numéro ne peut pas être vide";
 
     public static final String ID_CLIENT = "L'id client ne peut pas être vide.";
+
+    public static final String MESSAGE_NON_VIDE = "Le message ne doit pas être vide";
+
+    public static final String MOTE_DE_PASSE_NON_VIDE = "Le mot de passe ne doit pas être vide";
+
+    public static final String MOTE_DE_PASSE_TAILLE_VALIDE = "Le password doit contenir au moins 8 caracteres";
+
+    public static final String MOTE_DE_PASSE_PATTERN_VALIDE = "Le mot de passe saisi est incorrect";
 }
