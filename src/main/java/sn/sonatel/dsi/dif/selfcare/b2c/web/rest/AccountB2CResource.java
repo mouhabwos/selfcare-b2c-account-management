@@ -24,7 +24,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 import javax.validation.Valid;
- import java.net.URISyntaxException;
 import java.util.List;
 
 
@@ -55,7 +54,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/account-b-2-cs")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2CDto) throws URISyntaxException {
+    public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2CDto)  {
         log.debug("REST request to save AccountB2C : {}", accountB2CDto);
         if (accountB2CDto.getId() != null) {
             throw new BadRequestAlertException("A new accountB2C cannot already have an ID", ENTITY_NAME, "idexists");
