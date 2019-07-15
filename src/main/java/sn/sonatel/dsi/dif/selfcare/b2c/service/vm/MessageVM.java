@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.vm;
 
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.MessageValidation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,22 +12,19 @@ import javax.validation.constraints.Size;
 public class MessageVM {
 
     @ApiModelProperty(required = true)
-    @NotNull(message = "Le numero ne peut pas être vide")
-    @NotBlank(message = "Le numéro ne doit pas être vide")
-    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = "Le numéro doit un numéro orange valide")
-    @Size(min = 9, max = 18, message = "La taille du numéro doit être de 9 chiffres")
-    private String msisdn;
+    @NotNull(message = MessageValidation.NUMERO_NON_VIDE)
+    @NotBlank(message = MessageValidation.NUMERO_NON_VIDE)
+    @Pattern(regexp = Constants.LOGIN_REGEX_VALID_NUMBER, message = MessageValidation.NUMERO_ORANGE_VALIDE)
+    @Size(min = 9, max = 18, message = MessageValidation.NUMERO_TAILLE_VALIDE)
+    private String msisdn = "";
 
-    @NotNull(message = "Le message ne doit pas être vide")
-    @NotBlank(message = "Le message ne doit pas être vide")
-    private String message;
+    @NotNull(message = MessageValidation.MESSAGE_NON_VIDE)
+    @NotBlank(message = MessageValidation.MESSAGE_NON_VIDE)
+    private String message = "";
 
-    public MessageVM(String msisdn, String message) {
-        this.msisdn = msisdn;
-        this.message = message;
-    }
 
     public MessageVM() {
+        //Default constructor
     }
 
     public String getMsisdn() {

@@ -65,9 +65,7 @@ public class OTPService {
 
         Map<String,Object> response = restTemplate.getForObject(applicationProperties.getUrlOtp() + "/api/code-otp-infos/check-valid-request/" + msisdn, Map.class);
 
-        Boolean valid = (Boolean) response.get("valid");
-
-        return  valid;
+        return (Boolean) response.get("valid");
 
     }
 
