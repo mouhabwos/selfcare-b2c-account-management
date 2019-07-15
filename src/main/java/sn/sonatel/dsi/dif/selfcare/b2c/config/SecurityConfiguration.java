@@ -39,7 +39,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         //authenticated()
-        http
+        http.requiresChannel().anyRequest().requiresSecure().and()
             .csrf()
             .disable()
             .headers()
