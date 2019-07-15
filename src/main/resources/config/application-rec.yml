@@ -33,6 +33,7 @@ spring:
         active: dev
         include:
         - swagger
+        - tls
     devtools:
         restart:
             enabled: false
