@@ -30,7 +30,7 @@ eureka:
 
 spring:
     profiles:
-        active: dev
+        active: rec
         include:
         - swagger
         - tls
