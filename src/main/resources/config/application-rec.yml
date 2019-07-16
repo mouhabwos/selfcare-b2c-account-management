@@ -33,7 +33,7 @@ spring:
         active: rec
         include:
         - swagger
-        - tls
+        #- tls
     devtools:
         restart:
             enabled: false
