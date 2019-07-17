@@ -164,7 +164,7 @@ application:
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange
     selfcare-mail:
-        sender-address: orangeetmoi@orange-sonatel.com
+        sender-address: mailer.orangeetmoi@orange-sonatel.com
         sender-name: Orange et Moi
 log-manager:
     microservice-name: Account Management
