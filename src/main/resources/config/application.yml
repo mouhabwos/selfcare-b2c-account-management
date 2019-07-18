@@ -149,6 +149,10 @@ jhipster:
 
 logging:
     file: target/selfcare-b2c-account-management.log
+log-manager:
+    microservice-name: Account-Management
+    app-name: Selfcare B2C
+
 
 # ===================================================================
 # Application specific properties
