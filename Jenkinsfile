@@ -74,7 +74,7 @@ pipeline {
           unstash 'target'
           dir('target') {
             sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-            sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+            sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev,tls" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
           }
       }
     }
