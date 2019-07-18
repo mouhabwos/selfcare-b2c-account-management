@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.interceptor.LogManager;
@@ -17,5 +18,5 @@ public class LogManagerConfiguration {
     }
 
     @Bean
-    public LogManager logManager() { return new LogManager(new FileLogger(),loggingProperties);}
+    public LogManager logManager(){return new LogManager(new FileLogger(),loggingProperties);}
 }
