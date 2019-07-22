@@ -63,7 +63,7 @@ pipeline {
         agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
-                       anyOf { branch 'develop'; branch 'release' }
+                       anyOf { branch 'develop'; branch 'release'; branch 'SELFB2C-1173'  }
                     }
       steps {
 
@@ -83,7 +83,7 @@ pipeline {
     stage(' [REC] Build & Run Docker image') {
           agent  { label 'docker-builder-rec3' }
           options { skipDefaultCheckout() }
-          when { branch 'release' }
+          when { anyOf {  branch 'release'; branch 'SELFB2C-1173'  }}
           steps {
 
               sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'

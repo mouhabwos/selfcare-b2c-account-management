@@ -151,6 +151,8 @@ public class AccountB2CResource {
 
     }
 
+
+
     /**
      * GET / view-tutorial : change the status of user for view tutorial
      * @param msisdn
