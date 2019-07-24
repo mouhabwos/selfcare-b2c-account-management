@@ -132,12 +132,14 @@ pipeline {
 
   
 
-    stage('Deploy PréPROD') {
-    when { branch 'release' }
+    stage('Deploy Snaptshot on PréPROD') {
+    when { branch 'master' }
       steps {
-        echo 'deployer sur environnement de préproduction'
+        sh 'mvn clean deploy -Dmaven.test.skip=true'
       }
     }
+    
+    
 
 /*
     stage('Launch Qualys Scan') {
