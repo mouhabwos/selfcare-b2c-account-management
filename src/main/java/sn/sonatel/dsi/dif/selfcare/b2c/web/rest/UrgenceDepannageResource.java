@@ -39,11 +39,11 @@ public class UrgenceDepannageResource {
 
     @Auditable(description = Message.Account.OUVERTURE_COMPTE)
     @PostMapping(value = "/v1/mail/ouverture-compte",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity sendmail(@RequestParam String operationCode, @RequestParam String numero, @RequestParam String lastName, @RequestParam String firsName, @RequestParam String email, @RequestParam MultipartFile formulaire, @RequestParam MultipartFile rectoID, @RequestParam(required = false) MultipartFile verso) throws IOException, URISyntaxException {
+    public ResponseEntity sendmail(@RequestParam String operationCode, @RequestParam String numero, @RequestParam String lastName, @RequestParam String firstName, @RequestParam String email, @RequestParam MultipartFile formulaire, @RequestParam MultipartFile rectoID, @RequestParam( required = false) MultipartFile verso) throws IOException, URISyntaxException {
         log.info("REST request to register ouverture-compte");
 
         OperationDTO operationDTO = new OperationDTO();
-        operationDTO.setFirsName(firsName);
+        operationDTO.setFirsName(firstName);
         operationDTO.setOperationCode(operationCode);
         operationDTO.setLastName(lastName);
         operationDTO.setNumero(numero);

@@ -78,7 +78,7 @@ public class OperationDTO {
 
 
     public void checkFormatPDFFile(String fileName){
-        if(!fileName.matches(Constants.PDF_FILE_REGEX)){
+        if(!fileName.matches(Constants.PDF_FILE_REGEX ) && !fileName.matches(Constants.IMAGE_REGEX)){
             throw new BadRequestAlertException("Le ficher doit etre un document .pdf ", fileName,"");
         }
     }
