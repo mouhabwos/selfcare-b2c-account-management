@@ -21,8 +21,12 @@ import org.springframework.core.env.Environment;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.service.LoggingProperties;
 
 import javax.annotation.PostConstruct;
+import javax.net.ssl.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 
