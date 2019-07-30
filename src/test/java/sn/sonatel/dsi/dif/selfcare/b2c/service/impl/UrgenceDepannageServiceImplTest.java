@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mailmanagment.ServiceSendMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import java.io.File;
@@ -31,6 +33,9 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @SpringBootTest(classes = {SelfcareB2CApp.class})
 public class UrgenceDepannageServiceImplTest {
 
+    private static final String stringOperationDTO = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
+    private static final String stringOperationDTOErrorCode = "{\n" + "\t\"operationCode\":\"operation-test\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
+
     @Autowired
     private ServiceSendMail serviceSendMail;
 
@@ -39,10 +44,13 @@ public class UrgenceDepannageServiceImplTest {
     @Mock
     private MailSendRepository mailSendRepository;
 
+    @Mock
+    private ServiceFile serviceFileManager;
+
     @Before
     public void setUp() {
         initMocks(this);
-        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, serviceSendMail);
+        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, serviceSendMail, serviceFileManager);
     }
 
     private OperationDTO operationDTO() throws Exception {
@@ -65,7 +73,7 @@ public class UrgenceDepannageServiceImplTest {
         MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
 
 
-        operationDTO.setFirsName("firsName");
+        operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
         operationDTO.setLastName("lastname");
         operationDTO.setNumero("777777700");
@@ -97,7 +105,7 @@ public class UrgenceDepannageServiceImplTest {
         MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
 
 
-        operationDTO.setFirsName("firsName");
+        operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
         operationDTO.setLastName("lastname");
         operationDTO.setNumero("777777700");
@@ -127,6 +135,8 @@ public class UrgenceDepannageServiceImplTest {
     }
 
 
+
+
     @Test
     public void testOuvertureCompte() throws Exception {
 
@@ -137,7 +147,7 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
-        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(operationDTO());
+        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso());
         assertEquals( mail.getIdRequest(),ouvertureCompte);
     }
 
@@ -151,7 +161,7 @@ public class UrgenceDepannageServiceImplTest {
         // Run the test
         OperationDTO dto = operationDTO();
         dto.setOperationCode("operation-test");
-        urgenceDepannageService.ouvertureCompte(dto);
+        urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, dto.getFormulaire(), dto.getRectoID(), dto.getVerso());
     }
 
     @Test(expected = BadRequestAlertException.class)
@@ -161,7 +171,8 @@ public class UrgenceDepannageServiceImplTest {
 
         when(mailSendRepository.save(any())).thenReturn(mail);
 
-        urgenceDepannageService.ouvertureCompte(operationDTOErrorRecto());
+        urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso());
+
     }
 
 }

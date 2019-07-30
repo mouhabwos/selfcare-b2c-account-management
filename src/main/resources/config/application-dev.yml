@@ -85,7 +85,7 @@ spring:
                 enabled: true
 
 server:
-    port: @server.port.docker.expose@
+    port: 8715 #@server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties
@@ -158,8 +158,3 @@ application:
     url-otp: http://selfcare-otp
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: fatou.diaw@orange-sonatel.com
-
-
-
-
-

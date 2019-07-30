@@ -44,7 +44,7 @@ public class OperationDTO {
     @NotNull(message = MessageValidation.FIRSTNAME_NON_VIDE)
     @ApiModelProperty(required = true)
     @Size(max = 50)
-    private String firsName;
+    private String firstName;
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
@@ -54,14 +54,10 @@ public class OperationDTO {
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
-    @NotNull(message = MessageValidation.FORMULAIRE_NON_VIDE)
-    @NotBlank(message = MessageValidation.FORMULAIRE_NON_VIDE)
     private MultipartFile formulaire;
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
-    @NotNull(message = MessageValidation.RECTO_ID_NON_VIDE)
-    @NotBlank(message = MessageValidation.RECTOID_NOT_VIDE)
     private MultipartFile rectoID;
 
     @Getter(AccessLevel.PUBLIC)

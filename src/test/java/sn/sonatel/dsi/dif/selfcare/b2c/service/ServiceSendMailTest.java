@@ -101,7 +101,7 @@ public class ServiceSendMailTest {
     private OperationDTO operationDTO(){
         OperationDTO operationDTO = new OperationDTO();
 
-        operationDTO.setFirsName("firsName");
+        operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
         operationDTO.setLastName("lastname");
         operationDTO.setNumero("777777700");

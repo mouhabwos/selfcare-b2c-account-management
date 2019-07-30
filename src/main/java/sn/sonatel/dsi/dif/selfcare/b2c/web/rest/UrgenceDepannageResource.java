@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailSendService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
+
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,21 +38,11 @@ public class UrgenceDepannageResource {
 
 
     @Auditable(description = Message.Account.OUVERTURE_COMPTE)
-    @PostMapping(value = "/v1/mail/ouverture-compte",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity sendmail(@RequestParam String operationCode, @RequestParam String numero, @RequestParam String lastName, @RequestParam String firstName, @RequestParam String email, @RequestParam MultipartFile formulaire, @RequestParam MultipartFile rectoID, @RequestParam( required = false) MultipartFile verso) throws IOException, URISyntaxException {
+    @PostMapping(value = "/v1/mail/ouverture-compte",consumes = {MediaType.ALL_VALUE})
+    public ResponseEntity sendmail(@RequestPart String operationDTO, @RequestPart MultipartFile formulaire, @RequestPart MultipartFile rectoID, @RequestPart( required = false) MultipartFile verso) throws IOException, URISyntaxException {
         log.info("REST request to register ouverture-compte");
 
-        OperationDTO operationDTO = new OperationDTO();
-        operationDTO.setFirsName(firstName);
-        operationDTO.setOperationCode(operationCode);
-        operationDTO.setLastName(lastName);
-        operationDTO.setNumero(numero);
-        operationDTO.setEmail(email);
-        operationDTO.setFormulaire(formulaire);
-        operationDTO.setVerso(verso);
-        operationDTO.setRectoID(rectoID);
-
-        String idRequest = urgenceDepannageService.ouvertureCompte(operationDTO);
+        String idRequest = urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso);
 
         return ResponseEntity.accepted ().body(new URI ( "/api/v1/mail/ouverture-compte/status/" +idRequest ));
 

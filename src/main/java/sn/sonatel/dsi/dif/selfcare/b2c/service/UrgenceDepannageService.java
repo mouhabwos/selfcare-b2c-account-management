@@ -1,6 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -10,6 +10,6 @@ import java.io.IOException;
  */
 public interface UrgenceDepannageService {
 
-    String ouvertureCompte( OperationDTO operationDTO) throws IOException;
+    String ouvertureCompte(String operationDTO, MultipartFile formulaire, MultipartFile rectoID,  MultipartFile verso) throws IOException;
 
 }

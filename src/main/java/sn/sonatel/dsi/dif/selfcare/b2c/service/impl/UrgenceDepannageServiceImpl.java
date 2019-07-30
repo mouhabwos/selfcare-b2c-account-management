@@ -1,12 +1,18 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mailmanagment.ServiceSendMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import javax.activation.DataSource;
@@ -23,85 +29,130 @@ import java.util.Map;
  *
  */
 
+@Transactional
 @Service
 class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     private static final String RECTO = "_recto_";
     private static final String VERSO = "_verso_";
+    private static final String FILE = "file";
+    private static final String FORMULAIRE = "_formulaire_";
+    private static final String TEXT = "text/plain";
 
     private final MailSendRepository mailSendRepository;
 
-
     private final ServiceSendMail serviceSendMail;
 
-    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ServiceSendMail serviceSendMail) {
+    private final ServiceFile serviceFileManager;
+
+    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ServiceSendMail serviceSendMail, ServiceFile serviceFileManager) {
         this.mailSendRepository = mailSendRepository;
         this.serviceSendMail = serviceSendMail;
+        this.serviceFileManager = serviceFileManager;
     }
 
     @Override
-    public String ouvertureCompte( OperationDTO operationDTO) throws IOException {
+    public String ouvertureCompte( String dto, MultipartFile formulaire, MultipartFile rectoID,  MultipartFile versoID) throws IOException {
 
+
+        OperationDTO operationDTO = convertStringToOperationDTO(dto);
+        operationDTO.setFormulaire(formulaire);
+        operationDTO.setVerso(versoID);
+        operationDTO.setRectoID(rectoID);
+
+        Date date = new Date();
+        long millis = date.getTime();
 
         // verification of validity files
         operationDTO.checkFormatImageFile(operationDTO.getRectoID().getOriginalFilename());
-
         operationDTO.checkFormatPDFFile(operationDTO.getFormulaire().getOriginalFilename());
-
         operationDTO.setOperationTitre(serviceSendMail.getTitleOperation(operationDTO.getOperationCode()));
+
         if(operationDTO.getOperationTitre().equals("")){
             throw new BadRequestAlertException("Le code de l operation est introuvable", operationDTO.getOperationCode(),"");
         }
 
-        String idFormulaire = "";
-        String idRecto = "";
+        String idFormulaire = operationDTO.getNumero()+FORMULAIRE+millis;
+        String idRecto = operationDTO.getNumero()+ RECTO +millis;
         String idVerso = "";
 
 
         Map<String, DataSource> dataSource = new HashMap<>();
 
-        Date date = new Date();
-        long millis = date.getTime();
-
         DataSource dsFormulaire = new ByteArrayDataSource(operationDTO.getFormulaire().getBytes(), operationDTO.getFormulaire().getContentType());
         DataSource dsRecto = new ByteArrayDataSource(operationDTO.getRectoID().getBytes(), operationDTO.getRectoID().getContentType());
-        idFormulaire = operationDTO.getNumero()+"_"+millis;
+
         dataSource.put(idFormulaire, dsFormulaire);
 
-        idRecto = operationDTO.getNumero()+ RECTO +millis;
-        dataSource.put(idRecto, dsRecto);
 
+        dataSource.put(idRecto, dsRecto);
 
         if(operationDTO.getVerso() != null){
             operationDTO.checkFormatImageFile(operationDTO.getVerso().getOriginalFilename());
             DataSource dsVerso = new ByteArrayDataSource(operationDTO.getVerso().getBytes(), operationDTO.getVerso().getContentType());
             idVerso = operationDTO.getNumero()+VERSO+millis;
             dataSource.put(idVerso, dsVerso);
+
+            MultipartFile verso  = new MockMultipartFile(FILE, idRecto+getExtension(operationDTO.getVerso().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getVerso().getInputStream()));
+            operationDTO.setVerso(verso);
         }
 
-        Mail mail = new Mail();
+        MultipartFile pdf  = new MockMultipartFile(FILE, idFormulaire+getExtension(operationDTO.getFormulaire().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getFormulaire().getInputStream()));
+        MultipartFile recto  = new MockMultipartFile(FILE, idRecto+getExtension(operationDTO.getRectoID().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getRectoID().getInputStream()));
+        operationDTO.setFormulaire(pdf);
+        operationDTO.setRectoID(recto);
 
-        mail.setIdRequest(operationDTO.getNumero()+"_"+millis);
-        mail.setStatus(StatusMail.IN_PROGRESS);
-        mail.setEmail(operationDTO.getEmail());
-        mail.setIdFormulaire(idFormulaire);
-        mail.setIdVerso(idVerso);
-        mail.setIdRecto(idRecto);
-        mail.setOperationTitre(operationDTO.getOperationTitre());
-        mail.setFirsName(operationDTO.getFirsName());
-        mail.setLastName(operationDTO.getLastName());
-        mail.setNumero(operationDTO.getNumero());
-
-        mail = mailSendRepository.save(mail);
-
+        Mail mail = sauvegardeFiles(operationDTO,millis);
         serviceSendMail.sendEmailToServiceClient(dataSource, mail);
 
         return mail.getIdRequest()+"";
 
+    }
+
+    private Mail sauvegardeFiles(OperationDTO operationDTO, long millis){
+
+        Mail mail = new Mail();
+        if(operationDTO.getVerso()!= null){
+            mail.setIdVerso(operationDTO.getVerso().getOriginalFilename());
+            serviceFileManager.fileUpload(operationDTO.getVerso());
+        }
+
+        mail.setIdRequest(operationDTO.getNumero()+"_"+millis);
+        mail.setStatus(StatusMail.IN_PROGRESS);
+        mail.setEmail(operationDTO.getEmail());
+        mail.setIdFormulaire(operationDTO.getFormulaire().getOriginalFilename());
+        mail.setIdRecto(operationDTO.getRectoID().getOriginalFilename());
+        mail.setOperationTitre(operationDTO.getOperationTitre());
+        mail.setFirsName(operationDTO.getFirstName());
+        mail.setLastName(operationDTO.getLastName());
+        mail.setNumero(operationDTO.getNumero());
+
+        serviceFileManager.fileUpload(operationDTO.getFormulaire());
+        serviceFileManager.fileUpload(operationDTO.getRectoID());
+         return mailSendRepository.save(mail);
 
     }
 
+    private String getExtension(String name){
+        StringBuilder bld = new StringBuilder();
+        boolean trouve = false;
+        for ( int i = 0; i < name.length(); ++i ) {
+            char c = name.charAt( i );
+            if(c == '.'){
+                trouve = true;
+            }
+            if(trouve){
+                bld.append(c);
+            }
+        }
+        return bld.toString();
+    }
+
+    private OperationDTO convertStringToOperationDTO(String operationDTO) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(operationDTO, OperationDTO.class);
 
 
+    }
 
 }

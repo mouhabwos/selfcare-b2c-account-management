@@ -42,6 +42,8 @@ public final class Constants {
 
     public static final String FILE_DOWNLOAD = "/api/download/";
 
+    public static final String FILE_UPLOAD = "/api/upload";
+
     public static final String GET_ABONNE = "/api/soap/information-client";
 
     public static final String GET_SOUSCRIPTION_ABONNE = "/api/soap/souscription";
