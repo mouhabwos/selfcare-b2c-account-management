@@ -63,7 +63,7 @@ pipeline {
         agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
-                       anyOf { branch 'develop'; branch 'release'; branch 'SELFB2C-1173'  }
+                       anyOf { branch 'develop'; branch 'release' }
                     }
       steps {
 
@@ -74,7 +74,7 @@ pipeline {
           unstash 'target'
           dir('target') {
             sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-            sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+            sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev,tls" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
           }
       }
     }
@@ -83,7 +83,7 @@ pipeline {
     stage(' [REC] Build & Run Docker image') {
           agent  { label 'docker-builder-rec3' }
           options { skipDefaultCheckout() }
-          when { anyOf {  branch 'release'; branch 'SELFB2C-1173'  }}
+          when { branch 'release' }
           steps {
 
               sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
@@ -93,7 +93,7 @@ pipeline {
               unstash 'target'
               dir('target') {
                 sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-                sh 'docker run --name=${NAME} -d  --restart=always -e JAVA_OPTS="-Dspring.profiles.active=rec" --memory-reservation=256M --memory=768M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+                sh 'docker run --name=${NAME} -d  --restart=always -e JAVA_OPTS="-Dspring.profiles.active=rec,tls" --memory-reservation=256M --memory=768M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
               }
           }
         }
