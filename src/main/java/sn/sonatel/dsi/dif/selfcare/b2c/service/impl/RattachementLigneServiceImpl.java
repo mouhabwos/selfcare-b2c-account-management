@@ -14,10 +14,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceGateway;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Constants;
@@ -40,22 +39,17 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    private final SelfcareSoapService selfcareSoapService;
-
     private final CaptchaService captchaService;
 
-    private final ServiceGateway serviceGateway;
+    private final CustomerOfferApiClient customerOfferApiClient;
 
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, SelfcareSoapService selfcareSoapService, CaptchaService captchaService, ServiceGateway serviceGateway) {
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient) {
+
         this.rattachementLigneRepository = rattachementLigneRepository;
-
         this.accountB2CRepository = accountB2CRepository;
-
-        this.selfcareSoapService = selfcareSoapService;
         this.captchaService = captchaService;
-        this.serviceGateway = serviceGateway;
-
+        this.customerOfferApiClient = customerOfferApiClient;
     }
 
     @Override
@@ -154,11 +148,11 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
 
-                SouscriptionDto dto = getSouscription(rattachementLigne.getNumero());
+                CustomerOffer dto = getSouscription(rattachementLigne.getNumero());
                 if (dto != null) {
 
-                    infoNumberVMS.setProfil(dto.getProfil());
-                    infoNumberVMS.setFormule(dto.getNomOffre());
+                    infoNumberVMS.setProfil(dto.getOfferType().toString());
+                    infoNumberVMS.setFormule(dto.getOfferName());
 
                 } else {
                     infoNumberVMS.setProfil("");
@@ -265,11 +259,11 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
 
-    public SouscriptionDto getSouscription(String msisdn) {
+    public CustomerOffer getSouscription(String msisdn) {
 
         try {
 
-            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(msisdn);
+            ResponseEntity<CustomerOffer> response = customerOfferApiClient.customerOffer(msisdn);
             if (response.getBody()!= null) {
                 return response.getBody();
             } else {
@@ -401,14 +395,13 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
      * @since 1.1.4
      *
      */
-    public boolean checkNumberClient(String idClient, String numero){
+    public boolean checkNumberClient(String idClient, String numero) {
 
-        String numberClient = serviceGateway.getNumeroClient(numero).getBody();
-        if(numberClient != null && !numberClient.isEmpty()){
+        CustomerOffer customerOffer = customerOfferApiClient.customerOffer(numero).getBody();
+        if (customerOffer.getClientCode() != null && !customerOffer.getClientCode().isEmpty()) {
 
-            return numberClient.equals(idClient);
-
-        }else {
+            return customerOffer.getClientCode().equals(idClient);
+        } else {
 
             log.debug("Error id client not found : {}", idClient);
             throw new NumeroClientNotFoundException();

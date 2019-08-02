@@ -49,6 +49,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final CaptchaService captchaService;
 
+
     public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, CaptchaService captchaService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
@@ -242,7 +243,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
 
-
     @Override
     public void updateTutorialView(String msisdn) {
 
@@ -258,4 +258,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
 
     }
+
+
 }

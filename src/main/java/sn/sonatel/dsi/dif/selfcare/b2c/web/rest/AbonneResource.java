@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
@@ -22,9 +25,11 @@ public class AbonneResource {
     private final Logger log = LoggerFactory.getLogger ( RattachementLigneResource.class );
 
     private final SelfcareSoapService selfcareSoapService;
+    private final CustomerOfferApiClient customerOfferApiClient;
 
-    public AbonneResource(SelfcareSoapService selfcareSoapService) {
+    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferApiClient customerOfferApiClient) {
         this.selfcareSoapService = selfcareSoapService;
+        this.customerOfferApiClient = customerOfferApiClient;
     }
 
 
@@ -56,6 +61,19 @@ public class AbonneResource {
 
         return selfcareSoapService.getAbonne(msisdn, code);
 
+    }
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.1.4
+     *
+     */
+    @Auditable(description = Message.Abonne.CUSTOMEROFFER)
+    @GetMapping("/v1/customerOffer/{msisdn}")
+    @Timed
+    public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable String msisdn){
+        log.debug ( "REST request to get CustomerOffer : {}", msisdn );
+        return customerOfferApiClient.customerOffer(msisdn);
     }
 
 
