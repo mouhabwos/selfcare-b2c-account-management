@@ -24,6 +24,9 @@ public final class Constants {
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
+    public static final String PDF_FILE_REGEX = "^.+\\.(([pP][dD][fF])|([jJ][pP][gG]))$";
+
+    public static final String IMAGE_REGEX = "([a-zA-Z0-9\\s_\\\\.\\-\\(\\):])+(.png|.jpg|.jpeg|.PNG|.JPG|.JPEG)$";
 
 
     public static final String SELFCARE_B2C_SOAP_SERVICE = "https://selfcare-b2c-soap";
@@ -38,6 +41,8 @@ public final class Constants {
 
 
     public static final String FILE_DOWNLOAD = "/api/download/";
+
+    public static final String FILE_UPLOAD = "/api/upload";
 
     public static final String GET_ABONNE = "/api/soap/information-client";
 
