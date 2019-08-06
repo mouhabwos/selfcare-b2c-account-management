@@ -3,7 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.client.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.CustomerOfferClientFallbackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.CustomerOfferClientFallbackFactory;
 
 /**
  * @author BOUYA KANDE

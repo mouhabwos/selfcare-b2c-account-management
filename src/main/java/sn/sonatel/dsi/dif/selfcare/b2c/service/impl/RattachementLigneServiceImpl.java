@@ -230,7 +230,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
 
-    public void checkNumberIfUsed(String number, String login) {
+    private void checkNumberIfUsed(String number, String login) {
 
         log.debug ( "Service to check status number for rattached : {}", number );
         log.debug ( "Service to check status login : {}", login );
@@ -259,7 +259,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
 
-    public CustomerOffer getSouscription(String msisdn) {
+    private CustomerOffer getSouscription(String msisdn) {
 
         try {
 
@@ -286,7 +286,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
      * @since 1.1.4
      */
 
-    public boolean checkFixNumberAssociatedWithThisAccount(String login){
+    private boolean checkFixNumberAssociatedWithThisAccount(String login){
 
         List<RattachementLigne> ligneList = rattachementLigneRepository.findByAccountB2C_Numero(login);
         if(!ligneList.isEmpty()){
@@ -395,7 +395,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
      * @since 1.1.4
      *
      */
-    public boolean checkNumberClient(String idClient, String numero) {
+    private boolean checkNumberClient(String idClient, String numero) {
 
         CustomerOffer customerOffer = customerOfferApiClient.customerOffer(numero).getBody();
         if (customerOffer.getClientCode() != null && !customerOffer.getClientCode().isEmpty()) {

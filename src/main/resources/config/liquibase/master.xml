@@ -32,4 +32,15 @@ Add idClient field
 -->
     <include file="config/liquibase/changelog/20190524125929_changelog.xml" relativeToChangelogFile="false"/>
 
+    <!--
+Add entity Mail
+
+-->
+
+    <include file="config/liquibase/changelog/20190724123304_changelog.xml" relativeToChangelogFile="false"/>
+    <!--
+Add new Fields
+-->
+    <include file="config/liquibase/changelog/20190725154033_changelog.xml" relativeToChangelogFile="false"/>
+
  </databaseChangeLog>

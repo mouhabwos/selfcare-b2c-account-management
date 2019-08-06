@@ -43,13 +43,13 @@ public class TokenService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", applicationProperties.getGrantType());
-        map.add("client_id", applicationProperties.getClientId());
-        map.add("client_secret", applicationProperties.getClientSecret());
+        map.add("grant_type", applicationProperties.getApiManagement().getGrantType());
+        map.add("client_id", applicationProperties.getApiManagement().getClientId());
+        map.add("client_secret", applicationProperties.getApiManagement().getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        ResponseEntity<TokenDTO> response = restTemplate.postForEntity(applicationProperties.getKeyAccessTokenUri(), request, TokenDTO.class);
+        ResponseEntity<TokenDTO> response = restTemplate.postForEntity(applicationProperties.getApiManagement().getKeyAccessTokenUri(), request, TokenDTO.class);
 
         return response.getBody();
 

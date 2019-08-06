@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.ServiceUAAFallBackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.ServiceUAAFallBackFactory;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.validation.Valid;

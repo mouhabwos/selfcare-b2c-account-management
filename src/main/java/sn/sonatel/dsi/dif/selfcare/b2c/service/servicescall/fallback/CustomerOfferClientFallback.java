@@ -57,7 +57,7 @@ public class CustomerOfferClientFallback implements CustomerOfferApiClient {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
     }
 
     @Override

@@ -95,6 +95,8 @@ public final class Message {
 
         public static final String OUVERTURE_COMPTE = "Operation d'ouverture de compte dans urgence et depannage";
 
+        public static final String STATUS_MAIL = "Verification de l envoie du mail";
+
 
         private Account() {
             super ();

@@ -155,17 +155,17 @@ public class CustomerOfferClientFallbackTest {
     }
 
     /**
-     * code  200
+     * code  500
      */
     @Test
-    public void getGatewayError200() {
+    public void getGatewayErrorInternalServerError() {
 
         Map<String, Collection<String>> headers = new LinkedHashMap<>();
         Response response = Response.builder().status(200)
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.OK).body("");
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 

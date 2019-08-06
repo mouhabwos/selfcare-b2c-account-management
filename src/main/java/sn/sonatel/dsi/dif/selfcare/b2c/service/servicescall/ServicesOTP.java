@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.ServiceOTPFallBackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.ServiceOTPFallBackFactory;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
 import javax.validation.Valid;
