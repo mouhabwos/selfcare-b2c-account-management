@@ -29,15 +29,15 @@ public final class Constants {
     public static final String IMAGE_REGEX = "([a-zA-Z0-9\\s_\\\\.\\-\\(\\):])+(.png|.jpg|.jpeg|.PNG|.JPG|.JPEG)$";
 
 
-    public static final String SELFCARE_B2C_SOAP_SERVICE = "https://selfcare-b2c-soap";
+    public static final String SELFCARE_B2C_SOAP_SERVICE = "selfcare-b2c-soap";
 
-    public static final String SELFCARE_UAA_SERVICE = "https://selfcare-uaa";
+    public static final String SELFCARE_UAA_SERVICE = "selfcare-uaa";
 
-    public static final String SELFCARE_FILE_MANAGER_SERVICE = "https://selfcare-file-manager";
+    public static final String SELFCARE_FILE_MANAGER_SERVICE = "selfcare-file-manager";
 
-    public static final String SELFCARE_SERVICE_OTP = "https://selfcare-otp";
+    public static final String SELFCARE_SERVICE_OTP = "selfcare-otp";
 
-    public static final String SELFCARE_GATEWAY = "https://selfcare-gateway";
+    public static final String SELFCARE_GATEWAY = "selfcare-gateway";
 
 
     public static final String FILE_DOWNLOAD = "/api/download/";
