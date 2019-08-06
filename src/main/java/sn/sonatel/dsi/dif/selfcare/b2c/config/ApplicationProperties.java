@@ -1,6 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Properties specific to Selfcare B 2 C.
@@ -21,16 +27,15 @@ public class ApplicationProperties {
     private String emailServiceClientOrange;
     private String lienIbou;
 
-
     private final SelfcareMail selfcareMail = new SelfcareMail();
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final UrgenceDepannage urgenceDepannage = new UrgenceDepannage();
 
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
     }
-
-
-
-
 
     public String getAuthenticationAuthorisationUserServerHost() {
         return authenticationAuthorisationUserServerHost;
@@ -115,6 +120,16 @@ public class ApplicationProperties {
 
         private String senderName;
 
+        private String mailSubject;
+
+        public String getMailSubject() {
+            return mailSubject;
+        }
+
+        public void setMailSubject(String mailSubject) {
+            this.mailSubject = mailSubject;
+        }
+
         public String getSenderAddress() {
             return senderAddress;
         }
@@ -129,6 +144,30 @@ public class ApplicationProperties {
 
         public void setSenderName(String senderName) {
             this.senderName = senderName;
+        }
+
+    }
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.1.4
+     */
+    public static class UrgenceDepannage{
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private List<Operation> operation = new ArrayList<>();
+
+        public static class Operation{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String code;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String title;
+
         }
 
     }
