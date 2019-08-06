@@ -119,6 +119,26 @@ public class SelfcareSoapServiceTest {
     }
 
 
+    @Test
+    public void getAbonneForBadRequestResponse() {
+
+        CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
+
+        codeOTPCheckDTO.setValid(false);
+        codeOTPCheckDTO.setMsisdn(DEFAULT_NUMERO);
+        codeOTPCheckDTO.setCode(DEFAULT_CODE);
+
+        when(otpService.checkOPT(DEFAULT_NUMERO, DEFAULT_CODE)).thenReturn(codeOTPCheckDTO);
+
+
+        ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        ResponseEntity<AbonneDTO> entity = soapService.getAbonne(DEFAULT_NUMERO,DEFAULT_CODE);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST,entity.getStatusCode());
+
+    }
+
+
    @Test
     public void getAbonneBadRequest() {
 
