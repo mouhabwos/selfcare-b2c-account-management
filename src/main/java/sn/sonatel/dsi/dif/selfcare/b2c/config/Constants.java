@@ -24,22 +24,28 @@ public final class Constants {
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
+    public static final String PDF_FILE_REGEX = "^.+\\.(([pP][dD][fF])|([jJ][pP][gG]))$";
+
+    public static final String IMAGE_REGEX = "([a-zA-Z0-9\\s_\\\\.\\-\\(\\):])+(.png|.jpg|.jpeg|.PNG|.JPG|.JPEG)$";
 
 
-    public static final String SELFCARE_B2C_SOAP_SERVICE = "https://selfcare-b2c-soap";
+    public static final String SELFCARE_B2C_SOAP_SERVICE = "selfcare-b2c-soap";
 
-    public static final String SELFCARE_UAA_SERVICE = "https://selfcare-uaa";
+    public static final String SELFCARE_UAA_SERVICE = "selfcare-uaa";
 
-    public static final String SELFCARE_FILE_MANAGER_SERVICE = "https://selfcare-file-manager";
+    public static final String SELFCARE_FILE_MANAGER_SERVICE = "selfcare-file-manager";
 
-    public static final String SELFCARE_SERVICE_OTP = "https://selfcare-otp";
+    public static final String SELFCARE_SERVICE_OTP = "selfcare-otp";
 
+    public static final String SELFCARE_GATEWAY = "selfcare-gateway";
     public static final String API_MANAGEMENT = "http://api.rec.orange-sonatel.com";
 
 
     public static final String ENDPOINT_API_MANAGEMENT = "/api-accountmanagement";
 
     public static final String FILE_DOWNLOAD = "/api/download/";
+
+    public static final String FILE_UPLOAD = "/api/upload";
 
     public static final String GET_ABONNE = "/api/soap/information-client";
 

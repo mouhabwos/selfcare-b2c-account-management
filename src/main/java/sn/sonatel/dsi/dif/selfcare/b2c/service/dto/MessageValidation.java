@@ -44,4 +44,16 @@ public final class MessageValidation {
     public static final String MOTE_DE_PASSE_TAILLE_VALIDE = "Le password doit contenir au moins 8 caracteres";
 
     public static final String MOTE_DE_PASSE_PATTERN_VALIDE = "Le mot de passe saisi est incorrect";
+
+    public static final String CODE_OPERATION_NOT_NULL = "Le Code de l'opération ne peux pas etre null";
+
+    public static final String CODE_OPERATION_NOT_VIDE = "Le Code de l'opération ne peux pas etre vide";
+
+    public static final String RECTOID_NOT_VIDE = "Le rectoID ne peux pas etre vide";
+
+    public static final String VALIDE_FORMULAIRE = "Ce fichier n'est pas un fichier pdf valide";
+
+    public static final String VALIDE_RECTO = " Fichier c'est pas valide";
+
+    public static final String VALIDE_VERSO = " Fichier c'est pas valide";
 }
