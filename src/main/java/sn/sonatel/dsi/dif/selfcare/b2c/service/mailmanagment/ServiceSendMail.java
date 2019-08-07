@@ -114,7 +114,7 @@ public class ServiceSendMail {
 
                 });
 
-            Transport.send(mimeMessage);
+            javaMailSender.send(mimeMessage);
 
             log.debug("Sent email to User '{}'", applicationProperties.getEmailServiceClientOrange());
         } catch (Exception e) {
