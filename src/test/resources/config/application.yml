@@ -131,4 +131,15 @@ application:
     selfcare-mail:
         sender-address: orangeetmoi@orange-sonatel.com
         sender-name: Orange et Moi
+    urgence-depannage:
+        operation:
+            -
+                code: operation-100
+                title: Deplafonnement de compte Orange Money
+            -
+                code: operation-200
+                title: Ouverture de compte Orange Money
+            -
+                code: operation-300
+                title: Erreur transaction Orange Money
 
