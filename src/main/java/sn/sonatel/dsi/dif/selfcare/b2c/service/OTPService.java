@@ -23,9 +23,6 @@ public class OTPService {
     private final Logger log = LoggerFactory.getLogger(OTPService.class);
 
 
-
-
-
     private final ApplicationProperties applicationProperties;
 
 

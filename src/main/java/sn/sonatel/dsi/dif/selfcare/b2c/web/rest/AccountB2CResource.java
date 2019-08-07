@@ -164,7 +164,6 @@ public class AccountB2CResource {
     public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
         log.debug("REST request to update field turorialView AccountB2C : {}", msisdn);
         accountB2CService.updateTutorialView(msisdn);
-
         return ResponseEntity.ok().build();
     }
 

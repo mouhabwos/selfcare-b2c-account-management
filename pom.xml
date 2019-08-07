@@ -121,7 +121,9 @@
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/aop/logging/audit/SelfcareLogException.java,
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/CustomSecurityResolver.java,
             src/main/resources/templates/error.html,
-            src/main/resources/static/index.html
+            src/main/resources/static/index.html,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/service/serviceclient/configuration/ApiKeyRequestInterceptor.java
+
         </sonar.exclusions>
         <sonar.issue.ignore.multicriteria>S3437,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
         <!-- Rule https://sonarcloud.io/coding_rules?open=Web%3ABoldAndItalicTagsCheck&rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
@@ -156,6 +158,12 @@
                 <scope>import</scope>
             </dependency>
             <!-- jhipster-needle-maven-add-dependency-management -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.8</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -511,6 +519,11 @@
                         </path>
                         <!-- For JPA static metamodel generation -->
                         <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.8</version>
+                        </path>
+                        <path>
                             <groupId>org.hibernate</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
                             <version>${hibernate.version}</version>
@@ -804,6 +817,25 @@
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
+
+            <!-- <plugin>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>2.2.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>http://10.137.18.212:9000/api-accountmanagement/v2/api-docs</inputSpec>
+                            <output>${project.build.directory}/generated-sources/swagger</output>
+                            <language>spring</language>
+                            <library>spring-cloud</library>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
         </plugins>
         <pluginManagement>
             <plugins>

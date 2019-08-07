@@ -27,11 +27,16 @@ public class ApplicationProperties {
     private String emailServiceClientOrange;
     private String lienIbou;
 
+
     private final SelfcareMail selfcareMail = new SelfcareMail();
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     private final UrgenceDepannage urgenceDepannage = new UrgenceDepannage();
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final ApiManagement apiManagement = new ApiManagement();
 
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
@@ -109,7 +114,6 @@ public class ApplicationProperties {
         this.emailServiceClientOrange = emailServiceClientOrange;
     }
 
-
     /**
      * @author BOUYA KANDE
      * @since 1.1.4
@@ -169,6 +173,30 @@ public class ApplicationProperties {
             private String title;
 
         }
+
+    }
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.1.4
+     */
+    public static class ApiManagement{
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String grantType;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String clientId;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String clientSecret;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String keyAccessTokenUri;
 
     }
 }
