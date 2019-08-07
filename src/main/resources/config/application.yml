@@ -148,10 +148,7 @@ jhipster:
         license-url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 logging:
-    file: target/selfcare-b2c-account-management.log
-log-manager:
-    microservice-name: Account-Management
-    app-name: Selfcare B2C
+    file: target/selfcare-b2c-account-management.log 
 
 
 # ===================================================================
