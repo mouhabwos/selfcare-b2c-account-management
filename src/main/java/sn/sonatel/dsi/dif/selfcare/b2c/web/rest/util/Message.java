@@ -9,8 +9,9 @@ public final class Message {
     public static final class Abonne {
 
         public static final String IS_POSPAID = "Verifier si le numero est pospaid";
-        public static final String SOUSC_USER = "Recuperation de la souscription de l'abonne";
-        public static final String INFO_ABONNE = "Recuperation des informations de l'abonne";
+        public static final String SOUSC_USER = "Recuperation de la souscription de l abonne";
+        public static final String INFO_ABONNE = "Recuperation des informations de l abonne";
+        public static final String CUSTOMEROFFER = "Recuperation du custommer offer de l abonne";
 
         private Abonne() {
             super ();

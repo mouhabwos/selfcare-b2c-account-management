@@ -3,15 +3,20 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
@@ -37,6 +42,8 @@ import java.util.List;
 import java.util.Optional;
 
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
@@ -547,23 +554,28 @@ public class RattachementLigneResourceIntTest {
     @Test
     public void testaAddRattachementLigneFixe() throws Exception {
 
+        AccountB2C b2C = new AccountB2C();
+        b2C.setEmail("77testmail1@gmail.com");
+        b2C.setLastName("lastname");
+        b2C.setFirstName("firstname");
+        b2C.setNumero("770770089");
+        AccountB2C accountB2C = accountB2CRepository.save(b2C);
+
         RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient("789562");
-        rattachementLigneFixeVM.setNumero("33 896 52 75");
-        rattachementLigneFixeVM.setLogin("779562521");
+        rattachementLigneFixeVM.setIdClient("841431");
+        rattachementLigneFixeVM.setNumero("338366526");
+        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
         rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
 
         RattachementLigne ligne = new RattachementLigne();
         ligne.setIdClient(rattachementLigneFixeVM.getIdClient());
         ligne.setNumero(rattachementLigneFixeVM.getNumero());
 
+            restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/ligne-fixe/register")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(rattachementLigneFixeVM)))
+                .andExpect(status().isBadRequest());
 
-         rattachementLigneService =  mock( RattachementLigneService.class);
-         when(rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM)).thenReturn(ligne);
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/ligne-fixe/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigneFixeVM)))
-            .andExpect(status().isNotFound());
 
     }
 
@@ -575,6 +587,20 @@ public class RattachementLigneResourceIntTest {
 
     }
 
+
+    private CustomerOffer getCustomer(){
+
+        CustomerOffer customerOffer = new CustomerOffer()
+            .clientCode("841431")
+            .createDate("2011-05-26T15:51:10")
+            .endUserId("338366526")
+            .offerCode("9131")
+            .offerType(OfferTypeEnum.PREPAID)
+            .offerStatus("ACTIF")
+            .offerName("Jamono New Scool");
+
+        return customerOffer;
+    }
 
 
 }

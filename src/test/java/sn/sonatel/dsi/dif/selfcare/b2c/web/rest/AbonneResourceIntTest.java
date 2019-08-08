@@ -14,8 +14,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 
 
@@ -36,7 +39,8 @@ public class AbonneResourceIntTest {
     @Mock
     private SelfcareSoapService soapService;
 
-
+    @Mock
+    private CustomerOfferApiClient customerOfferApiClient;
 
     @Mock
     private AbonneResource resource;
@@ -45,7 +49,7 @@ public class AbonneResourceIntTest {
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource(soapService);
+        final AbonneResource abonneResource = new AbonneResource(soapService, customerOfferApiClient);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
     }
@@ -92,5 +96,25 @@ public class AbonneResourceIntTest {
         restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", ""))
             .andExpect(status().isNotFound());
     }
+
+
+    @Test
+    public void getCustomerOffer() throws Exception {
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+        ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.OK).body(customerOffer);
+        when(customerOfferApiClient.customerOffer(Mockito.anyString())).thenReturn(response);
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/customerOffer/{msisdn}", DEFAULT_NUMERO))
+            .andExpect(status().isOk());
+    }
+
 
 }
