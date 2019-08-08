@@ -176,27 +176,52 @@ public class ApplicationProperties {
 
     }
 
+
     /**
      * @author BOUYA KANDE
      * @since 1.1.4
      */
     public static class ApiManagement{
 
-        @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
-        private String grantType;
+        @Setter(AccessLevel.PUBLIC)
+        private final Auth auth = new Auth();
 
-        @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
-        private String clientId;
+        @Setter(AccessLevel.PUBLIC)
+        private final UrlApi urlApi = new UrlApi();
 
-        @Setter(AccessLevel.PUBLIC)
-        @Getter(AccessLevel.PUBLIC)
-        private String clientSecret;
 
-        @Setter(AccessLevel.PUBLIC)
-        @Getter(AccessLevel.PUBLIC)
-        private String keyAccessTokenUri;
+        public static class Auth{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String grantType;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String clientId;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String clientSecret;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String keyAccessTokenUri;
+
+        }
+
+        public static class UrlApi{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String baseUrl;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String urlAccountManagement;
+        }
 
     }
 }
