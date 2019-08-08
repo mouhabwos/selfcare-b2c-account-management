@@ -17,6 +17,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Constants;
@@ -43,13 +45,15 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final CustomerOfferApiClient customerOfferApiClient;
 
+    private final SelfcareSoapService selfcareSoapService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient) {
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SelfcareSoapService selfcareSoapService) {
 
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.captchaService = captchaService;
         this.customerOfferApiClient = customerOfferApiClient;
+        this.selfcareSoapService = selfcareSoapService;
     }
 
     @Override
@@ -144,26 +148,52 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
             for (RattachementLigne rattachementLigne : list) {
 
-                InfoNumberVM infoNumberVMS = new InfoNumberVM();
+                InfoNumberVM infoNumberVMS =getInfoNumber(rattachementLigne.getNumero());
 
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
-
-                CustomerOffer dto = getSouscription(rattachementLigne.getNumero());
-                if (dto != null) {
-
-                    infoNumberVMS.setProfil(dto.getOfferType().toString());
-                    infoNumberVMS.setFormule(dto.getOfferName());
-
-                } else {
-                    infoNumberVMS.setProfil("");
-                    infoNumberVMS.setFormule("");
-
-                }
 
                 infoNumberVMList.add(infoNumberVMS);
             }
         }
         return infoNumberVMList;
+    }
+
+
+
+    private InfoNumberVM getInfoNumber(String msisdn){
+
+        InfoNumberVM infoNumberVMS = new InfoNumberVM();
+
+        if(msisdn.matches(Constants.FIX_REGEX_VALID_NUMBER)){
+            CustomerOffer  customerOffer = getSouscriptionFixe(msisdn);
+            if (customerOffer != null) {
+
+                infoNumberVMS.setProfil(customerOffer.getOfferType().toString());
+                infoNumberVMS.setFormule(customerOffer.getOfferName());
+
+            } else {
+                infoNumberVMS.setProfil("");
+                infoNumberVMS.setFormule("");
+
+            }
+        } else {
+
+            SouscriptionDto souscriptionDto = getSouscriptionMobile(msisdn);
+
+            if (souscriptionDto != null) {
+
+                infoNumberVMS.setProfil(souscriptionDto.getProfil());
+                infoNumberVMS.setFormule(souscriptionDto.getNomOffre());
+
+            } else {
+                infoNumberVMS.setProfil("");
+                infoNumberVMS.setFormule("");
+
+            }
+
+        }
+
+        return infoNumberVMS;
     }
 
     @Override
@@ -259,7 +289,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
 
-    private CustomerOffer getSouscription(String msisdn) {
+    private CustomerOffer getSouscriptionFixe(String msisdn) {
 
         try {
 
@@ -407,6 +437,25 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             throw new NumeroClientNotFoundException();
         }
 
+    }
+
+    private SouscriptionDto getSouscriptionMobile(String msisdn) {
+
+        try {
+
+            ResponseEntity<SouscriptionDto> response = selfcareSoapService.getSouscription(msisdn);
+            if (response.getBody()!= null) {
+                return response.getBody();
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+
+            log.debug("Exception get souscription abonne : {}", msisdn);
+        }
+
+        return null;
     }
 
 }
