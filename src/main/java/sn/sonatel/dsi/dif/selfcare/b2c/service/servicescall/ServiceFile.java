@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.ServiceFileFallBackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.ServiceFileFallBackFactory;
 
 @AuthorizedUserFeignClient( name = Constants.SELFCARE_FILE_MANAGER_SERVICE, fallbackFactory = ServiceFileFallBackFactory.class)
 public interface ServiceFile {

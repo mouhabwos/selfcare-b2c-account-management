@@ -158,10 +158,16 @@ application:
     url-otp: http://selfcare-otp
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: fatou.diaw@orange-sonatel.com
-    grant_type: client_credentials
-    client_id: selfcare-b2c
-    client_secret: 231cec91-c08e-4081-a420-8177e86fdf6c
-    key-access-token-uri: http://api.rec.orange-sonatel.com/oauth/token
+
+    api-management:
+        auth:
+            grant_type: client_credentials
+            client_id: selfcare-b2c
+            client_secret: 231cec91-c08e-4081-a420-8177e86fdf6c
+            key-access-token-uri: http://api.rec.orange-sonatel.com/oauth/token
+        url-api:
+            base-url: http://api.rec.orange-sonatel.com
+            url-account-management: /api-accountmanagement
 
 
 

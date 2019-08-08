@@ -27,17 +27,16 @@ public class ApplicationProperties {
     private String emailServiceClientOrange;
     private String lienIbou;
 
-    private String grantType;
-    private String clientId;
-    private String clientSecret;
-    private String keyAccessTokenUri;
-
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     private final UrgenceDepannage urgenceDepannage = new UrgenceDepannage();
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final ApiManagement apiManagement = new ApiManagement();
 
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
@@ -115,38 +114,6 @@ public class ApplicationProperties {
         this.emailServiceClientOrange = emailServiceClientOrange;
     }
 
-    public String getGrantType() {
-        return grantType;
-    }
-
-    public void setGrantType(String grantType) {
-        this.grantType = grantType;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
-
-    public String getKeyAccessTokenUri() {
-        return keyAccessTokenUri;
-    }
-
-    public void setKeyAccessTokenUri(String keyAccessTokenUri) {
-        this.keyAccessTokenUri = keyAccessTokenUri;
-    }
-
     /**
      * @author BOUYA KANDE
      * @since 1.1.4
@@ -205,6 +172,55 @@ public class ApplicationProperties {
             @Getter(AccessLevel.PUBLIC)
             private String title;
 
+        }
+
+    }
+
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.1.4
+     */
+    public static class ApiManagement{
+
+        @Getter(AccessLevel.PUBLIC)
+        @Setter(AccessLevel.PUBLIC)
+        private final Auth auth = new Auth();
+
+        @Getter(AccessLevel.PUBLIC)
+        @Setter(AccessLevel.PUBLIC)
+        private final UrlApi urlApi = new UrlApi();
+
+
+        public static class Auth{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String grantType;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String clientId;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String clientSecret;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String keyAccessTokenUri;
+
+        }
+
+        public static class UrlApi{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String baseUrl;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String urlAccountManagement;
         }
 
     }

@@ -47,17 +47,20 @@ public class CustomerOfferClientFallback implements CustomerOfferApiClient {
 
         } else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 401){
 
-            log.debug("Error status 404 API Management SERVICE UNAVAILABLE : {} ", throwable.getMessage());
+            log.debug("Error status 404 API Management SERVICE UNAUTHORIZED : {} ", throwable.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
+        }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 403){
 
-        if(throwable instanceof FeignException && ((FeignException) throwable).status() == 403){
-
-            log.debug("Error status 404 API Management SERVICE UNAVAILABLE : {} ", throwable.getMessage());
+            log.debug("Error status 404 API Management SERVICE FORBIDDEN : {} ", throwable.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
+        }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 504){
+
+            log.debug("Error status 504 API Management SERVICE TIME OUT : {} ", throwable.getMessage());
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
     }
 
     @Override
