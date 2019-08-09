@@ -50,7 +50,6 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
             .authorizeRequests()
-            .antMatchers("/api/**").authenticated()
             .antMatchers("/api/account-management/register").permitAll()
             .antMatchers("/api/auth/**").permitAll()
             .antMatchers("/api/account-management/check_number").permitAll()
@@ -59,6 +58,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .antMatchers("/api/account-management/view-tutorial/**").permitAll()
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()
+            .antMatchers("/api/**").authenticated()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
     }
 
