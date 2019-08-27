@@ -205,7 +205,7 @@ pipeline {
        }
     }
 
- */
+
 
     stage('Release On Nexus') {
      when {
@@ -225,7 +225,7 @@ pipeline {
         }
       }
 
-
+ */
       }
 
   post {
