@@ -11,6 +11,7 @@ public final class Message {
         public static final String IS_POSPAID = "Verifier si le numero est pospaid";
         public static final String SOUSC_USER = "Recuperation de la souscription de l abonne";
         public static final String INFO_ABONNE = "Recuperation des informations de l abonne";
+        public static final String CUSTOMEROFFER = "Recuperation du custommer offer de l abonne";
 
         private Abonne() {
             super ();
@@ -19,7 +20,7 @@ public final class Message {
 
     public static final class Authentification {
 
-        public static final String CONN_SUCC = "Connexion Reussie";
+        public static final String CONN_SUCC = "Connexion Réussie";
         public static final String CONN_ERR = "Erreur de Connexion";
 
         private Authentification() {
@@ -29,15 +30,15 @@ public final class Message {
 
     public static final class AccountB2C {
 
-        public static final String CREATE_ACCOUNT = "Creation d un nouveau compte";
+        public static final String CREATE_ACCOUNT = "Creation d'un nouveau compte";
         public static final String ENREGISTREMENT_COMPTE = "enregistrement compte";
-        public static final String UPDATE = "Modification d un compte";
+        public static final String UPDATE = "Modification d'un compte";
         public static final String LIST_ACCOUNT = "Liste des comptes";
-        public static final String LIST_ACCOUNT_BY_ID = "Affichage d une categorie Pass Illimix";
-        public static final String DELETE_ACCOUNT = "Suppression d une categorie Pass Illimix";
-        public static final String SEARCH_ACCOUNT = "Suppression d une categorie Pass Illimix";
-        public static final String CHECK_NUMBER = "Suppression d une categorie Pass Illimix";
-        public static final String GET_ACCOUNT = "Suppression d une categorie Pass Illimix";
+        public static final String LIST_ACCOUNT_BY_ID = "Affichage d'une categorie Pass Illimix";
+        public static final String DELETE_ACCOUNT = "Suppression d'une categorie Pass Illimix";
+        public static final String SEARCH_ACCOUNT = "Suppression d'une categorie Pass Illimix";
+        public static final String CHECK_NUMBER = "Suppression d'une categorie Pass Illimix";
+        public static final String GET_ACCOUNT = "Suppression d'une categorie Pass Illimix";
 
         private AccountB2C() {
             super ();
@@ -47,19 +48,19 @@ public final class Message {
     public static final class Rattachement {
 
         public static final String ADD = "Creation de rattachement de ligne";
-        public static final String UPDATE = "Modification de ligne rattachee";
+        public static final String UPDATE = "Modification de ligne rattachée";
         public static final String LIST = "Lister les  lignes rattachées";
-        public static final String LIST_BY_ID = "Lister une ligne rattachee";
-        public static final String DELETE = "Suppression de lignes rattachees de ligne mobile";
+        public static final String LIST_BY_ID = "Lister une ligne rattachée";
+        public static final String DELETE = "Suppression de lignes rattachées de ligne mobile";
 
-        public static final String DELETE_ALL = "Suppression multiple de ligne rattachee";
+        public static final String DELETE_ALL = "Suppression multiple de ligne rattachée";
 
         public static final String SAVE = "Rattachement de ligne mobile";
         public static final String List_By_MSISDN = "Recuperation de la liste de numeros rattaches en fonction du login";
 
-        public static final String SEARCH = "Rechercher une ligne rattachee";
+        public static final String SEARCH = "Rechercher une ligne rattachée";
 
-        public static final String CHECK_NUMBER_FIXE = "Verification de la disponibilite du numero fix";
+        public static final String CHECK_NUMBER_FIXE = "Verification de la disponibilité du numéro fix";
 
         public static final String ADD_LIGNE_FIXE = "Creation de rattachement de ligne fixe";
 
@@ -78,21 +79,21 @@ public final class Message {
         public static final String LIST_BY_ID = "Recuperation d un compte B2C par id";
         public static final String DELETE = "Suppression d'un compte utilisateur";
 
-        public static final String DELETE_ALL = "Suppression multiple de ligne rattachee";
+        public static final String DELETE_ALL = "Suppression multiple de ligne rattachée";
 
         public static final String SAVE = "Ajout de rattachement de ligne";
-        public static final String List_By_MSISDN = "Affichage d une ligne rattachee";
+        public static final String List_By_MSISDN = "Affichage d'une ligne rattachée";
 
         public static final String SEARCH = "Rechercher un compte";
 
         public static final String CHECK_Numero = "Verification de la disponibilite du numero ";
         public static final String CHECK_Email = "Verification de la disponibilite de l'email ";
 
-        public static final String GET_ACCOUNT = "Recuperation d un compte a partir du numero de telephone ";
+        public static final String GET_ACCOUNT = "Recuperation d'un compte a partir du numero de telephone ";
 
         public static final String UPDATE_TUTORIAL_VIEW = "Mise a jour du champs tutorialView a true";
 
-        public static final String OUVERTURE_COMPTE = "Operation d ouverture de compte dans urgence et depannage";
+        public static final String OUVERTURE_COMPTE = "Operation d'ouverture de compte dans urgence et depannage";
 
         public static final String STATUS_MAIL = "Verification de l envoie du mail";
 

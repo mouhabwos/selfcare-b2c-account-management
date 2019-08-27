@@ -7,7 +7,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallbackfactory.ServiceSOAPFallBackFactory;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.ServiceSOAPFallBackFactory;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.SOAPRequest;
 
 import javax.validation.Valid;

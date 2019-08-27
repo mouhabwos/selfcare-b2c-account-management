@@ -29,7 +29,7 @@ public final class Constants {
     public static final String IMAGE_REGEX = "([a-zA-Z0-9\\s_\\\\.\\-\\(\\):])+(.png|.jpg|.jpeg|.PNG|.JPG|.JPEG)$";
 
 
-    public static final String SELFCARE_B2C_SOAP_SERVICE = "https://selfcare-b2c-soap";
+    public static final String SELFCARE_B2C_SOAP_SERVICE = "selfcare-b2c-soap";
 
     public static final String SELFCARE_UAA_SERVICE = "selfcare-uaa";
 
@@ -37,8 +37,11 @@ public final class Constants {
 
     public static final String SELFCARE_SERVICE_OTP = "selfcare-otp";
 
-    public static final String SELFCARE_GATEWAY = "elfcare-gateway";
+    public static final String SELFCARE_GATEWAY = "selfcare-gateway";
+    public static final String API_MANAGEMENT = "http://api.rec.orange-sonatel.com";
 
+
+    public static final String ENDPOINT_API_MANAGEMENT = "/api-accountmanagement";
 
     public static final String FILE_DOWNLOAD = "/api/download/";
 
@@ -55,8 +58,6 @@ public final class Constants {
     public static final String URL_CHECK_CODE_OTP = "/api/code-otp-infos/check";
 
     public static final String URL_CHECK_VALID_REQUEST_OTP = "/api/code-otp-infos/check-valid-request/{msisdn}";
-
-    public static final String URL_GET_NUMERO_CLIENT = "/api/numero-client/{msisdn}";
 
 
     public static final String VALIDE ="valid";
