@@ -180,3 +180,28 @@ application:
             base-url: http://api.rec.orange-sonatel.com
             url-account-management: /api-accountmanagement
 
+    message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
+    service-client-orange: . Service Client Orange
+
+    selfcare-mail:
+        sender-address: mailer.orangeetmoi@orange-sonatel.com
+        sender-name: Orange et Moi
+        mail-subject: Orange et Moi
+    urgence-depannage:
+        operation:
+            -
+                code: operation-100
+                title: Deplafonnement de compte Orange Money
+            -
+                code: operation-200
+                title: Ouverture de compte Orange Money
+            -
+                code: operation-300
+                title: Erreur transaction Orange Money
+
+log-manager:
+    microservice-name: Account Management
+    app-name: Selfcare B2C
+
+
+
