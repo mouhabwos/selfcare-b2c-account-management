@@ -130,14 +130,7 @@ pipeline {
       }
     }
 
-  
-
-    stage('Deploy Snaptshot on PréPROD') {
-    when { branch 'master' }
-      steps {
-        sh 'mvn clean deploy -Dmaven.test.skip=true'
-      }
-    }
+ 
     
     
 
@@ -206,14 +199,14 @@ pipeline {
     }
 
 
-
+*/
     stage('Release On Nexus') {
      when {
       branch 'master'
      }
       steps {
-        build job: 'selfcare-b2c-account-management-release'
-      }
+        sh 'mvn -Dresume=false release:prepare release:perform --batch-mode -X -Pprod'
+       }
     }
 
 
@@ -225,7 +218,7 @@ pipeline {
         }
       }
 
- */
+ 
       }
 
   post {
