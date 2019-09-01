@@ -63,7 +63,7 @@ pipeline {
         agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
-                       anyOf { branch 'password'; branch 'release' }
+                       anyOf { branch 'develop'; branch 'release' }
                     }
       steps {
 
@@ -138,8 +138,8 @@ pipeline {
         sh 'mvn clean deploy -Dmaven.test.skip=true'
       }
     }
-    
-    
+
+
 
 /*
     stage('Launch Qualys Scan') {
@@ -206,7 +206,7 @@ pipeline {
     }
 
 
-
+*/
     stage('Release On Nexus') {
      when {
       branch 'master'
@@ -225,7 +225,7 @@ pipeline {
         }
       }
 
- */
+
       }
 
   post {
