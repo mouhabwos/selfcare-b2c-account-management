@@ -116,5 +116,15 @@ public class AbonneResourceIntTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    public void getCustomerOfferWithNullBody() throws Exception {
+
+        ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        when(customerOfferApiClient.customerOffer(Mockito.anyString())).thenReturn(response);
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/customerOffer/{msisdn}", "DEFAULT_NUMERO"))
+            .andExpect(status().isNotFound());
+    }
+
 
 }
