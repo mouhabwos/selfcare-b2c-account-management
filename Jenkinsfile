@@ -31,7 +31,7 @@ pipeline {
      }
 
 
-      
+
     stage('Units Tests') {
       steps {
         sh 'mvn clean test -Dmaven.test.skip=false'
@@ -55,8 +55,8 @@ pipeline {
        }
      }
 	 }
-    
- 
+
+
 
 
     stage(' [DEV2] Build & Run Docker image') {
@@ -111,7 +111,7 @@ pipeline {
               }
             }
         }
-  
+
 
 
 
@@ -130,7 +130,7 @@ pipeline {
       }
     }
 
-  
+
 
     stage('Deploy PréPROD') {
     when { branch 'release' }
