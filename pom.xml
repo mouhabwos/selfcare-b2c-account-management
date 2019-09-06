@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.2.8-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -173,14 +173,9 @@
         <dependency>
             <groupId>sn.sonatel.dsi.dif.selfcare.utils</groupId>
             <artifactId>selfcare-logging</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>sn.sonatel.dsi.dif.selfcare.utils</groupId>
-            <artifactId>selfcare-logging</artifactId>
-            <version>1.0.0</version>
-        </dependency>
         <dependency>
             <groupId>io.github.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>

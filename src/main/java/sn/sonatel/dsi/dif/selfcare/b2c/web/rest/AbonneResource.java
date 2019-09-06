@@ -73,7 +73,7 @@ public class AbonneResource {
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable String msisdn){
         log.debug ( "REST request to get CustomerOffer : {}", msisdn );
-        ResponseEntity<CustomerOffer> responseEntity = customerOfferApiClient.customerOffer(msisdn);
+        ResponseEntity<CustomerOffer> responseEntity = customerOfferApiClient.getCustomerOffer(msisdn);
 
         return (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null)? ResponseEntity.ok(responseEntity.getBody()): responseEntity;
 

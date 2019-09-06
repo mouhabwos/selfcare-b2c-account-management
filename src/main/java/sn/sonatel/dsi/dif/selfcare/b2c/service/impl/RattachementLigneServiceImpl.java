@@ -293,7 +293,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         try {
 
-            ResponseEntity<CustomerOffer> response = customerOfferApiClient.customerOffer(msisdn);
+            ResponseEntity<CustomerOffer> response = customerOfferApiClient.getCustomerOffer(msisdn);
             if (response.getBody()!= null) {
                 return response.getBody();
             } else {
@@ -427,7 +427,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
      */
     private boolean checkNumberClient(String idClient, String numero) {
 
-        CustomerOffer customerOffer = customerOfferApiClient.customerOffer(numero).getBody();
+        CustomerOffer customerOffer = customerOfferApiClient.getCustomerOffer(numero).getBody();
         if (customerOffer.getClientCode() != null && !customerOffer.getClientCode().isEmpty()) {
 
             return customerOffer.getClientCode().equals(idClient);

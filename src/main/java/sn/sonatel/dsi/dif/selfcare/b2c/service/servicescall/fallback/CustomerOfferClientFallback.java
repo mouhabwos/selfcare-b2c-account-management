@@ -60,11 +60,12 @@ public class CustomerOfferClientFallback implements CustomerOfferApiClient {
         }
 
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-/-((-_-))-/-");
     }
 
     @Override
-    public ResponseEntity<CustomerOffer> customerOffer(String msisdn) {
+    public ResponseEntity<CustomerOffer> getCustomerOffer(String msisdn) {
+        log.debug("getcustomerOffer fallback for customer {} with following error : {} ",msisdn,throwable.toString());
         return responseBuilder();
     }
 }
