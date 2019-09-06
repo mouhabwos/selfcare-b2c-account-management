@@ -110,7 +110,7 @@ public class AbonneResourceIntTest {
         customerOffer.setOfferName("Jamono New Scool");
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.OK).body(customerOffer);
-        when(customerOfferApiClient.customerOffer(Mockito.anyString())).thenReturn(response);
+        when(customerOfferApiClient.getCustomerOffer(Mockito.anyString())).thenReturn(response);
 
         restAbonneMockMvc.perform(get("/api/abonne/v1/customerOffer/{msisdn}", DEFAULT_NUMERO))
             .andExpect(status().isOk());
@@ -120,7 +120,7 @@ public class AbonneResourceIntTest {
     public void getCustomerOfferWithNullBody() throws Exception {
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        when(customerOfferApiClient.customerOffer(Mockito.anyString())).thenReturn(response);
+        when(customerOfferApiClient.getCustomerOffer(Mockito.anyString())).thenReturn(response);
 
         restAbonneMockMvc.perform(get("/api/abonne/v1/customerOffer/{msisdn}", "DEFAULT_NUMERO"))
             .andExpect(status().isNotFound());

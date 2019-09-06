@@ -212,7 +212,7 @@ public class RattachementLigneServiceImplTest {
         customerOffer.setClientCode(numeroclient);
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.ok(customerOffer);
-        when(customerOfferApiClient.customerOffer(anyString())).thenReturn(response);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
         RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
         rattachementLigneFixeVM.setIdClient(numeroclient);
@@ -274,7 +274,7 @@ public class RattachementLigneServiceImplTest {
         String numeroclient = "7895612";
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
-        when(customerOfferApiClient.customerOffer(anyString())).thenReturn(response);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
         RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
         rattachementLigneFixeVM.setIdClient(numeroclient);
@@ -305,7 +305,7 @@ public class RattachementLigneServiceImplTest {
         String numeroclient = "32722731";
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
-        when(customerOfferApiClient.customerOffer(anyString())).thenReturn(response);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
         RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
         rattachementLigneFixeVM.setIdClient(numeroclient);
@@ -323,7 +323,7 @@ public class RattachementLigneServiceImplTest {
         String numeroclient = "32722731";
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
-        when(customerOfferApiClient.customerOffer(anyString())).thenReturn(response);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
         RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
         rattachementLigneFixeVM.setIdClient(numeroclient);
