@@ -46,7 +46,7 @@ public class CustomerOfferClientFallbackTest {
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
@@ -65,7 +65,7 @@ public class CustomerOfferClientFallbackTest {
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
@@ -86,7 +86,7 @@ public class CustomerOfferClientFallbackTest {
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
@@ -107,7 +107,7 @@ public class CustomerOfferClientFallbackTest {
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
@@ -128,7 +128,7 @@ public class CustomerOfferClientFallbackTest {
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
@@ -148,7 +148,7 @@ public class CustomerOfferClientFallbackTest {
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
@@ -165,11 +165,11 @@ public class CustomerOfferClientFallbackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-/-((-_-))-/-");
 
         customerOfferClientFallbackUnderTest = new CustomerOfferClientFallback(FeignException.errorStatus("api", response));
 
-        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.customerOffer("7789564563");
+        ResponseEntity<CustomerOffer> numeroClient = customerOfferClientFallbackUnderTest.getCustomerOffer("7789564563");
 
         assertEquals(expectedResult,numeroClient);
 
