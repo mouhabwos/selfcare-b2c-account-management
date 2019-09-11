@@ -221,6 +221,10 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String urlAccountManagement;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String baseName;
         }
 
     }

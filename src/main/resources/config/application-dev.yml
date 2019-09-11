@@ -163,10 +163,11 @@ application:
         auth:
             grant_type: client_credentials
             client_id: selfcare-b2c
-            client_secret: 231cec91-c08e-4081-a420-8177e86fdf6c
-            key-access-token-uri: http://api.rec.orange-sonatel.com/oauth/token
+            client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
+            key-access-token-uri: https://iaam.orange-sonatel.com/auth/realms/apimanagement/protocol/openid-connect/token
         url-api:
-            base-url: http://api.rec.orange-sonatel.com
+            base-name: api-accountmanagement
+            base-url: https://api.orange-sonatel.com
             url-account-management: /api-accountmanagement
 
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
