@@ -42,7 +42,7 @@ public class ApiManagementServiceTest {
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.OK).body(customerOffer);
 
-        when(mockCustomerOfferApiClient.customerOffer(anyString())).thenReturn(response);
+        when(mockCustomerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
         // Run the test
         final CustomerOffer result = customerOfferServiceUnderTest.getCustomerOffer(customerOffer.getEndUserId());
@@ -57,7 +57,7 @@ public class ApiManagementServiceTest {
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        when(mockCustomerOfferApiClient.customerOffer(anyString())).thenReturn(response);
+        when(mockCustomerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
         customerOfferServiceUnderTest.getCustomerOffer("test");
 

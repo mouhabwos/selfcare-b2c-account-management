@@ -148,7 +148,8 @@ jhipster:
         license-url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 logging:
-    file: target/selfcare-b2c-account-management.log
+    file: target/selfcare-b2c-account-management.log 
+
 
 # ===================================================================
 # Application specific properties

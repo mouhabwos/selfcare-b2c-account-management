@@ -24,7 +24,7 @@ public class CustomerOfferService {
 
     public CustomerOffer getCustomerOffer(String msisdn){
         log.debug ( "Service for get Customer Offer for client {}", msisdn );
-        ResponseEntity<CustomerOffer> responseEntity = customerOfferApiClient.customerOffer(msisdn);
+        ResponseEntity<CustomerOffer> responseEntity = customerOfferApiClient.getCustomerOffer(msisdn);
 
         if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
            return responseEntity.getBody();
