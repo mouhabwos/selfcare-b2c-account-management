@@ -65,7 +65,8 @@ public class CustomerOfferClientFallback implements CustomerOfferApiClient {
 
     @Override
     public ResponseEntity<CustomerOffer> getCustomerOffer(String msisdn) {
-        log.debug("getcustomerOffer fallback for customer {} with following error : {} ",msisdn,throwable.toString());
+        String value = throwable.toString();
+        log.debug("getcustomerOffer fallback for customer {} with following error : {} ",msisdn,value);
         return responseBuilder();
     }
 }
