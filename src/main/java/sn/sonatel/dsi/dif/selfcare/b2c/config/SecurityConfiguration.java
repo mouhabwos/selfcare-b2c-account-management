@@ -50,7 +50,6 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
             .authorizeRequests()
-            .antMatchers("/api/**").authenticated()
             .antMatchers("/api/account-management/register").permitAll()
             .antMatchers("/api/auth/**").permitAll()
             .antMatchers("/api/account-management/check_number").permitAll()
