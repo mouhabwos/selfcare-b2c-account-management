@@ -59,6 +59,8 @@ public final class Constants {
 
     public static final String URL_CHECK_VALID_REQUEST_OTP = "/api/code-otp-infos/check-valid-request/{msisdn}";
 
+    public static final String URL_GET_NUMERO_CLIENT = "/api/numero-client/{msisdn}";
+
 
     public static final String VALIDE ="valid";
 

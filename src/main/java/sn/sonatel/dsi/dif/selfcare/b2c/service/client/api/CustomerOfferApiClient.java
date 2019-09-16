@@ -17,5 +17,5 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.Cus
 public interface CustomerOfferApiClient{
 
     @GetMapping(value = "/api/accountManagement/v1/customerOffer/{msisdn}")
-    ResponseEntity<CustomerOffer> customerOffer(@PathVariable("msisdn") String msisdn);
+    ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable("msisdn") String msisdn);
 }

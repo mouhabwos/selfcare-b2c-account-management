@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
