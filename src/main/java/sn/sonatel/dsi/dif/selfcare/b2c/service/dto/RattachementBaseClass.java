@@ -63,5 +63,14 @@ public class RattachementBaseClass {
     public void setTypeNumero(TypeNumero typeNumero) {
         this.typeNumero = typeNumero;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+            "\"numero\":" + numero + ',' +
+            "\"login\":" + login + ',' +
+            "\"typeNumero\":" + typeNumero +
+            '}';
+    }
 }
 
