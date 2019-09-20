@@ -67,13 +67,13 @@ public class SouscriptionDto {
 
     @Override
     public String toString() {
-        return "SouscriptionDto{" +
-            "msisdn='" + msisdn + '\'' +
-            ", profil='" + profil + '\'' +
-            ", nomOffre='" + nomOffre + '\'' +
-            ", codeOffre='" + codeOffre + '\'' +
-            ", code='" + code + '\'' +
-            ", message='" + message + '\'' +
+        return "{" +
+            "\"msisdn\":" + msisdn + ',' +
+            "\"profil\":" + profil + ',' +
+            "\"nomOffre\":" + nomOffre + ',' +
+            "\"codeOffre\":" + codeOffre + ',' +
+            "\"code\":" + code + ',' +
+            "\"message\":" + message +
             '}';
     }
 }
