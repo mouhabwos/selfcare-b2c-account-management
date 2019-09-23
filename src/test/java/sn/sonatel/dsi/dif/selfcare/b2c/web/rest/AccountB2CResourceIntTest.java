@@ -34,6 +34,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
@@ -44,6 +45,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -576,7 +578,20 @@ public class AccountB2CResourceIntTest {
 
         ResponseEntity<AccountB2C> response = ResponseEntity.status(HttpStatus.OK).body(account);
 
-        when(accountB2CResource.registerAccountB2C(b2C)).thenReturn(response);
+        AccountB2CService accountB2CServices = mock(AccountB2CService.class);
+
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+
+        this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+
+
+
+        when(accountB2CServices.registerAccountB2C(b2C)).thenReturn(account);
 
         when(otpService.checkRegisterValidity(b2C.getLogin())).thenReturn(true);
 
