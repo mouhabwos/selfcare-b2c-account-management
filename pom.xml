@@ -11,6 +11,14 @@
     <repositories>
         <!-- jhipster-needle-maven-repository -->
     </repositories>
+  
+  <repositories>
+    <repository>
+      <id>nexus-release</id>
+      <name>nexus releases</name>
+      <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
+    </repository> 
+  </repositories>
 
     <!-- jhipster-needle-distribution-management -->
     <distributionManagement>
