@@ -74,18 +74,20 @@ public class OperationDTO {
 
 
     public void checkFormatPDFFile(String fileName){
-        if(!fileName.matches(Constants.PDF_FILE_REGEX ) && !fileName.matches(Constants.IMAGE_REGEX)){
+        int indexOf = fileName.lastIndexOf('.');
+        String extension = fileName.substring(indexOf);
+        if(!extension.matches(Constants.PDF_FILE_EXTENSION_REGEX) && !extension.matches(Constants.IMAGE_EXTENSION_REGEX)){
             throw new BadRequestAlertException("Le ficher doit etre un document .pdf ", fileName,"");
         }
     }
 
     public void checkFormatImageFile(String fileName){
-
-        if(!fileName.matches(Constants.IMAGE_REGEX)){
-         throw new BadRequestAlertException("Le format de l'image doit etre .png, .jpg, .jpeg ", fileName,"");
+        int indexOf = fileName.lastIndexOf('.');
+        String extension = fileName.substring(indexOf);
+        if(!extension.matches(Constants.IMAGE_EXTENSION_REGEX)){
+            throw new BadRequestAlertException("Le format de l'image doit etre .png, .jpg, .jpeg ", fileName,"");
         }
 
     }
-
 
 }
