@@ -112,7 +112,7 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setEmail("testmail@gmail.com");
         managedUserVM.setLastName("lastname");
         managedUserVM.setFirstName("firstname");
-        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).build();
+        ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
         when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
         // Run the test

@@ -205,7 +205,7 @@ pipeline {
       branch 'master'
      }
       steps {
-        sh 'mvn -Dresume=false release:prepare release:perform --batch-mode -X -Pprod'
+        build job: 'selfcare-b2c-account-management-release'
        }
     }
 
