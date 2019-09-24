@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.MessageValidation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTO;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 /**
@@ -16,7 +16,7 @@ public class ManagedUserVM extends UserDTO {
 
     public static final int PASSWORD_MAX_LENGTH = 19;
 
-    @NotNull(message = MessageValidation.MOTE_DE_PASSE_NON_VIDE)
+    @NotBlank(message = MessageValidation.MOTE_DE_PASSE_NON_VIDE)
     @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH, message = MessageValidation.MOTE_DE_PASSE_TAILLE_VALIDE)
     @ApiModelProperty(required = true)
     private String password;
