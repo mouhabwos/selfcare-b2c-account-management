@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.HttpClientErrorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -83,52 +84,40 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
         log.debug("Service for register AccountB2C : {}", managedUserVM);
 
-        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(managedUserVM.getLogin());
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(managedUserVM.getLogin());
-
-        if(accountB2C.isPresent()){
-            log.debug ( "Error this login is already used  : {}", managedUserVM.getLogin() );
-            throw new LoginAlreadyUsedException();
-        }
-
-        if(ligne.isPresent()){
-            log.debug ( "Error this login is already rattached  : {}", managedUserVM.getLogin() );
-            throw new LigneAlreadyRattachedException();
-        }
-
-        AccountB2C result =  new AccountB2C();
+        checkExistingAccountForNumber(managedUserVM.getLogin());
 
 
-        try {
             if(managedUserVM.getEmail() == null){
 
                 managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
             }
+
+        try {
             ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
 
             if (response.getStatusCode() == HttpStatus.CREATED) {
+
                 managedUserVM.setActivated(true);
-                AccountB2C account =  new AccountB2C();
-                account.setNumero(managedUserVM.getLogin());
 
-                account.setFirstName(managedUserVM.getFirstName());
-                account.setLastName(managedUserVM.getLastName());
-                account.setImageProfil(managedUserVM.getImageprofil());
-                account.setEmail(managedUserVM.getEmail());
-                result = accountB2CRepository.save(account);
+                AccountB2C result =  new AccountB2C();
+
+                result.setNumero(managedUserVM.getLogin());
+                result.setFirstName(managedUserVM.getFirstName());
+                result.setLastName(managedUserVM.getLastName());
+                result.setImageProfil(managedUserVM.getImageprofil());
+                result.setEmail(managedUserVM.getEmail());
+                result = accountB2CRepository.save(result);
                 mailService.sendActivationEmail(result);
-            }
-            else {
-                log.debug ( "Error account is not created  : {}", managedUserVM );
-                throw new UserNoCreatedException();
+
+                return result;
             }
 
-        }catch (Exception e){
+        }catch (HttpClientErrorException e){
 
             log.debug(" exception for creation Account : {}", e);
         }
 
-        return result;
+         throw new UserNoCreatedException();
     }
 
 
@@ -173,19 +162,8 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getMsisdn());
+        checkExistingAccountForNumber(numberRequest.getMsisdn());
 
-        Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(msisdn);
-        if(account.isPresent()){
-            log.debug("Error number is already used  : {}", numberRequest);
-            throw new LoginAlreadyUsedException();
-        }
-
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
-        if(ligne.isPresent()){
-            log.debug("Error number is already rattached  : {}", numberRequest);
-            throw new LigneAlreadyRattachedException();
-        }
         return ResponseEntity.ok().build();
     }
 
@@ -257,6 +235,26 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw  new LigneNotFoundException();
         }
 
+    }
+
+
+    private void checkExistingAccountForNumber(String msisdn){
+
+         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
+
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
+
+        if(accountB2C.isPresent()){
+            log.debug ( "Error this login is already used  : {}", msisdn);
+            throw new LoginAlreadyUsedException();
+        }
+
+        if(ligne.isPresent()){
+            log.debug ( "Error this login is already rattached  : {}", msisdn );
+            throw new LigneAlreadyRattachedException();
+        }
     }
 
 
