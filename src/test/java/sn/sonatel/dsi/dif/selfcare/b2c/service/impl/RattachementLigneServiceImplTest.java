@@ -186,7 +186,7 @@ public class RattachementLigneServiceImplTest {
 
     }
 
-    @Test(expected = NoValideNumberFixeException.class)
+    @Test(expected = InvalidOrangeNumberException.class)
     public void testAddRattachementLigneFixeNoValid(){
         RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
         rattachementLigneFixeVM.setIdClient("7895623");
@@ -227,7 +227,7 @@ public class RattachementLigneServiceImplTest {
 
     }
 
-    @Test(expected = NoValideNumberFixeException.class)
+    @Test(expected = InvalidOrangeNumberException.class)
     public void testAddRattachementLigneFixeNoValidIdClient(){
         //creation account
         AccountB2C accountB2C = new AccountB2C();

@@ -41,11 +41,9 @@ public class FormatNumberPhoneUtilTest {
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void getNumberFormatWithNull() {
-
-        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( null );
-        assertThat ( msisdn ).isEqualTo ( "" );
+        FormatNumberPhoneUtil.extractNumberWithoutSuffix( null );
 
     }
 }

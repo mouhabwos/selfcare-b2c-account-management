@@ -85,6 +85,38 @@ public class UrgenceDepannageServiceImplTest {
         return operationDTO;
     }
 
+    private OperationDTO operationDTOWithCaracter() throws Exception {
+        OperationDTO operationDTO = new OperationDTO();
+
+
+        String filePdf = "fichierTest.pdf";
+        String image = "---éééé ]]@..@@.png";
+
+        File filePdfM = new File(filePdf);
+        File fileImageRectoM = new File(image);
+        File fileImageVersoM = new File(image);
+
+        FileInputStream inputPDF = new FileInputStream(filePdfM);
+        FileInputStream inputRecto = new FileInputStream(filePdfM);
+        FileInputStream inputVerso = new FileInputStream(filePdfM);
+
+        MultipartFile multipartFilePDF = new MockMultipartFile("file", filePdfM.getName(), "text/plain", IOUtils.toByteArray(inputPDF));
+        MultipartFile multipartFileRecto = new MockMultipartFile("file", fileImageRectoM.getName(), "text/plain", IOUtils.toByteArray(inputRecto));
+        MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
+
+
+        operationDTO.setFirstName("firstName");
+        operationDTO.setOperationCode("operation-200");
+        operationDTO.setLastName("lastname");
+        operationDTO.setNumero("777777700");
+        operationDTO.setEmail("email@gmail.com");
+        operationDTO.setFormulaire(multipartFilePDF);
+        operationDTO.setRectoID(multipartFileRecto);
+        operationDTO.setVerso(multipartFileVerso);
+
+        return operationDTO;
+    }
+
     private OperationDTO operationDTOErrorRecto() throws Exception {
         OperationDTO operationDTO = new OperationDTO();
 
@@ -151,6 +183,21 @@ public class UrgenceDepannageServiceImplTest {
         assertEquals( mail.getIdRequest(),ouvertureCompte);
     }
 
+    @Test
+    public void testOuvertureCompteWithCaract() throws Exception {
+
+        // Setup
+
+        Mail mail = getMailEntity();
+
+        when(mailSendRepository.save(any())).thenReturn(mail);
+
+        // Run the test
+        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOWithCaracter().getFormulaire(), operationDTOWithCaracter().getRectoID(), operationDTOWithCaracter().getVerso());
+        assertEquals( mail.getIdRequest(),ouvertureCompte);
+    }
+
+    //
     @Test(expected = BadRequestAlertException.class)
     public void testOuvertureCompteThrowsBadRequestAlertException() throws Exception {
 
