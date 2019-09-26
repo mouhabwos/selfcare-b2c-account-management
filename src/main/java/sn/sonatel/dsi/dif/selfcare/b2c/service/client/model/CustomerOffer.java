@@ -286,5 +286,21 @@ public class CustomerOffer   {
     this.voice = voice;
   }
 
+    @Override
+    public String toString() {
+        return "{" +
+            "\"clientCode\":" + clientCode + ',' +
+            "\"createDate\":" + createDate + ',' +
+            "\"data\":" + data +
+            "\"endUserId\":" + endUserId + ',' +
+            "\"offerCode\":" + offerCode + ',' +
+            "\"offerGamme\":" + offerGamme +
+            "\"offerName\":" + offerName + ',' +
+            "\"offerStatus\":" + offerStatus + ',' +
+            "\"offerType\"" + offerType + ',' +
+            "\"sms\":" + sms + ',' +
+            "\"voice\":" + voice + ',' +
+            '}';
+    }
 }
 
