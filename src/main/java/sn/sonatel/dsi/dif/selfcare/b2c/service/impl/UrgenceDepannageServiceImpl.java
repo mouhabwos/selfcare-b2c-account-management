@@ -34,7 +34,6 @@ import java.util.Map;
 class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     private static final String RECTO = "_recto_";
-    private static final String VERSO = "_verso_";
     private static final String FILE = "file";
     private static final String FORMULAIRE = "_formulaire_";
     private static final String TEXT = "text/plain";
@@ -66,6 +65,8 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         // verification of validity files
         operationDTO.checkFormatImageFile(operationDTO.getRectoID().getOriginalFilename());
         operationDTO.checkFormatPDFFile(operationDTO.getFormulaire().getOriginalFilename());
+
+        // get operation title
         operationDTO.setOperationTitre(serviceSendMail.getTitleOperation(operationDTO.getOperationCode()));
 
         if(operationDTO.getOperationTitre().equals("")){
@@ -74,7 +75,7 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
         String idFormulaire = operationDTO.getNumero()+FORMULAIRE+millis;
         String idRecto = operationDTO.getNumero()+ RECTO +millis;
-        String idVerso = "";
+
 
 
         Map<String, DataSource> dataSource = new HashMap<>();
@@ -82,16 +83,16 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         DataSource dsFormulaire = new ByteArrayDataSource(operationDTO.getFormulaire().getBytes(), operationDTO.getFormulaire().getContentType());
         DataSource dsRecto = new ByteArrayDataSource(operationDTO.getRectoID().getBytes(), operationDTO.getRectoID().getContentType());
 
-        dataSource.put(idFormulaire, dsFormulaire);
+        dataSource.put(operationDTO.getFormulaire().getOriginalFilename(), dsFormulaire);
 
 
-        dataSource.put(idRecto, dsRecto);
+        dataSource.put(operationDTO.getRectoID().getOriginalFilename(), dsRecto);
 
         if(operationDTO.getVerso() != null){
             operationDTO.checkFormatImageFile(operationDTO.getVerso().getOriginalFilename());
             DataSource dsVerso = new ByteArrayDataSource(operationDTO.getVerso().getBytes(), operationDTO.getVerso().getContentType());
-            idVerso = operationDTO.getNumero()+VERSO+millis;
-            dataSource.put(idVerso, dsVerso);
+
+            dataSource.put(operationDTO.getVerso().getOriginalFilename(), dsVerso);
 
             MultipartFile verso  = new MockMultipartFile(FILE, idRecto+getExtension(operationDTO.getVerso().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getVerso().getInputStream()));
             operationDTO.setVerso(verso);
@@ -99,10 +100,12 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
         MultipartFile pdf  = new MockMultipartFile(FILE, idFormulaire+getExtension(operationDTO.getFormulaire().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getFormulaire().getInputStream()));
         MultipartFile recto  = new MockMultipartFile(FILE, idRecto+getExtension(operationDTO.getRectoID().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getRectoID().getInputStream()));
+
         operationDTO.setFormulaire(pdf);
         operationDTO.setRectoID(recto);
 
         Mail mail = sauvegardeFiles(operationDTO,millis);
+
         serviceSendMail.sendEmailToServiceClient(dataSource, mail);
 
         return mail.getIdRequest()+"";
