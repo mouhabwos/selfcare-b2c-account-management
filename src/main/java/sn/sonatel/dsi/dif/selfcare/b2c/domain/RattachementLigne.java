@@ -89,10 +89,10 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "RattachementLigne{" +
-            "id=" + getId() +
-            ", numero='" + getNumero() + "'" +
-            ", typeNumero='" + getTypeNumero() + "'" +
+        return "{" +
+            "\"id\":" + getId() +  "," +
+            "\"numero\":" + getNumero() + "," +
+            "\"typeNumero\":" + getTypeNumero() +
             "}";
     }
 }
