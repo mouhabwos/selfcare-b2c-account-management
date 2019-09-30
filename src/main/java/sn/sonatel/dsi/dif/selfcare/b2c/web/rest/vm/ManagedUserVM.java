@@ -5,7 +5,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.MessageValidation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTO;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**

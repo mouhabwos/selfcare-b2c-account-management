@@ -32,4 +32,12 @@ public class InfoNumberVM {
         this.formule = formule;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+            "\"msisdn\":" + msisdn + ',' +
+            "\"profil\":" + profil + ',' +
+            "\"formule\":" + formule + ',' +
+            '}';
+    }
 }

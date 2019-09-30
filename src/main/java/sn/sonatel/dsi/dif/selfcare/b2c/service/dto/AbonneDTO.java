@@ -31,5 +31,11 @@ public class AbonneDTO {
         this.prenomAbonne = prenomAbonne;
     }
 
-
+    @Override
+    public String toString() {
+        return "{" +
+            "\"nomAbonne\":" + nomAbonne + ',' +
+            "\"prenomAbonne\":" + prenomAbonne +
+            '}';
+    }
 }
