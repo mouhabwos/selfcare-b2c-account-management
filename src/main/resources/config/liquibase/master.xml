@@ -11,6 +11,7 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190319083019_added_entity_Selfcarelog.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20191024112804_added_entity_Sponsor.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20190308110242_added_entity_constraints_RattachementLigne.xml"
              relativeToChangelogFile="false"/>
