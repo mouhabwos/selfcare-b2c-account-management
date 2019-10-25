@@ -1,12 +1,9 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import ch.qos.logback.classic.AsyncAppender;
-import ch.qos.logback.classic.LoggerContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -23,7 +20,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.LoggerVM;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -37,23 +33,11 @@ import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormatting
 /**
  * Test class for the LogsResource REST controller.
  *
- * @see LogsResource
+ * @see SponsorResource
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
 public class SponsorResourceIntTest {
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        final SponsorResource sponsorResource = new SponsorResource(sponsorService);
-        this.restSponsorMockMvc = MockMvcBuilders.standaloneSetup(sponsorResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-    }
 
     private static final String DEFAULT_MSISDN = "AAAAAAAAAA";
     private static final String UPDATED_MSISDN = "BBBBBBBBBB";
@@ -66,6 +50,18 @@ public class SponsorResourceIntTest {
 
     private static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
     private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        final SponsorResource sponsorResource = new SponsorResource(sponsorService);
+        this.restSponsorMockMvc = MockMvcBuilders.standaloneSetup(sponsorResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+    }
 
     @Autowired
     private SponsorRepository sponsorRepository;
