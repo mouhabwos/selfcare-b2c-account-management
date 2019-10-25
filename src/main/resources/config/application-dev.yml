@@ -189,6 +189,10 @@ application:
                 code: operation-300
                 title: Erreur transaction Orange Money
 
+    send-sms:
+        sponsorship:
+            sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. FI rek la  www.orangeetmoi.sn
+
 log-manager:
     microservice-name: Account Management
     app-name: Selfcare B2C

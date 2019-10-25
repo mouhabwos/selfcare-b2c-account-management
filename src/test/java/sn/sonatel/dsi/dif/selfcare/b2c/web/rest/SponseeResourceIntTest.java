@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
@@ -31,6 +32,8 @@ import java.time.ZoneOffset;
 import java.time.ZoneId;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.sameInstant;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -426,4 +429,23 @@ public class SponseeResourceIntTest {
         assertThat(sponseeMapper.fromId(42L).getId()).isEqualTo(42);
         assertThat(sponseeMapper.fromId(null)).isNull();
     }
+
+
+    @Test
+    @Transactional
+    public void testSendSmsForSponseeWithBadRequest() throws Exception {
+
+        String msisdnSource = "770000000";
+        String msisdnDest = "770000001";
+
+        // Create the Sponsee, which fails.
+        SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+
+        restSponseeMockMvc.perform(post("/api/sponsees/send-sms?msisdnSource="+msisdnSource+"&msisdnDest="+msisdnDest)
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+            .andExpect(status().isBadRequest());
+
+    }
+
 }
