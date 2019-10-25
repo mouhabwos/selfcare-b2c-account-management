@@ -103,5 +103,18 @@ public final class Message {
         }
     }
 
+    public static final class Sponsee {
+
+        public static final String CREATE_SPONSEE = "Parrainage d un nouveau numero";
+        public static final String UPDATE_SPONSEE = "Modification d un sponsee";
+        public static final String LIST_SPONSEE = "Liste des sponsee";
+        public static final String SPONSEE_BY_ID = "Affichage d un sponsee par l id";
+        public static final String DELETE_SPONSEE = "Suppression d un sponsee";
+
+        private Sponsee() {
+            super ();
+        }
+    }
+
 
 }
