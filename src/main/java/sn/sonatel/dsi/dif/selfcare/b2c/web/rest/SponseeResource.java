@@ -127,4 +127,13 @@ public class SponseeResource {
         sponseeService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
+
+    @PostMapping("/sponsees/send-sms")
+    public ResponseEntity sendSmsToSponsoree( @RequestParam String Smsisdn, @RequestParam String Dmsisdn){
+
+        log.debug("REST request to send sms to Sponsoree : {}", Dmsisdn);
+        sponseeService.sendSmsToSponsoree(Smsisdn, Dmsisdn);
+        return ResponseEntity.accepted().build();
+    }
 }

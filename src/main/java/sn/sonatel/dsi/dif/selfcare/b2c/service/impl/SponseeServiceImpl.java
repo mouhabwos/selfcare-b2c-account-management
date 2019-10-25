@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
@@ -12,6 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 import java.util.Optional;
 
@@ -28,9 +33,17 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final SponseeMapper sponseeMapper;
 
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper) {
+    private static final String ENTITY_NAME = "selfcareB2CAccountManagementSponseeServiceImpl";
+
+    private final ApplicationProperties applicationProperties;
+
+    private final ServicesOTP servicesOTP;
+
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
+        this.applicationProperties = applicationProperties;
+        this.servicesOTP = servicesOTP;
     }
 
     /**
@@ -85,5 +98,38 @@ public class SponseeServiceImpl implements SponseeService {
     public void delete(Long id) {
         log.debug("Request to delete Sponsee : {}", id);
         sponseeRepository.deleteById(id);
+    }
+
+    @Override
+    public void sendSmsToSponsoree(String msisdnSource, String msisdnDest) {
+        log.debug("Request Service to send sms to Sponsee : {}", msisdnDest);
+
+        msisdnSource = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdnSource);
+        msisdnDest = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdnDest);
+
+        check(msisdnSource,msisdnDest);
+
+        MessageVM messageVM = new MessageVM();
+        messageVM.setMsisdn(msisdnDest);
+        messageVM.setSourceAddress(msisdnSource);
+        messageVM.setMessage(applicationProperties.getSendSms().getSponsorship().getSmsSponsee());
+        boolean generateMessage = servicesOTP.generateMessage(messageVM);
+        if(!generateMessage){
+            log.debug("Error Request Service sms not be sent to Sponsee : {}", msisdnDest);
+            throw new BadRequestAlertException("Le sms n'a pas été envoyé",ENTITY_NAME,"smsNotSend");
+        }
+
+    }
+
+
+    private void check(String msisdnSource, String msisdnDest){
+
+        Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(msisdnDest);
+        if(sponsee.isPresent()){
+            if(sponsee.get().getAccountB2C().getNumero().equals(msisdnSource)){
+                throw new BadRequestAlertException("Ce numero est parrainé par un autre",ENTITY_NAME,"notYourSponsee");
+            }
+
+        }else throw new BadRequestAlertException("Ce numero n'est pas encore parrainé",ENTITY_NAME,"sponseeNotFound");
     }
 }

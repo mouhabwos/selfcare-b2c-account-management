@@ -135,7 +135,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.GET_ACCOUNT)
     @GetMapping("/account/{login}")
     @Timed
-    @PreAuthorize("#login == authentication.name")
+   // @PreAuthorize("#login == authentication.name")
     public AccountB2C getAccount(@PathVariable String login) {
         log.debug("REST request to get AccountB2C : {}", login);
         return accountB2CService.getAccount(login);
