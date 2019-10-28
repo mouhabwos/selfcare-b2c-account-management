@@ -153,5 +153,7 @@ application:
             base-url: https://api.orange-sonatel.com
             url-account-management: /api-accountmanagement
 
-
+    send-sms:
+        sponsorship:
+            sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. FI rek la  www.orangeetmoi.sn
 

@@ -43,4 +43,6 @@ public interface SponseeService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    void sendSmsToSponsee( String msisdnSource, String msisdnDest);
 }
