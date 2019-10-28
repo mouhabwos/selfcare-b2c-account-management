@@ -12,13 +12,7 @@ import java.util.Optional;
  */
 public interface SponseeService {
 
-    /**
-     * Save a sponsee.
-     *
-     * @param sponseeDTO the entity to save.
-     * @return the persisted entity.
-     */
-    SponseeDTO save(SponseeDTO sponseeDTO);
+
 
     /**
      * Get all the sponsees.
@@ -43,4 +37,10 @@ public interface SponseeService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    void sendSmsToSponsee( String msisdnSource, String msisdnDest);
+
+    SponseeDTO register(SponseeDTO sponseeDTO);
+
+    SponseeDTO update(SponseeDTO sponseeDTO);
 }

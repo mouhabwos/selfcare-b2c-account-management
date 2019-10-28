@@ -38,6 +38,10 @@ public class ApplicationProperties {
     @Setter(AccessLevel.PUBLIC)
     private final ApiManagement apiManagement = new ApiManagement();
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final SendSms sendSms = new SendSms();
+
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
     }
@@ -227,5 +231,26 @@ public class ApplicationProperties {
             private String baseName;
         }
 
+
+    }
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.4.0
+     */
+
+    public static class SendSms{
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private Sponsorship sponsorship;
+
+        public static class Sponsorship{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsSponsee;
+
+        }
     }
 }

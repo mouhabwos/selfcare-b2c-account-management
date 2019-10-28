@@ -55,10 +55,8 @@ public class SponseeResource {
         if (sponseeDTO.getId() != null) {
             throw new BadRequestAlertException("A new sponsee cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        SponseeDTO result = sponseeService.save(sponseeDTO);
-        return ResponseEntity.created(new URI("/api/sponsees/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        SponseeDTO result = sponseeService.register(sponseeDTO);
+        return ResponseEntity.accepted().body(result);
     }
 
     /**
@@ -77,7 +75,7 @@ public class SponseeResource {
         if (sponseeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        SponseeDTO result = sponseeService.save(sponseeDTO);
+        SponseeDTO result = sponseeService.update(sponseeDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, sponseeDTO.getId().toString()))
             .body(result);
@@ -126,5 +124,15 @@ public class SponseeResource {
         log.debug("REST request to delete Sponsee : {}", id);
         sponseeService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+
+    @Auditable(description = Message.Sponsee.SMS_TO_SPONSEE)
+    @PostMapping("/sponsees/send-sms")
+    public ResponseEntity sendSmsToSponsee( @RequestParam String sMsisdn, @RequestParam String dMsisdn){
+
+        log.debug("REST request to send sms to Sponsoree : {}", dMsisdn);
+        sponseeService.sendSmsToSponsee(sMsisdn, dMsisdn);
+        return ResponseEntity.ok().build();
     }
 }
