@@ -64,6 +64,8 @@ public class SponseeResourceIntTest {
     private static final Boolean DEFAULT_ENABLED = false;
     private static final Boolean UPDATED_ENABLED = true;
 
+    private static final String msisdnSponsor = "770010101";
+
     @Autowired
     private SponseeRepository sponseeRepository;
 
@@ -149,6 +151,7 @@ public class SponseeResourceIntTest {
 
         // Create the Sponsee
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
         restSponseeMockMvc.perform(post("/api/sponsees")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
@@ -215,6 +218,7 @@ public class SponseeResourceIntTest {
 
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
 
         restSponseeMockMvc.perform(post("/api/sponsees")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -235,6 +239,7 @@ public class SponseeResourceIntTest {
 
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
 
         restSponseeMockMvc.perform(post("/api/sponsees")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -255,7 +260,7 @@ public class SponseeResourceIntTest {
 
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
-
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
         restSponseeMockMvc.perform(post("/api/sponsees")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
@@ -332,6 +337,7 @@ public class SponseeResourceIntTest {
             .createdDate(UPDATED_CREATED_DATE)
             .enabled(UPDATED_ENABLED);
         SponseeDTO sponseeDTO = sponseeMapper.toDto(updatedSponsee);
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
 
         restSponseeMockMvc.perform(put("/api/sponsees")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
