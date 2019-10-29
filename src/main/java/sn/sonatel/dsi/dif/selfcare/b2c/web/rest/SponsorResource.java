@@ -1,8 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
@@ -51,7 +54,7 @@ public class SponsorResource {
      */
     @Auditable(description = Message.Sponsor.CREATE)
     @PostMapping("/sponsors")
-    public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
+    public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException, SponsorException {
         log.debug("REST request to save Sponsor : {}", sponsor);
         if (sponsor.getId() != null) {
             throw new BadRequestAlertException("A new sponsor cannot already have an ID", ENTITY_NAME, "idexists");
@@ -116,12 +119,32 @@ public class SponsorResource {
     }
 
     @Auditable(description = Message.Sponsor.CHECK_SPONSOR)
-    @GetMapping("/sponsors/{msisdn}/check ")
+    @GetMapping("/sponsors/{msisdn}/check")
     public ResponseEntity<Boolean> isThisNumerASponsor(@PathVariable String msisdn) {
         log.debug("REST request to get Sponsor : {}", msisdn);
         Boolean result = sponsorService.isNumberPresent(msisdn);
 
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     *This API upload a xls file of sponsors
+     *
+     * @param multipartFile
+     * @return List of duplicate elements
+     */
+    @Auditable(description = Message.Sponsor.UPLOAD)
+    @PostMapping("/sponsors/upload")
+    public ResponseEntity<UploadResponse> uploadSponsor(@RequestParam("file") MultipartFile multipartFile) {
+        log.debug("REST request to upload a file of Sponsors ");
+
+        UploadResponse uploadResponse = new UploadResponse();
+        try {
+            uploadResponse= sponsorService.upload(multipartFile);
+        } catch (SponsorException e) {
+            log.debug("Failed to upload file of Sponsors : {}", e.getMessage());
+        }
+        return ResponseEntity.ok(uploadResponse);
     }
 
     /**

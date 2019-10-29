@@ -1,9 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 
 import java.util.Optional;
 
@@ -18,7 +21,7 @@ public interface SponsorService {
      * @param sponsor the entity to save.
      * @return the persisted entity.
      */
-    Sponsor save(Sponsor sponsor);
+    Sponsor save(Sponsor sponsor) throws SponsorException;
 
 
     /**
@@ -67,4 +70,12 @@ public interface SponsorService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    /**
+     *
+     * @param multipartFile
+     * @return
+     * @throws SponsorException
+     */
+    UploadResponse upload(MultipartFile multipartFile) throws SponsorException;
 }

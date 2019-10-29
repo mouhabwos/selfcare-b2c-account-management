@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,8 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -22,6 +25,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import javax.persistence.EntityManager;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -203,7 +209,7 @@ public class SponsorResourceIntTest {
         String msisdn ="776713165";
 
         // Get the sponsor
-        restSponsorMockMvc.perform(get("/api/sponsor/{msisdn}", msisdn))
+        restSponsorMockMvc.perform(get("/api/sponsors/{msisdn}/check", msisdn))
             .andExpect(status().isOk());
     }
 
@@ -264,6 +270,27 @@ public class SponsorResourceIntTest {
         // Validate the Sponsor in the database
         List<Sponsor> sponsorList = sponsorRepository.findAll();
         assertThat(sponsorList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    public void uploadSponsor() throws Exception {
+//        Mock Multipart
+        Path path = Paths.get("sponsors.xlsx");
+        String name = "file";
+        String originalFileName = "sponsors.xlsx";
+        String contentType = "text/plain";
+        byte[] content =  Files.readAllBytes(path);
+        MockMultipartFile file = new MockMultipartFile(name,
+            originalFileName, contentType, content);
+
+        restSponsorMockMvc.perform(MockMvcRequestBuilders.multipart("/api/sponsors/upload")
+            .file(file))
+            .andExpect(status().isOk());
+
+        // Validate the sim in the database
+        List<Sponsor> sponsorList = sponsorRepository.findAll();
+        Assert.assertEquals(1,sponsorList.size());
     }
 
     @Test

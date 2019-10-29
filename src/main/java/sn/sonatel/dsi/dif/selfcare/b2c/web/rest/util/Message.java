@@ -124,6 +124,7 @@ public final class Message {
         public static final String LIST = "Liste des sponsors";
         public static final String SPONSOR_BY_ID = "Affichage d un sponsor par l id";
         public static final String CHECK_SPONSOR = "Verification du numero d un sponsor";
+        public static final String UPLOAD = "Importation d'un fichiers sponsors";
         public static final String DELETE = "Suppression d un sponsor";
 
         private Sponsor() {
