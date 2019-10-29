@@ -448,4 +448,13 @@ public class SponseeResourceIntTest {
 
     }
 
+    @Test
+    @Transactional
+    public void testFindAllSponseeByMsisdn() throws Exception {
+
+        restSponseeMockMvc.perform(get("/api/sponsees/by-msisdn/{msisdn}", "77900 00 00"))
+            .andExpect(status().isNotFound());
+
+    }
+
 }
