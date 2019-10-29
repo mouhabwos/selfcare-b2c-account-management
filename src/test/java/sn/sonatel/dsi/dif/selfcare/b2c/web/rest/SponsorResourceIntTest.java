@@ -203,7 +203,7 @@ public class SponsorResourceIntTest {
         String msisdn ="776713165";
 
         // Get the sponsor
-        restSponsorMockMvc.perform(get("/api/sponsor/{msisdn}", msisdn))
+        restSponsorMockMvc.perform(get("/api/sponsors/{msisdn}/check", msisdn))
             .andExpect(status().isOk());
     }
 
