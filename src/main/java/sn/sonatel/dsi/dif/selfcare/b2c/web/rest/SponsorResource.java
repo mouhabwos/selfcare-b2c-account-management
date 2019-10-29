@@ -116,7 +116,7 @@ public class SponsorResource {
     }
 
     @Auditable(description = Message.Sponsor.CHECK_SPONSOR)
-    @GetMapping("/sponsors/{msisdn}/check ")
+    @GetMapping("/sponsors/{msisdn}/check")
     public ResponseEntity<Boolean> isThisNumerASponsor(@PathVariable String msisdn) {
         log.debug("REST request to get Sponsor : {}", msisdn);
         Boolean result = sponsorService.isNumberPresent(msisdn);
