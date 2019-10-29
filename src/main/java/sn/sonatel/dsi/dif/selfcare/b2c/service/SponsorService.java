@@ -20,6 +20,15 @@ public interface SponsorService {
      */
     Sponsor save(Sponsor sponsor);
 
+
+    /**
+     * Update a sponsor.
+     *
+     * @param sponsor the entity to save.
+     * @return the updated entity.
+     */
+    Sponsor update(Sponsor sponsor);
+
     /**
      * Get all the sponsors.
      *
@@ -36,6 +45,21 @@ public interface SponsorService {
      * @return the entity.
      */
     Optional<Sponsor> findOne(Long id);
+
+    /**
+     * check if the msisdn is present
+     * @param msisdn
+     * @return
+     */
+    Boolean isNumberPresent(String msisdn);
+
+    /**
+     * get the "msisdn" Sponsor
+     *
+     * @param msisdn
+     * @return
+     */
+    Sponsor getSponsorByMsisdn(String msisdn);
 
     /**
      * Delete the "id" sponsor.
