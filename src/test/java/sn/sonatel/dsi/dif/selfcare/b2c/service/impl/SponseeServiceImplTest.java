@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,18 +12,20 @@ import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringRunner.class)
@@ -40,10 +43,13 @@ public class SponseeServiceImplTest {
 
     private SponseeServiceImpl sponseeServiceImplUnderTest;
 
+    @Autowired
+    private AccountB2CRepository accountB2CRepository;
+
     @Before
     public void setUp() {
         initMocks(this);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository);
     }
 
     private AccountB2C getAccount(){
@@ -118,6 +124,30 @@ public class SponseeServiceImplTest {
 
         // Run the test
         sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+
+    }
+
+    @Test
+    public void testFindAllSponseeByMsisdn() {
+        mockSponseeRepository = mock(SponseeRepository.class);
+        accountB2CRepository = mock(AccountB2CRepository.class);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository);
+        Sponsee sponsee = new Sponsee();
+        sponsee.setId(78L);
+        sponsee.setMsisdn("778520000");
+        List<Sponsee> sponseeList = new ArrayList<>();
+        sponseeList.add(sponsee);
+
+        AccountB2C b2C = new AccountB2C();
+        b2C.setId(7L);
+        b2C.setNumero("771326617");
+        Optional<AccountB2C> b2COptional = Optional.of(b2C);
+
+        when(mockSponseeRepository.findAllByAccountB2C(any())).thenReturn(sponseeList);
+        when(accountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
+
+        List<Sponsee> allSponseeByMsisdn = sponseeServiceImplUnderTest.findAllSponseeBySponsor(b2C.getNumero());
+        Assert.assertEquals(1,allSponseeByMsisdn.size());
 
     }
 }

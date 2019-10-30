@@ -1,10 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -45,4 +47,6 @@ public interface SponseeService {
     void delete(Long id);
 
     void sendSmsToSponsee( String msisdnSource, String msisdnDest);
+
+    List<Sponsee> findAllSponseeBySponsor(String msisgn);
 }

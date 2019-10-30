@@ -8,6 +8,8 @@ public final class ErrorMessages {
 
     public static final String SMS_NOT_BE_SEND = "Le sms n'a pas ete envoye";
 
+    public static final String USER_NOT_FOUND = "Ce compte n'existe pas";
+
     private ErrorMessages() {
         //Default constructor
     }

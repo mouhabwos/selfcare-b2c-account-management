@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
@@ -18,8 +20,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,11 +45,14 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final ServicesOTP servicesOTP;
 
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP) {
+    private final AccountB2CRepository accountB2CRepository;
+
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
         this.applicationProperties = applicationProperties;
         this.servicesOTP = servicesOTP;
+        this.accountB2CRepository = accountB2CRepository;
     }
 
     /**
@@ -121,6 +128,18 @@ public class SponseeServiceImpl implements SponseeService {
             throw new BadRequestAlertException(ErrorMessages.SMS_NOT_BE_SEND,ENTITY_NAME,"smsNotSend");
         }
 
+    }
+
+    @Override
+    public List<Sponsee> findAllSponseeBySponsor(String msisdn) {
+
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<AccountB2C> user = accountB2CRepository.findOneByNumero(msisdn);
+
+        if (user.isPresent()) {
+            return sponseeRepository.findAllByAccountB2C(user.get());
+        }else  throw new NotFoundNumberException( ErrorMessages.USER_NOT_FOUND) ;
     }
 
 
