@@ -14,5 +14,6 @@ import java.util.Optional;
 @Repository
 public interface SponsorRepository extends JpaRepository<Sponsor, Long> {
 
-    Optional<Sponsor> findOneByMsisdn(String msisdn);
+    Optional<Sponsor> getSponsorByMsisdn(String msisdn);
+
 }

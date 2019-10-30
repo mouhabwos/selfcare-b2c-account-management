@@ -198,6 +198,16 @@ public class SponsorResourceIntTest {
     }
 
     @Test
+    public void getSponsorByMsisdn() throws Exception {
+
+        String msisdn ="776713165";
+
+        // Get the sponsor
+        restSponsorMockMvc.perform(get("/api/sponsors/{msisdn}/check", msisdn))
+            .andExpect(status().isOk());
+    }
+
+    @Test
     @Transactional
     public void getNonExistingSponsor() throws Exception {
         // Get the sponsor

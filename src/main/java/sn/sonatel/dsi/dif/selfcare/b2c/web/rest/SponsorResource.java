@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -13,7 +14,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,6 +29,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
 public class SponsorResource {
 
     private final Logger log = LoggerFactory.getLogger(SponsorResource.class);
@@ -45,6 +49,7 @@ public class SponsorResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new sponsor, or with status {@code 400 (Bad Request)} if the sponsor has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Auditable(description = Message.Sponsor.CREATE)
     @PostMapping("/sponsors")
     public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
         log.debug("REST request to save Sponsor : {}", sponsor);
@@ -66,13 +71,14 @@ public class SponsorResource {
      * or with status {@code 500 (Internal Server Error)} if the sponsor couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Auditable(description = Message.Sponsor.UPDATE)
     @PutMapping("/sponsors")
     public ResponseEntity<Sponsor> updateSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
         log.debug("REST request to update Sponsor : {}", sponsor);
         if (sponsor.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Sponsor result = sponsorService.save(sponsor);
+        Sponsor result = sponsorService.update(sponsor);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, sponsor.getId().toString()))
             .body(result);
@@ -86,6 +92,7 @@ public class SponsorResource {
 
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sponsors in body.
      */
+    @Auditable(description = Message.Sponsor.LIST)
     @GetMapping("/sponsors")
     public ResponseEntity<List<Sponsor>> getAllSponsors(Pageable pageable) {
         log.debug("REST request to get a page of Sponsors");
@@ -100,11 +107,21 @@ public class SponsorResource {
      * @param id the id of the sponsor to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the sponsor, or with status {@code 404 (Not Found)}.
      */
+    @Auditable(description = Message.Sponsor.SPONSOR_BY_ID)
     @GetMapping("/sponsors/{id}")
     public ResponseEntity<Sponsor> getSponsor(@PathVariable Long id) {
         log.debug("REST request to get Sponsor : {}", id);
         Optional<Sponsor> sponsor = sponsorService.findOne(id);
         return ResponseUtil.wrapOrNotFound(sponsor);
+    }
+
+    @Auditable(description = Message.Sponsor.CHECK_SPONSOR)
+    @GetMapping("/sponsors/{msisdn}/check")
+    public ResponseEntity<Boolean> isThisNumerASponsor(@PathVariable String msisdn) {
+        log.debug("REST request to get Sponsor : {}", msisdn);
+        Boolean result = sponsorService.isNumberPresent(msisdn);
+
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -113,6 +130,7 @@ public class SponsorResource {
      * @param id the id of the sponsor to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Auditable(description = Message.Sponsor.DELETE)
     @DeleteMapping("/sponsors/{id}")
     public ResponseEntity<Void> deleteSponsor(@PathVariable Long id) {
         log.debug("REST request to delete Sponsor : {}", id);

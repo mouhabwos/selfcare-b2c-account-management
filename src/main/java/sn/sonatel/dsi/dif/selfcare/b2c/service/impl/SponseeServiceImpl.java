@@ -175,7 +175,11 @@ public class SponseeServiceImpl implements SponseeService {
         sponseeDTO.setMsisdnSponsor(FormatNumberPhoneUtil.extractNumberWithoutSuffix(sponseeDTO.getMsisdnSponsor()));
         sponseeDTO.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(sponseeDTO.getMsisdn()));
 
-        checkNumberSponsee(sponseeDTO.getMsisdnSponsor(), sponseeDTO.getMsisdn());
+
+        Optional<Sponsee> sponseeBean = sponseeRepository.findOneByMsisdn(sponseeDTO.getMsisdn());
+        if(sponseeBean.isPresent() && !sponseeBean.get().getAccountB2C().getNumero().equals(sponseeDTO.getMsisdnSponsor())){
+            throw new ForbiddenException();
+        }
 
         Sponsee sponsee = sponseeMapper.toEntity(sponseeDTO);
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(sponseeDTO.getMsisdnSponsor());
@@ -229,7 +233,7 @@ public class SponseeServiceImpl implements SponseeService {
 
     private void checkNumberOfSponsor(String msisdSponsor){
 
-        Optional<Sponsor> optionalSponsor = sponsorRepository.findOneByMsisdn(msisdSponsor);
+        Optional<Sponsor> optionalSponsor = sponsorRepository.getSponsorByMsisdn(msisdSponsor);
         if(!optionalSponsor.isPresent()){
             log.debug("Error Request Service  msisdn does not have the possibility to sponsor: {}", msisdSponsor);
             throw new ForbiddenException();

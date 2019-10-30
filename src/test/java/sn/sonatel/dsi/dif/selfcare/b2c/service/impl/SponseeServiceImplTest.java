@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,8 +11,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
@@ -51,8 +54,14 @@ public class SponseeServiceImplTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
-    @Mock
+    @Autowired
     private SponsorRepository sponsorRepository;
+
+    @Autowired
+    private SponseeRepository sponseeRepository;
+
+    @Autowired
+    private SponseeMapper sponseeMapper;
 
     @Before
     public void setUp() {
@@ -169,14 +178,15 @@ public class SponseeServiceImplTest {
 
     }
 
-    @Test(expected = BadRequestAlertException.class)
+     @Test(expected = BadRequestAlertException.class)
     public void testRegisterSponseeWithSponsorNoAccount(){
-
+         sponsorRepository = mock(SponsorRepository.class);
+         forMockService();
         AccountB2C accountB2C = getAccount();
         accountB2C.setId(null);
         accountB2CRepository.save(accountB2C);
 
-        when(sponsorRepository.findOneByMsisdn(anyString())).thenReturn(getSponsor());
+       when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(getSponsor());
 
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdnSponsor("770100000");
@@ -189,15 +199,18 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithNumAlreadyUsed(){
 
         accountB2CRepository = mock(AccountB2CRepository.class);
-        forMockService();
-        AccountB2C accountB2C = getAccount();
+        sponsorRepository = mock(SponsorRepository.class);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+
+
+       AccountB2C accountB2C = getAccount();
         String msisdnSponsor = getSponsor().get().getMsisdn();
         accountB2C.setNumero(msisdnSponsor);
         Optional<AccountB2C>  b2COptional = Optional.of(accountB2C);
         when(accountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
-       // AccountB2C save = accountB2CRepository.save(accountB2C);
+       AccountB2C save = accountB2CRepository.save(accountB2C);
 
-        when(sponsorRepository.findOneByMsisdn(anyString())).thenReturn(getSponsor());
+        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(getSponsor());
 
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdn("");
@@ -212,23 +225,149 @@ public class SponseeServiceImplTest {
     public void testRegisterSponsee(){
 
        accountB2CRepository = mock(AccountB2CRepository.class);
+        sponsorRepository = mock(SponsorRepository.class);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
 
+
+        // -------- save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+        String sponsorNum = sponsor.getMsisdn();
+        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(sponsorOptional);
+
+        // -------- save account sponsor
         AccountB2C accountB2C = getAccount();
-        String msisdnSponsor = getSponsor().get().getMsisdn();
-        accountB2C.setNumero(msisdnSponsor);
-        Optional<AccountB2C>  b2COptional = Optional.of(accountB2C);
-        when(accountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
-        // AccountB2C save = accountB2CRepository.save(accountB2C);
 
-        when(sponsorRepository.findOneByMsisdn(anyString())).thenReturn(getSponsor());
+        accountB2C.setNumero("775600000");
+        Optional<AccountB2C> accountB2COptional = Optional.of(accountB2C);
+        AccountB2C saveAccount = accountB2CRepository.save(accountB2C);
 
+        // rattachement ligne
+        RattachementLigne rattachementLigne = new RattachementLigne();
+        rattachementLigne.setNumero(sponsor.getMsisdn());
+        rattachementLigne.setAccountB2C(null);
+        rattachementLigne.setTypeNumero(TypeNumero.MOBILE);
+        RattachementLigne ligne = rattachementLigneRepository.save(rattachementLigne);
+
+        when(accountB2CRepository.findOneByNumero("77000 00 00")).thenReturn(accountB2COptional);
+
+        System.out.println("@@@@@@@@@@@@@@@@@       Ligne ====           "+ligne+"                    @@@@@@@@@@@@@@@@@@@@@");
+
+        // -------- sponseeDTO add value
         SponseeDTO sponseeDTO = getSponseeDTO();
+        sponseeDTO.setMsisdnSponsor(ligne.getNumero());
 
-        sponseeDTO.setMsisdn("77 666 66 66");
+        System.out.println("@@@@@@@@@@@@@@@@@                  "+sponseeDTO.getMsisdnSponsor()+"                    @@@@@@@@@@@@@@@@@@@@@");
 
-        sponseeDTO.setMsisdnSponsor(accountB2C.getNumero());
+        // call fonction
+       // SponseeDTO register = sponseeServiceImplUnderTest.register(sponseeDTO);
+
+
+    }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testRegisterSponseeAlreadyRattachedException(){
+
+        //accountB2CRepository = mock(AccountB2CRepository.class);
+        sponsorRepository = mock(SponsorRepository.class);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+
+
+        // -------- save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+        String sponsorNum = sponsor.getMsisdn();
+        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(sponsorOptional);
+
+
+        // rattachement ligne
+        RattachementLigne rattachementLigne = new RattachementLigne();
+        rattachementLigne.setNumero(sponsor.getMsisdn());
+        rattachementLigne.setAccountB2C(null);
+        rattachementLigne.setTypeNumero(TypeNumero.MOBILE);
+        RattachementLigne ligne = rattachementLigneRepository.save(rattachementLigne);
+
+        // -------- sponseeDTO add value
+        SponseeDTO sponseeDTO = getSponseeDTO();
+        sponseeDTO.setMsisdnSponsor(ligne.getNumero());
+        sponseeDTO.setMsisdn(ligne.getNumero());
 
         sponseeServiceImplUnderTest.register(sponseeDTO);
 
+
     }
+
+
+
+    @Test
+    public void testUpdateSponsee(){
+
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+
+        //save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+        Sponsor sponsorSave = sponsorRepository.save(sponsor);
+        //save account sponsor
+        AccountB2C accountB2C = getAccount();
+        accountB2C.setId(null);
+        accountB2C.setNumero(sponsorSave.getMsisdn());
+        AccountB2C save = accountB2CRepository.save(getAccount());
+        // save sponsee
+        SponseeDTO sponseeDTO = getSponseeDTO();
+        Sponsee sponsee = new Sponsee();
+        sponsee.setAccountB2C(save);
+        sponsee.setMsisdn(sponseeDTO.getMsisdn());
+        sponsee.setFirstName(sponseeDTO.getFirstName());
+        Sponsee saveSponsee = sponseeRepository.save(sponsee);
+        sponseeDTO.setMsisdnSponsor(save.getNumero());
+        sponseeDTO.setLastName("hello");
+        sponseeDTO.setFirstName("hello firstname");
+
+        SponseeDTO update = sponseeServiceImplUnderTest.update(sponseeDTO);
+
+        Assert.assertEquals(sponseeDTO.getMsisdnSponsor(),update.getMsisdnSponsor());
+        Assert.assertEquals(sponseeDTO.getFirstName(),update.getFirstName());
+        Assert.assertEquals(sponseeDTO.getLastName(),update.getLastName());
+        Assert.assertEquals(sponseeDTO.getCreatedDate(),update.getCreatedDate());
+
+
+    }
+
+    @Test
+    public void testGetSponseeById(){
+
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+
+        // -------- save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+        String sponsorNum = sponsor.getMsisdn();
+        sponsorRepository.save(sponsor);
+
+        // -------- save account sponsor
+        AccountB2C accountB2C = getAccount();
+
+        accountB2C.setNumero(sponsor.getMsisdn());
+        Optional<AccountB2C> accountB2COptional = Optional.of(accountB2C);
+        AccountB2C saveAccount = accountB2CRepository.save(accountB2C);
+
+        // save sponsee
+        SponseeDTO sponseeDTO = getSponseeDTO();
+        Sponsee sponsee = new Sponsee();
+        sponsee.setAccountB2C(saveAccount);
+        sponsee.setMsisdn(sponseeDTO.getMsisdn());
+        sponsee.setFirstName(sponseeDTO.getFirstName());
+        Sponsee saveSponsee = sponseeRepository.save(sponsee);
+
+        Optional<SponseeDTO> one = sponseeServiceImplUnderTest.findOne(saveSponsee.getId());
+
+        Assert.assertEquals(sponsee.getAccountB2C().getNumero(),one.get().getMsisdnSponsor());
+        Assert.assertEquals(sponsee.getFirstName(),one.get().getFirstName());
+        Assert.assertEquals(sponsee.getLastName(),one.get().getLastName());
+        Assert.assertEquals(sponsee.getCreatedDate(),one.get().getCreatedDate());
+
+    }
+
+
 }
