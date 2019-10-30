@@ -22,12 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -93,17 +91,15 @@ public class SponseeServiceImpl implements SponseeService {
         log.debug("Request to get Sponsee : {}", id);
 
         Optional<Sponsee> sponsee = sponseeRepository.findById(id);
-
-        SponseeDTO sponseeDT = new SponseeDTO();
-
         if(sponsee.isPresent()){
-            sponseeDT = sponseeMapper.toDto(sponsee.get());
+            SponseeDTO sponseeDT = sponseeMapper.toDto(sponsee.get());
+            Optional<SponseeDTO>  toDto = Optional.of(sponseeDT);
+
+            toDto.ifPresent(sponseeDTO -> sponseeDTO.setMsisdnSponsor(sponsee.get().getAccountB2C().getNumero()));
+            return toDto;
         }
 
-        Optional<SponseeDTO>  toDto = Optional.ofNullable(sponseeDT);
-
-        toDto.ifPresent(sponseeDTO -> sponseeDTO.setMsisdnSponsor(sponsee.get().getAccountB2C().getNumero()));
-        return toDto;
+       return Optional.empty();
     }
 
     /**
@@ -136,6 +132,18 @@ public class SponseeServiceImpl implements SponseeService {
             throw new BadRequestAlertException(ErrorMessages.SMS_NOT_BE_SEND,ENTITY_NAME,"smsNotSend");
         }
 
+    }
+
+    @Override
+    public List<Sponsee> findAllSponseeBySponsor(String msisdn) {
+
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<AccountB2C> user = accountB2CRepository.findOneByNumero(msisdn);
+
+        if (user.isPresent()) {
+            return sponseeRepository.findAllByAccountB2C(user.get());
+        }else  throw new NotFoundNumberException( ErrorMessages.USER_NOT_FOUND) ;
     }
 
     @Override

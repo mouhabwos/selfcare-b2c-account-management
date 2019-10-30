@@ -8,6 +8,8 @@ public final class ErrorMessages {
 
     public static final String SMS_NOT_BE_SEND = "Le sms n'a pas ete envoye";
 
+    public static final String USER_NOT_FOUND = "Ce compte n'existe pas";
+
     public static final String MSISDN_IS_NOT_A_SPONSOR = "Ce numéro ne peut pas parrainer";
 
     public static final String MSISDN_DOES_NOT_HAVE_AN_ACCOUNT = "Ce numéro n'a pas de compte";

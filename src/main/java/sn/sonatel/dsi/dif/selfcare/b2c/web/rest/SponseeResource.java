@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
@@ -134,5 +135,13 @@ public class SponseeResource {
         log.debug("REST request to send sms to Sponsoree : {}", dMsisdn);
         sponseeService.sendSmsToSponsee(sMsisdn, dMsisdn);
         return ResponseEntity.ok().build();
+    }
+
+    @Auditable(description = Message.Sponsee.LIST_SPONSEE_BY_MSISDN)
+    @GetMapping("/sponsees/by-account/{msisdn}")
+    public ResponseEntity<List<Sponsee>> getAllSponseesBySponsor(@PathVariable String msisdn) {
+        log.debug("REST request to get a page of Sponsees");
+        List<Sponsee> allSponseeByMsisdn = sponseeService.findAllSponseeBySponsor(msisdn);
+        return ResponseEntity.ok().body(allSponseeByMsisdn);
     }
 }
