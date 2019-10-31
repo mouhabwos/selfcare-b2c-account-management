@@ -15,12 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.errors.ErrorMessages;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.MsisdnAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorMessageErrors;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
 import java.io.File;
 import java.io.IOException;

@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
@@ -47,13 +49,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final SelfcareSoapService selfcareSoapService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SelfcareSoapService selfcareSoapService) {
+    private final SponseeRepository sponseeRepository;
+
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SelfcareSoapService selfcareSoapService, SponseeRepository sponseeRepository) {
 
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.captchaService = captchaService;
         this.customerOfferApiClient = customerOfferApiClient;
         this.selfcareSoapService = selfcareSoapService;
+        this.sponseeRepository = sponseeRepository;
     }
 
     @Override
@@ -127,7 +132,11 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             rattachement.setAccountB2C(accountB2C.get());
 
             rattachement = rattachementLigneRepository.save(rattachement);
-
+            Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(rattachement.getNumero());
+            if(sponsee.isPresent()){
+                sponsee.get().setEffective(true);
+                sponseeRepository.save(sponsee.get());
+            }
         }
 
         return rattachement;
