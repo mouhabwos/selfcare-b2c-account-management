@@ -56,10 +56,8 @@ public class SponseeResource {
         if (sponseeDTO.getId() != null) {
             throw new BadRequestAlertException("A new sponsee cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        SponseeDTO result = sponseeService.save(sponseeDTO);
-        return ResponseEntity.created(new URI("/api/sponsees/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        SponseeDTO result = sponseeService.register(sponseeDTO);
+        return ResponseEntity.accepted().body(result);
     }
 
     /**
@@ -78,7 +76,7 @@ public class SponseeResource {
         if (sponseeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        SponseeDTO result = sponseeService.save(sponseeDTO);
+        SponseeDTO result = sponseeService.update(sponseeDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, sponseeDTO.getId().toString()))
             .body(result);

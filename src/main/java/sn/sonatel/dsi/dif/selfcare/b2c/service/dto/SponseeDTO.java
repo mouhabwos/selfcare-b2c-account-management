@@ -25,6 +25,10 @@ public class SponseeDTO {
     @NotNull
     private Boolean enabled = true;
 
+    @NotNull
+    @NotBlank
+    private String msisdnSponsor;
+
 
     public Long getId() {
         return id;
@@ -82,17 +86,26 @@ public class SponseeDTO {
         this.enabled = enabled;
     }
 
+    public String getMsisdnSponsor() {
+        return msisdnSponsor;
+    }
+
+    public void setMsisdnSponsor(String msisdnSponsor) {
+        this.msisdnSponsor = msisdnSponsor;
+    }
 
     @Override
     public String toString() {
-        return "SponseeDTO{" +
-            "id=" + getId() +
-            ", msisdn='" + getMsisdn() + "'" +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            ", effective='" + isEffective() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", enabled='" + isEnabled() + "'" +
-            "}";
+
+        return "{" +
+            "\"id\":" + id + ',' +
+            "\"msisdn\":" + msisdn + ',' +
+            "\"firstName\":" + firstName + ',' +
+            "\"lastName\":" + lastName + ',' +
+            "\"effective\":" + isEffective() + ',' +
+            "\"createdDate\":" + getCreatedDate() + ',' +
+            "\"enabled\":" + isEnabled() +
+            "\"msisdnSponsor\":" + msisdnSponsor +
+            '}';
     }
 }

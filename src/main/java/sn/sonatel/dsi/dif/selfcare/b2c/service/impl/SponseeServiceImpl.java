@@ -2,7 +2,11 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
@@ -18,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 import java.util.List;
@@ -47,27 +49,20 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository) {
+    private final RattachementLigneRepository rattachementLigneRepository;
+
+    private final SponsorRepository sponsorRepository;
+
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SponsorRepository sponsorRepository) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
         this.applicationProperties = applicationProperties;
         this.servicesOTP = servicesOTP;
         this.accountB2CRepository = accountB2CRepository;
+        this.rattachementLigneRepository = rattachementLigneRepository;
+        this.sponsorRepository = sponsorRepository;
     }
 
-    /**
-     * Save a sponsee.
-     *
-     * @param sponseeDTO the entity to save.
-     * @return the persisted entity.
-     */
-    @Override
-    public SponseeDTO save(SponseeDTO sponseeDTO) {
-        log.debug("Request to save Sponsee : {}", sponseeDTO);
-        Sponsee sponsee = sponseeMapper.toEntity(sponseeDTO);
-        sponsee = sponseeRepository.save(sponsee);
-        return sponseeMapper.toDto(sponsee);
-    }
 
     /**
      * Get all the sponsees.
@@ -94,8 +89,17 @@ public class SponseeServiceImpl implements SponseeService {
     @Transactional(readOnly = true)
     public Optional<SponseeDTO> findOne(Long id) {
         log.debug("Request to get Sponsee : {}", id);
-        return sponseeRepository.findById(id)
-            .map(sponseeMapper::toDto);
+
+        Optional<Sponsee> sponsee = sponseeRepository.findById(id);
+        if(sponsee.isPresent()){
+            SponseeDTO sponseeDT = sponseeMapper.toDto(sponsee.get());
+            Optional<SponseeDTO>  toDto = Optional.of(sponseeDT);
+
+            toDto.ifPresent(sponseeDTO -> sponseeDTO.setMsisdnSponsor(sponsee.get().getAccountB2C().getNumero()));
+            return toDto;
+        }
+
+       return Optional.empty();
     }
 
     /**
@@ -142,6 +146,60 @@ public class SponseeServiceImpl implements SponseeService {
         }else  throw new NotFoundNumberException( ErrorMessages.USER_NOT_FOUND) ;
     }
 
+    @Override
+    public SponseeDTO register(SponseeDTO sponseeDTO){
+
+        //format msisdn of sponsee and sponsor
+        sponseeDTO.setMsisdnSponsor(FormatNumberPhoneUtil.extractNumberWithoutSuffix(sponseeDTO.getMsisdnSponsor()));
+        sponseeDTO.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(sponseeDTO.getMsisdn()));
+
+        // check number of sponsee and sponsor
+        checkNumberOfSponsor(sponseeDTO.getMsisdnSponsor());
+        checkDisponibilityOfNumberForSponsored(sponseeDTO.getMsisdn());
+
+        // save sponsee
+        Sponsee sponsee = sponseeMapper.toEntity(sponseeDTO);
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(sponseeDTO.getMsisdnSponsor());
+
+        if(accountB2C.isPresent()){
+            sponsee.setAccountB2C(accountB2C.get());
+        }
+        sponsee = sponseeRepository.save(sponsee);
+
+        // Send sms to sponsee
+        sendSmsToSponsee(sponsee.getAccountB2C().getNumero(), sponsee.getMsisdn());
+
+        SponseeDTO toDto = sponseeMapper.toDto(sponsee);
+
+        toDto.setMsisdnSponsor(sponseeDTO.getMsisdnSponsor());
+
+        return toDto;
+    }
+
+    @Override
+    public SponseeDTO update(SponseeDTO sponseeDTO){
+        log.debug("Request to save Sponsee : {}", sponseeDTO);
+        //format msisdn of sponsee and sponsor
+        sponseeDTO.setMsisdnSponsor(FormatNumberPhoneUtil.extractNumberWithoutSuffix(sponseeDTO.getMsisdnSponsor()));
+        sponseeDTO.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(sponseeDTO.getMsisdn()));
+
+
+        Optional<Sponsee> sponseeBean = sponseeRepository.findOneByMsisdn(sponseeDTO.getMsisdn());
+        if(sponseeBean.isPresent() && !sponseeBean.get().getAccountB2C().getNumero().equals(sponseeDTO.getMsisdnSponsor())){
+            throw new ForbiddenException();
+        }
+
+        Sponsee sponsee = sponseeMapper.toEntity(sponseeDTO);
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(sponseeDTO.getMsisdnSponsor());
+
+        if(accountB2C.isPresent()){
+            sponsee.setAccountB2C(accountB2C.get());
+        }
+        sponsee = sponseeRepository.save(sponsee);
+        SponseeDTO toDto = sponseeMapper.toDto(sponsee);
+        toDto.setMsisdnSponsor(sponsee.getAccountB2C().getNumero());
+        return toDto;
+    }
 
     private void checkNumberSponsee(String msisdnSource, String msisdnDest){
 
@@ -157,4 +215,45 @@ public class SponseeServiceImpl implements SponseeService {
 
         }else throw new BadRequestAlertException(ErrorMessages.NUMBER_ALREADY_SPONSORED,ENTITY_NAME,"sponseeNotFound");
     }
+
+
+    private void checkDisponibilityOfNumberForSponsored(String msisdnSponsee){
+
+        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(msisdnSponsee);
+        if(rattachementLigne.isPresent()){
+            log.debug("Error Request Service msisdn is rattached : {}", msisdnSponsee);
+            throw new LigneAlreadyRattachedException();
+        }
+
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdnSponsee);
+        if(accountB2C.isPresent()){
+            log.debug("Error Request Service msisdn have an account : {}", msisdnSponsee);
+            throw new LoginAlreadyUsedException();
+        }
+
+        Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(msisdnSponsee);
+        if(sponsee.isPresent() && sponsee.get().isEnabled()){
+            log.debug("Error Request Service msisdn is sponsored : {}", msisdnSponsee);
+            throw new BadRequestAlertException(ErrorMessages.NUMBER_IS_ALREADY_REGISTERED,ENTITY_NAME,"userExiste");
+        }
+
+    }
+
+    private void checkNumberOfSponsor(String msisdSponsor){
+
+        Optional<Sponsor> optionalSponsor = sponsorRepository.getSponsorByMsisdn(msisdSponsor);
+        if(!optionalSponsor.isPresent()){
+            log.debug("Error Request Service  msisdn does not have the possibility to sponsor: {}", msisdSponsor);
+            throw new ForbiddenException();
+        }
+
+        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(msisdSponsor);
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdSponsor);
+        if(!rattachementLigne.isPresent() && !accountB2C.isPresent()){
+            log.debug("Error Request Service  msisdn of sponsor hav'nt a account  : {}", msisdSponsor);
+            throw new BadRequestAlertException(ErrorMessages.MSISDN_DOES_NOT_HAVE_AN_ACCOUNT,ENTITY_NAME,"notFoundSponsor");
+        }
+
+    }
+
 }
