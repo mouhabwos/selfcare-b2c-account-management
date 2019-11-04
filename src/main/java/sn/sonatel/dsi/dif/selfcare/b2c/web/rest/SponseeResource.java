@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -19,7 +20,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.List;
@@ -51,6 +51,7 @@ public class SponseeResource {
      */
     @Auditable(description = Message.Sponsee.CREATE_SPONSEE)
     @PostMapping("/sponsees")
+    @PreAuthorize("@sponsorshipSecurityResolver.isSponsor(#sponseeDTO.msisdnSponsor)")
     public ResponseEntity<SponseeDTO> createSponsee(@Valid @RequestBody SponseeDTO sponseeDTO) throws URISyntaxException {
         log.debug("REST request to save Sponsee : {}", sponseeDTO);
         if (sponseeDTO.getId() != null) {
@@ -71,6 +72,7 @@ public class SponseeResource {
      */
     @Auditable(description = Message.Sponsee.UPDATE_SPONSEE)
     @PutMapping("/sponsees")
+    @PreAuthorize("@sponsorshipSecurityResolver.isSponsor(#sponseeDTO.msisdnSponsor)")
     public ResponseEntity<SponseeDTO> updateSponsee(@Valid @RequestBody SponseeDTO sponseeDTO) throws URISyntaxException {
         log.debug("REST request to update Sponsee : {}", sponseeDTO);
         if (sponseeDTO.getId() == null) {
