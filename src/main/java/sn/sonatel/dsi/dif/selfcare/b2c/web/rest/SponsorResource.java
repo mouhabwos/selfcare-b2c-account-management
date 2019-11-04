@@ -32,7 +32,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
-@PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
 public class SponsorResource {
 
     private final Logger log = LoggerFactory.getLogger(SponsorResource.class);
@@ -53,6 +52,7 @@ public class SponsorResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @Auditable(description = Message.Sponsor.CREATE)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PostMapping("/sponsors")
     public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException, SponsorException {
         log.debug("REST request to save Sponsor : {}", sponsor);
@@ -75,6 +75,7 @@ public class SponsorResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @Auditable(description = Message.Sponsor.UPDATE)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PutMapping("/sponsors")
     public ResponseEntity<Sponsor> updateSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
         log.debug("REST request to update Sponsor : {}", sponsor);
@@ -96,6 +97,7 @@ public class SponsorResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sponsors in body.
      */
     @Auditable(description = Message.Sponsor.LIST)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @GetMapping("/sponsors")
     public ResponseEntity<List<Sponsor>> getAllSponsors(Pageable pageable) {
         log.debug("REST request to get a page of Sponsors");
@@ -111,6 +113,7 @@ public class SponsorResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the sponsor, or with status {@code 404 (Not Found)}.
      */
     @Auditable(description = Message.Sponsor.SPONSOR_BY_ID)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @GetMapping("/sponsors/{id}")
     public ResponseEntity<Sponsor> getSponsor(@PathVariable Long id) {
         log.debug("REST request to get Sponsor : {}", id);
@@ -134,6 +137,7 @@ public class SponsorResource {
      * @return List of duplicate elements
      */
     @Auditable(description = Message.Sponsor.UPLOAD)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PostMapping("/sponsors/upload")
     public ResponseEntity<UploadResponse> uploadSponsor(@RequestParam("file") MultipartFile multipartFile) {
         log.debug("REST request to upload a file of Sponsors ");
@@ -154,6 +158,7 @@ public class SponsorResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @Auditable(description = Message.Sponsor.DELETE)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @DeleteMapping("/sponsors/{id}")
     public ResponseEntity<Void> deleteSponsor(@PathVariable Long id) {
         log.debug("REST request to delete Sponsor : {}", id);
