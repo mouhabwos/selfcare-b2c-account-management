@@ -275,6 +275,9 @@ public class SponsorResourceIntTest {
     @Test
     @Transactional
     public void uploadSponsor() throws Exception {
+
+        int databaseSizeBeforeUpdate = sponsorRepository.findAll().size();
+
 //        Mock Multipart
         Path path = Paths.get("sponsors.xlsx");
         String name = "file";
@@ -290,7 +293,7 @@ public class SponsorResourceIntTest {
 
         // Validate the sim in the database
         List<Sponsor> sponsorList = sponsorRepository.findAll();
-        Assert.assertEquals(1,sponsorList.size());
+        Assert.assertEquals(databaseSizeBeforeUpdate+1,sponsorList.size());
     }
 
     @Test
