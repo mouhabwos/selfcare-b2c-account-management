@@ -12,9 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
@@ -25,6 +27,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedExce
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,13 +58,22 @@ public class AccountB2CServiceImplTest {
 
     private AccountB2CServiceImpl accountB2CServiceImplUnderTest;
 
+    @Mock
+    private SponseeRepository sponseeRepository;
+
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager, mockCaptchaService);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager, mockCaptchaService, sponseeRepository);
     }
 
-
+    private Optional<Sponsee> getSponsee(){
+        Sponsee sponsee = new Sponsee();
+        sponsee.setId(45L);
+        sponsee.setMsisdn("775266364");
+        Optional<Sponsee> optionalSponsee = Optional.of(sponsee);
+        return optionalSponsee;
+    }
 
     @Test
     public void testRegisterAccountB2CSucceess() {
@@ -73,7 +86,7 @@ public class AccountB2CServiceImplTest {
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
         when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
-
+        when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
 
         // Run the test
          AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
