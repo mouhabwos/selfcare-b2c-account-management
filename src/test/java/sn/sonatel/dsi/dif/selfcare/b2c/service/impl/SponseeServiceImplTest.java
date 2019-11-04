@@ -26,6 +26,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -351,5 +352,32 @@ public class SponseeServiceImplTest {
 
     }
 
+    @Test
+    public void testDisabledSponsee(){
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+
+        AccountB2C account = getAccount();
+        AccountB2C accountB2C = accountB2CRepository.save(account);
+        Sponsee sponsee = getSponsee();
+        sponsee.setMsisdn("778888888");
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2019-09-29T10:00:00+00:00[Africa/Dakar]");
+
+        sponsee.setCreatedDate(zonedDateTime);
+        sponsee.setAccountB2C(accountB2C);
+        sponsee.setEnabled(true);
+        sponseeRepository.save(sponsee);
+
+        sponseeServiceImplUnderTest.disabledSponsee();
+
+        Optional<Sponsee> sponseeOptional = sponseeRepository.findOneByMsisdn(sponsee.getMsisdn());
+
+        Assert.assertFalse(!sponsee.isEnabled());
+        Assert.assertEquals(sponsee.getAccountB2C().getNumero(),sponseeOptional.get().getAccountB2C().getNumero());
+        Assert.assertEquals(sponsee.getFirstName(),sponseeOptional.get().getFirstName());
+        Assert.assertEquals(sponsee.getLastName(),sponseeOptional.get().getLastName());
+        Assert.assertEquals(sponsee.getCreatedDate(),sponseeOptional.get().getCreatedDate());
+
+
+    }
 
 }

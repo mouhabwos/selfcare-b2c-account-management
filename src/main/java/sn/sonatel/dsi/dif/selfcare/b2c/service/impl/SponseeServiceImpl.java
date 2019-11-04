@@ -26,7 +26,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
-import java.time.Month;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +45,8 @@ public class SponseeServiceImpl implements SponseeService {
     private final SponseeMapper sponseeMapper;
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementSponseeServiceImpl";
+
+    private static final Long MAX_DELAIT = 15L;
 
     private final ApplicationProperties applicationProperties;
 
@@ -260,7 +262,8 @@ public class SponseeServiceImpl implements SponseeService {
     }
 
 
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 00 00 * * ?")
+    @Transactional
     public void disabledSponsee(){
 
         log.debug("Service Request for disabled sponsee");
@@ -271,8 +274,10 @@ public class SponseeServiceImpl implements SponseeService {
         for (Sponsee sponsee : allSponseeNoRegistered) {
 
             ZonedDateTime createdDate = sponsee.getCreatedDate();
+            Duration duration = Duration.between(createdDate, today);
+            long days = duration.toDays();
 
-            if(createdDate.isBefore(today.minusDays(15))){
+            if(days >= MAX_DELAIT){
                 log.debug("Service Request for disabled sponsee {} : ",sponsee);
                 sponsee.setEnabled(false);
                 sponseeRepository.save(sponsee);
