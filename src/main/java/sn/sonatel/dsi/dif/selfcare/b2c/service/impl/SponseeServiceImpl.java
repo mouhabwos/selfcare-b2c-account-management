@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -25,6 +26,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
+import java.time.Month;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -256,4 +259,24 @@ public class SponseeServiceImpl implements SponseeService {
 
     }
 
+
+    @Scheduled(cron = "*/5 * * * * ?")
+    public void disabledSponsee(){
+
+        log.debug("Service Request for disabled sponsee");
+        ZonedDateTime today = ZonedDateTime.now();
+
+        List<Sponsee> allSponseeNoRegistered = sponseeRepository.findAllSponseeNoRegistered();
+
+        for (Sponsee sponsee : allSponseeNoRegistered) {
+
+            ZonedDateTime createdDate = sponsee.getCreatedDate();
+
+            if(createdDate.isBefore(today.minusDays(15))){
+                log.debug("Service Request for disabled sponsee {} : ",sponsee);
+                sponsee.setEnabled(false);
+                sponseeRepository.save(sponsee);
+            }
+        }
+    }
 }
