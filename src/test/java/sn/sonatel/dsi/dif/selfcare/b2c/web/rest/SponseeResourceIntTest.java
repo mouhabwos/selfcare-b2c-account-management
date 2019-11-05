@@ -535,4 +535,60 @@ public class SponseeResourceIntTest {
 
     }
 
+    @Test
+    @Transactional
+    public void createSponseeWithBadRequest() throws Exception {
+        // Create the Sponsee
+        SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
+        sponseeDTO.setId(1L);
+        restSponseeMockMvc.perform(post("/api/sponsees")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+            .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @Transactional
+    public void updateSponseeWithBadRequest() throws Exception {
+
+        forMockService();
+        // Initialize the database
+        sponseeRepository.saveAndFlush(sponsee);
+
+        int databaseSizeBeforeUpdate = sponseeRepository.findAll().size();
+
+        // Update the sponsee
+        Sponsee updatedSponsee = sponseeRepository.findById(sponsee.getId()).get();
+
+        // Disconnect from session so that the updates on updatedSponsee are not directly saved in db
+        em.detach(updatedSponsee);
+        updatedSponsee
+            .msisdn(UPDATED_MSISDN)
+            .firstName(UPDATED_FIRST_NAME)
+            .lastName(UPDATED_LAST_NAME)
+            .effective(UPDATED_EFFECTIVE)
+            .createdDate(UPDATED_CREATED_DATE)
+            .enabled(UPDATED_ENABLED);
+        SponseeDTO sponseeDTO = sponseeMapper.toDto(updatedSponsee);
+        sponseeDTO.setMsisdnSponsor(msisdnSponsor);
+        sponseeDTO.setId(null);
+
+        restSponseeMockMvc.perform(put("/api/sponsees")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @Transactional
+    public void testCheckSponseeByMsisdn() throws Exception {
+
+        restSponseeMockMvc.perform(get("/api/sponsees/check-number/{msisdn}", "77900 00 00"))
+            .andExpect(status().isOk());
+
+    }
+
 }
