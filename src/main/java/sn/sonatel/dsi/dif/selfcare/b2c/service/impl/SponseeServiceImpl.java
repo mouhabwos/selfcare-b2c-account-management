@@ -1,6 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -26,8 +25,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,8 +42,6 @@ public class SponseeServiceImpl implements SponseeService {
     private final SponseeMapper sponseeMapper;
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementSponseeServiceImpl";
-
-    private static final Long MAX_DELAIT = 15L;
 
     private final ApplicationProperties applicationProperties;
 
@@ -259,29 +254,5 @@ public class SponseeServiceImpl implements SponseeService {
             throw new BadRequestAlertException(ErrorMessages.MSISDN_DOES_NOT_HAVE_AN_ACCOUNT,ENTITY_NAME,"notFoundSponsor");
         }
 
-    }
-
-
-    @Scheduled(cron = "0 00 00 * * ?")
-    @Transactional
-    public void disabledSponsee(){
-
-        log.debug("Service Request for disabled sponsee");
-        ZonedDateTime today = ZonedDateTime.now();
-
-        List<Sponsee> allSponseeNoRegistered = sponseeRepository.findAllSponseeNoRegistered();
-
-        for (Sponsee sponsee : allSponseeNoRegistered) {
-
-            ZonedDateTime createdDate = sponsee.getCreatedDate();
-            Duration duration = Duration.between(createdDate, today);
-            long days = duration.toDays();
-
-            if(days >= MAX_DELAIT){
-                log.debug("Service Request for disabled sponsee {} : ",sponsee);
-                sponsee.setEnabled(false);
-                sponseeRepository.save(sponsee);
-            }
-        }
     }
 }
