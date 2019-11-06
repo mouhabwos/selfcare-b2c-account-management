@@ -168,5 +168,20 @@ public class AccountB2CResource {
     }
 
 
+    /**
+     * GET / view-tutorial : check the status of user for view tutorial
+     * @param msisdn
+     * @return Response the view status
+     * @Throws BadRequestException when account not found
+     */
+    @Auditable(description = Message.Account.TUTORIAL_VIEW_STATUS)
+    @GetMapping("/view-tutorial/status/{msisdn}")
+    @Timed
+    public ResponseEntity<Boolean> checkTutorialViewStatus(@PathVariable String msisdn){
+        log.debug("REST request to check field turorialView  status for AccountB2C : {}", msisdn);
+        AccountB2C account = accountB2CService.getAccount(msisdn);
+        return ResponseEntity.ok(account.isTutoViewed());
+    }
+
 
 }

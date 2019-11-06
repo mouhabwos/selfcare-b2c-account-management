@@ -33,6 +33,7 @@ spring:
         active: dev
         include:
         - swagger
+        - chron
         # Uncomment to activate TLS for the dev profile
         #- tls
     devtools:
@@ -188,6 +189,13 @@ application:
             -
                 code: operation-300
                 title: Erreur transaction Orange Money
+
+    send-sms:
+        sponsorship:
+            sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. FI rek la  www.orangeetmoi.sn
+
+    scheduler:
+        cron-disabled-sponsee: 0 00 00 * * ?
 
 log-manager:
     microservice-name: Account Management

@@ -1,7 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -12,8 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,8 +51,10 @@ public class SponsorResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new sponsor, or with status {@code 400 (Bad Request)} if the sponsor has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Auditable(description = Message.Sponsor.CREATE)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PostMapping("/sponsors")
-    public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
+    public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException, SponsorException {
         log.debug("REST request to save Sponsor : {}", sponsor);
         if (sponsor.getId() != null) {
             throw new BadRequestAlertException("A new sponsor cannot already have an ID", ENTITY_NAME, "idexists");
@@ -66,13 +74,15 @@ public class SponsorResource {
      * or with status {@code 500 (Internal Server Error)} if the sponsor couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Auditable(description = Message.Sponsor.UPDATE)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PutMapping("/sponsors")
     public ResponseEntity<Sponsor> updateSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
         log.debug("REST request to update Sponsor : {}", sponsor);
         if (sponsor.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Sponsor result = sponsorService.save(sponsor);
+        Sponsor result = sponsorService.update(sponsor);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, sponsor.getId().toString()))
             .body(result);
@@ -86,6 +96,8 @@ public class SponsorResource {
 
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sponsors in body.
      */
+    @Auditable(description = Message.Sponsor.LIST)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @GetMapping("/sponsors")
     public ResponseEntity<List<Sponsor>> getAllSponsors(Pageable pageable) {
         log.debug("REST request to get a page of Sponsors");
@@ -100,11 +112,43 @@ public class SponsorResource {
      * @param id the id of the sponsor to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the sponsor, or with status {@code 404 (Not Found)}.
      */
+    @Auditable(description = Message.Sponsor.SPONSOR_BY_ID)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @GetMapping("/sponsors/{id}")
     public ResponseEntity<Sponsor> getSponsor(@PathVariable Long id) {
         log.debug("REST request to get Sponsor : {}", id);
         Optional<Sponsor> sponsor = sponsorService.findOne(id);
         return ResponseUtil.wrapOrNotFound(sponsor);
+    }
+
+    @Auditable(description = Message.Sponsor.CHECK_SPONSOR)
+    @GetMapping("/sponsors/{msisdn}/check")
+    public ResponseEntity<Boolean> isThisNumerASponsor(@PathVariable String msisdn) {
+        log.debug("REST request to get Sponsor : {}", msisdn);
+        Boolean result = sponsorService.isNumberPresent(msisdn);
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     *This API upload a xls file of sponsors
+     *
+     * @param multipartFile
+     * @return List of duplicate elements
+     */
+    @Auditable(description = Message.Sponsor.UPLOAD)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
+    @PostMapping("/sponsors/upload")
+    public ResponseEntity<UploadResponse> uploadSponsor(@RequestParam("file") MultipartFile multipartFile) {
+        log.debug("REST request to upload a file of Sponsors ");
+
+        UploadResponse uploadResponse = new UploadResponse();
+        try {
+            uploadResponse= sponsorService.upload(multipartFile);
+        } catch (SponsorException e) {
+            log.debug("Failed to upload file of Sponsors : {}", e.getMessage());
+        }
+        return ResponseEntity.ok(uploadResponse);
     }
 
     /**
@@ -113,6 +157,8 @@ public class SponsorResource {
      * @param id the id of the sponsor to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Auditable(description = Message.Sponsor.DELETE)
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @DeleteMapping("/sponsors/{id}")
     public ResponseEntity<Void> deleteSponsor(@PathVariable Long id) {
         log.debug("REST request to delete Sponsor : {}", id);

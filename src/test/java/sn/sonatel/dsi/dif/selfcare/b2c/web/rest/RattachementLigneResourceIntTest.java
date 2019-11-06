@@ -10,9 +10,11 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
@@ -110,6 +112,9 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     private RattachementLigneService rattachementLigneService;
 
+    @Mock
+    private SponseeRepository sponseeRepository;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -140,11 +145,19 @@ public class RattachementLigneResourceIntTest {
         rattachementLigne = createEntity(em);
     }
 
+    private Optional<Sponsee> getSponsee(){
+        Sponsee sponsee = new Sponsee();
+        sponsee.setId(45L);
+        sponsee.setMsisdn("");
+        Optional<Sponsee> optionalSponsee = Optional.of(sponsee);
+        return optionalSponsee;
+    }
+
     @Test
     @Transactional
     public void createRattachementLigne() throws Exception {
         int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
-
+        when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
         RattachementLigneDTO ligne = new RattachementLigneDTO();
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());

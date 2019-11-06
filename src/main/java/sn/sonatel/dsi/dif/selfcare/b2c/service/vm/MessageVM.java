@@ -22,6 +22,7 @@ public class MessageVM {
     @NotBlank(message = MessageValidation.MESSAGE_NON_VIDE)
     private String message = "";
 
+    private  String sourceAddress;
 
     public MessageVM() {
         //Default constructor
@@ -41,5 +42,13 @@ public class MessageVM {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getSourceAddress() {
+        return sourceAddress;
+    }
+
+    public void setSourceAddress(String sourceAddress) {
+        this.sourceAddress = sourceAddress;
     }
 }
