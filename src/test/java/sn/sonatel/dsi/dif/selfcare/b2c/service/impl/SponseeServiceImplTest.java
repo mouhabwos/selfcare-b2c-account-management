@@ -24,6 +24,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -348,5 +349,37 @@ public class SponseeServiceImplTest {
         Assert.assertEquals(sponsee.getCreatedDate(),one.get().getCreatedDate());
 
     }
+
+    @Test(expected = LigneAlreadyRattachedException.class)
+    public void testRegisterSponseeWithExceptionAlreadyRattached(){
+
+        rattachementLigneRepository = mock(RattachementLigneRepository.class);
+        sponsorRepository = mock(SponsorRepository.class);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+
+
+        // -------- save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(sponsorOptional);
+
+        // rattachement ligne
+        RattachementLigne rattachementLigne = new RattachementLigne();
+        rattachementLigne.setNumero("779999999");
+        rattachementLigne.setAccountB2C(null);
+        rattachementLigne.setTypeNumero(TypeNumero.MOBILE);
+        when(rattachementLigneRepository.findByNumero(anyString())).thenReturn(Optional.of(rattachementLigne));
+
+        // -------- sponseeDTO add value
+        SponseeDTO sponseeDTO = getSponseeDTO();
+        sponseeDTO.setMsisdnSponsor(rattachementLigne.getNumero());
+        sponseeDTO.setMsisdn(rattachementLigne.getNumero());
+
+        sponseeServiceImplUnderTest.register(sponseeDTO);
+
+    }
+
+
+
 
 }

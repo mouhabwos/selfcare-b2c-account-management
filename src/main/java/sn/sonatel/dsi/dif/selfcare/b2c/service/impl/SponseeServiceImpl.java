@@ -147,6 +147,13 @@ public class SponseeServiceImpl implements SponseeService {
     }
 
     @Override
+    public void checkNumberIsSponsee(String msisdn) {
+        log.debug("Service Request check if number is sponsored : {}", msisdn);
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+        checkDisponibilityOfNumberForSponsored(msisdn);
+    }
+
+    @Override
     public SponseeDTO register(SponseeDTO sponseeDTO){
 
         //format msisdn of sponsee and sponsor

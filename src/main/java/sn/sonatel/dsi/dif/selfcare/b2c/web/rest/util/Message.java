@@ -93,6 +93,8 @@ public final class Message {
 
         public static final String UPDATE_TUTORIAL_VIEW = "Mise a jour du champs tutorialView a true";
 
+        public static final String TUTORIAL_VIEW_STATUS = "Verifier si le tutoriel a ete vu par l'utilisateur";
+
         public static final String OUVERTURE_COMPTE = "Operation d ouverture de compte dans urgence et depannage";
 
         public static final String STATUS_MAIL = "Verification de l envoie du mail";
@@ -112,6 +114,7 @@ public final class Message {
         public static final String DELETE_SPONSEE = "Suppression d un sponsee";
         public static final String SMS_TO_SPONSEE = "Envoie sms au sponsee";
         public static final String LIST_SPONSEE_BY_MSISDN = "Liste des sponsee par msisdn du sponsor";
+        public static final String CHECK_SPONSEE = "Verification du numero a parraine";
 
         private Sponsee() {
             super ();
