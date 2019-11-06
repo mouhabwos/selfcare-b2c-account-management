@@ -689,7 +689,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2C b2C = new AccountB2C();
         b2C.setTutoViewed(false);
-        b2C.setNumero("770502595");
+        b2C.setNumero("770500001");
         b2C.setLastName("hello");
         b2C.setFirstName("hello");
         b2C.setEmail("hello95@gmail.com");

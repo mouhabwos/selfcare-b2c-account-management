@@ -20,4 +20,7 @@ public interface SponseeRepository extends JpaRepository<Sponsee, Long> {
 
     List<Sponsee> findAllByAccountB2C(AccountB2C user);
 
+    @Query("SELECT s FROM Sponsee s WHERE s.effective=false AND s.enabled=true")
+    List<Sponsee> findAllSponseeNoRegistered();
+
 }

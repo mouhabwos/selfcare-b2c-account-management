@@ -42,6 +42,10 @@ public class ApplicationProperties {
     @Setter(AccessLevel.PUBLIC)
     private final SendSms sendSms = new SendSms();
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final Scheduler scheduler = new Scheduler();
+
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
     }
@@ -252,5 +256,16 @@ public class ApplicationProperties {
             private String smsSponsee;
 
         }
+    }
+
+    /**
+     * @author BOUYA KANDE
+     * @since 1.4.0
+     */
+    public static class Scheduler{
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String cronDisabledSponsee;
     }
 }
