@@ -47,4 +47,6 @@ public interface SponseeService {
     SponseeDTO update(SponseeDTO sponseeDTO);
 
     List<Sponsee> findAllSponseeBySponsor(String msisgn);
+
+    void checkNumberIsSponsee(String msisdn);
 }

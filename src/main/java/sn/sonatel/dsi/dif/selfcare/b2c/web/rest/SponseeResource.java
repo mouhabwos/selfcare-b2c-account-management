@@ -146,4 +146,12 @@ public class SponseeResource {
         List<Sponsee> allSponseeByMsisdn = sponseeService.findAllSponseeBySponsor(msisdn);
         return ResponseEntity.ok().body(allSponseeByMsisdn);
     }
+
+    @Auditable(description = Message.Sponsee.CHECK_SPONSEE)
+    @GetMapping("/sponsees/check-number/{msisdn}")
+    public ResponseEntity checkNumberSponsee(@PathVariable String msisdn) {
+        log.debug("REST request to check number sponsee {} : ",msisdn);
+        sponseeService.checkNumberIsSponsee(msisdn);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -114,6 +114,7 @@ public final class Message {
         public static final String DELETE_SPONSEE = "Suppression d un sponsee";
         public static final String SMS_TO_SPONSEE = "Envoie sms au sponsee";
         public static final String LIST_SPONSEE_BY_MSISDN = "Liste des sponsee par msisdn du sponsor";
+        public static final String CHECK_SPONSEE = "Verification du numero a parraine";
 
         private Sponsee() {
             super ();
