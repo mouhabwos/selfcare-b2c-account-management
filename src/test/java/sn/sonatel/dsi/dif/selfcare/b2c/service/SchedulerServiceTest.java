@@ -80,6 +80,5 @@ public class SchedulerServiceTest {
         Assert.assertEquals(sponsee.getAccountB2C().getNumero(),sponseeOptional.get().getAccountB2C().getNumero());
         Assert.assertEquals(sponsee.getFirstName(),sponseeOptional.get().getFirstName());
         Assert.assertEquals(sponsee.getLastName(),sponseeOptional.get().getLastName());
-        Assert.assertEquals(sponsee.getCreatedDate(),sponseeOptional.get().getCreatedDate());
     }
 }
