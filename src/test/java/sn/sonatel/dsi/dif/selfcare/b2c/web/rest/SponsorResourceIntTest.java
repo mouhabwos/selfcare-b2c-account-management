@@ -289,7 +289,7 @@ public class SponsorResourceIntTest {
 
         restSponsorMockMvc.perform(MockMvcRequestBuilders.multipart("/api/sponsors/upload")
             .file(file))
-            .andExpect(status().isOk());
+            .andExpect(status().isAccepted());
 
         // Validate the sim in the database
         List<Sponsor> sponsorList = sponsorRepository.findAll();

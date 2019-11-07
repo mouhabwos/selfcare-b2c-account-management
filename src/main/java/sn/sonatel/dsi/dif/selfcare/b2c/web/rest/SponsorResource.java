@@ -148,7 +148,7 @@ public class SponsorResource {
         } catch (SponsorException e) {
             log.debug("Failed to upload file of Sponsors : {}", e.getMessage());
         }
-        return ResponseEntity.ok(uploadResponse);
+        return ResponseEntity.accepted().body(uploadResponse);
     }
 
     /**
