@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.springframework.data.domain.PageImpl;
+import org.springframework.scheduling.annotation.Async;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -25,6 +27,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,8 +77,14 @@ public class SponseeServiceImpl implements SponseeService {
     @Transactional(readOnly = true)
     public Page<SponseeDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Sponsees");
-        return sponseeRepository.findAll(pageable)
-            .map(sponseeMapper::toDto);
+        List<SponseeDTO> sponseeDTOList = new ArrayList<>();
+        List<Sponsee> sponseeRepositoryAll = sponseeRepository.findAll();
+        for (Sponsee sponsee: sponseeRepositoryAll) {
+            SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+            sponseeDTO.setMsisdnSponsor(sponsee.getAccountB2C().getNumero());
+            sponseeDTOList.add(sponseeDTO);
+        }
+        return new PageImpl<>(sponseeDTOList, pageable, sponseeDTOList.size());
     }
 
 
@@ -206,6 +215,19 @@ public class SponseeServiceImpl implements SponseeService {
         SponseeDTO toDto = sponseeMapper.toDto(sponsee);
         toDto.setMsisdnSponsor(sponsee.getAccountB2C().getNumero());
         return toDto;
+    }
+
+    @Async
+    @Override
+    public Sponsee updateEffectiveInscriptionOfSponsee(String msisdn){
+        log.debug("Request to update Sponsee : {}", msisdn);
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+        Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(msisdn);
+        if(sponsee.isPresent()){
+            sponsee.get().setEffective(true);
+            return sponseeRepository.save(sponsee.get());
+        }
+       return new Sponsee();
     }
 
     private void checkNumberSponsee(String msisdnSource, String msisdnDest){
