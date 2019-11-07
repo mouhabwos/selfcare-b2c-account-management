@@ -338,6 +338,13 @@ public class SponseeResourceIntTest {
     @Test
     @Transactional
     public void getAllSponsees() throws Exception {
+
+        AccountB2C accountB2C = getAccount();
+        accountB2C.setNumero("780000000");
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        accountB2C = accountB2CRepository.save(accountB2C);
+        sponsee.setAccountB2C(accountB2C);
         // Initialize the database
         sponseeRepository.saveAndFlush(sponsee);
 

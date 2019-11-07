@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.springframework.data.domain.PageImpl;
 import org.springframework.scheduling.annotation.Async;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -26,6 +27,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,8 +77,14 @@ public class SponseeServiceImpl implements SponseeService {
     @Transactional(readOnly = true)
     public Page<SponseeDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Sponsees");
-        return sponseeRepository.findAll(pageable)
-            .map(sponseeMapper::toDto);
+        List<SponseeDTO> sponseeDTOList = new ArrayList<>();
+        List<Sponsee> sponseeRepositoryAll = sponseeRepository.findAll();
+        for (Sponsee sponsee: sponseeRepositoryAll) {
+            SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
+            sponseeDTO.setMsisdnSponsor(sponsee.getAccountB2C().getNumero());
+            sponseeDTOList.add(sponseeDTO);
+        }
+        return new PageImpl<>(sponseeDTOList, pageable, sponseeDTOList.size());
     }
 
 
