@@ -133,7 +133,7 @@ public class AccountB2CResourceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService,captchaService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -580,7 +580,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService,captchaService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
