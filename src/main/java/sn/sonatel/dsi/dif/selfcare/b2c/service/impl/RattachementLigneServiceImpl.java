@@ -9,13 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
@@ -49,16 +48,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final SelfcareSoapService selfcareSoapService;
 
-    private final SponseeRepository sponseeRepository;
+    private final SponseeService sponseeService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SelfcareSoapService selfcareSoapService, SponseeRepository sponseeRepository) {
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SelfcareSoapService selfcareSoapService, SponseeService sponseeService) {
 
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.captchaService = captchaService;
         this.customerOfferApiClient = customerOfferApiClient;
         this.selfcareSoapService = selfcareSoapService;
-        this.sponseeRepository = sponseeRepository;
+        this.sponseeService = sponseeService;
     }
 
     @Override
@@ -132,11 +131,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             rattachement.setAccountB2C(accountB2C.get());
 
             rattachement = rattachementLigneRepository.save(rattachement);
-            Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(rattachement.getNumero());
-            if(sponsee.isPresent()){
-                sponsee.get().setEffective(true);
-                sponseeRepository.save(sponsee.get());
-            }
+            sponseeService.updateEffectiveInscriptionOfSponsee(rattachement.getNumero());
         }
 
         return rattachement;

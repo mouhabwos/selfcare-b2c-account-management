@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.springframework.scheduling.annotation.Async;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -206,6 +207,19 @@ public class SponseeServiceImpl implements SponseeService {
         SponseeDTO toDto = sponseeMapper.toDto(sponsee);
         toDto.setMsisdnSponsor(sponsee.getAccountB2C().getNumero());
         return toDto;
+    }
+
+    @Async
+    @Override
+    public Sponsee updateEffectiveInscriptionOfSponsee(String msisdn){
+        log.debug("Request to update Sponsee : {}", msisdn);
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+        Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(msisdn);
+        if(sponsee.isPresent()){
+            sponsee.get().setEffective(true);
+            return sponseeRepository.save(sponsee.get());
+        }
+       return new Sponsee();
     }
 
     private void checkNumberSponsee(String msisdnSource, String msisdnDest){
