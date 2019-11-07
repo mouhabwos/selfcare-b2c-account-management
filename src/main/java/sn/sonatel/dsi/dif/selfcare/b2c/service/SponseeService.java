@@ -49,4 +49,6 @@ public interface SponseeService {
     List<Sponsee> findAllSponseeBySponsor(String msisgn);
 
     void checkNumberIsSponsee(String msisdn);
+
+    Sponsee updateEffectiveInscriptionOfSponsee(String msisdn);
 }
