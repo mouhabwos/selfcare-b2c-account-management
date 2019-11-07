@@ -17,10 +17,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
@@ -56,6 +53,8 @@ public class AccountB2CServiceImplTest {
     private DowloadManager mockDowloadManager;
     @Mock
     private CaptchaService mockCaptchaService;
+    @Mock
+    private BoosterManager boosterManager;
 
     private AccountB2CServiceImpl accountB2CServiceImplUnderTest;
 
@@ -68,7 +67,7 @@ public class AccountB2CServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager, mockCaptchaService,sponseeService);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager,sponseeService,boosterManager);
     }
 
     private Optional<Sponsee> getSponsee(){
