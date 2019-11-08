@@ -1,0 +1,14 @@
+/** not an ignored comment */
+entity Sponsor {
+	msisdn String,
+    matricule String,
+    firstName String,
+    lastName String
+}
+
+// Set pagination options
+paginate Sponsor with pagination
+
+// Set service options to all except few
+service all with serviceImpl
+search * with elasticsearch except Sponsor

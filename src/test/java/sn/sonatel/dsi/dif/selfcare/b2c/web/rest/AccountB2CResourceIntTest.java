@@ -133,7 +133,7 @@ public class AccountB2CResourceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService,captchaService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -580,7 +580,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService,captchaService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -689,7 +689,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2C b2C = new AccountB2C();
         b2C.setTutoViewed(false);
-        b2C.setNumero("770502595");
+        b2C.setNumero("770500001");
         b2C.setLastName("hello");
         b2C.setFirstName("hello");
         b2C.setEmail("hello95@gmail.com");
@@ -703,5 +703,26 @@ public class AccountB2CResourceIntTest {
 
         restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/{msisdn}", "770565053"))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void checkTutorialViewStatusThrowBadRequest() throws Exception {
+
+        restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/status/{msisdn}", "770565053"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void checkTutorialViewStatus() throws Exception {
+
+        AccountB2C b2C = new AccountB2C();
+        b2C.setTutoViewed(false);
+        b2C.setNumero("770502595");
+        b2C.setLastName("hello");
+        b2C.setFirstName("hello");
+        b2C.setEmail("hello95@gmail.com");
+        b2C = accountB2CRepository.save(b2C);
+        restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/status/{msisdn}", b2C.getNumero()))
+            .andExpect(status().isOk());
     }
 }

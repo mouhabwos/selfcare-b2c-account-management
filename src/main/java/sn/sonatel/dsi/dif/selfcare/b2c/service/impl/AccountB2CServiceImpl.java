@@ -14,10 +14,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
@@ -48,16 +45,19 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final DowloadManager dowloadManager;
 
-    private final CaptchaService captchaService;
+    private final SponseeService sponseeService;
+
+    private final BoosterManager boosterManager;
 
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, CaptchaService captchaService) {
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, SponseeService sponseeService, BoosterManager boosterManager) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
         this.mailService = mailService;
         this.dowloadManager = dowloadManager;
-        this.captchaService = captchaService;
+        this.sponseeService = sponseeService;
+        this.boosterManager=boosterManager;
     }
 
     @Override
@@ -109,6 +109,9 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result = accountB2CRepository.save(result);
                 mailService.sendActivationEmail(result);
 
+                this.boosterManager.applyWelcomeBooster(result.getNumero());
+                sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
+
                 return result;
             }
 
@@ -157,10 +160,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         log.debug("Service to check number of AccountB2C : {}", numberRequest);
         numberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getMsisdn()));
 
-        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
-            log.debug("Error invalid number to check number  : {}", numberRequest);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         checkExistingAccountForNumber(numberRequest.getMsisdn());
 

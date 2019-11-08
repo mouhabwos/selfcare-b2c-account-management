@@ -93,12 +93,45 @@ public final class Message {
 
         public static final String UPDATE_TUTORIAL_VIEW = "Mise a jour du champs tutorialView a true";
 
+        public static final String TUTORIAL_VIEW_STATUS = "Verifier si le tutoriel a ete vu par l'utilisateur";
+
         public static final String OUVERTURE_COMPTE = "Operation d ouverture de compte dans urgence et depannage";
 
         public static final String STATUS_MAIL = "Verification de l envoie du mail";
 
 
         private Account() {
+            super ();
+        }
+    }
+
+    public static final class Sponsee {
+
+        public static final String CREATE_SPONSEE = "Parrainage d un nouveau numero";
+        public static final String UPDATE_SPONSEE = "Modification d un sponsee";
+        public static final String LIST_SPONSEE = "Liste des sponsee";
+        public static final String SPONSEE_BY_ID = "Affichage d un sponsee par l id";
+        public static final String DELETE_SPONSEE = "Suppression d un sponsee";
+        public static final String SMS_TO_SPONSEE = "Envoie sms au sponsee";
+        public static final String LIST_SPONSEE_BY_MSISDN = "Liste des sponsee par msisdn du sponsor";
+        public static final String CHECK_SPONSEE = "Verification du numero a parraine";
+
+        private Sponsee() {
+            super ();
+        }
+    }
+
+    public static final class Sponsor {
+
+        public static final String CREATE = "Création d'un sponsor";
+        public static final String UPDATE = "Modification d un sponsor";
+        public static final String LIST = "Liste des sponsors";
+        public static final String SPONSOR_BY_ID = "Affichage d un sponsor par l id";
+        public static final String CHECK_SPONSOR = "Verification du numero d un sponsor";
+        public static final String UPLOAD = "Importation d'un fichiers sponsors";
+        public static final String DELETE = "Suppression d un sponsor";
+
+        private Sponsor() {
             super ();
         }
     }

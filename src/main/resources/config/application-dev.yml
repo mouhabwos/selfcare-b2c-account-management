@@ -26,13 +26,14 @@ eureka:
         hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.32:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s.orange-sonatel.com/eureka/
 
 spring:
     profiles:
         active: dev
         include:
         - swagger
+        - chron
         # Uncomment to activate TLS for the dev profile
         #- tls
     devtools:
@@ -188,6 +189,13 @@ application:
             -
                 code: operation-300
                 title: Erreur transaction Orange Money
+
+    send-sms:
+        sponsorship:
+            sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. FI rek la  www.orangeetmoi.sn
+
+    scheduler:
+        cron-disabled-sponsee: 0 00 00 * * ?
 
 log-manager:
     microservice-name: Account Management

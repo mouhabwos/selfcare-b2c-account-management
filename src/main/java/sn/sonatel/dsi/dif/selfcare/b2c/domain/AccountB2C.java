@@ -51,6 +51,9 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
+    private Set<Sponsee> sponsees = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @Column(name = "derniere_connnexion_date", nullable = true)
@@ -186,6 +189,15 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     public void setUsers(Set<RattachementLigne> rattachementLignes) {
         this.users = rattachementLignes;
     }
+
+    public Set<Sponsee> getSponsees() {
+        return sponsees;
+    }
+
+    public void setSponsees(Set<Sponsee> sponsees) {
+        this.sponsees = sponsees;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

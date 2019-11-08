@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
@@ -43,11 +45,14 @@ public class AccountB2CResource {
 
     private final SelfcareOTPService otpService;
 
+    private final CaptchaService captchaService;
 
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService) {
+
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService,CaptchaService captchaService) {
 
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
+        this.captchaService=captchaService;
     }
 
 
@@ -119,6 +124,10 @@ public class AccountB2CResource {
     @PostMapping("/check_number")
     public ResponseEntity checkNumber(@Valid @RequestBody NumberRequest numberRequest) {
 
+        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
+            log.debug("Error invalid number to check number  : {}", numberRequest);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         return accountB2CService.checkNumber(numberRequest);
     }
@@ -167,6 +176,21 @@ public class AccountB2CResource {
         return ResponseEntity.ok().build();
     }
 
+
+    /**
+     * GET / view-tutorial : check the status of user for view tutorial
+     * @param msisdn
+     * @return Response the view status
+     * @Throws BadRequestException when account not found
+     */
+    @Auditable(description = Message.Account.TUTORIAL_VIEW_STATUS)
+    @GetMapping("/view-tutorial/status/{msisdn}")
+    @Timed
+    public ResponseEntity<Boolean> checkTutorialViewStatus(@PathVariable String msisdn){
+        log.debug("REST request to check field turorialView  status for AccountB2C : {}", msisdn);
+        AccountB2C account = accountB2CService.getAccount(msisdn);
+        return ResponseEntity.ok(account.isTutoViewed());
+    }
 
 
 }
