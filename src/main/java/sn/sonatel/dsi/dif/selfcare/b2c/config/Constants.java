@@ -35,6 +35,8 @@ public final class Constants {
 
     public static final String SELFCARE_FILE_MANAGER_SERVICE = "selfcare-file-manager";
 
+    public static final String SELFCARE_CONSO_SERVICE = "selfcare-b2c-conso";
+
     public static final String SELFCARE_SERVICE_OTP = "selfcare-otp";
 
     public static final String SELFCARE_GATEWAY = "selfcare-gateway";

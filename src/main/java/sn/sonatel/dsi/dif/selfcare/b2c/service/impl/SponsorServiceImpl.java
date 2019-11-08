@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.SponsorUploadResponse;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
@@ -148,6 +149,7 @@ public class SponsorServiceImpl implements SponsorService {
         return getUploadResponse(errorsList, rowIterator);
     }
 
+    @Async
     private UploadResponse getUploadResponse(List<SponsorUploadResponse> sponsorUploadErrorResponseList, Iterator<Row> rowIterator) {
         int sponsorCounter = 0;
         // Create a DataFormatter to format and get each cell's value as String
