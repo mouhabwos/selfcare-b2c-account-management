@@ -220,7 +220,13 @@ public class SponseeServiceImpl implements SponseeService {
         Optional<Sponsee> sponsee = sponseeRepository.findOneByMsisdn(msisdn);
         if(sponsee.isPresent()){
             sponsee.get().setEffective(true);
-            return sponseeRepository.save(sponsee.get());
+            Sponsee saveSponsee = sponseeRepository.save(sponsee.get());
+            MessageVM messageVM = new MessageVM();
+            messageVM.setMsisdn(sponsee.get().getAccountB2C().getNumero());
+            messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsor(),saveSponsee.getMsisdn()));
+
+            servicesOTP.generateMessage(messageVM);
+            return saveSponsee;
         }
        return new Sponsee();
     }
