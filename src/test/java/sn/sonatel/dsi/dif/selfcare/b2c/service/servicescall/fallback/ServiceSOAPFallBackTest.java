@@ -34,9 +34,24 @@ public class ServiceSOAPFallBackTest {
      */
 
 
-
     @Test
     public void testGetAbonneStatusOK() {
+        Map<String, Collection<String>> headers = new LinkedHashMap<>();
+        Response response = Response.builder().status(500)
+            .headers(headers)
+            .build();
+
+        ResponseEntity<AbonneDTO> expectedResult =  ResponseEntity.status(HttpStatus.OK).build();
+
+        serviceSOAPFallBackUnderTest = new ServiceSOAPFallBack(FeignException.errorStatus("SOAP", response));
+
+        ResponseEntity<AbonneDTO> abonne = serviceSOAPFallBackUnderTest.getAbonne(new SOAPRequest(""));
+
+        assertEquals(abonne,expectedResult);
+    }
+
+    @Test
+    public void testGetSouscriptionStatusOK() {
         Map<String, Collection<String>> headers = new LinkedHashMap<>();
         Response response = Response.builder().status(200)
             .headers(headers)
@@ -46,7 +61,7 @@ public class ServiceSOAPFallBackTest {
 
         serviceSOAPFallBackUnderTest = new ServiceSOAPFallBack(FeignException.errorStatus("SOAP", response));
 
-        ResponseEntity<AbonneDTO> abonne = serviceSOAPFallBackUnderTest.getAbonne(new SOAPRequest(""));
+        ResponseEntity<SouscriptionDto> abonne = serviceSOAPFallBackUnderTest.getSouscription(new SOAPRequest(""));
 
         assertEquals(abonne,expectedResult);
     }
@@ -59,7 +74,7 @@ public class ServiceSOAPFallBackTest {
 
 
     @Test
-    public void getAbonneError400(){
+    public void getSouscriptionError400(){
 
         Map<String, Collection<String>> headers = new LinkedHashMap<>();
         Response response = Response.builder().status(400)
@@ -70,7 +85,7 @@ public class ServiceSOAPFallBackTest {
 
         serviceSOAPFallBackUnderTest = new ServiceSOAPFallBack(FeignException.errorStatus("SOAP", response));
 
-        ResponseEntity<AbonneDTO> abonne = serviceSOAPFallBackUnderTest.getAbonne(new SOAPRequest(""));
+        ResponseEntity<SouscriptionDto> abonne = serviceSOAPFallBackUnderTest.getSouscription(new SOAPRequest(""));
 
         assertEquals(abonne,expectedResult);
 
@@ -80,7 +95,7 @@ public class ServiceSOAPFallBackTest {
      * code erreur 500
      */
     @Test
-    public void getAbonneError500(){
+    public void getSouscriptionError500(){
 
         Map<String, Collection<String>> headers = new LinkedHashMap<>();
         Response response = Response.builder().status(500)
@@ -90,7 +105,7 @@ public class ServiceSOAPFallBackTest {
 
         serviceSOAPFallBackUnderTest = new ServiceSOAPFallBack(FeignException.errorStatus("SOAP", response));
 
-        ResponseEntity<AbonneDTO> abonne = serviceSOAPFallBackUnderTest.getAbonne(new SOAPRequest(""));
+        ResponseEntity<SouscriptionDto> abonne = serviceSOAPFallBackUnderTest.getSouscription(new SOAPRequest(""));
 
     }
 
@@ -98,18 +113,18 @@ public class ServiceSOAPFallBackTest {
      * code erreur 503
      */
     @Test
-    public void getAbonneError503(){
+    public void getSouscriptionError503(){
 
         Map<String, Collection<String>> headers = new LinkedHashMap<>();
         Response response = Response.builder().status(503)
             .headers(headers)
             .build();
 
-        ResponseEntity<AbonneDTO> expectedResult =  ResponseEntity.status(HttpStatus.OK).build();
+        ResponseEntity<AbonneDTO> expectedResult =  ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 
         serviceSOAPFallBackUnderTest = new ServiceSOAPFallBack(FeignException.errorStatus("SOAP", response));
 
-        ResponseEntity<AbonneDTO> abonne = serviceSOAPFallBackUnderTest.getAbonne(new SOAPRequest(""));
+        ResponseEntity<SouscriptionDto> abonne = serviceSOAPFallBackUnderTest.getSouscription(new SOAPRequest(""));
 
         assertEquals(abonne,expectedResult);
 
