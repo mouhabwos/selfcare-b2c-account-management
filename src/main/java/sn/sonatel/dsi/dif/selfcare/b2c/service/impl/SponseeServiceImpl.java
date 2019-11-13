@@ -5,10 +5,8 @@ import org.springframework.scheduling.annotation.Async;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
@@ -54,16 +52,13 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    private final SponsorRepository sponsorRepository;
-
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SponsorRepository sponsorRepository) {
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
         this.applicationProperties = applicationProperties;
         this.servicesOTP = servicesOTP;
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.sponsorRepository = sponsorRepository;
     }
 
 
@@ -269,12 +264,6 @@ public class SponseeServiceImpl implements SponseeService {
     }
 
     private void checkNumberOfSponsor(String msisdSponsor){
-
-        Optional<Sponsor> optionalSponsor = sponsorRepository.getSponsorByMsisdn(msisdSponsor);
-        if(!optionalSponsor.isPresent()){
-            log.debug("Error Request Service  msisdn does not have the possibility to sponsor: {}", msisdSponsor);
-            throw new ForbiddenException();
-        }
 
         Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(msisdSponsor);
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdSponsor);
