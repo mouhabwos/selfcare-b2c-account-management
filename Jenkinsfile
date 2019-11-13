@@ -63,7 +63,7 @@ pipeline {
         agent  { label 'docker-builder-dev3' }
         options { skipDefaultCheckout() }
         when {
-                       anyOf { branch 'develop'; branch 'release' }
+                       anyOf { branch 'bugRegister'; branch 'release' }
                     }
       steps {
 
