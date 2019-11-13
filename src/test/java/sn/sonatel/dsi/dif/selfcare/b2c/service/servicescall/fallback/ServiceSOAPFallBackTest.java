@@ -105,7 +105,7 @@ public class ServiceSOAPFallBackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity<AbonneDTO> expectedResult =  ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        ResponseEntity<AbonneDTO> expectedResult =  ResponseEntity.status(HttpStatus.OK).build();
 
         serviceSOAPFallBackUnderTest = new ServiceSOAPFallBack(FeignException.errorStatus("SOAP", response));
 

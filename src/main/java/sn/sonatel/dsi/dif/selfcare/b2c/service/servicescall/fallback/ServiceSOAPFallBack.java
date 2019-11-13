@@ -21,11 +21,21 @@ public class ServiceSOAPFallBack implements ServiceSOAP {
     @Override
     public ResponseEntity<SouscriptionDto> getSouscription(SOAPRequest msisdn) {
 
+        if(throwable instanceof FeignException && ((FeignException) throwable).status() == 503){
+
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
+
         return throwableCall();
     }
 
     @Override
     public ResponseEntity<AbonneDTO> getAbonne(SOAPRequest msisdn) {
+
+        if(throwable instanceof FeignException && ((FeignException) throwable).status() == 503){
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
 
         return throwableCall();
     }
@@ -40,9 +50,6 @@ public class ServiceSOAPFallBack implements ServiceSOAP {
 
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 
-            }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 503){
-
-                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
             }
 
             return ResponseEntity.ok().build();
