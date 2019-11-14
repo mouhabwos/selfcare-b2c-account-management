@@ -259,6 +259,10 @@ public class ApplicationProperties {
             @Getter(AccessLevel.PUBLIC)
             private String smsSponsor;
 
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsPromo;
+
         }
     }
 
