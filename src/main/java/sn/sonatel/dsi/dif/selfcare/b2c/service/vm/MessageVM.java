@@ -22,7 +22,7 @@ public class MessageVM {
     @NotBlank(message = MessageValidation.MESSAGE_NON_VIDE)
     private String message = "";
 
-    private  String sourceAddress;
+    private  String sourceAddress = Constants.ORANGE_ET_MOI;
 
     public MessageVM() {
         //Default constructor

@@ -51,7 +51,7 @@ public class SponseeResource {
      */
     @Auditable(description = Message.Sponsee.CREATE_SPONSEE)
     @PostMapping("/sponsees")
-    @PreAuthorize("@sponsorshipSecurityResolver.isSponsor(#sponseeDTO.msisdnSponsor)")
+    @PreAuthorize("#sponseeDTO.msisdnSponsor == authentication.name")
     public ResponseEntity<SponseeDTO> createSponsee(@Valid @RequestBody SponseeDTO sponseeDTO) throws URISyntaxException {
         log.debug("REST request to save Sponsee : {}", sponseeDTO);
         if (sponseeDTO.getId() != null) {
@@ -72,7 +72,7 @@ public class SponseeResource {
      */
     @Auditable(description = Message.Sponsee.UPDATE_SPONSEE)
     @PutMapping("/sponsees")
-    @PreAuthorize("@sponsorshipSecurityResolver.isSponsor(#sponseeDTO.msisdnSponsor)")
+    @PreAuthorize("#sponseeDTO.msisdnSponsor == authentication.name")
     public ResponseEntity<SponseeDTO> updateSponsee(@Valid @RequestBody SponseeDTO sponseeDTO) throws URISyntaxException {
         log.debug("REST request to update Sponsee : {}", sponseeDTO);
         if (sponseeDTO.getId() == null) {

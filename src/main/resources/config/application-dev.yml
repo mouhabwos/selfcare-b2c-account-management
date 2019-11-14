@@ -26,7 +26,7 @@ eureka:
         hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s.orange-sonatel.com/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.100.59.111:8761/eureka/
 
 spring:
     profiles:
@@ -193,7 +193,7 @@ application:
     send-sms:
         sponsorship:
             sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. FI rek la  www.orangeetmoi.sn
-
+            sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
 
