@@ -1,7 +1,9 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -11,6 +13,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.WelcomeBoosterStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.errors.ErrorMessages;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import org.slf4j.Logger;
@@ -52,13 +55,16 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository) {
+    private final BoosterClient boosterClient;
+
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, BoosterClient boosterClient) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
         this.applicationProperties = applicationProperties;
         this.servicesOTP = servicesOTP;
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
+        this.boosterClient = boosterClient;
     }
 
 
@@ -125,11 +131,17 @@ public class SponseeServiceImpl implements SponseeService {
         msisdnDest = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdnDest);
 
         checkNumberSponsee(msisdnSource,msisdnDest);
-
         MessageVM messageVM = new MessageVM();
         messageVM.setMsisdn(msisdnDest);
         messageVM.setSourceAddress(msisdnSource);
-        messageVM.setMessage(applicationProperties.getSendSms().getSponsorship().getSmsSponsee());
+        WelcomeBoosterStatus welcomeBooster = getWelcomeBoosterStatus();
+
+        if(welcomeBooster.getValue() != null){
+            String messagePromo = String.format(applicationProperties.getSendSms().getSponsorship().getSmsPromo(),welcomeBooster.getValue().getAmount(), welcomeBooster.getValue().getUnit());
+            messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),messagePromo));
+        }else messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),""));
+
+
         boolean generateMessage = servicesOTP.generateMessage(messageVM);
         if(!generateMessage){
             log.debug("Error Request Service sms not be sent to Sponsee : {}", msisdnDest);
@@ -279,4 +291,16 @@ public class SponseeServiceImpl implements SponseeService {
         }
 
     }
+
+    private WelcomeBoosterStatus getWelcomeBoosterStatus(){
+
+        ResponseEntity<List<WelcomeBoosterStatus>> activeWelcomeBoosterValue = boosterClient.getActiveWelcomeBoosterValue();
+        if(activeWelcomeBoosterValue.getBody() != null){
+            return activeWelcomeBoosterValue.getBody().get(0);
+        }
+
+        return new WelcomeBoosterStatus();
+    }
+
+
 }
