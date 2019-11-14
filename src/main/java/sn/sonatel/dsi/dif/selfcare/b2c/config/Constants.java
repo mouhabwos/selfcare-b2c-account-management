@@ -76,6 +76,8 @@ public final class Constants {
 
     public static final int getMaxAttempts = 4;
 
+    public static final String ORANGE_ET_MOI ="OrangeetMoi";
+
     private Constants() {
 
         //Default constructor

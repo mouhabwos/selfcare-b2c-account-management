@@ -57,8 +57,6 @@ public class SponseeServiceImplTest {
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
 
-    @Autowired
-    private SponsorRepository sponsorRepository;
 
     @Autowired
     private SponseeRepository sponseeRepository;
@@ -69,12 +67,12 @@ public class SponseeServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
     }
 
     public void forMockService() {
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
     }
     private AccountB2C getAccount(){
         AccountB2C accountB2C = new AccountB2C();
@@ -171,7 +169,7 @@ public class SponseeServiceImplTest {
     public void testFindAllSponseeByMsisdn() {
         mockSponseeRepository = mock(SponseeRepository.class);
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository,rattachementLigneRepository,sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository,rattachementLigneRepository);
         Sponsee sponsee = new Sponsee();
         sponsee.setId(78L);
         sponsee.setMsisdn("778520000");
@@ -191,29 +189,11 @@ public class SponseeServiceImplTest {
 
     }
 
-    @Test(expected = ForbiddenException.class)
-    public void testRegisterSponseeWithForbidden(){
-
-        AccountB2C accountB2C = getAccount();
-        accountB2C.setId(null);
-        accountB2CRepository.save(accountB2C);
-
-        SponseeDTO sponseeDTO = getSponseeDTO();
-        sponseeDTO.setMsisdnSponsor("77900 00 00");
-
-        sponseeServiceImplUnderTest.register(sponseeDTO);
-
-    }
-
      @Test(expected = BadRequestAlertException.class)
     public void testRegisterSponseeWithSponsorNoAccount(){
-         sponsorRepository = mock(SponsorRepository.class);
-         forMockService();
         AccountB2C accountB2C = getAccount();
         accountB2C.setId(null);
         accountB2CRepository.save(accountB2C);
-
-       when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(getSponsor());
 
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdnSponsor("770100000");
@@ -226,8 +206,7 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithNumAlreadyUsed(){
 
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponsorRepository = mock(SponsorRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
 
 
        AccountB2C accountB2C = getAccount();
@@ -235,9 +214,7 @@ public class SponseeServiceImplTest {
         accountB2C.setNumero(msisdnSponsor);
         Optional<AccountB2C>  b2COptional = Optional.of(accountB2C);
         when(accountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
-       //AccountB2C save = accountB2CRepository.save(accountB2C);
 
-        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(getSponsor());
 
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdn("");
@@ -251,15 +228,12 @@ public class SponseeServiceImplTest {
     @Test(expected = BadRequestAlertException.class)
     public void testRegisterSponseeAlreadyRattachedException(){
 
-        //accountB2CRepository = mock(AccountB2CRepository.class);
-        sponsorRepository = mock(SponsorRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
 
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
         Sponsor sponsor = sponsorOptional.get();
-        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(sponsorOptional);
 
 
         // rattachement ligne
@@ -284,16 +258,15 @@ public class SponseeServiceImplTest {
     @Test
     public void testUpdateSponsee(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
 
         //save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
         Sponsor sponsor = sponsorOptional.get();
-        Sponsor sponsorSave = sponsorRepository.save(sponsor);
         //save account sponsor
         AccountB2C accountB2C = getAccount();
         accountB2C.setId(null);
-        accountB2C.setNumero(sponsorSave.getMsisdn());
+        accountB2C.setNumero(sponsor.getMsisdn());
         AccountB2C save = accountB2CRepository.save(getAccount());
         // save sponsee
         SponseeDTO sponseeDTO = getSponseeDTO();
@@ -319,12 +292,11 @@ public class SponseeServiceImplTest {
     @Test
     public void testGetSponseeById(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
         Sponsor sponsor = sponsorOptional.get();
-        sponsorRepository.save(sponsor);
 
         // -------- save account sponsor
         AccountB2C accountB2C = getAccount();
@@ -354,14 +326,12 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithExceptionAlreadyRattached(){
 
         rattachementLigneRepository = mock(RattachementLigneRepository.class);
-        sponsorRepository = mock(SponsorRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, sponsorRepository);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository);
 
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
         Sponsor sponsor = sponsorOptional.get();
-        when(sponsorRepository.getSponsorByMsisdn(anyString())).thenReturn(sponsorOptional);
 
         // rattachement ligne
         RattachementLigne rattachementLigne = new RattachementLigne();
