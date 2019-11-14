@@ -4,12 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
@@ -17,6 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.WelcomeBoosterStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.SponseeServiceImpl;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
@@ -110,6 +113,14 @@ public class SponseeResourceIntTest {
 
     @Autowired
     private AccountB2CRepository accountB2CRepository;
+
+    @Mock
+    private BoosterClient boosterClient;
+
+    @Mock
+    private SponseeRepository sponseesRepository;
+
+
 
     @Before
     public void setup() {
@@ -521,12 +532,30 @@ public class SponseeResourceIntTest {
     public void testSendSmsForSponseeWithBadRequest() throws Exception {
 
         String msisdnSource = "770000000";
-        String msisdnDest = "770000001";
+        String msisdnDest = "770000070";
+        sponsee.setEffective(false);
+        sponsee.setEnabled(true);
+        sponsee.setMsisdn(msisdnDest);
+        WelcomeBoosterStatus boosterStatus = new WelcomeBoosterStatus();
+        WelcomeBoosterStatus.BoosterValue boosterValue = new WelcomeBoosterStatus.BoosterValue();
+        WelcomeBoosterStatus.BoosterType boosterType =  WelcomeBoosterStatus.BoosterType.RECHARGE;
+        WelcomeBoosterStatus.Status status =  WelcomeBoosterStatus.Status.SUCCESS;
 
+        boosterValue.setUnit(WelcomeBoosterStatus.BoosterUnit.CFA);
+        boosterValue.setAmount("1000");
+        boosterStatus.setValue(boosterValue);
+        boosterStatus.setType(boosterType);
+        boosterStatus.setStatus(status);
+
+        List<WelcomeBoosterStatus> statuses = new ArrayList<>();
+
+        ResponseEntity<List<WelcomeBoosterStatus>> listResponseEntity = ResponseEntity.ok().body(statuses);
+        when(sponseesRepository.findOneByMsisdn(anyString())).thenReturn(Optional.of(sponsee));
+        when(boosterClient.getActiveWelcomeBoosterValue()).thenReturn(listResponseEntity);
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
 
-        restSponseeMockMvc.perform(post("/api/sponsees/send-sms?msisdnSource="+msisdnSource+"&msisdnDest="+msisdnDest)
+        restSponseeMockMvc.perform(post("/api/sponsees/send-sms?sMsisdn="+msisdnSource+"&sMsisdn="+msisdnDest)
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
             .andExpect(status().isBadRequest());
@@ -597,5 +626,4 @@ public class SponseeResourceIntTest {
             .andExpect(status().isOk());
 
     }
-
 }
