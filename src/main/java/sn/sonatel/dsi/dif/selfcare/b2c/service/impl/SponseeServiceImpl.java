@@ -295,7 +295,7 @@ public class SponseeServiceImpl implements SponseeService {
     private WelcomeBoosterStatus getWelcomeBoosterStatus(){
 
         ResponseEntity<List<WelcomeBoosterStatus>> activeWelcomeBoosterValue = boosterClient.getActiveWelcomeBoosterValue();
-        if(activeWelcomeBoosterValue.getBody() != null){
+        if(activeWelcomeBoosterValue.getBody() != null && !activeWelcomeBoosterValue.getBody().isEmpty()){
             return activeWelcomeBoosterValue.getBody().get(0);
         }
 
