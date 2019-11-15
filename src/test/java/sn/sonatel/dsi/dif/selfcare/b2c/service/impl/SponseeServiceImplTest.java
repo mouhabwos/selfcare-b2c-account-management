@@ -355,5 +355,91 @@ public class SponseeServiceImplTest {
 
     }
 
+    @Test
+    public void testSMSSponseeWithEmptyPromoBooster(){
+
+        boosterClient = mock(BoosterClient.class);
+
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+
+        sponseeRepository.deleteAll();
+        List<WelcomeBoosterStatus> statuses = new ArrayList<>();
+
+        ResponseEntity<List<WelcomeBoosterStatus>> listResponseEntity = ResponseEntity.ok().body(statuses);
+
+        when(boosterClient.getActiveWelcomeBoosterValue()).thenReturn(listResponseEntity);
+        when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+
+        //save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+
+        //save account sponsor
+        AccountB2C accountB2C = getAccount();
+        accountB2C.setId(null);
+        accountB2C.setNumero(sponsor.getMsisdn());
+        AccountB2C save = accountB2CRepository.save(getAccount());
+
+
+        // save sponsee
+        SponseeDTO sponseeDTO = getSponseeDTO();
+        Sponsee sponsee = new Sponsee();
+        sponsee.setAccountB2C(save);
+        sponsee.setMsisdn(sponseeDTO.getMsisdn());
+        sponsee.setFirstName(sponseeDTO.getFirstName());
+        Sponsee saveSponsee = sponseeRepository.save(sponsee);
+        sponseeDTO.setMsisdnSponsor(save.getNumero());
+        sponseeDTO.setLastName("hello");
+        sponseeDTO.setFirstName("hello firstname");
+
+        sponseeServiceImplUnderTest.sendSmsToSponsee(sponseeDTO.getMsisdnSponsor(),sponseeDTO.getMsisdn());
+
+
+
+    }
+
+    @Test
+    public void testSMSSponseeWithNNullPromoBooster(){
+
+        boosterClient = mock(BoosterClient.class);
+
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+
+        sponseeRepository.deleteAll();
+
+        ResponseEntity<List<WelcomeBoosterStatus>> listResponseEntity = ResponseEntity.ok().body(null);
+
+        when(boosterClient.getActiveWelcomeBoosterValue()).thenReturn(listResponseEntity);
+        when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+
+        //save sponsor
+        Optional<Sponsor> sponsorOptional = getSponsor();
+        Sponsor sponsor = sponsorOptional.get();
+
+        //save account sponsor
+        AccountB2C accountB2C = getAccount();
+        accountB2C.setId(null);
+        accountB2C.setNumero(sponsor.getMsisdn());
+        AccountB2C save = accountB2CRepository.save(getAccount());
+
+
+        // save sponsee
+        SponseeDTO sponseeDTO = getSponseeDTO();
+        Sponsee sponsee = new Sponsee();
+        sponsee.setAccountB2C(save);
+        sponsee.setMsisdn(sponseeDTO.getMsisdn());
+        sponsee.setFirstName(sponseeDTO.getFirstName());
+        Sponsee saveSponsee = sponseeRepository.save(sponsee);
+        sponseeDTO.setMsisdnSponsor(save.getNumero());
+        sponseeDTO.setLastName("hello");
+        sponseeDTO.setFirstName("hello firstname");
+
+        sponseeServiceImplUnderTest.sendSmsToSponsee(sponseeDTO.getMsisdnSponsor(),sponseeDTO.getMsisdn());
+
+
+
+    }
+
+
 
 }
