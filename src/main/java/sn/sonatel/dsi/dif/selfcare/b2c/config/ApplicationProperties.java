@@ -199,6 +199,10 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         private final UrlApi urlApi = new UrlApi();
 
+        @Getter(AccessLevel.PUBLIC)
+        @Setter(AccessLevel.PUBLIC)
+        private final ApiName apiName = new ApiName();
+
 
         public static class Auth{
 
@@ -233,6 +237,17 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String baseName;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String urlPartyManagement;
+        }
+
+        public static class ApiName{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String partyManagement;
         }
 
 

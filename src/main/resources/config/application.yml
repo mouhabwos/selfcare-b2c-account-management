@@ -37,28 +37,29 @@ eureka:
             git-version: ${git.commit.id.describe:}
             git-commit: ${git.commit.id.abbrev:}
             git-branch: ${git.branch:}
-#ribbon:
-#    eureka:
-#        enabled: true
+ribbon:
+    ReadTimeout: 120000
+    connection-timeout: 3000
+    eureka:
+        enabled: true
 feign:
     hystrix:
-        enabled: true
-#    client:
-#        config:
-#            default:
-#                connectTimeout: 5000
-#                readTimeout: 5000
+        enabled: false
+    client:
+        config:
+            default:
+                connectTimeout: 3000
+                readTimeout: 120000
 
 # See https://github.com/Netflix/Hystrix/wiki/Configuration
+
 hystrix:
     command:
         default:
             execution:
                 isolation:
-                    strategy: SEMAPHORE
-    # See https://github.com/spring-cloud/spring-cloud-netflix/issues/1330
-    #                    thread:
-    #                        timeoutInMilliseconds: 10000
+                    thread:
+                        timeoutInMilliseconds: 120000
     shareSecurityContext: true
 
 management:
@@ -152,7 +153,7 @@ jhipster:
         license-url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 logging:
-    file: target/selfcare-b2c-account-management.log 
+    file: target/selfcare-b2c-account-management.log
 
 
 # ===================================================================
