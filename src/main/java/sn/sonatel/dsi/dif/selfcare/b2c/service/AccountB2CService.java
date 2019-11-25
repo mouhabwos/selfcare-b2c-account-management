@@ -32,4 +32,6 @@ public interface AccountB2CService {
     AccountB2C getAccount(String login);
 
     void sendmail(UserInfoOuvertureCompte b2C);
+
+    boolean checkNumberV2(String msisdn);
 }
