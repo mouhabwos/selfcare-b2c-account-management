@@ -44,13 +44,11 @@ public class UrgenceDepannageServiceImplTest {
     @Mock
     private MailSendRepository mailSendRepository;
 
-    @Mock
-    private ServiceFile serviceFileManager;
 
     @Before
     public void setUp() {
         initMocks(this);
-        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, serviceSendMail, serviceFileManager);
+        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, serviceSendMail);
     }
 
     private OperationDTO operationDTO() throws Exception {
