@@ -25,7 +25,6 @@ public class IndividualInformation {
 
     private Set<OrganizationIdentification> individualIdentification = new HashSet<>();
 
-
     public IndividualInformation() {
         // Default constructor
     }
@@ -109,4 +108,5 @@ public class IndividualInformation {
     public void setIndividualIdentification(Set<OrganizationIdentification> individualIdentification) {
         this.individualIdentification = individualIdentification;
     }
+
 }

@@ -8,7 +8,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.ApiManagemen
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback.factory.PartyManagementClientFallbackFactory;
 
-@ApiManagementAuthorizedFeignClient(name = Constants.PARTY_MANAGEMENT, url="${application.api-management.url-api.base-url}"+"$ {application.api-management.url-api.url-party-management}",fallbackFactory = PartyManagementClientFallbackFactory.class)
+@ApiManagementAuthorizedFeignClient(name = Constants.PARTY_MANAGEMENT, url="${application.api-management.url-api.base-url}/"+Constants.PARTY_MANAGEMENT,fallbackFactory = PartyManagementClientFallbackFactory.class)
 public interface PartyManagementApiClient {
 
     @GetMapping(value = "/api/partyManagement/v1/individual/{msisdn}")

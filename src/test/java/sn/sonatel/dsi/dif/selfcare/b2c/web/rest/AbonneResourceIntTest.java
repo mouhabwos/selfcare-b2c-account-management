@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.PartyManagementService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
@@ -49,13 +49,13 @@ public class AbonneResourceIntTest {
     private AbonneResource resource;
 
     @Mock
-    private PartyManagementService partyManagementService;
+    private AbonneService abonneService;
 
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource(soapService, customerOfferService, partyManagementService);
+        final AbonneResource abonneResource = new AbonneResource(soapService, customerOfferService, abonneService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
     }
@@ -124,15 +124,15 @@ public class AbonneResourceIntTest {
 
     @Test
     public void testGetIndividualInformation() throws Exception {
-
         PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         when(partyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
 
-        restAbonneMockMvc.perform(get("/api/abonne/v1/individual/{msisdn}", "DEFAULT_NUMERO"))
+        restAbonneMockMvc.perform(get("/api/abonne/v1/information-abonne/{msisdn}", "DEFAULT_NUMERO"))
             .andExpect(status().isOk());
     }
+
 
 
 }

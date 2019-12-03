@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.PartyManagementService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
@@ -28,12 +28,12 @@ public class AbonneResource {
 
     private final SelfcareSoapService selfcareSoapService;
     private final CustomerOfferService customerOfferService;
-    private final PartyManagementService partyManagementService;
+    private final AbonneService abonneService;
 
-    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferService customerOfferService, PartyManagementService partyManagementService) {
+    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferService customerOfferService, AbonneService abonneService) {
         this.selfcareSoapService = selfcareSoapService;
         this.customerOfferService = customerOfferService;
-        this.partyManagementService = partyManagementService;
+        this.abonneService = abonneService;
     }
 
 
@@ -82,10 +82,10 @@ public class AbonneResource {
 
     }
 
-    @GetMapping("/v1/individual/{msisdn}")
+    @GetMapping("/v1/information-abonne/{msisdn}")
     public ResponseEntity<IndividualInformation> getIndividualInformation(@PathVariable String msisdn) {
         log.debug ( "REST request to get abonne : {}", msisdn );
-        return ResponseEntity.ok(partyManagementService.getIndividualInformation(msisdn));
+        return ResponseEntity.ok(abonneService.getIndividualInformation(msisdn));
 
     }
 

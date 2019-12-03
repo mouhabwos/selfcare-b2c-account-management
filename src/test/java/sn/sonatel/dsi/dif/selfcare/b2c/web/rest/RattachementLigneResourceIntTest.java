@@ -115,6 +115,9 @@ public class RattachementLigneResourceIntTest {
     @Mock
     private SponseeRepository sponseeRepository;
 
+    @Mock
+    private CustomerOfferApiClient customerOfferApiClient;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -583,6 +586,11 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne ligne = new RattachementLigne();
         ligne.setIdClient(rattachementLigneFixeVM.getIdClient());
         ligne.setNumero(rattachementLigneFixeVM.getNumero());
+
+        CustomerOffer customerOffer = getCustomer();
+
+        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(customerOffer);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
 
             restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/ligne-fixe/register")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)

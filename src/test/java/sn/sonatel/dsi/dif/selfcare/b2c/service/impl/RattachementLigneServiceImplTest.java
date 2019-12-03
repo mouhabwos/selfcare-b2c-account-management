@@ -22,12 +22,18 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -61,8 +67,6 @@ public class RattachementLigneServiceImplTest {
     @Mock
     private CustomerOfferApiClient customerOfferApiClient;
 
-    @Mock
-    private  SelfcareSoapService selfcareSoapService;
 
     @Mock
     private SponseeRepository sponseeRepository;
@@ -73,7 +77,7 @@ public class RattachementLigneServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, selfcareSoapService, sponseeService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService);
     }
 
 
@@ -373,6 +377,61 @@ public class RattachementLigneServiceImplTest {
 
          rattachementLigneServiceImpl.getAccountB2CByIdClient(idClient);
 
+    }
+
+    @Test
+    public void testGetRattachementLignes() {
+
+        // Setup
+         String msisdn = "77000 00 00";
+        mockAccountB2CRepository = mock(AccountB2CRepository.class);
+        mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService);
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        accountB2C.setNumero(msisdn);
+        Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
+        when(mockAccountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
+         List<RattachementLigne> rattachementLignes = new ArrayList<>();
+        when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
+        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
+
+        // Run the test
+        final List<InfoNumberVM> result = rattachementLigneServiceImpl.getRattachementLignes(msisdn);
+
+        List<InfoNumberVM> expectedResult = new ArrayList<>();
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testGetRattachementLignesWithNullBodyCustomerOffer() {
+
+        // Setup
+        String msisdn = "77000 00 00";
+        mockAccountB2CRepository = mock(AccountB2CRepository.class);
+        mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService);
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        accountB2C.setNumero(msisdn);
+        Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
+        when(mockAccountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
+        List<RattachementLigne> rattachementLignes = new ArrayList<>();
+        when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
+        when(customerOfferApiClient.getCustomerOffer("msisdn")).thenReturn(null);
+
+        // Run the test
+        final List<InfoNumberVM> result = rattachementLigneServiceImpl.getRattachementLignes(msisdn);
+
+        List<InfoNumberVM> expectedResult = new ArrayList<>();
+        // Verify the results
+        assertEquals(expectedResult, result);
     }
 
     private CustomerOffer getCustomer(){

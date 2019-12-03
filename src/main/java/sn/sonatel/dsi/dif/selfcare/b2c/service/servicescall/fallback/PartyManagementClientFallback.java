@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback;
 
+import com.netflix.hystrix.exception.HystrixTimeoutException;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,19 @@ public class PartyManagementClientFallback implements PartyManagementApiClient {
         this.throwable = throwable;
     }
 
+    @Override
+    public ResponseEntity<IndividualInformation> getIndividualInformation(String msisdn) {
+        log.debug("get individual information fallback for customer {} with following error : {} ",msisdn,throwable);
+        return responseBuilder();
+    }
+
     private ResponseEntity responseBuilder(){
 
+        if(throwable.getClass() == HystrixTimeoutException.class){
+
+            log.debug(" @@@@@@@@@ Error HystrixTimeoutException  PARTY Management SERVICE TIME OUT @@@@@@@@@@ ");
+            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("");
+        }
         if(throwable instanceof FeignException && ((FeignException) throwable).status() == 401){
 
             log.debug("Error status 404 API Management SERVICE UNAUTHORIZED : {} ", throwable.getMessage());
@@ -60,13 +72,8 @@ public class PartyManagementClientFallback implements PartyManagementApiClient {
 
         }
 
-
+        log.debug("default response status 500 : {} ", throwable.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-/-((-_-))-/-");
     }
 
-    @Override
-    public ResponseEntity<IndividualInformation> getIndividualInformation(String msisdn) {
-        log.debug("get individual information fallback for customer {} with following error : {} ",msisdn,throwable);
-        return responseBuilder();
-    }
 }

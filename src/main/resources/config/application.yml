@@ -37,29 +37,28 @@ eureka:
             git-version: ${git.commit.id.describe:}
             git-commit: ${git.commit.id.abbrev:}
             git-branch: ${git.branch:}
-ribbon:
-    ReadTimeout: 120000
-    connection-timeout: 3000
-    eureka:
-        enabled: true
+#ribbon:
+#    eureka:
+#        enabled: true
 feign:
     hystrix:
-        enabled: false
-    client:
-        config:
-            default:
-                connectTimeout: 3000
-                readTimeout: 120000
+        enabled: true
+#    client:
+#        config:
+#            default:
+#                connectTimeout: 5000
+#                readTimeout: 5000
 
 # See https://github.com/Netflix/Hystrix/wiki/Configuration
-
 hystrix:
     command:
         default:
             execution:
                 isolation:
-                    thread:
-                        timeoutInMilliseconds: 120000
+                    strategy: SEMAPHORE
+    # See https://github.com/spring-cloud/spring-cloud-netflix/issues/1330
+    #                    thread:
+    #                        timeoutInMilliseconds: 10000
     shareSecurityContext: true
 
 management:
