@@ -21,8 +21,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
@@ -64,10 +66,13 @@ public class AccountB2CServiceImplTest {
     @Autowired
     private SponseeService sponseeService;
 
+    @Mock
+    private ValidationHmacService validationHmacService;
+
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager,sponseeService,boosterManager);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager,sponseeService,boosterManager, validationHmacService);
     }
 
     private Optional<Sponsee> getSponsee(){
@@ -274,6 +279,16 @@ public class AccountB2CServiceImplTest {
         request.setToken("kbjidfbicnokfljvregjnsfouhrfbdsfoozfboufhzofhhzlzofoodfojzfzojfbzjofbzojfzjfoz");
         accountB2CServiceImplUnderTest.checkNumber(request);
 
+    }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testCheckNumberV2(){
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
+        checkNumberRequest.setUuid("789");
+        checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
+        checkNumberRequest.setMsisdn("771326617");
+
+        accountB2CServiceImplUnderTest.checkNumberV2(checkNumberRequest);
     }
 
 

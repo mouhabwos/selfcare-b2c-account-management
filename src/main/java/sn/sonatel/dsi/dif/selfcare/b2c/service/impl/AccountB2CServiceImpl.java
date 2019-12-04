@@ -20,6 +20,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
@@ -49,8 +50,10 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final BoosterManager boosterManager;
 
+    private final ValidationHmacService validationHmacService;
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, SponseeService sponseeService, BoosterManager boosterManager) {
+
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
@@ -58,6 +61,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         this.dowloadManager = dowloadManager;
         this.sponseeService = sponseeService;
         this.boosterManager=boosterManager;
+        this.validationHmacService = validationHmacService;
     }
 
     @Override
@@ -219,6 +223,20 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     }
 
+    @Override
+    public void checkNumberV2(CheckNumberRequest checkNumberRequest) {
+
+        log.debug("Service for check number version 2 for : {}", checkNumberRequest);
+        checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
+
+        boolean validateHmac = validationHmacService.validateHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
+
+        if(!validateHmac){
+            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
+        }
+        checkExistingAccountForNumber(checkNumberRequest.getMsisdn());
+    }
+
 
     @Override
     public void updateTutorialView(String msisdn) {
@@ -255,6 +273,5 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new LigneAlreadyRattachedException();
         }
     }
-
 
 }

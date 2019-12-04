@@ -53,6 +53,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .antMatchers("/api/account-management/register").permitAll()
             .antMatchers("/api/auth/**").permitAll()
             .antMatchers("/api/account-management/check_number").permitAll()
+            .antMatchers("/api/account-management/v2/check_number").permitAll()
             .antMatchers("/api/account-management/email-already-exist").permitAll()
             .antMatchers("/api/account-management/account/**").permitAll()
             .antMatchers("/api/account-management/view-tutorial/**").permitAll()

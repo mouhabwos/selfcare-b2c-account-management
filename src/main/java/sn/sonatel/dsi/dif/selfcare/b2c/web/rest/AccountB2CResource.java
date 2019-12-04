@@ -21,6 +21,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
@@ -47,8 +48,7 @@ public class AccountB2CResource {
 
     private final CaptchaService captchaService;
 
-
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService,CaptchaService captchaService) {
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, CaptchaService captchaService) {
 
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
@@ -130,6 +130,14 @@ public class AccountB2CResource {
         }
 
         return accountB2CService.checkNumber(numberRequest);
+    }
+
+    @Auditable(description = Message.Account.CHECK_Numero)
+    @PostMapping("/v2/check_number")
+    public ResponseEntity checkNumberV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+        checkNumberRequest.setUuid(uuid);
+        accountB2CService.checkNumberV2(checkNumberRequest);
+        return ResponseEntity.ok().build();
     }
 
     @Auditable(description = Message.Account.CHECK_Email)
