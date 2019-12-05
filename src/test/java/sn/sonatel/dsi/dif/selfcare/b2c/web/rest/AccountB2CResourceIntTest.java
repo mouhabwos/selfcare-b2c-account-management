@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -33,9 +34,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
@@ -45,6 +49,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -724,5 +729,36 @@ public class AccountB2CResourceIntTest {
         b2C = accountB2CRepository.save(b2C);
         restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/status/{msisdn}", b2C.getNumero()))
             .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @Transactional
+    public void registerAccountB2CWithIndicTigo() throws Exception {
+
+
+        ManagedUserVM b2C = new ManagedUserVM();
+
+        b2C.setLogin("761326617");
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setPassword("Passer12");
+        b2C.setEmail("email760000000@gmail.com");
+        b2C.setLangKey("");
+        b2C.setActivationKey("");
+
+        AccountB2C account =  new AccountB2C();
+        account.setNumero(b2C.getLogin());
+        account.setId(1L);
+        account.setFirstName(b2C.getFirstName());
+        account.setLastName(b2C.getLastName());
+        account.setImageProfil(b2C.getImageprofil());
+
+        // Response BadRequest == utilisateur non créé
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(b2C)))
+            .andExpect(status().isBadRequest());
     }
 }
