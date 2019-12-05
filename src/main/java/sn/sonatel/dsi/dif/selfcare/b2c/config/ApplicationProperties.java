@@ -199,7 +199,6 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         private final UrlApi urlApi = new UrlApi();
 
-
         public static class Auth{
 
             @Setter(AccessLevel.PUBLIC)
@@ -233,6 +232,7 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String baseName;
+
         }
 
 
