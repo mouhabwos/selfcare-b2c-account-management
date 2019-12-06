@@ -48,6 +48,8 @@ public class AccountB2CResource {
 
     private final CaptchaService captchaService;
 
+    private static final String IDNULL = "idnull";
+
     public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, CaptchaService captchaService) {
 
         this.accountB2CService = accountB2CService;
@@ -79,13 +81,30 @@ public class AccountB2CResource {
             return ResponseEntity.badRequest().build();
         }
         if (managedUserVM.getId() != null) {
-            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, IDNULL);
         }
 
         AccountB2C result = accountB2CService.registerAccountB2C(managedUserVM);
 
         return ResponseEntity.ok(result);
 
+    }
+
+    @Auditable(description = Message.Account.ADD)
+    @PostMapping("/v2/register")
+    public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+        log.debug("REST request to save AccountB2C version 2 : {}", managedUserVM);
+
+        if (!otpService.checkRegisterValidity(managedUserVM.getLogin())){
+            return ResponseEntity.badRequest().build();
+        }
+        if (managedUserVM.getId() != null) {
+            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, IDNULL);
+        }
+        managedUserVM.setUuid(uuid);
+        AccountB2C result = accountB2CService.registerAccountB2CV2(managedUserVM);
+
+        return ResponseEntity.ok(result);
     }
 
 
@@ -95,7 +114,7 @@ public class AccountB2CResource {
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, IDNULL);
         }
         AccountB2C result = accountB2CService.updateAccountB2C(accountB2C);
 

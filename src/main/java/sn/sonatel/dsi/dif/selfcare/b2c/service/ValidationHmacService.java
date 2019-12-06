@@ -44,11 +44,10 @@ public class ValidationHmacService {
      * @param msisdn : the msisdn for who the hmac was generated
      * @param uuid: the uuid of device
      * @return boolean
-     * @author: aly
+     * @author: bouya
      */
     public boolean compareHmac(String hmac, String msisdn, String uuid) {
         String computedHmac = sha256Handler.encryptSHA256(String.format("%s%s%s%s", INDICATIF+msisdn, uuid, new SimpleDateFormat("dd/MM/yyyy").format(new Date()), applicationProperties.getHmacSecret()));
-
         return computedHmac.equals(hmac);
     }
 }

@@ -747,4 +747,54 @@ public class AccountB2CResourceIntTest {
             .content ( TestUtil.convertObjectToJsonBytes ( checkNumberRequest )))
             .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @Transactional
+    public void registerAccountB2C() throws Exception {
+
+        int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
+        ManagedUserVM b2C = new ManagedUserVM();
+
+        b2C.setLogin(accountB2C.getNumero());
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setPassword("Passer12");
+        b2C.setEmail("email4@gmail.com");
+        b2C.setLangKey("");
+        b2C.setActivationKey("");
+
+        AccountB2C account =  new AccountB2C();
+        account.setNumero(b2C.getLogin());
+        account.setId(1L);
+        account.setFirstName(b2C.getFirstName());
+        account.setLastName(b2C.getLastName());
+        account.setImageProfil(b2C.getImageprofil());
+
+        ResponseEntity<AccountB2C> response = ResponseEntity.status(HttpStatus.OK).body(account);
+
+        AccountB2CService accountB2CServices = mock(AccountB2CService.class);
+
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService,captchaService);
+
+        this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+
+
+
+        when(accountB2CServices.registerAccountB2C(b2C)).thenReturn(account);
+
+        when(otpService.checkRegisterValidity(b2C.getLogin())).thenReturn(true);
+
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(b2C)))
+            .andExpect(status().isOk());
+
+
+    }
 }

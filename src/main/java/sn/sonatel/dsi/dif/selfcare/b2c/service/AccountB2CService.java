@@ -35,4 +35,6 @@ public interface AccountB2CService {
     void sendmail(UserInfoOuvertureCompte b2C);
 
     void checkNumberV2(CheckNumberRequest checkNumberRequest);
+
+    AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM);
 }
