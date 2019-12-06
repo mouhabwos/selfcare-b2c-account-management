@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
@@ -26,11 +28,12 @@ public class AbonneResource {
 
     private final SelfcareSoapService selfcareSoapService;
     private final CustomerOfferService customerOfferService;
+    private final AbonneService abonneService;
 
-    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferService customerOfferService) {
+    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferService customerOfferService, AbonneService abonneService) {
         this.selfcareSoapService = selfcareSoapService;
         this.customerOfferService = customerOfferService;
-
+        this.abonneService = abonneService;
     }
 
 
@@ -76,6 +79,13 @@ public class AbonneResource {
         log.debug ( "REST request to get CustomerOffer : {}", msisdn );
 
         return ResponseEntity.ok(customerOfferService.getCustomerOffer(msisdn));
+
+    }
+
+    @GetMapping("/v1/information-abonne/{msisdn}")
+    public ResponseEntity<IndividualInformation> getIndividualInformation(@PathVariable String msisdn) {
+        log.debug ( "REST request to get abonne : {}", msisdn );
+        return ResponseEntity.ok(abonneService.getIndividualInformation(msisdn));
 
     }
 

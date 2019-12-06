@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -41,6 +40,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
@@ -759,6 +759,29 @@ public class AccountB2CResourceIntTest {
         restAccountB2CMockMvc.perform(post("/api/account-management/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
+            .andExpect(status().isBadRequest());
+    }
+
+
+
+
+    @Test
+    @Transactional
+    public void checkNumberV2() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
+        checkNumberRequest.setMsisdn(MSISDN);
+        checkNumberRequest.setHmac(HMAC);
+        //checkNumberRequest.setUuid(UUID);
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/v2/check_number")
+            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
+            .header("X-UUID", UUID)
+            .content ( TestUtil.convertObjectToJsonBytes ( checkNumberRequest )))
             .andExpect(status().isBadRequest());
     }
 }
