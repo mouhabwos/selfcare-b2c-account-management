@@ -291,5 +291,50 @@ public class AccountB2CServiceImplTest {
         accountB2CServiceImplUnderTest.checkNumberV2(checkNumberRequest);
     }
 
+    @Test
+    public void testRegisterAccountB2CV2Success() {
+
+        // Setup
+        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        managedUserVM.setUuid("789");
+        managedUserVM.setHmac("ce55ff824f9e0e518f0bb121d1a164b40d13a0f1bb6ff2364e1aee0a599c4305");
+        managedUserVM.setPassword("Passer12");
+        managedUserVM.setLogin("775266300");
+        managedUserVM.setLastName("lastname");
+        managedUserVM.setFirstName("firstname");
+        ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
+
+        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
+        when(validationHmacService.validateHmac(anyString(),anyString(),anyString())).thenReturn(true);
+
+        // Run the test
+        AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
+
+        // Verify the results
+        assertNotNull(result);
+    }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testRegisterAccountB2CV2HmacNonValid() {
+        // Setup
+        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        managedUserVM.setUuid("789885");
+        managedUserVM.setHmac("ce55ff824f9e0e518f0bb121d1a164b40d13a0f1bb6ff2364e1aee0a599c4305");
+        managedUserVM.setPassword("Passer12");
+        managedUserVM.setLogin("771326618");
+        managedUserVM.setLastName("lastname");
+        managedUserVM.setFirstName("firstname");
+        ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
+
+        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
+
+        // Run the test
+        AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
+
+        // Verify the results
+        assertNotNull(result);
+    }
 
 }
