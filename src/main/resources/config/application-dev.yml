@@ -198,6 +198,8 @@ application:
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
 
+    hmac-secret: secretToShareWithGatewayOM
+
 log-manager:
     microservice-name: Account Management
     app-name: Selfcare B2C

@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -34,9 +33,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
@@ -724,5 +723,28 @@ public class AccountB2CResourceIntTest {
         b2C = accountB2CRepository.save(b2C);
         restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/status/{msisdn}", b2C.getNumero()))
             .andExpect(status().isOk());
+    }
+
+
+
+
+    @Test
+    @Transactional
+    public void checkNumberV2() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
+        checkNumberRequest.setMsisdn(MSISDN);
+        checkNumberRequest.setHmac(HMAC);
+        //checkNumberRequest.setUuid(UUID);
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/v2/check_number")
+            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
+            .header("X-UUID", UUID)
+            .content ( TestUtil.convertObjectToJsonBytes ( checkNumberRequest )))
+            .andExpect(status().isBadRequest());
     }
 }

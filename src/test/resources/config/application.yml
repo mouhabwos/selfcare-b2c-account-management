@@ -159,3 +159,5 @@ application:
             sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
             sms-promo: Fais le aujourd hui et gagne %s %s.
 
+
+    hmac-secret: secretToShareWithGatewayOM

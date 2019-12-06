@@ -26,6 +26,7 @@ public class ApplicationProperties {
     private String serviceClientOrange;
     private String emailServiceClientOrange;
     private String lienIbou;
+    private String hmacSecret;
 
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
@@ -45,6 +46,14 @@ public class ApplicationProperties {
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     private final Scheduler scheduler = new Scheduler();
+
+    public String getHmacSecret() {
+        return hmacSecret;
+    }
+
+    public void setHmacSecret(String hmacSecret) {
+        this.hmacSecret = hmacSecret;
+    }
 
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
