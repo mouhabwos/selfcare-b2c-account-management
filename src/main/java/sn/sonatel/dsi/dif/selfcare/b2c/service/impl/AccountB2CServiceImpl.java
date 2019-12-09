@@ -87,44 +87,20 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
         log.debug("Service for register AccountB2C : {}", managedUserVM);
+        return register(managedUserVM);
+    }
 
-        checkExistingAccountForNumber(managedUserVM.getLogin());
+    @Override
+    public AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM){
 
+        log.debug("Service for register AccountB2C : {}", managedUserVM);
+        boolean validateHmac = validationHmacService.validateHmac(managedUserVM.getHmac(), managedUserVM.getLogin(), managedUserVM.getUuid());
 
-            if(managedUserVM.getEmail() == null){
-
-                managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
-            }
-
-        try {
-            ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
-
-            if (response.getStatusCode() == HttpStatus.CREATED) {
-
-                managedUserVM.setActivated(true);
-
-                AccountB2C result =  new AccountB2C();
-
-                result.setNumero(managedUserVM.getLogin());
-                result.setFirstName(managedUserVM.getFirstName());
-                result.setLastName(managedUserVM.getLastName());
-                result.setImageProfil(managedUserVM.getImageprofil());
-                result.setEmail(managedUserVM.getEmail());
-                result = accountB2CRepository.save(result);
-                mailService.sendActivationEmail(result);
-
-                this.boosterManager.applyWelcomeBooster(result.getNumero());
-                sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
-
-                return result;
-            }
-
-        }catch (HttpClientErrorException e){
-
-            log.debug(" exception for creation Account : {}", e);
+        if(!validateHmac){
+            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
 
-         throw new UserNoCreatedException();
+        return register(managedUserVM);
     }
 
 
@@ -272,6 +248,47 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             log.debug ( "Error this login is already rattached  : {}", msisdn );
             throw new LigneAlreadyRattachedException();
         }
+    }
+
+    private AccountB2C register(ManagedUserVM managedUserVM){
+
+        checkExistingAccountForNumber(managedUserVM.getLogin());
+
+
+        if(managedUserVM.getEmail() == null){
+
+            managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
+        }
+
+        try {
+            ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
+
+            if (response.getStatusCode() == HttpStatus.CREATED) {
+
+                managedUserVM.setActivated(true);
+
+                AccountB2C result =  new AccountB2C();
+
+                result.setNumero(managedUserVM.getLogin());
+                result.setFirstName(managedUserVM.getFirstName());
+                result.setLastName(managedUserVM.getLastName());
+                result.setImageProfil(managedUserVM.getImageprofil());
+                result.setEmail(managedUserVM.getEmail());
+                result = accountB2CRepository.save(result);
+                mailService.sendActivationEmail(result);
+
+                this.boosterManager.applyWelcomeBooster(result.getNumero());
+                sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
+
+                return result;
+            }
+
+        }catch (HttpClientErrorException e){
+
+            log.debug(" exception for creation Account : {}", e);
+        }
+
+        throw new UserNoCreatedException();
     }
 
 }
