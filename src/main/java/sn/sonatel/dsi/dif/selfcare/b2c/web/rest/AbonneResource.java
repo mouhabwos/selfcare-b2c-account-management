@@ -14,6 +14,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
@@ -84,8 +85,15 @@ public class AbonneResource {
 
     @GetMapping("/v1/information-abonne/{msisdn}")
     public ResponseEntity<IndividualInformation> getIndividualInformation(@PathVariable String msisdn) {
-        log.debug ( "REST request to get abonne : {}", msisdn );
+        log.debug ( "REST request to get information abonne : {}", msisdn );
         return ResponseEntity.ok(abonneService.getIndividualInformation(msisdn));
+
+    }
+
+    @GetMapping("/v1/information-organization/{msisdn}")
+    public ResponseEntity<OrganizationInformation> getOrganizationInformation(@PathVariable String msisdn) {
+        log.debug ( "REST request to get information  organization : {}", msisdn );
+        return ResponseEntity.ok(abonneService.getOrganizationInformation(msisdn));
 
     }
 

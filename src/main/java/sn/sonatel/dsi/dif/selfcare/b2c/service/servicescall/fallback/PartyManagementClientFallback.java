@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 
 /**
  * @author BOUYA KANDE
@@ -27,6 +28,12 @@ public class PartyManagementClientFallback implements PartyManagementApiClient {
     @Override
     public ResponseEntity<IndividualInformation> getIndividualInformation(String msisdn) {
         log.debug("get individual information fallback for customer {} with following error : {} ",msisdn,throwable);
+        return responseBuilder();
+    }
+
+    @Override
+    public ResponseEntity<OrganizationInformation> getOrganizationInformation(String msisdn) {
+        log.debug("get Organization information fallback for customer {} with following error : {} ",msisdn,throwable);
         return responseBuilder();
     }
 

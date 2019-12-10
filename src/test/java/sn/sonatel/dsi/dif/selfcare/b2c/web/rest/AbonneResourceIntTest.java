@@ -133,6 +133,16 @@ public class AbonneResourceIntTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    public void testGetOrganizationInformationInformation() throws Exception {
+        PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
+        ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        when(partyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/information-organization/{msisdn}", "DEFAULT_NUMERO"))
+            .andExpect(status().isOk());
+    }
 
 
 }

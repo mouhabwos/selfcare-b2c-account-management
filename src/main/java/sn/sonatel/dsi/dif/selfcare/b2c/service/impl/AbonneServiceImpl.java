@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
 
 @Service
@@ -29,5 +30,21 @@ public class AbonneServiceImpl implements AbonneService {
 
         }
         return new IndividualInformation();
+    }
+
+    @Override
+    public OrganizationInformation getOrganizationInformation(String msisdn){
+
+        ResponseEntity<OrganizationInformation> responseEntity = partyManagementApiClient.getOrganizationInformation(msisdn);
+
+        if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+            return responseEntity.getBody();
+        }
+
+        if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
+            throw new NotFoundNumberException("");
+
+        }
+        return new OrganizationInformation();
     }
 }

@@ -3,10 +3,15 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 public class OrganizationIdentification {
 
     private String type;
+
     private String identificationId;
+
     private String issuingAuthority;
+
     private String  href;
+
     private String issuingDate;
+
     private String expiryDate;
 
     public OrganizationIdentification() {
