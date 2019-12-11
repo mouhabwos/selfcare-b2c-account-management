@@ -93,6 +93,9 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM){
 
+        managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin()));
+
+
         log.debug("Service for register AccountB2C : {}", managedUserVM);
         boolean validateHmac = validationHmacService.validateHmac(managedUserVM.getHmac(), managedUserVM.getLogin(), managedUserVM.getUuid());
 
