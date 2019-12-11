@@ -6,13 +6,20 @@ import java.util.Set;
 public class OrganizationInformation {
 
     private String id;
-    private String isLegalEntity;
-    private String type;
-    private String tradingName;
-    private String nameType;
-    private String status;
+
     private String href;
-    private Set<OrganizationIdentification> individualIdentification = new HashSet<>();
+
+    private String isLegalEntity;
+
+    private String type;
+
+    private String tradingName;
+
+    private String nameType;
+
+    private String status;
+
+    private Set<OrganizationIdentification> organizationIdentification = new HashSet<>();
 
     public OrganizationInformation() {
         // Default constructor
@@ -26,13 +33,6 @@ public class OrganizationInformation {
         this.id = id;
     }
 
-    public String getIsLegalEntity() {
-        return isLegalEntity;
-    }
-
-    public void setIsLegalEntity(String isLegalEntity) {
-        this.isLegalEntity = isLegalEntity;
-    }
 
     public String getType() {
         return type;
@@ -40,6 +40,22 @@ public class OrganizationInformation {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getIsLegalEntity() {
+        return isLegalEntity;
+    }
+
+    public void setIsLegalEntity(String isLegalEntity) {
+        this.isLegalEntity = isLegalEntity;
     }
 
     public String getTradingName() {
@@ -66,19 +82,11 @@ public class OrganizationInformation {
         this.status = status;
     }
 
-    public String getHref() {
-        return href;
+    public Set<OrganizationIdentification> getOrganizationIdentification() {
+        return organizationIdentification;
     }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    public Set<OrganizationIdentification> getIndividualIdentification() {
-        return individualIdentification;
-    }
-
-    public void setIndividualIdentification(Set<OrganizationIdentification> individualIdentification) {
-        this.individualIdentification = individualIdentification;
+    public void setOrganizationIdentification(Set<OrganizationIdentification> organizationIdentification) {
+        this.organizationIdentification = organizationIdentification;
     }
 }

@@ -22,8 +22,8 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: @eureka.instance.dev.hostname@
-        hostname: @eureka.instance.dev.hostname@
+        ip-address: localhost #@eureka.instance.dev.hostname@
+        hostname: localhost #@eureka.instance.dev.hostname@
     client:
         service-url:
             defaultZone: http://admin:${jhipster.registry.password}@10.100.59.111:8761/eureka/
@@ -86,7 +86,7 @@ spring:
                 enabled: true
 
 server:
-    port: @server.port.docker.expose@
+    port: 8715 #@server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties

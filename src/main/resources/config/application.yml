@@ -37,14 +37,12 @@ eureka:
             git-version: ${git.commit.id.describe:}
             git-commit: ${git.commit.id.abbrev:}
             git-branch: ${git.branch:}
-ribbon:
-    ReadTimeout: 120000
-    connection-timeout: 3000
-    eureka:
-        enabled: true
+#ribbon:
+#    eureka:
+#        enabled: true
 feign:
     hystrix:
-        enabled: false
+        enabled: true
     client:
         config:
             default:
@@ -52,7 +50,6 @@ feign:
                 readTimeout: 120000
 
 # See https://github.com/Netflix/Hystrix/wiki/Configuration
-
 hystrix:
     command:
         default:

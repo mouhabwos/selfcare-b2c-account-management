@@ -23,6 +23,8 @@ public class IndividualInformation {
 
     private String maritalStatus;
 
+    private String type;
+
     private Set<OrganizationIdentification> individualIdentification = new HashSet<>();
 
     public IndividualInformation() {
@@ -109,4 +111,11 @@ public class IndividualInformation {
         this.individualIdentification = individualIdentification;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

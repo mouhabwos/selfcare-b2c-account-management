@@ -43,44 +43,20 @@ public class PartyManagementClientFallback implements PartyManagementApiClient {
 
             log.debug(" @@@@@@@@@ Error HystrixTimeoutException  PARTY Management SERVICE TIME OUT @@@@@@@@@@ ");
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("");
-        }
-        if(throwable instanceof FeignException && ((FeignException) throwable).status() == 401){
+        } else if (throwable instanceof FeignException && ((FeignException) throwable).status() == 400) {
 
-            log.debug("Error status 404 API Management SERVICE UNAUTHORIZED : {} ", throwable.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        } else
-        if (throwable instanceof FeignException && ((FeignException) throwable).status() == 400) {
-
-            log.debug("Error status 400 API Management BAD REQUEST : {} ", throwable.getMessage());
+            log.debug("@@@@@@@@@@@ Error status 400 API Management BAD REQUEST : {} ", throwable.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
 
         }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 404){
 
-            log.debug("Error status 404 SERVICE UNAVAILABLE API Management  : {} ", throwable.getMessage());
+            log.debug("@@@@@@@@@@@ Error status 404 SERVICE UNAVAILABLE API Management  : {} ", throwable.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-
-        }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 503){
-
-            log.debug("Error status 503 API Management SERVICE UNAVAILABLE : {} ", throwable.getMessage());
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
-
-        }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 403){
-
-            log.debug("Error status 404 API Management SERVICE FORBIDDEN : {} ", throwable.getMessage());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
-        } else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 504){
-
-            log.debug("Error status 504 API Management SERVICE TIME OUT : {} ", throwable.getMessage());
-            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("");
-        }else if(throwable instanceof FeignException && ((FeignException) throwable).status() == 500){
-
-            log.debug("Error status 500 API Management INTERNAL SERVER : {} ", throwable.getMessage());
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
 
         }
 
-        log.debug("default response status 500 : {} ", throwable.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-/-((-_-))-/-");
+        log.debug("@@@@@@@@@@@ default response status 503 : {} ", throwable.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
     }
 
 }
