@@ -12,6 +12,7 @@ public final class Message {
         public static final String SOUSC_USER = "Recuperation de la souscription de l abonne";
         public static final String INFO_ABONNE = "Recuperation des informations de l abonne";
         public static final String CUSTOMEROFFER = "Recuperation du custommer offer de l abonne";
+        public static final String IS_ORANGE_NUMBER = "Verifier si le numero est un numero orange";
 
         private Abonne() {
             super ();

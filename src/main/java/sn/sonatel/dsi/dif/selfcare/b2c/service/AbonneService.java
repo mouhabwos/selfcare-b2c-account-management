@@ -1,8 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 
 public interface AbonneService {
 
-    IndividualInformation getIndividualInformation(String msisdn);
+    AbonneDTO getInformationAbonne(String msisdn);
+
+    boolean isOrangeNumber(String msisdn);
 }

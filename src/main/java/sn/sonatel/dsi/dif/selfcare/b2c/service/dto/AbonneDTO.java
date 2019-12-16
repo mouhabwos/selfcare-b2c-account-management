@@ -14,6 +14,7 @@ public class AbonneDTO {
 
     private String prenomAbonne;
 
+    private String msisdn;
 
     public String getNomAbonne() {
         return nomAbonne;
@@ -31,11 +32,20 @@ public class AbonneDTO {
         this.prenomAbonne = prenomAbonne;
     }
 
+    public String getMsisdn() {
+        return msisdn;
+    }
+
+    public void setMsisdn(String msisdn) {
+        this.msisdn = msisdn;
+    }
+
     @Override
     public String toString() {
         return "{" +
             "\"nomAbonne\":" + nomAbonne + ',' +
             "\"prenomAbonne\":" + prenomAbonne +
+            "\"msisdn\":" + msisdn +
             '}';
     }
 }

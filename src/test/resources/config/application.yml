@@ -152,6 +152,10 @@ application:
             base-name: api-accountmanagement
             base-url: https://api.orange-sonatel.com
             url-account-management: /api-accountmanagement
+        party-management:
+            name: api-partymanagement
+            url-individual-information: /api/partyManagement/v1/individual/{msisdn}
+            url-organization-information: /api/partyManagement/v1/organization/{msisdn}
 
     send-sms:
         sponsorship:

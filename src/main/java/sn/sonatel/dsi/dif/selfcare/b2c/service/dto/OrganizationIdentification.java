@@ -2,11 +2,18 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 public class OrganizationIdentification {
 
+    private String id;
+
     private String type;
+
     private String identificationId;
+
     private String issuingAuthority;
+
     private String  href;
+
     private String issuingDate;
+
     private String expiryDate;
 
     public OrganizationIdentification() {
@@ -59,5 +66,13 @@ public class OrganizationIdentification {
 
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -4,17 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -57,73 +58,73 @@ public class AbonneServiceImplTest {
 
         information.setIndividualIdentification(individualIdentification);
 
-
         return information;
     }
-    @Test(expected = NotFoundNumberException.class)
-    public void testGetIndividualInformationWithNotFoundNumberException() {
+
+    private OrganizationInformation getOrganization(String msisdn){
+
+        OrganizationInformation identification = new OrganizationInformation();
+        identification.setId(msisdn);
+        identification.setIsLegalEntity("");
+        identification.setTradingName("DD");
+        identification.setStatus("status");
+        identification.setHref("");
+        identification.setOrganizationIdentification(new HashSet<>());
+        identification.setType("type");
+
+        return identification;
+    }
+
+
+    @Test
+    public void testGetIsOrangeNumberWithNotFoundNumber() {
         // Setup
-        final String msisdn = "msisdn";
-        /*final IndividualInformation expectedResult = null;*/
+        final String msisdn = "700000000";
 
         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
+        when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
 
         // Run the test
-        abonneServiceImplUnderTest.getIndividualInformation(msisdn);
+        boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
+        assertFalse(orangeNumber);
 
     }
 
     @Test
-    public void testGetIndividualInformationSuccess() {
-        // init val
-        final String msisdn = "77000 00 00";
-        IndividualInformation information = getIndividualInformation(msisdn);
+    public void testIsOrangeNumberWithTrue() {
+        // Setup
+        final String msisdn = "700000000";
 
 
-        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).body(information);
+        ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body(getIndividualInformation(msisdn));
 
-        when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
-
+        when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(responseEntity);
+        when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
 
         // Run the test
-        final IndividualInformation result = abonneServiceImplUnderTest.getIndividualInformation(msisdn);
-
-        // Verify the results
-        assertEquals(information.getId(), result.getId());
-        assertEquals(information.getFamilyName(), result.getFamilyName());
-        assertEquals(information.getContactNumbers(), result.getContactNumbers());
-        assertEquals(information.getBirthDate(), result.getBirthDate());
-        assertEquals(information.getTitle(), result.getTitle());
-        assertEquals(information.getGender(), result.getGender());
-        assertEquals(information.getGivenName(), result.getGender());
-        assertEquals(information.getStatus(), result.getGender());
-        assertEquals(information.getMaritalStatus(), result.getMaritalStatus());
-
-        assertEquals(information.getIndividualIdentification(), result.getIndividualIdentification());
+        boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
+        assertTrue(orangeNumber);
 
     }
 
-    public void testGetIndividualInformationWithEmptyResult() {
+    @Test
+    public void testIsOrangeNumbersWithTrue() {
         // Setup
-        final String msisdn = "msisdn";
-        /*final IndividualInformation expectedResult = null;*/
+        final String msisdn = "700000000";
 
-        ResponseEntity response = ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).build();
+
+        OrganizationInformation organization =  getOrganization(msisdn);
+        ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body(organization);
 
         when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
-        IndividualInformation information = new IndividualInformation();
+        when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(responseEntity);
 
         // Run the test
-        final IndividualInformation result = abonneServiceImplUnderTest.getIndividualInformation(msisdn);
-
-        // Verify the results
-        assertEquals(information.getId(), result.getId());
-        assertEquals(information.getFamilyName(), result.getFamilyName());
-        assertEquals(information.getContactNumbers(), result.getContactNumbers());
-        assertEquals(information.getBirthDate(), result.getBirthDate());
-        assertEquals(information.getTitle(), result.getTitle());
-        assertEquals(information.getGender(), result.getGender());
+        boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
+        assertTrue(orangeNumber);
     }
 }

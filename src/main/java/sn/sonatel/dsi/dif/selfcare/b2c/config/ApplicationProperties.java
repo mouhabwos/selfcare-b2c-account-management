@@ -208,6 +208,10 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         private final UrlApi urlApi = new UrlApi();
 
+        @Getter(AccessLevel.PUBLIC)
+        @Setter(AccessLevel.PUBLIC)
+        private final PartyManagement partyManagement = new PartyManagement();
+
         public static class Auth{
 
             @Setter(AccessLevel.PUBLIC)
@@ -241,6 +245,22 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String baseName;
+
+        }
+
+        public static class PartyManagement{
+
+            @Getter(AccessLevel.PUBLIC)
+            @Setter(AccessLevel.PUBLIC)
+            private String name;
+
+            @Getter(AccessLevel.PUBLIC)
+            @Setter(AccessLevel.PUBLIC)
+            private String urlIndividualInformation;
+
+            @Getter(AccessLevel.PUBLIC)
+            @Setter(AccessLevel.PUBLIC)
+            private String urlOrganizationInformation;
 
         }
 
