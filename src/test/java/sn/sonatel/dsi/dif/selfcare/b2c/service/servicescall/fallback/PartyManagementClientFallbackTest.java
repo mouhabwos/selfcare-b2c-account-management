@@ -122,7 +122,7 @@ public class PartyManagementClientFallbackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
 
         partyManagementClientFallbackUnderTest = new PartyManagementClientFallback(FeignException.errorStatus("api", response));
 
@@ -142,7 +142,7 @@ public class PartyManagementClientFallbackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
 
         partyManagementClientFallbackUnderTest = new PartyManagementClientFallback(FeignException.errorStatus("api", response));
 
@@ -163,7 +163,7 @@ public class PartyManagementClientFallbackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-/-((-_-))-/-");
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
 
         partyManagementClientFallbackUnderTest = new PartyManagementClientFallback(FeignException.errorStatus("api", response));
 
@@ -181,7 +181,7 @@ public class PartyManagementClientFallbackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("");
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
 
         partyManagementClientFallbackUnderTest = new PartyManagementClientFallback(FeignException.errorStatus("api", response));
 

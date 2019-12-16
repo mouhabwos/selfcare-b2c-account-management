@@ -27,6 +27,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -122,17 +123,19 @@ public class AbonneResourceIntTest {
             .andExpect(status().isOk());
     }
 
-    @Test
-    public void testGetIndividualInformation() throws Exception {
-        PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
-        ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
+    @Test
+    public void testGetOrganizationInformationInformation() throws Exception {
+         PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
+         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        when(partyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
         when(partyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
 
-        restAbonneMockMvc.perform(get("/api/abonne/v1/information-abonne/{msisdn}", "DEFAULT_NUMERO"))
-            .andExpect(status().isOk());
+        restAbonneMockMvc.perform(get("/api/abonne/v1/is-orange-number/{msisdn}", "DEFAULT_NUMERO"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("false"));
     }
-
 
 
 }

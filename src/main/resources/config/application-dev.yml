@@ -22,8 +22,8 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: @eureka.instance.dev.hostname@
-        hostname: @eureka.instance.dev.hostname@
+        ip-address: localhost #@eureka.instance.dev.hostname@
+        hostname: localhost #@eureka.instance.dev.hostname@
     client:
         service-url:
             defaultZone: http://admin:${jhipster.registry.password}@10.100.59.111:8761/eureka/
@@ -86,7 +86,7 @@ spring:
                 enabled: true
 
 server:
-    port: @server.port.docker.expose@
+    port: 8715 #@server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties
@@ -170,6 +170,10 @@ application:
             base-name: api-accountmanagement
             base-url: https://api.orange-sonatel.com
             url-account-management: /api-accountmanagement
+        party-management:
+            name: api-partymanagement
+            url-individual-information: /api/partyManagement/v1/individual/{msisdn}
+            url-organization-information: /api/partyManagement/v1/organization/{msisdn}
 
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange
