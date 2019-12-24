@@ -7,13 +7,13 @@
     <version>1.5.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
- 
+
   <repositories>
     <repository>
       <id>nexus-release</id>
       <name>nexus releases</name>
       <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
-    </repository> 
+    </repository>
   </repositories>
 
     <!-- jhipster-needle-distribution-management -->
@@ -609,6 +609,22 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>${maven-resources-plugin.version}</version>
                 <executions>
+                    <execution>
+                        <id>openshift-configs</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/openshift</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>openshift</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>default-resources</id>
                         <phase>validate</phase>
