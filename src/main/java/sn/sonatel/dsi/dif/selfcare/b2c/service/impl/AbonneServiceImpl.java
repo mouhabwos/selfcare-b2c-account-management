@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
@@ -27,21 +29,21 @@ public class AbonneServiceImpl implements AbonneService {
         log.debug("Service get information msisdn: {}", msisdn);
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
         AbonneDTO abonneDTO = new AbonneDTO();
-        InforClientWrapper inforClientWrapper;
+        InfoClientWrapper infoClientWrapper;
 
-        inforClientWrapper = getInformations(msisdn);
-            ClientType clientType = inforClientWrapper.getClientType();
+        infoClientWrapper = getInformations(msisdn);
+            ClientType clientType = infoClientWrapper.getClientType();
         switch (clientType){
-            case INDIVIDUAL:
+            case ORGANIZATION:
                 abonneDTO.setNomAbonne("");
                 abonneDTO.setPrenomAbonne("");
-                abonneDTO.setMsisdn(inforClientWrapper.getOrganization().getId());
+                abonneDTO.setMsisdn(infoClientWrapper.getOrganization().getId());
                 return abonneDTO;
 
-            case ORGANIZATION:
-                abonneDTO.setNomAbonne(inforClientWrapper.getInformation().getFamilyName());
-                abonneDTO.setPrenomAbonne(inforClientWrapper.getInformation().getGivenName());
-                abonneDTO.setMsisdn(inforClientWrapper.getInformation().getId());
+            case INDIVIDUAL:
+                abonneDTO.setNomAbonne(infoClientWrapper.getInformation().getFamilyName());
+                abonneDTO.setPrenomAbonne(infoClientWrapper.getInformation().getGivenName());
+                abonneDTO.setMsisdn(infoClientWrapper.getInformation().getId());
                 return abonneDTO;
             default:
                 return abonneDTO;
@@ -49,27 +51,27 @@ public class AbonneServiceImpl implements AbonneService {
     }
 
 
-    private  InforClientWrapper getInformations(String msisdn){
+    public InfoClientWrapper getInformations(String msisdn){
 
-        InforClientWrapper inforClientWrapper = new InforClientWrapper();
+        InfoClientWrapper infoClientWrapper = new InfoClientWrapper();
 
         ResponseEntity<IndividualInformation> informationResponseEntity = partyManagementApiClient.getIndividualInformation(msisdn);
 
         if (informationResponseEntity.getStatusCode() == HttpStatus.OK && informationResponseEntity.getBody() != null) {
-            inforClientWrapper.setClientType(ClientType.ORGANIZATION);
-            inforClientWrapper.setInformation(informationResponseEntity.getBody());
-            return inforClientWrapper;
+            infoClientWrapper.setClientType(ClientType.INDIVIDUAL);
+            infoClientWrapper.setInformation(informationResponseEntity.getBody());
+            return infoClientWrapper;
         }
 
         ResponseEntity<OrganizationInformation> responseEntity = partyManagementApiClient.getOrganizationInformation(msisdn);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                inforClientWrapper.setClientType(ClientType.INDIVIDUAL);
-                inforClientWrapper.setOrganization(responseEntity.getBody());
-                 return inforClientWrapper;
+                infoClientWrapper.setClientType(ClientType.ORGANIZATION);
+                infoClientWrapper.setOrganization(responseEntity.getBody());
+                 return infoClientWrapper;
             }
 
-        return inforClientWrapper;
+        return infoClientWrapper;
     }
 
 
@@ -84,37 +86,3 @@ public class AbonneServiceImpl implements AbonneService {
 
 }
 
- class InforClientWrapper{
-
-    private ClientType clientType = ClientType.NOT_FOUND;
-    private IndividualInformation information = new IndividualInformation();
-    private OrganizationInformation organization = new OrganizationInformation();
-
-     public ClientType getClientType() {
-         return clientType;
-     }
-
-     public void setClientType(ClientType clientType) {
-         this.clientType = clientType;
-     }
-
-     public IndividualInformation getInformation() {
-         return information;
-     }
-
-     public void setInformation(IndividualInformation information) {
-         this.information = information;
-     }
-
-     public OrganizationInformation getOrganization() {
-         return organization;
-     }
-
-     public void setOrganization(OrganizationInformation organization) {
-         this.organization = organization;
-     }
- }
-
- enum ClientType{
-     INDIVIDUAL, ORGANIZATION,NOT_FOUND
- }
