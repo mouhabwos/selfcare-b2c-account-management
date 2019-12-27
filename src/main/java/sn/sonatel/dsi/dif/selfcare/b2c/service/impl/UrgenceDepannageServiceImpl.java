@@ -6,13 +6,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.mailmanagment.ServiceSendMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import javax.activation.DataSource;
@@ -40,14 +39,11 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     private final MailSendRepository mailSendRepository;
 
-    private final ServiceSendMail serviceSendMail;
+    private final ApplicationProperties applicationProperties;
 
-    private final ServiceFile serviceFileManager;
-
-    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ServiceSendMail serviceSendMail, ServiceFile serviceFileManager) {
+    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ApplicationProperties applicationProperties) {
         this.mailSendRepository = mailSendRepository;
-        this.serviceSendMail = serviceSendMail;
-        this.serviceFileManager = serviceFileManager;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -67,7 +63,7 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         operationDTO.checkFormatPDFFile(operationDTO.getFormulaire().getOriginalFilename());
 
         // get operation title
-        operationDTO.setOperationTitre(serviceSendMail.getTitleOperation(operationDTO.getOperationCode()));
+        operationDTO.setOperationTitre(getTitleOperation(operationDTO.getOperationCode()));
 
         if(operationDTO.getOperationTitre().equals("")){
             throw new BadRequestAlertException("Le code de l operation est introuvable", operationDTO.getOperationCode(),"");
@@ -106,8 +102,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
         Mail mail = sauvegardeFiles(operationDTO,millis);
 
-        serviceSendMail.sendEmailToServiceClient(dataSource, mail);
-
         return mail.getIdRequest()+"";
 
     }
@@ -117,7 +111,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         Mail mail = new Mail();
         if(operationDTO.getVerso()!= null){
             mail.setIdVerso(operationDTO.getVerso().getOriginalFilename());
-            serviceFileManager.fileUpload(operationDTO.getVerso());
         }
 
         mail.setIdRequest(operationDTO.getNumero()+"_"+millis);
@@ -130,8 +123,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         mail.setLastName(operationDTO.getLastName());
         mail.setNumero(operationDTO.getNumero());
 
-        serviceFileManager.fileUpload(operationDTO.getFormulaire());
-        serviceFileManager.fileUpload(operationDTO.getRectoID());
          return mailSendRepository.save(mail);
 
     }
@@ -156,6 +147,21 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         return mapper.readValue(operationDTO, OperationDTO.class);
 
 
+    }
+
+    private String getTitleOperation(String codeOperation){
+
+        String title = "";
+
+        for (ApplicationProperties.UrgenceDepannage.Operation operation1:
+            applicationProperties.getUrgenceDepannage().getOperation()){
+            if(operation1.getCode().equals(codeOperation)){
+                title = operation1.getTitle();
+
+            }
+
+        }
+        return title;
     }
 
 }

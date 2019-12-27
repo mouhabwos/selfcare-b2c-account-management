@@ -72,7 +72,7 @@ public class AccountB2CServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService, mockMailService, mockDowloadManager,sponseeService,boosterManager, validationHmacService);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService);
     }
 
     private Optional<Sponsee> getSponsee(){
@@ -216,17 +216,6 @@ public class AccountB2CServiceImplTest {
 
         // Verify the results
 
-    }
-
-    @Test
-    public void testSendmail() {
-        // Setup
-        final UserInfoOuvertureCompte b2C = null;
-
-        // Run the test
-        accountB2CServiceImplUnderTest.sendmail(b2C);
-
-        // Verify the results
     }
 
     @Test

@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,13 +11,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.mailmanagment.ServiceSendMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import java.io.File;
@@ -36,21 +34,20 @@ public class UrgenceDepannageServiceImplTest {
     private static final String stringOperationDTO = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
     private static final String stringOperationDTOErrorCode = "{\n" + "\t\"operationCode\":\"operation-test\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
 
-    @Autowired
-    private ServiceSendMail serviceSendMail;
 
     private UrgenceDepannageService urgenceDepannageService;
 
     @Mock
     private MailSendRepository mailSendRepository;
 
-    @Mock
-    private ServiceFile serviceFileManager;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Before
     public void setUp() {
         initMocks(this);
-        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, serviceSendMail, serviceFileManager);
+        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, applicationProperties);
     }
 
     private OperationDTO operationDTO() throws Exception {
