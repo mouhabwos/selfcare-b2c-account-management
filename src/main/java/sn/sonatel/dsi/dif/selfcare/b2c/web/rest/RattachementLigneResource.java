@@ -180,26 +180,6 @@ public class RattachementLigneResource {
 
     /**
      *
-     * @param rattachementLigneFixeVM
-     * @return responseEntity status ok
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     *
-     */
-
-    @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
-    @PostMapping("/rattachement-lignes/ligne-fixe/register")
-    @PreAuthorize("#rattachementLigneFixeVM.login==authentication.name")
-    public ResponseEntity<RattachementLigne> addRattachementLigneFixe(@Valid @RequestBody RattachementLigneFixeVM rattachementLigneFixeVM){
-        log.debug ( "REST request to save RattachementLigne : {}", rattachementLigneFixeVM );
-        RattachementLigne ligne = rattachementLigneService.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-        return ResponseEntity.ok(ligne);
-    }
-
-    /**
-     *
      * @param idClient
      * @return response status ok with a content body accountb2c
      *

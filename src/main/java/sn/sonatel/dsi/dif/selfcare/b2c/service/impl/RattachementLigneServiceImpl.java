@@ -9,14 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
@@ -27,6 +29,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service class for managing users RattachementLigne.
@@ -46,13 +49,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final SponseeService sponseeService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService) {
+    private final AbonneService abonneService;
+
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService, AbonneService abonneService) {
 
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.captchaService = captchaService;
         this.customerOfferApiClient = customerOfferApiClient;
         this.sponseeService = sponseeService;
+        this.abonneService = abonneService;
     }
 
     @Override
@@ -120,11 +126,14 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
                 throw new LigneNotFoundException();
             }
 
+            if(!isInContactNumbers(ligneVM.getNumero(),ligneVM.getLogin())){
+                throw new BadRequestAlertException("Vous ne pouvez pas rattacher ce numero","RattachementLigne","notMyNumber");
+            }
+
             rattachement.setNumero(ligneVM.getNumero());
             rattachement.setTypeNumero(ligneVM.getTypeNumero());
 
             rattachement.setAccountB2C(accountB2C.get());
-
             rattachement = rattachementLigneRepository.save(rattachement);
             sponseeService.updateEffectiveInscriptionOfSponsee(rattachement.getNumero());
         }
@@ -321,67 +330,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     /**
      *
-     * @param ligneVM
-     * @return ligne fixe rattached
-     *
-     * @author BOUYA KANDE
-     * @since 1.1.4
-     *
-     */
-    @Override
-    public RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneVM){
-
-        log.debug("Service for save Rattachement ligne fixe  : {}", ligneVM);
-
-        ligneVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getNumero()));
-
-        ligneVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getLogin()));
-
-        if(ligneVM.getNumero().matches(Constants.FIX_REGEX_VALID_NUMBER)){
-
-            Optional<RattachementLigne> ligneratt = rattachementLigneRepository.findByNumero(ligneVM.getNumero());
-            if(ligneratt.isPresent()){
-                log.debug("Error number is already rattached  : {}", ligneratt);
-                throw new LigneAlreadyRattachedException();
-            }
-
-            if(checkNumberClient(ligneVM.getIdClient(), ligneVM.getNumero())){
-
-                Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
-                if(accountB2C.isPresent()){
-
-                    if(checkFixNumberAssociatedWithThisAccount(accountB2C.get().getNumero())){
-                        log.debug("Error this account have a number fixe rattached  : {}", accountB2C.get());
-                        throw new AccountAlreadyHaveNumberFixeException();
-                    }
-                    RattachementLigne ligne = new RattachementLigne();
-
-                    ligne.setNumero(ligneVM.getNumero());
-                    ligne.setAccountB2C(accountB2C.get());
-                    ligne.setTypeNumero(TypeNumero.FIXE);
-                    ligne.setIdClient(ligneVM.getIdClient());
-                    return rattachementLigneRepository.save(ligne);
-
-                }else {
-
-                    log.debug ( "Error login not found  : {}", ligneVM.getLogin() );
-                    throw new LigneNotFoundException();
-                }
-
-            }else {
-                log.debug ( "Error id client not valid  : {}", ligneVM.getIdClient() );
-                throw new NumberClientFixeNotASameException();
-            }
-
-        }else {
-            log.debug("Error this number is not an valid number orange  : {}", ligneVM.getNumero());
-            throw  new  NoValideNumberFixeException();
-        }
-
-    }
-
-    /**
-     *
      * @param idClient
      * @return accountB2C
      *
@@ -400,27 +348,14 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         throw new NumeroClientNotFoundException();
     }
 
-    /**
-     *
-     * @param idClient
-     * @return true or false
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     *
-     */
-    private boolean checkNumberClient(String idClient, String numero) {
-        ResponseEntity<CustomerOffer> offerResponseEntity = customerOfferApiClient.getCustomerOffer(numero);
-        if(offerResponseEntity.getBody() != null){
-            CustomerOffer customerOffer = offerResponseEntity.getBody();
-            if (customerOffer.getClientCode() != null && !customerOffer.getClientCode().isEmpty()) {
+    private boolean isInContactNumbers(String msisdn, String login){
 
-                return customerOffer.getClientCode().equals(idClient);
-            } else {
+        InfoClientWrapper informations = abonneService.getInformations(login);
 
-                log.debug("Error id client not found : {}", idClient);
-                throw new NumeroClientNotFoundException();
-            }
+        if(informations.getClientType() == ClientType.INDIVIDUAL){
+            Set<String> contactNumbers = informations.getInformation().getContactNumbers();
+
+          return contactNumbers.contains(msisdn);
         }
         return false;
     }
