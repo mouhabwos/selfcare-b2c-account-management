@@ -22,8 +22,8 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: localhost #@eureka.instance.dev.hostname@
-        hostname: localhost #@eureka.instance.dev.hostname@
+        ip-address: @eureka.instance.dev.hostname@
+        hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
             defaultZone: http://admin:${jhipster.registry.password}@10.100.59.111:8761/eureka/
@@ -86,7 +86,7 @@ spring:
                 enabled: true
 
 server:
-    port: 8715 #@server.port.docker.expose@
+    port: @server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties
@@ -163,12 +163,12 @@ application:
     api-management:
         auth:
             grant_type: client_credentials
-            client_id: selfcare-b2c
-            client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
-            key-access-token-uri: https://iaam.orange-sonatel.com/auth/realms/apimanagement/protocol/openid-connect/token
+            client_id: selfcare-b2b
+            client_secret: b2ba6823-d8f4-43ba-a6ae-8767cedc681b
+            key-access-token-uri: http://api.rec.orange-sonatel.com/oauth/token
         url-api:
             base-name: api-accountmanagement
-            base-url: https://api.orange-sonatel.com
+            base-url: http://api.rec.orange-sonatel.com
             url-account-management: /api-accountmanagement
         party-management:
             name: api-partymanagement
