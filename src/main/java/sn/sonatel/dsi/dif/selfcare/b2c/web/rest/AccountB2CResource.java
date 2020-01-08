@@ -15,7 +15,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
@@ -174,16 +173,6 @@ public class AccountB2CResource {
         return accountB2CService.getAccount(login);
 
     }
-
-    @Auditable(description = Message.Account.OUVERTURE_COMPTE)
-    @PostMapping("/mail/ouverture-compte")
-   // @PreAuthorize("#b2C.numero== authentication.name")
-    public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
-        log.debug("REST request to register ouverture-compte : {}", b2C);
-        accountB2CService.sendmail(b2C);
-
-    }
-
 
 
     /**

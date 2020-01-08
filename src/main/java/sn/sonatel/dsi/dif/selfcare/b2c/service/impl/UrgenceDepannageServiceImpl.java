@@ -1,26 +1,22 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.mailmanagment.ServiceSendMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * @author BOUYA KANDE
@@ -33,21 +29,16 @@ import java.util.Map;
 @Service
 class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
-    private static final String RECTO = "_recto_";
-    private static final String FILE = "file";
-    private static final String FORMULAIRE = "_formulaire_";
-    private static final String TEXT = "text/plain";
-
     private final MailSendRepository mailSendRepository;
 
-    private final ServiceSendMail serviceSendMail;
+    private final ApplicationProperties applicationProperties;
 
-    private final ServiceFile serviceFileManager;
+    private final SFTPClientService ftpService;
 
-    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ServiceSendMail serviceSendMail, ServiceFile serviceFileManager) {
+    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ApplicationProperties applicationProperties, SFTPClientService ftpService) {
         this.mailSendRepository = mailSendRepository;
-        this.serviceSendMail = serviceSendMail;
-        this.serviceFileManager = serviceFileManager;
+        this.applicationProperties = applicationProperties;
+        this.ftpService = ftpService;
     }
 
     @Override
@@ -59,6 +50,13 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         operationDTO.setVerso(versoID);
         operationDTO.setRectoID(rectoID);
 
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+        multipartFiles.add(rectoID);
+        multipartFiles.add(formulaire);
+        if(versoID != null){
+            multipartFiles.add(versoID);
+        }
+
         Date date = new Date();
         long millis = date.getTime();
 
@@ -66,49 +64,26 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         operationDTO.checkFormatImageFile(operationDTO.getRectoID().getOriginalFilename());
         operationDTO.checkFormatPDFFile(operationDTO.getFormulaire().getOriginalFilename());
 
+        if(operationDTO.getVerso() != null){
+            operationDTO.checkFormatImageFile(operationDTO.getVerso().getOriginalFilename());
+        }
+
         // get operation title
-        operationDTO.setOperationTitre(serviceSendMail.getTitleOperation(operationDTO.getOperationCode()));
+        operationDTO.setOperationTitre(getTitleOperation(operationDTO.getOperationCode()));
 
         if(operationDTO.getOperationTitre().equals("")){
             throw new BadRequestAlertException("Le code de l operation est introuvable", operationDTO.getOperationCode(),"");
         }
 
-        String idFormulaire = operationDTO.getNumero()+FORMULAIRE+millis;
-        String idRecto = operationDTO.getNumero()+ RECTO +millis;
-
-
-
-        Map<String, DataSource> dataSource = new HashMap<>();
-
-        DataSource dsFormulaire = new ByteArrayDataSource(operationDTO.getFormulaire().getBytes(), operationDTO.getFormulaire().getContentType());
-        DataSource dsRecto = new ByteArrayDataSource(operationDTO.getRectoID().getBytes(), operationDTO.getRectoID().getContentType());
-
-        dataSource.put(operationDTO.getFormulaire().getOriginalFilename(), dsFormulaire);
-
-
-        dataSource.put(operationDTO.getRectoID().getOriginalFilename(), dsRecto);
-
-        if(operationDTO.getVerso() != null){
-            operationDTO.checkFormatImageFile(operationDTO.getVerso().getOriginalFilename());
-            DataSource dsVerso = new ByteArrayDataSource(operationDTO.getVerso().getBytes(), operationDTO.getVerso().getContentType());
-
-            dataSource.put(operationDTO.getVerso().getOriginalFilename(), dsVerso);
-
-            MultipartFile verso  = new MockMultipartFile(FILE, idRecto+getExtension(operationDTO.getVerso().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getVerso().getInputStream()));
-            operationDTO.setVerso(verso);
-        }
-
-        MultipartFile pdf  = new MockMultipartFile(FILE, idFormulaire+getExtension(operationDTO.getFormulaire().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getFormulaire().getInputStream()));
-        MultipartFile recto  = new MockMultipartFile(FILE, idRecto+getExtension(operationDTO.getRectoID().getOriginalFilename()), TEXT, IOUtils.toByteArray(operationDTO.getRectoID().getInputStream()));
-
-        operationDTO.setFormulaire(pdf);
-        operationDTO.setRectoID(recto);
 
         Mail mail = sauvegardeFiles(operationDTO,millis);
 
-        serviceSendMail.sendEmailToServiceClient(dataSource, mail);
+        // send to server ftp
 
-        return mail.getIdRequest()+"";
+        String zipFiles = ftpService.zipFiles(multipartFiles, constructionNameFile(operationDTO.getNumero(), operationDTO.getCanal()));
+        ftpService.sendFileToServerFtp(zipFiles);
+
+        return  mail.getIdRequest()+"";
 
     }
 
@@ -117,7 +92,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         Mail mail = new Mail();
         if(operationDTO.getVerso()!= null){
             mail.setIdVerso(operationDTO.getVerso().getOriginalFilename());
-            serviceFileManager.fileUpload(operationDTO.getVerso());
         }
 
         mail.setIdRequest(operationDTO.getNumero()+"_"+millis);
@@ -130,25 +104,8 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         mail.setLastName(operationDTO.getLastName());
         mail.setNumero(operationDTO.getNumero());
 
-        serviceFileManager.fileUpload(operationDTO.getFormulaire());
-        serviceFileManager.fileUpload(operationDTO.getRectoID());
          return mailSendRepository.save(mail);
 
-    }
-
-    private String getExtension(String name){
-        StringBuilder bld = new StringBuilder();
-        boolean trouve = false;
-        for ( int i = 0; i < name.length(); ++i ) {
-            char c = name.charAt( i );
-            if(c == '.'){
-                trouve = true;
-            }
-            if(trouve){
-                bld.append(c);
-            }
-        }
-        return bld.toString();
     }
 
     private OperationDTO convertStringToOperationDTO(String operationDTO) throws IOException {
@@ -157,5 +114,32 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
 
     }
+
+    private String getTitleOperation(String codeOperation){
+
+        String title = "";
+
+        for (ApplicationProperties.UrgenceDepannage.Operation operation1:
+            applicationProperties.getUrgenceDepannage().getOperation()){
+            if(operation1.getCode().equals(codeOperation)){
+                title = operation1.getTitle();
+
+            }
+
+        }
+        return title;
+    }
+
+    private String constructionNameFile(String msisdn, String canal){
+
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formattedString = zonedDateTime.format(formatter);
+
+        return msisdn+"_"+formattedString+"_"+canal;
+    }
+
+
+
 
 }

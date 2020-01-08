@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class IndividualInformation {
@@ -118,10 +117,5 @@ public class IndividualInformation {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(contactNumbers);
     }
 }

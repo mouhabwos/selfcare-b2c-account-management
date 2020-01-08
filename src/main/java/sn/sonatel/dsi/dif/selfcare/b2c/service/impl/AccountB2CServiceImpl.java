@@ -16,7 +16,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
@@ -42,10 +41,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final SelfcareUAAService selfcareUAAService;
 
-    private final MailService mailService;
-
-    private final DowloadManager dowloadManager;
-
     private final SponseeService sponseeService;
 
     private final BoosterManager boosterManager;
@@ -53,12 +48,10 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     private final ValidationHmacService validationHmacService;
 
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService) {
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
-        this.mailService = mailService;
-        this.dowloadManager = dowloadManager;
         this.sponseeService = sponseeService;
         this.boosterManager=boosterManager;
         this.validationHmacService = validationHmacService;
@@ -194,15 +187,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public void sendmail(UserInfoOuvertureCompte b2C) {
-
-        log.debug("Service to get create an account : {}", b2C);
-        b2C = dowloadManager.addResources(b2C);
-        mailService.sendEmailToServiceClient(b2C);
-
-    }
-
-    @Override
     public void checkNumberV2(CheckNumberRequest checkNumberRequest) {
 
         log.debug("Service for check number version 2 for : {}", checkNumberRequest);
@@ -278,7 +262,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setImageProfil(managedUserVM.getImageprofil());
                 result.setEmail(managedUserVM.getEmail());
                 result = accountB2CRepository.save(result);
-                mailService.sendActivationEmail(result);
 
                 this.boosterManager.applyWelcomeBooster(result.getNumero());
                 sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());

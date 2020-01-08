@@ -165,3 +165,10 @@ application:
 
 
     hmac-secret: secretToShareWithGatewayOM
+
+    serveur-ftp:
+        port: 22
+        user: portailomsftp
+        password: Port@ilomsftp0279
+        ip-serveur: 10.137.56.3
+        directory: /home/portailomsftp/
