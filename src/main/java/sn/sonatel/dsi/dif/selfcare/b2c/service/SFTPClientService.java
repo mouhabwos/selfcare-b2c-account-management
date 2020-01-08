@@ -35,14 +35,14 @@ public class SFTPClientService {
 
     @Async
     public void sendFileToServerFtp(String fileName) {
-
+        log.debug("@@@@@@@@@@  Service upload file to server SFTP: {}    @@@@@@@@@@@@", fileName);
         File file =  new File(applicationProperties.getTmpPath()+fileName);
-        uploadGateway.upload(file);
 
+          uploadGateway.upload(file);
     }
 
 
-    public String zipFiles(List<MultipartFile> multipartFiles, String nameZip) throws IOException {
+    public String zipFiles(List<MultipartFile> multipartFiles, String nameZip) {
 
         String fileName = nameZip+".zip";
         String directory = applicationProperties.getTmpPath()+fileName;
@@ -71,14 +71,13 @@ public class SFTPClientService {
 
             }
         }
-
-
+            return fileName;
     } catch (IOException ex) {
         log.error("Error while upload file from SFTP ", ex.getMessage(),ex);
     } finally {
             log.error("Finally while upload file from SFTP ");
+            return fileName;
     }
-        return fileName;
     }
 
 }

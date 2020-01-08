@@ -73,6 +73,6 @@ public class SftpConfig {
     public interface UploadGateways {
 
         @Gateway(requestChannel = "toSftpChannel")
-        boolean upload(File file);
+        void upload(File file);
     }
 }

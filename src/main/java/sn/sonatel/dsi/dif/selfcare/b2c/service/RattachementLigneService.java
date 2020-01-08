@@ -34,16 +34,6 @@ public interface RattachementLigneService {
 
     /**
      *
-     * @param ligneVM
-     * @return rattachementLigne
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     */
-    RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneVM);
-
-    /**
-     *
      * @param idClient
      * @return AccountB2C
      *

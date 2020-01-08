@@ -3,11 +3,12 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SftpConfig;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class SFTPClientServiceTest {
     @Mock
     private  SftpConfig.UploadGateways uploadGateway;
 
+
     @Before
     public void setUp() {
         initMocks(this);
@@ -40,10 +42,11 @@ public class SFTPClientServiceTest {
         String fileName = "nameZip.zip";
         // Setup
         when(mockApplicationProperties.getTmpPath()).thenReturn("");
-        when(uploadGateway.upload(any())).thenReturn(true);
 
         // Run the test
         sftpClientServiceUnderTest.sendFileToServerFtp(fileName);
+        Mockito.verify(uploadGateway).upload(any());
+
     }
 
     @Test
