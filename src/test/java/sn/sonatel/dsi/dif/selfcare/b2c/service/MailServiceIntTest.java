@@ -2,11 +2,11 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import io.github.jhipster.config.JHipsterProperties;
 import org.junit.Before;
-import org.junit.Ignore;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.invocation.InvocationOnMock;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
@@ -24,7 +24,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 
 import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
@@ -68,9 +67,6 @@ public class MailServiceIntTest {
         @Autowired
         private ApplicationProperties applicationProperties;
 
-        @Autowired
-        private ServiceFile service;
-
         @Mock
         private JHipsterProperties mockJHipsterProperties;
         @Mock
@@ -81,8 +77,6 @@ public class MailServiceIntTest {
         private SpringTemplateEngine mockTemplateEngine;
         @Autowired
         private ApplicationProperties mockApplicationProperties;
-        @Mock
-        private ServiceFile mockService;
 
         @Mock
         private MailService serviceMailMock;
@@ -96,8 +90,8 @@ public class MailServiceIntTest {
         public void setup() {
             MockitoAnnotations.initMocks(this);
             doNothing().when(javaMailSender).send(any(MimeMessage.class));
-            mailService = new MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine, applicationProperties, service);
-            mailServiceUnderTest = new MailService(mockJHipsterProperties, mockJavaMailSender, mockMessageSource, mockTemplateEngine, mockApplicationProperties, mockService);
+            mailService = new MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine, applicationProperties);
+            mailServiceUnderTest = new MailService(mockJHipsterProperties, mockJavaMailSender, mockMessageSource, mockTemplateEngine, mockApplicationProperties);
             userInfoWithResources=initUserInfoWithResources();
         }
 

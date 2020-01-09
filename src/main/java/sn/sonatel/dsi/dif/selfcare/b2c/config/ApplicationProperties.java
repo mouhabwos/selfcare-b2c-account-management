@@ -27,6 +27,7 @@ public class ApplicationProperties {
     private String emailServiceClientOrange;
     private String lienIbou;
     private String hmacSecret;
+    private String tmpPath;
 
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
@@ -46,6 +47,10 @@ public class ApplicationProperties {
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     private final Scheduler scheduler = new Scheduler();
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final ServeurFtp serveurFtp = new ServeurFtp();
 
     public String getHmacSecret() {
         return hmacSecret;
@@ -129,6 +134,14 @@ public class ApplicationProperties {
 
     public void setEmailServiceClientOrange(String emailServiceClientOrange) {
         this.emailServiceClientOrange = emailServiceClientOrange;
+    }
+
+    public String getTmpPath() {
+        return tmpPath;
+    }
+
+    public void setTmpPath(String tmpPath) {
+        this.tmpPath = tmpPath;
     }
 
     /**
@@ -304,5 +317,28 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
         private String cronDisabledSponsee;
+    }
+
+    public static class ServeurFtp{
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String ipServeur;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String password;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String user;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private int port;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String directory;
     }
 }
