@@ -16,10 +16,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
@@ -41,23 +41,20 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final SelfcareUAAService selfcareUAAService;
 
-    private final MailService mailService;
-
-    private final DowloadManager dowloadManager;
-
     private final SponseeService sponseeService;
 
     private final BoosterManager boosterManager;
 
+    private final ValidationHmacService validationHmacService;
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, MailService mailService, DowloadManager dowloadManager, SponseeService sponseeService, BoosterManager boosterManager) {
+
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
-        this.mailService = mailService;
-        this.dowloadManager = dowloadManager;
         this.sponseeService = sponseeService;
         this.boosterManager=boosterManager;
+        this.validationHmacService = validationHmacService;
     }
 
     @Override
@@ -83,44 +80,23 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
         log.debug("Service for register AccountB2C : {}", managedUserVM);
+        return register(managedUserVM);
+    }
 
-        checkExistingAccountForNumber(managedUserVM.getLogin());
+    @Override
+    public AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM){
+
+        managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin()));
 
 
-            if(managedUserVM.getEmail() == null){
+        log.debug("Service for register AccountB2C : {}", managedUserVM);
+        boolean validateHmac = validationHmacService.validateHmac(managedUserVM.getHmac(), managedUserVM.getLogin(), managedUserVM.getUuid());
 
-                managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
-            }
-
-        try {
-            ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
-
-            if (response.getStatusCode() == HttpStatus.CREATED) {
-
-                managedUserVM.setActivated(true);
-
-                AccountB2C result =  new AccountB2C();
-
-                result.setNumero(managedUserVM.getLogin());
-                result.setFirstName(managedUserVM.getFirstName());
-                result.setLastName(managedUserVM.getLastName());
-                result.setImageProfil(managedUserVM.getImageprofil());
-                result.setEmail(managedUserVM.getEmail());
-                result = accountB2CRepository.save(result);
-                mailService.sendActivationEmail(result);
-
-                this.boosterManager.applyWelcomeBooster(result.getNumero());
-                sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
-
-                return result;
-            }
-
-        }catch (HttpClientErrorException e){
-
-            log.debug(" exception for creation Account : {}", e);
+        if(!validateHmac){
+            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
 
-         throw new UserNoCreatedException();
+        return register(managedUserVM);
     }
 
 
@@ -211,12 +187,17 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public void sendmail(UserInfoOuvertureCompte b2C) {
+    public void checkNumberV2(CheckNumberRequest checkNumberRequest) {
 
-        log.debug("Service to get create an account : {}", b2C);
-        b2C = dowloadManager.addResources(b2C);
-        mailService.sendEmailToServiceClient(b2C);
+        log.debug("Service for check number version 2 for : {}", checkNumberRequest);
+        checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
 
+        boolean validateHmac = validationHmacService.validateHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
+
+        if(!validateHmac){
+            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
+        }
+        checkExistingAccountForNumber(checkNumberRequest.getMsisdn());
     }
 
     @Override
@@ -267,5 +248,44 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
     }
 
+    private AccountB2C register(ManagedUserVM managedUserVM){
+
+        checkExistingAccountForNumber(managedUserVM.getLogin());
+
+
+        if(managedUserVM.getEmail() == null){
+
+            managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
+        }
+
+        try {
+            ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
+
+            if (response.getStatusCode() == HttpStatus.CREATED) {
+
+                managedUserVM.setActivated(true);
+
+                AccountB2C result =  new AccountB2C();
+
+                result.setNumero(managedUserVM.getLogin());
+                result.setFirstName(managedUserVM.getFirstName());
+                result.setLastName(managedUserVM.getLastName());
+                result.setImageProfil(managedUserVM.getImageprofil());
+                result.setEmail(managedUserVM.getEmail());
+                result = accountB2CRepository.save(result);
+
+                this.boosterManager.applyWelcomeBooster(result.getNumero());
+                sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
+
+                return result;
+            }
+
+        }catch (HttpClientErrorException e){
+
+            log.debug(" exception for creation Account : {}", e);
+        }
+
+        throw new UserNoCreatedException();
+    }
 
 }

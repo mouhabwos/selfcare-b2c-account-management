@@ -26,6 +26,8 @@ public class ApplicationProperties {
     private String serviceClientOrange;
     private String emailServiceClientOrange;
     private String lienIbou;
+    private String hmacSecret;
+    private String tmpPath;
 
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
@@ -45,6 +47,18 @@ public class ApplicationProperties {
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     private final Scheduler scheduler = new Scheduler();
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final ServeurFtp serveurFtp = new ServeurFtp();
+
+    public String getHmacSecret() {
+        return hmacSecret;
+    }
+
+    public void setHmacSecret(String hmacSecret) {
+        this.hmacSecret = hmacSecret;
+    }
 
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
@@ -120,6 +134,14 @@ public class ApplicationProperties {
 
     public void setEmailServiceClientOrange(String emailServiceClientOrange) {
         this.emailServiceClientOrange = emailServiceClientOrange;
+    }
+
+    public String getTmpPath() {
+        return tmpPath;
+    }
+
+    public void setTmpPath(String tmpPath) {
+        this.tmpPath = tmpPath;
     }
 
     /**
@@ -199,6 +221,9 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         private final UrlApi urlApi = new UrlApi();
 
+        @Getter(AccessLevel.PUBLIC)
+        @Setter(AccessLevel.PUBLIC)
+        private final PartyManagement partyManagement = new PartyManagement();
 
         public static class Auth{
 
@@ -233,6 +258,23 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String baseName;
+
+        }
+
+        public static class PartyManagement{
+
+            @Getter(AccessLevel.PUBLIC)
+            @Setter(AccessLevel.PUBLIC)
+            private String name;
+
+            @Getter(AccessLevel.PUBLIC)
+            @Setter(AccessLevel.PUBLIC)
+            private String urlIndividualInformation;
+
+            @Getter(AccessLevel.PUBLIC)
+            @Setter(AccessLevel.PUBLIC)
+            private String urlOrganizationInformation;
+
         }
 
 
@@ -275,5 +317,28 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
         private String cronDisabledSponsee;
+    }
+
+    public static class ServeurFtp{
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String ipServeur;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String password;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String user;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private int port;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String directory;
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
@@ -22,8 +24,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -45,11 +49,14 @@ public class AbonneResourceIntTest {
     @Mock
     private AbonneResource resource;
 
+    @Mock
+    private AbonneService abonneService;
+
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource(soapService, customerOfferService);
+        final AbonneResource abonneResource = new AbonneResource(soapService, customerOfferService, abonneService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
     }
@@ -116,14 +123,18 @@ public class AbonneResourceIntTest {
             .andExpect(status().isOk());
     }
 
+
     @Test
-    public void getCustomerOfferWithNullBody() throws Exception {
+    public void testGetOrganizationInformationInformation() throws Exception {
+         PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
+         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-       /* ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        ///when(apiManagementService.getCustomerOffer(Mockito.anyString())).thenReturn(response);
+        when(partyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
+        when(partyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
 
-        restAbonneMockMvc.perform(get("/api/abonne/v1/customerOffer/{msisdn}", "DEFAULT_NUMERO"))
-            .andExpect(status().isNotFound());*/
+        restAbonneMockMvc.perform(get("/api/abonne/v1/is-orange-number/{msisdn}", "DEFAULT_NUMERO"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("false"));
     }
 
 

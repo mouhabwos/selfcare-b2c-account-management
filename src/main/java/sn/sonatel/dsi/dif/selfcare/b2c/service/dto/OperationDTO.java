@@ -72,6 +72,10 @@ public class OperationDTO {
     @Setter(AccessLevel.PUBLIC)
     private String operationTitre;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String canal = "ORANGETMOI";
+
 
     public void checkFormatPDFFile(String fileName){
         int indexOf = fileName.lastIndexOf('.');

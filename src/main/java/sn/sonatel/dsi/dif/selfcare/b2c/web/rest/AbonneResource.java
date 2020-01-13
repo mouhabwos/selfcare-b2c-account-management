@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
@@ -26,11 +27,12 @@ public class AbonneResource {
 
     private final SelfcareSoapService selfcareSoapService;
     private final CustomerOfferService customerOfferService;
+    private final AbonneService abonneService;
 
-    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferService customerOfferService) {
+    public AbonneResource(SelfcareSoapService selfcareSoapService, CustomerOfferService customerOfferService, AbonneService abonneService) {
         this.selfcareSoapService = selfcareSoapService;
         this.customerOfferService = customerOfferService;
-
+        this.abonneService = abonneService;
     }
 
 
@@ -52,7 +54,6 @@ public class AbonneResource {
             return new ResponseEntity<>(selfcareSoapService.isPostpaid(msisdn1), HttpStatus.OK);
 
     }
-
 
 
     @Auditable(description = Message.Abonne.INFO_ABONNE)
@@ -79,5 +80,13 @@ public class AbonneResource {
 
     }
 
+    @Auditable(description = Message.Abonne.IS_ORANGE_NUMBER)
+    @GetMapping("/v1/is-orange-number/{msisdn}")
+    @Timed
+    public ResponseEntity<Boolean> isOrangeNumber(@PathVariable String msisdn) {
+        log.debug ( "REST request to get information  organization : {}", msisdn );
+        return ResponseEntity.ok(abonneService.isOrangeNumber(msisdn));
+
+    }
 
 }

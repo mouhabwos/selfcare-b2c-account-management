@@ -35,10 +35,14 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
@@ -49,6 +53,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
@@ -726,6 +733,115 @@ public class AccountB2CResourceIntTest {
         b2C = accountB2CRepository.save(b2C);
         restAccountB2CMockMvc.perform(get("/api/account-management/view-tutorial/status/{msisdn}", b2C.getNumero()))
             .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @Transactional
+    public void registerAccountB2CWithIndicTigo() throws Exception {
+
+
+        ManagedUserVM b2C = new ManagedUserVM();
+
+        b2C.setLogin("761326617");
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setPassword("Passer12");
+        b2C.setEmail("email760000000@gmail.com");
+        b2C.setLangKey("");
+        b2C.setActivationKey("");
+
+        AccountB2C account =  new AccountB2C();
+        account.setNumero(b2C.getLogin());
+        account.setId(1L);
+        account.setFirstName(b2C.getFirstName());
+        account.setLastName(b2C.getLastName());
+        account.setImageProfil(b2C.getImageprofil());
+
+        // Response BadRequest == utilisateur non créé
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(b2C)))
+            .andExpect(status().isBadRequest());
+    }
+
+
+
+
+    @Test
+    @Transactional
+    public void checkNumberV2() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
+        checkNumberRequest.setMsisdn(MSISDN);
+        checkNumberRequest.setHmac(HMAC);
+        //checkNumberRequest.setUuid(UUID);
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/v2/check_number")
+            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
+            .header("X-UUID", UUID)
+            .content ( TestUtil.convertObjectToJsonBytes ( checkNumberRequest )))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    public void registerAccountB2CV2() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        int databaseSizeBeforeCreate = accountB2CRepository.findAll().size();
+        ManagedUserVM b2C = new ManagedUserVM();
+
+        b2C.setLogin("771326617");
+        b2C.setFirstName(accountB2C.getFirstName());
+        b2C.setLastName(accountB2C.getLastName());
+        b2C.setPassword("Passer12");
+        b2C.setEmail("email4@gmail.com");
+        b2C.setLangKey("");
+        b2C.setActivationKey("");
+
+        AccountB2C account =  new AccountB2C();
+        account.setNumero(b2C.getLogin());
+        account.setId(1L);
+        account.setFirstName(b2C.getFirstName());
+        account.setLastName(b2C.getLastName());
+        account.setImageProfil(b2C.getImageprofil());
+
+        ResponseEntity<AccountB2C> response = ResponseEntity.status(HttpStatus.OK).body(account);
+
+        AccountB2CService accountB2CServices = mock(AccountB2CService.class);
+
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService,captchaService);
+
+        this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+
+
+
+        when(accountB2CServices.registerAccountB2C(b2C)).thenReturn(account);
+
+        when(otpService.checkRegisterValidity(b2C.getLogin())).thenReturn(true);
+
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/v2/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .header("X-UUID", UUID)
+            .content(TestUtil.convertObjectToJsonBytes(b2C)))
+            .andExpect(status().isOk());
+
+
     }
 
     @Test

@@ -14,7 +14,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceFile;
 
 
 import javax.mail.internet.MimeMessage;
@@ -30,8 +29,6 @@ public class MailService {
     private static final String USER = "user";
 
     private final ApplicationProperties applicationProperties;
-
-    private final ServiceFile service;
 
     private static final String EMAIL_ADMIN = "emailAdmin";
 
@@ -49,13 +46,12 @@ public class MailService {
 
     private final SpringTemplateEngine templateEngine;
 
-    public MailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine, ApplicationProperties applicationProperties, ServiceFile service) {
+    public MailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine, ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
         this.jHipsterProperties = jHipsterProperties;
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
         this.templateEngine = templateEngine;
-        this.service = service;
     }
 
     @Async

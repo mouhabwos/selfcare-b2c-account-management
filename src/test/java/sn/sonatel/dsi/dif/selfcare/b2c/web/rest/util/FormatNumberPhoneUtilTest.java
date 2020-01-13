@@ -13,6 +13,9 @@ public class FormatNumberPhoneUtilTest {
 
     private static final String NUMEROPLUS221 = "+221 77 562 23 23";
 
+    private static final String INDIEXPRESSO = "22170 000 00 00";
+    private static final String INDITIGO = "22176 000 00 00";
+
     @Before
     public void setUp() throws Exception {
     }
@@ -44,6 +47,22 @@ public class FormatNumberPhoneUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void getNumberFormatWithNull() {
         FormatNumberPhoneUtil.extractNumberWithoutSuffix( null );
+
+    }
+
+    @Test
+    public void getNumberFormatWithIndicExpresso() {
+
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( INDIEXPRESSO );
+        assertThat ( msisdn ).isEqualTo ( "700000000" );
+
+    }
+
+    @Test
+    public void getNumberFormatWithIndicTigo() {
+
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix( INDITIGO );
+        assertThat ( msisdn ).isEqualTo ( "760000000" );
 
     }
 }

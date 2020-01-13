@@ -17,17 +17,22 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 
-import static org.junit.Assert.assertEquals;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -61,8 +66,6 @@ public class RattachementLigneServiceImplTest {
     @Mock
     private CustomerOfferApiClient customerOfferApiClient;
 
-    @Mock
-    private  SelfcareSoapService selfcareSoapService;
 
     @Mock
     private SponseeRepository sponseeRepository;
@@ -70,10 +73,13 @@ public class RattachementLigneServiceImplTest {
     @Autowired
     private SponseeService sponseeService;
 
+    @Mock
+    private AbonneService abonneService;
+
     @Before
     public void setUp() {
         initMocks(this);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, selfcareSoapService, sponseeService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService, abonneService);
     }
 
 
@@ -193,155 +199,6 @@ public class RattachementLigneServiceImplTest {
 
     }
 
-    @Test(expected = InvalidOrangeNumberException.class)
-    public void testAddRattachementLigneFixeNoValid(){
-        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient("7895623");
-        rattachementLigneFixeVM.setNumero("3389652523");
-        rattachementLigneFixeVM.setLogin("777895666");
-        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-
-    }
-
-    @Test
-    public void testAddRattachementLigneFixeSuccess(){
-        //creation account
-        AccountB2C accountB2C = new AccountB2C();
-        accountB2C.setNumero("778965536");
-        accountB2C.setFirstName("test");
-        accountB2C.setLastName("test");
-        accountB2C.setEmail("test536@gmail.com");
-        accountB2C = mockAccountB2CRepository.save(accountB2C);
-
-        String numeroclient = "841431";
-        CustomerOffer customerOffer = getCustomer();
-        customerOffer.setClientCode(numeroclient);
-
-        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(customerOffer);
-        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
-
-        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient(numeroclient);
-        rattachementLigneFixeVM.setNumero("338366526");
-        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
-        rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
-        RattachementLigne ligne = rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-        assertEquals(ligne.getNumero(), rattachementLigneFixeVM.getNumero());
-        assertEquals(ligne.getIdClient(), rattachementLigneFixeVM.getIdClient());
-
-
-    }
-
-    @Test(expected = InvalidOrangeNumberException.class)
-    public void testAddRattachementLigneFixeNoValidIdClient(){
-        //creation account
-        AccountB2C accountB2C = new AccountB2C();
-        accountB2C.setNumero("778965531");
-        accountB2C.setFirstName("test");
-        accountB2C.setLastName("test");
-        accountB2C.setEmail("test53@gmail.com");
-        accountB2C = mockAccountB2CRepository.save(accountB2C);
-
-        //create rattachement ligne
-        RattachementLigne ligne = new RattachementLigne();
-        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
-        ligne.setNumero("770312323");
-        ligne.setAccountB2C(accountB2C);
-        mockRattachementLigneRepository.save(ligne);
-
-
-        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient("7895623");
-        rattachementLigneFixeVM.setNumero("3389652523");
-        rattachementLigneFixeVM.setLogin("777895666");
-        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-
-    }
-
-    @Test(expected = LigneAlreadyRattachedException.class)
-    public void testAddRattachementLigneFixeeAlreadyRattached(){
-        //creation account
-        AccountB2C accountB2C = new AccountB2C();
-        accountB2C.setNumero("778965539");
-        accountB2C.setFirstName("test");
-        accountB2C.setLastName("test");
-        accountB2C.setEmail("test539@gmail.com");
-        accountB2C = mockAccountB2CRepository.save(accountB2C);
-
-        //create rattachement ligne
-        RattachementLigne ligne = new RattachementLigne();
-        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
-        ligne.setNumero("339952323");
-        ligne.setAccountB2C(accountB2C);
-        mockRattachementLigneRepository.save(ligne);
-
-        String numeroclient = "7895612";
-
-        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
-        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
-
-        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient(numeroclient);
-        rattachementLigneFixeVM.setNumero("339952323");
-        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
-        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-
-    }
-
-    @Test(expected = AccountAlreadyHaveNumberFixeException.class)
-    public void testAddRattachementLigneFixeAccountAlreadyHaveNumberFixe(){
-        //creation account
-        AccountB2C accountB2C = new AccountB2C();
-        accountB2C.setNumero("778965593");
-        accountB2C.setFirstName("test");
-        accountB2C.setLastName("test");
-        accountB2C.setEmail("test593@gmail.com");
-        accountB2C = mockAccountB2CRepository.save(accountB2C);
-
-        //create rattachement ligne
-        RattachementLigne ligne = new RattachementLigne();
-        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
-        ligne.setNumero("338237244");
-        ligne.setAccountB2C(accountB2C);
-        mockRattachementLigneRepository.save(ligne);
-
-        String numeroclient = "32722731";
-
-        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
-        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
-
-        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient(numeroclient);
-        rattachementLigneFixeVM.setNumero("339952356");
-        rattachementLigneFixeVM.setLogin(accountB2C.getNumero());
-        rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-
-    }
-
-
-    @Test(expected = LigneNotFoundException.class)
-    public void testAddRattachementLigneFixeLigneNotFound(){
-
-        String numeroclient = "32722731";
-
-        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
-        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
-
-        RattachementLigneFixeVM rattachementLigneFixeVM = new RattachementLigneFixeVM();
-        rattachementLigneFixeVM.setIdClient(numeroclient);
-        rattachementLigneFixeVM.setNumero("338237244");
-        rattachementLigneFixeVM.setLogin("779562521");
-        rattachementLigneFixeVM.setTypeNumero(TypeNumero.FIXE);
-        RattachementLigne ligne = rattachementLigneServiceImpl.addRattachementLigneFixe(rattachementLigneFixeVM);
-
-
-    }
-
     @Test
     public void testGetAccountB2CByIdClient(){
 
@@ -375,6 +232,61 @@ public class RattachementLigneServiceImplTest {
 
     }
 
+    @Test
+    public void testGetRattachementLignes() {
+
+        // Setup
+         String msisdn = "77000 00 00";
+        mockAccountB2CRepository = mock(AccountB2CRepository.class);
+        mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService, abonneService);
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        accountB2C.setNumero(msisdn);
+        Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
+        when(mockAccountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
+         List<RattachementLigne> rattachementLignes = new ArrayList<>();
+        when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
+        ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
+
+        // Run the test
+        final List<InfoNumberVM> result = rattachementLigneServiceImpl.getRattachementLignes(msisdn);
+
+        List<InfoNumberVM> expectedResult = new ArrayList<>();
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testGetRattachementLignesWithNullBodyCustomerOffer() {
+
+        // Setup
+        String msisdn = "77000 00 00";
+        mockAccountB2CRepository = mock(AccountB2CRepository.class);
+        mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService, abonneService);
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        accountB2C.setNumero(msisdn);
+        Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
+        when(mockAccountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
+        List<RattachementLigne> rattachementLignes = new ArrayList<>();
+        when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
+        when(customerOfferApiClient.getCustomerOffer("msisdn")).thenReturn(null);
+
+        // Run the test
+        final List<InfoNumberVM> result = rattachementLigneServiceImpl.getRattachementLignes(msisdn);
+
+        List<InfoNumberVM> expectedResult = new ArrayList<>();
+        // Verify the results
+        assertEquals(expectedResult, result);
+    }
+
     private CustomerOffer getCustomer(){
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("32722731");
@@ -394,6 +306,38 @@ public class RattachementLigneServiceImplTest {
 
 
         return customerOffer;
+    }
+
+    @Test(expected = InvalidOrangeNumberException.class)
+    public void testAddRattachementLigneFixeNoValid(){
+        //creation account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("778965351");
+        accountB2C.setFirstName("test");
+        accountB2C.setLastName("test");
+        accountB2C.setEmail("test778@gmail.com");
+
+        //create rattachement ligne
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setTypeNumero(TYPE_NUMERO_FIX);
+        ligne.setNumero("339962218");
+        ligne.setAccountB2C(accountB2C);
+        RattachementLigneVM ligneVM = new RattachementLigneVM();
+        ligneVM.setLogin(accountB2C.getNumero());
+        ligneVM.setNumero("77123202000");
+        rattachementLigneServiceImpl.addRattachementLigne(ligneVM);
+
+
+    }
+
+    @Test
+    public void testEquals(){
+
+        IndividualInformation information = new IndividualInformation();
+
+        int hashCode = information.hashCode();
+        assertNotNull(hashCode);
+
     }
 
 }

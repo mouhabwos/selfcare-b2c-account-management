@@ -7,13 +7,13 @@
     <version>1.5.9-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
- 
+
   <repositories>
     <repository>
       <id>nexus-release</id>
       <name>nexus releases</name>
       <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
-    </repository> 
+    </repository>
   </repositories>
 
     <!-- jhipster-needle-distribution-management -->
@@ -527,6 +527,23 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>3.12</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-sftp</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.springml/sftp.client -->
+        <dependency>
+            <groupId>com.springml</groupId>
+            <artifactId>sftp.client</artifactId>
+            <version>1.0.3</version>
         </dependency>
 
     </dependencies>

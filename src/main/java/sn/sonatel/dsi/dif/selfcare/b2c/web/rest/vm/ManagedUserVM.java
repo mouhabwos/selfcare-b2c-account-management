@@ -21,6 +21,10 @@ public class ManagedUserVM extends UserDTO {
     @ApiModelProperty(required = true)
     private String password;
 
+    private String hmac;
+
+    private String uuid;
+
     public ManagedUserVM(String password) {
         this.password = password;
 
@@ -37,6 +41,22 @@ public class ManagedUserVM extends UserDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getHmac() {
+        return hmac;
+    }
+
+    public void setHmac(String hmac) {
+        this.hmac = hmac;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override

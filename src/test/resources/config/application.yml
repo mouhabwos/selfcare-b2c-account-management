@@ -152,6 +152,10 @@ application:
             base-name: api-accountmanagement
             base-url: https://api.orange-sonatel.com
             url-account-management: /api-accountmanagement
+        party-management:
+            name: api-partymanagement
+            url-individual-information: /api/partyManagement/v1/individual/{msisdn}
+            url-organization-information: /api/partyManagement/v1/organization/{msisdn}
 
     send-sms:
         sponsorship:
@@ -159,3 +163,12 @@ application:
             sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
             sms-promo: Fais le aujourd hui et gagne %s %s.
 
+
+    hmac-secret: secretToShareWithGatewayOM
+
+    serveur-ftp:
+        port: 22
+        user: portailomsftp
+        password: Port@ilomsftp0279
+        ip-serveur: 10.137.56.3
+        directory: /home/portailomsftp/

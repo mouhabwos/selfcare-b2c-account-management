@@ -37,11 +37,9 @@ eureka:
             git-version: ${git.commit.id.describe:}
             git-commit: ${git.commit.id.abbrev:}
             git-branch: ${git.branch:}
-ribbon:
-    ReadTimeout: 120000
-    connection-timeout: 3000
-    eureka:
-        enabled: true
+#ribbon:
+#    eureka:
+#        enabled: true
 feign:
     hystrix:
         enabled: false
@@ -153,7 +151,7 @@ jhipster:
         license-url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 logging:
-    file: target/selfcare-b2c-account-management.log 
+    file: target/selfcare-b2c-account-management.log
 
 
 # ===================================================================

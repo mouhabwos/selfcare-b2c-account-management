@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c;
 
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.integration.annotation.IntegrationComponentScan;
+import org.springframework.integration.config.EnableIntegration;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.OAuth2InterceptedFeignConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.DefaultProfileUtil;
@@ -37,6 +39,8 @@ import java.util.Collection;
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class, LoggingProperties.class})
 @EnableDiscoveryClient
 @EnableFeignClients
+@IntegrationComponentScan
+@EnableIntegration
 public class SelfcareB2CApp {
 
     private static final Logger log = LoggerFactory.getLogger(SelfcareB2CApp.class);
@@ -117,9 +121,9 @@ public class SelfcareB2CApp {
         log.info("\n----------------------------------------------------------\n\t" +
                 "Config Server: \t{}\n----------------------------------------------------------", configServerStatus);
     }
-  
+
     // -- disable Ssl Verification
-  
+
     static {
         disableSslVerification();
     }

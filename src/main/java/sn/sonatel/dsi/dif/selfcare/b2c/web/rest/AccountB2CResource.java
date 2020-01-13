@@ -15,12 +15,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
@@ -47,8 +47,9 @@ public class AccountB2CResource {
 
     private final CaptchaService captchaService;
 
+    private static final String IDNULL = "idnull";
 
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService,CaptchaService captchaService) {
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, CaptchaService captchaService) {
 
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
@@ -79,13 +80,27 @@ public class AccountB2CResource {
             return ResponseEntity.badRequest().build();
         }
         if (managedUserVM.getId() != null) {
-            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, IDNULL);
         }
 
         AccountB2C result = accountB2CService.registerAccountB2C(managedUserVM);
 
         return ResponseEntity.ok(result);
 
+    }
+
+    @Auditable(description = Message.Account.ADD)
+    @PostMapping("/v2/register")
+    public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+        log.debug("REST request to save AccountB2C version 2 : {}", managedUserVM);
+
+        if (managedUserVM.getId() != null) {
+            throw new BadRequestAlertException("Id is not null", ENTITY_NAME, IDNULL);
+        }
+        managedUserVM.setUuid(uuid);
+        AccountB2C result = accountB2CService.registerAccountB2CV2(managedUserVM);
+
+        return ResponseEntity.ok(result);
     }
 
 
@@ -95,7 +110,7 @@ public class AccountB2CResource {
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, IDNULL);
         }
         AccountB2C result = accountB2CService.updateAccountB2C(accountB2C);
 
@@ -132,6 +147,14 @@ public class AccountB2CResource {
         return accountB2CService.checkNumber(numberRequest);
     }
 
+    @Auditable(description = Message.Account.CHECK_Numero)
+    @PostMapping("/v2/check_number")
+    public ResponseEntity checkNumberV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+        checkNumberRequest.setUuid(uuid);
+        accountB2CService.checkNumberV2(checkNumberRequest);
+        return ResponseEntity.ok().build();
+    }
+
     @Auditable(description = Message.Account.CHECK_Email)
     @PostMapping("/email-already-exist")
     @Timed
@@ -150,16 +173,6 @@ public class AccountB2CResource {
         return accountB2CService.getAccount(login);
 
     }
-
-    @Auditable(description = Message.Account.OUVERTURE_COMPTE)
-    @PostMapping("/mail/ouverture-compte")
-   // @PreAuthorize("#b2C.numero== authentication.name")
-    public void sendmail(@Valid @RequestBody UserInfoOuvertureCompte b2C) {
-        log.debug("REST request to register ouverture-compte : {}", b2C);
-        accountB2CService.sendmail(b2C);
-
-    }
-
 
 
     /**
