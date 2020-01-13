@@ -42,7 +42,7 @@ eureka:
 #        enabled: true
 feign:
     hystrix:
-        enabled: true
+        enabled: false
     client:
         config:
             default:
@@ -50,6 +50,7 @@ feign:
                 readTimeout: 120000
 
 # See https://github.com/Netflix/Hystrix/wiki/Configuration
+
 hystrix:
     command:
         default:

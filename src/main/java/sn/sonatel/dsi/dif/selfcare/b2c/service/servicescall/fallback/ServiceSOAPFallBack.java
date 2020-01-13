@@ -27,7 +27,7 @@ public class ServiceSOAPFallBack implements ServiceSOAP {
     @Override
     public ResponseEntity<AbonneDTO> getAbonne(SOAPRequest msisdn) {
 
-        return throwableCall();
+        return ResponseEntity.ok().build();
     }
 
         private ResponseEntity throwableCall(){

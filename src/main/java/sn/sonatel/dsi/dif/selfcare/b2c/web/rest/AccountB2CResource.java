@@ -206,4 +206,12 @@ public class AccountB2CResource {
     }
 
 
+    @Auditable(description = Message.Account.CHECK_Numero)
+    @GetMapping("/v2/check_number/{msisdn}")
+    public Boolean checkNumberV2(@PathVariable  String  msisdn) {
+        log.debug("REST request to check number : {}", msisdn);
+        return accountB2CService.checkNumberV2(msisdn);
+    }
+
+
 }

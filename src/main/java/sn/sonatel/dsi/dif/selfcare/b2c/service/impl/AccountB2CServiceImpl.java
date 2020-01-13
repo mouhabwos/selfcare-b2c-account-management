@@ -200,6 +200,17 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         checkExistingAccountForNumber(checkNumberRequest.getMsisdn());
     }
 
+    @Override
+    public boolean checkNumberV2(String msisdn) {
+
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
+
+            log.debug ( "Service check Number : {}", msisdn);
+          return accountB2C.isPresent();
+    }
+
 
     @Override
     public void updateTutorialView(String msisdn) {
