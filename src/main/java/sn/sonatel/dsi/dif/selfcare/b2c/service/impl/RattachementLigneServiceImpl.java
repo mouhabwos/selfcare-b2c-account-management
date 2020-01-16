@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -13,7 +12,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
@@ -43,19 +41,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final AccountB2CRepository accountB2CRepository;
 
-    private final CaptchaService captchaService;
-
     private final CustomerOfferApiClient customerOfferApiClient;
 
     private final SponseeService sponseeService;
 
     private final AbonneService abonneService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CaptchaService captchaService, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService, AbonneService abonneService) {
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService, AbonneService abonneService) {
 
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
-        this.captchaService = captchaService;
         this.customerOfferApiClient = customerOfferApiClient;
         this.sponseeService = sponseeService;
         this.abonneService = abonneService;
@@ -205,53 +200,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     }
 
-    /**
-     *
-     * @param numberRequest
-     * @return statut 200 (ok)
-     *
-     * @throws ResponseEntity 400 (Bad Request) : if token is invalid
-     * @throws NoValideNumberFixeException 400 (Bad Request) : if the number is not an orange number
-     * @throws LigneAlreadyRattachedException 400 (Bad Request) : if the number is already attached to an account
-     * @throws AccountAlreadyHaveNumberFixeException 400 (Bad Request) : if already has a fixed fix number
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     *
-     */
-    @Override
-    public ResponseEntity checkNumberFix(CheckNumberFixVM numberRequest) {
-
-        log.debug("Check number of AccountB2C : {}", numberRequest);
-
-        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
-            log.debug("Error invalid token  : {}", numberRequest);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        if(!numberRequest.getMsisdn().matches(Constants.FIX_REGEX_VALID_NUMBER)){
-
-            log.debug("Error this number is not an valid number orange  : {}", numberRequest);
-            throw  new  NoValideNumberFixeException();
-        }
-
-        String numFixe = FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getMsisdn());
-        String login = FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getLogin());
-
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(numFixe);
-        if(ligne.isPresent()){
-            log.debug("Error number is already rattached  : {}", numberRequest);
-            throw new LigneAlreadyRattachedException();
-        }
-
-        if(checkFixNumberAssociatedWithThisAccount(login)){
-            log.debug("Error this account have a number fixe rattached  : {}", login);
-            throw new AccountAlreadyHaveNumberFixeException();
-        }
-
-        return ResponseEntity.ok().build();
-    }
-
 
     private void checkNumberIfUsed(String number, String login) {
 
@@ -281,7 +229,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     }
 
-
     private CustomerOffer getSouscription(String msisdn) {
 
         try {
@@ -301,52 +248,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         return null;
     }
 
-    /**
-     *
-     * @param login
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     */
-
-    private boolean checkFixNumberAssociatedWithThisAccount(String login){
-
-        List<RattachementLigne> ligneList = rattachementLigneRepository.findByAccountB2C_Numero(login);
-        if(!ligneList.isEmpty()){
-
-            for (RattachementLigne ligne1: ligneList) {
-
-                if(ligne1.getNumero().matches(Constants.FIX_REGEX_VALID_NUMBER)){
-                    return true;
-                }
-
-            }
-
-        }
-        return false;
-
-    }
-
-
-    /**
-     *
-     * @param idClient
-     * @return accountB2C
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     *
-     */
-    @Override
-    public AccountB2C getAccountB2CByIdClient(String idClient) {
-
-        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByIdClient(idClient);
-        if(ligne.isPresent()){
-            return ligne.get().getAccountB2C();
-        }
-        log.debug("Error id client not found : {}", idClient);
-        throw new NumeroClientNotFoundException();
-    }
 
     private boolean isInContactNumbers(String msisdn, String login){
 

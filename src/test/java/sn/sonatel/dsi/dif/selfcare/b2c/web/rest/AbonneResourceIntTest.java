@@ -18,10 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 
 
 import static org.mockito.Mockito.mock;
@@ -41,9 +38,6 @@ public class AbonneResourceIntTest {
     private MockMvc restAbonneMockMvc;
 
     @Mock
-    private SelfcareSoapService soapService;
-
-    @Mock
     private CustomerOfferService customerOfferService;
 
     @Mock
@@ -56,20 +50,12 @@ public class AbonneResourceIntTest {
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource(soapService, customerOfferService, abonneService);
+        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
     }
 
-    @Test
-    public void getSouscription() throws Exception {
 
-        ResponseEntity<SouscriptionDto> response = ResponseEntity.status(HttpStatus.OK).build();
-        when(resource.getSouscription(Mockito.any())).thenReturn(response);
-
-       restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", DEFAULT_NUMERO))
-            .andExpect(status().isOk());
-    }
 
     @Test
     public void isPostpaid() throws Exception {
@@ -81,28 +67,6 @@ public class AbonneResourceIntTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void getAbonne() throws Exception {
-        ResponseEntity<AbonneDTO> response = ResponseEntity.status(HttpStatus.OK).build();
-        when(resource.getAbonne(Mockito.anyString(),Mockito.anyString())).thenReturn(response);
-
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}/{code}", DEFAULT_NUMERO,DEFAULT_CODE))
-            .andExpect(status().isOk());
-    }
-
-    @Test
-    public void getAbonneWithStatusNOT_FOUND() throws Exception {
-
-        restAbonneMockMvc.perform(get("/api/abonne/information-abonne/{msisdn}", ""))
-            .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void getSouscriptionWithStatusNOT_FOUND() throws Exception {
-
-        restAbonneMockMvc.perform(get("/api/abonne/souscription/{msisdn}", ""))
-            .andExpect(status().isNotFound());
-    }
 
 
     @Test
