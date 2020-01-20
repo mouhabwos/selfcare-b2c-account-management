@@ -24,7 +24,8 @@ public class CustomerOffer   {
   @JsonProperty("clientCode")
   private String clientCode = null;
 
-
+    @JsonProperty("offerId")
+    private String offerId;
 
 
   @JsonProperty("createDate")
@@ -286,6 +287,14 @@ public class CustomerOffer   {
     this.voice = voice;
   }
 
+    public String getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(String offerId) {
+        this.offerId = offerId;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -300,6 +309,7 @@ public class CustomerOffer   {
             "\"offerType\"" + offerType + ',' +
             "\"sms\":" + sms + ',' +
             "\"voice\":" + voice + ',' +
+            "\"offerId\":" + offerId + ',' +
             '}';
     }
 }
