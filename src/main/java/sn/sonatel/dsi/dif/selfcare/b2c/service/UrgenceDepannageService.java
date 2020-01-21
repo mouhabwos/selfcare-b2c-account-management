@@ -10,6 +10,6 @@ import java.io.IOException;
  */
 public interface UrgenceDepannageService {
 
-    String ouvertureCompte(String operationDTO, MultipartFile formulaire, MultipartFile rectoID,  MultipartFile verso) throws IOException;
+    String ouvertureCompte(String operationDTO, MultipartFile formulaire, MultipartFile rectoID,  MultipartFile verso,String canal) throws IOException;
 
 }
