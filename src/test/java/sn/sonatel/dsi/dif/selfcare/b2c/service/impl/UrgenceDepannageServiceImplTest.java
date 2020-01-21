@@ -34,7 +34,7 @@ public class UrgenceDepannageServiceImplTest {
 
     private static final String stringOperationDTO = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
     private static final String stringOperationDTOErrorCode = "{\n" + "\t\"operationCode\":\"operation-test\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
-
+    private static final String CANAL = "";
 
     private UrgenceDepannageService urgenceDepannageService;
 
@@ -180,7 +180,7 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
-        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso());
+        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso(),CANAL);
         assertEquals( mail.getIdRequest(),ouvertureCompte);
     }
 
@@ -194,7 +194,7 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
-        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOWithCaracter().getFormulaire(), operationDTOWithCaracter().getRectoID(), operationDTOWithCaracter().getVerso());
+        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOWithCaracter().getFormulaire(), operationDTOWithCaracter().getRectoID(), operationDTOWithCaracter().getVerso(),CANAL);
         assertEquals( mail.getIdRequest(),ouvertureCompte);
     }
 
@@ -209,7 +209,7 @@ public class UrgenceDepannageServiceImplTest {
         // Run the test
         OperationDTO dto = operationDTO();
         dto.setOperationCode("operation-test");
-        urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, dto.getFormulaire(), dto.getRectoID(), dto.getVerso());
+        urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, dto.getFormulaire(), dto.getRectoID(), dto.getVerso(),CANAL);
     }
 
     @Test(expected = BadRequestAlertException.class)
@@ -219,7 +219,7 @@ public class UrgenceDepannageServiceImplTest {
 
         when(mailSendRepository.save(any())).thenReturn(mail);
 
-        urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso());
+        urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
 
     }
 

@@ -2,12 +2,11 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
+
 
 import java.util.Optional;
 
@@ -25,8 +24,6 @@ public interface AccountB2CService {
 
     Optional<AccountB2C> getAccountB2C(Long id);
 
-    ResponseEntity checkNumber(NumberRequest numberRequest);
-
     boolean emailExistingVerify(String email);
 
     AccountB2C getAccount(String login);
@@ -34,4 +31,6 @@ public interface AccountB2CService {
     void checkNumberV2(CheckNumberRequest checkNumberRequest);
 
     AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM);
+
+    boolean checkNumberV2(String msisdn);
 }

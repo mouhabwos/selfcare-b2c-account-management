@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,8 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -28,17 +29,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SouscriptionDto;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
@@ -46,10 +42,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -85,8 +81,6 @@ public class AccountB2CResourceIntTest {
     @Autowired
     private AccountB2CRepository accountB2CRepository;
 
-    @Autowired
-    private CaptchaService captchaService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -138,7 +132,7 @@ public class AccountB2CResourceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService,captchaService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -314,23 +308,6 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
 
-  /* @Test
-    @Transactional
-    public void getAccountB2C() throws Exception {
-        // Initialize the database
-        accountB2CRepository.saveAndFlush(accountB2C);
-
-        // Get the accountB2C
-        restAccountB2CMockMvc.perform(get("/api/account-management/account-b-2-cs/{id}", accountB2C.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(accountB2C.getId().intValue()))
-            .andExpect(jsonPath("$.numero").value(DEFAULT_NUMERO.toString()))
-            .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()))
-            .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.imageProfil").value(DEFAULT_IMAGE_PRFIL.toString()));
-    }*/
 
     @Test
     @Transactional
@@ -395,24 +372,6 @@ public class AccountB2CResourceIntTest {
 
     }
 
- /*   @Test
-    @Transactional
-    public void deleteAccountB2C() throws Exception {
-        // Initialize the database
-        accountB2CRepository.saveAndFlush(accountB2C);
-
-        int databaseSizeBeforeDelete = accountB2CRepository.findAll().size();
-
-        // Delete the accountB2C
-        restAccountB2CMockMvc.perform(delete("/api/account-management/account-b-2-cs/{id}", accountB2C.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
-            .andExpect(status().isOk());
-
-        // Validate the database is empty
-        List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
-        assertThat(accountB2CList).hasSize(databaseSizeBeforeDelete - 1);
-
-    }*/
 
     @Test
     @Transactional
@@ -429,59 +388,6 @@ public class AccountB2CResourceIntTest {
         assertThat(accountB2C1).isNotEqualTo(accountB2C2);
     }
 
-    @Test
-    @Transactional
-    public void checkLoginUsed() throws Exception {
-        // Initialize the database
-        accountB2CRepository.saveAndFlush(accountB2C);
-        NumberRequest numberRequest = new NumberRequest();
-        numberRequest.setMsisdn("775167761");
-        numberRequest.setToken("xYu45tUDind");
-
-        // Get the accountB2C
-        restAccountB2CMockMvc.perform(post("/api/account-management/check_number")
-            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
-            .content ( TestUtil.convertObjectToJsonBytes ( numberRequest )))
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @Transactional
-    public void checkLoginAlreadyRattached() throws Exception {
-        // Initialize the database
-        accountB2CRepository.saveAndFlush(accountB2C);
-
-        RattachementLigne ligne = new RattachementLigne();
-        ligne.setNumero("771222323");
-        ligne.setAccountB2C(accountB2C);
-        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
-        rattachementLigneRepository.save(ligne);
-
-        NumberRequest numberRequest = new NumberRequest();
-        numberRequest.setMsisdn(ligne.getNumero());
-        numberRequest.setToken("xYu45tUDind");
-
-        // Get the accountB2C
-        restAccountB2CMockMvc.perform(post("/api/account-management/check_number")
-            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
-            .content ( TestUtil.convertObjectToJsonBytes ( numberRequest )))
-            .andExpect(status().isBadRequest());
-    }
-
-
-    @Test
-    @Transactional
-    public void checkLoginNotUsed() throws Exception {
-
-        NumberRequest numberRequest = new NumberRequest();
-        numberRequest.setMsisdn("779853232");
-        numberRequest.setToken("xYu45tUDind");
-
-        restAccountB2CMockMvc.perform(post("/api/account-management/check_number")
-            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
-            .content ( TestUtil.convertObjectToJsonBytes ( numberRequest )))
-            .andExpect(status().isBadRequest());
-    }
 
     public void addData(){
         AccountB2C accountB2C = new AccountB2C();
@@ -585,7 +491,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService,captchaService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -608,22 +514,6 @@ public class AccountB2CResourceIntTest {
 
 
     }
-/*
-    @Test
-    @Transactional
-    public void registerAccountB2CWithNumberRattached() throws Exception {
-        adRattachement();
-        ManagedUserVM vm =addDataManagedUserVM();
-        vm.setLogin("770256363");
-
-        restAccountB2CMockMvc.perform(post("/api/account-management/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(vm)))
-            .andExpect(status().isBadRequest());
-
-    }*/
-
-
 
     @Transactional
     @Test
@@ -815,7 +705,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService,captchaService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -837,6 +727,17 @@ public class AccountB2CResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
             .andExpect(status().isOk());
 
+
+    }
+
+    @Test
+    public void checkNumberV2WithResponseFalse() throws Exception {
+
+
+        restAccountB2CMockMvc.perform(get("/api/account-management/v2/check_number/{msisdn}", "778888888"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().string("false"));
 
     }
 }

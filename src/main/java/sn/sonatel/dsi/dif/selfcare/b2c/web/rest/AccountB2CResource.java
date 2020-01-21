@@ -6,13 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
@@ -22,7 +20,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 import javax.validation.Valid;
@@ -45,15 +42,13 @@ public class AccountB2CResource {
 
     private final SelfcareOTPService otpService;
 
-    private final CaptchaService captchaService;
-
     private static final String IDNULL = "idnull";
 
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, CaptchaService captchaService) {
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService) {
 
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
-        this.captchaService=captchaService;
+
     }
 
 
@@ -131,22 +126,6 @@ public class AccountB2CResource {
     }
 
 
-
-
-
-
-    @Auditable(description = Message.Account.CHECK_Numero)
-    @PostMapping("/check_number")
-    public ResponseEntity checkNumber(@Valid @RequestBody NumberRequest numberRequest) {
-
-        if(!captchaService.verifyCaptcha(numberRequest.getToken())){
-            log.debug("Error invalid number to check number  : {}", numberRequest);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return accountB2CService.checkNumber(numberRequest);
-    }
-
     @Auditable(description = Message.Account.CHECK_Numero)
     @PostMapping("/v2/check_number")
     public ResponseEntity checkNumberV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
@@ -203,6 +182,14 @@ public class AccountB2CResource {
         log.debug("REST request to check field turorialView  status for AccountB2C : {}", msisdn);
         AccountB2C account = accountB2CService.getAccount(msisdn);
         return ResponseEntity.ok(account.isTutoViewed());
+    }
+
+
+    @Auditable(description = Message.Account.CHECK_Numero)
+    @GetMapping("/v2/check_number/{msisdn}")
+    public Boolean checkNumberV2(@PathVariable  String  msisdn) {
+        log.debug("REST request to check number : {}", msisdn);
+        return accountB2CService.checkNumberV2(msisdn);
     }
 
 

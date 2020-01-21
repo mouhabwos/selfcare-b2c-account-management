@@ -21,7 +21,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -131,19 +130,6 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public ResponseEntity checkNumber(NumberRequest numberRequest) {
-
-        log.debug("Service to check number of AccountB2C : {}", numberRequest);
-        numberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(numberRequest.getMsisdn()));
-
-
-        checkExistingAccountForNumber(numberRequest.getMsisdn());
-
-        return ResponseEntity.ok().build();
-    }
-
-
-    @Override
     public boolean emailExistingVerify(String email) {
 
         log.debug("Service to verify the status of email : {}", email);
@@ -198,6 +184,17 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
         checkExistingAccountForNumber(checkNumberRequest.getMsisdn());
+    }
+
+    @Override
+    public boolean checkNumberV2(String msisdn) {
+
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
+
+            log.debug ( "Service check Number : {}", msisdn);
+          return accountB2C.isPresent();
     }
 
 
