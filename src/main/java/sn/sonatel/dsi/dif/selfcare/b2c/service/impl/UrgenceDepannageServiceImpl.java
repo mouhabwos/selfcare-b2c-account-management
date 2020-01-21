@@ -42,13 +42,16 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
     }
 
     @Override
-    public String ouvertureCompte( String dto, MultipartFile formulaire, MultipartFile rectoID,  MultipartFile versoID) throws IOException {
+    public String ouvertureCompte( String dto, MultipartFile formulaire, MultipartFile rectoID,  MultipartFile versoID, String canal) throws IOException {
 
 
         OperationDTO operationDTO = convertStringToOperationDTO(dto);
         operationDTO.setFormulaire(formulaire);
         operationDTO.setVerso(versoID);
         operationDTO.setRectoID(rectoID);
+        if(canal != null && !canal.equals("")){
+            operationDTO.setCanal(canal);
+        }
 
         List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(rectoID);
