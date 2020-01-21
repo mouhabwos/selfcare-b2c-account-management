@@ -28,8 +28,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -320,5 +319,19 @@ public class AccountB2CServiceImplTest {
         // Verify the results
         assertNotNull(result);
     }
+    @Test
+    public void testCheckNumberV2Account(){
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("lastname");
+        accountB2C.setFirstName("firstname");
+        accountB2C.setNumero("778525265");
+        accountB2C =  mockAccountB2CRepository.save(accountB2C);
+
+        boolean checkNumberV2 = accountB2CServiceImplUnderTest.checkNumberV2(accountB2C.getNumero()) ;
+        assertTrue(checkNumberV2);
+
+    }
+
 
 }
