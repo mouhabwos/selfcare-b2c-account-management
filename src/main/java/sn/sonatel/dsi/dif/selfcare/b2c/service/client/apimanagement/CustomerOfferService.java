@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ProfilType;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
@@ -29,5 +31,16 @@ public class CustomerOfferService {
         if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
            return responseEntity.getBody();
         } else throw new NotFoundNumberException(msisdn);
+    }
+
+    public boolean isPostpaid(String msisdn){
+
+        log.debug ( "Service for check if number is postpaid for client {}", msisdn );
+        CustomerOffer customerOffer = getCustomerOffer(msisdn);
+        OfferTypeEnum offerType = customerOffer.getOfferType();
+
+        String profile = offerType.toString();
+
+        return profile.equals(ProfilType.POSTPAID.name());
     }
 }

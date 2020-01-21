@@ -22,7 +22,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareSoapService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -103,8 +102,6 @@ public class RattachementLigneResourceIntTest {
     @Autowired
     @Qualifier("loadBalancedRestTemplate")
     private RestTemplate restTemplate;
-    @Mock
-    private SelfcareSoapService selfcareSoapService;
 
     private RattachementLigneResource rattachementLigneResource;
 
@@ -573,30 +570,6 @@ public class RattachementLigneResourceIntTest {
 
 
     }
-
-    @Test
-    public void testCheckNumberFixSucess() throws Exception {
-
-        CheckNumberFixVM numberRequest = new CheckNumberFixVM();
-        numberRequest.setLogin("774568989");
-        numberRequest.setMsisdn("339962217");
-        numberRequest.setToken("ndskdnslkdnksqnkjjezkjzebdlndlknqsozeoinzlkndlzknjnlsnflknkzlkzehfzebf");
-
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/check_number_fixe")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(numberRequest)))
-            .andExpect(status().isBadRequest());
-
-    }
-
-    @Test
-    public void testGetAccountB2CByIdClient() throws Exception {
-
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-account/{idClient}", "167600"))
-            .andExpect(status().isNotFound());
-
-    }
-
 
     private CustomerOffer getCustomer(){
 

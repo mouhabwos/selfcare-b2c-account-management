@@ -19,20 +19,17 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -53,8 +50,6 @@ public class AccountB2CServiceImplTest {
     private MailService mockMailService;
     @Mock
     private DowloadManager mockDowloadManager;
-    @Mock
-    private CaptchaService mockCaptchaService;
     @Mock
     private BoosterManager boosterManager;
 
@@ -217,7 +212,7 @@ public class AccountB2CServiceImplTest {
         // Verify the results
 
     }
-
+/*
     @Test
     public void testCheckNumber(){
 
@@ -269,7 +264,7 @@ public class AccountB2CServiceImplTest {
         accountB2CServiceImplUnderTest.checkNumber(request);
 
     }
-
+*/
     @Test(expected = BadRequestAlertException.class)
     public void testCheckNumberV2(){
         CheckNumberRequest checkNumberRequest = new CheckNumberRequest();

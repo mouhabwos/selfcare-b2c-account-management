@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
@@ -161,43 +160,6 @@ public class RattachementLigneResource {
 
     }
 
-    /**
-     *
-     * @param checkNumberFixVM
-     * @return status ok
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     *
-     */
-    @Auditable(description = Message.Rattachement.CHECK_NUMBER_FIXE)
-    @PostMapping("/rattachement-lignes/check_number_fixe")
-    @PreAuthorize("#checkNumberFixVM.login==authentication.name")
-    public ResponseEntity checkNumberFix(@Valid @RequestBody CheckNumberFixVM checkNumberFixVM){
-        log.debug ( "REST request to get RattachementLigne : {}", checkNumberFixVM );
-        return rattachementLigneService.checkNumberFix(checkNumberFixVM);
-    }
-
-    /**
-     *
-     * @param idClient
-     * @return response status ok with a content body accountb2c
-     *
-     * @author Bouya Kande
-     * @since 1.1.4
-     *
-     */
-    @Auditable(description = Message.Rattachement.List_By_MSISDN)
-    @GetMapping("/rattachement-lignes/get-account/{idClient}")
-    @Timed
-    @PostAuthorize("returnObject.body.numero == authentication.name ")
-    public ResponseEntity<AccountB2C> getAccountB2CByIdClient(@PathVariable String idClient){
-
-        log.debug ( "REST request to get AccountB2C by id client : {}", idClient );
-        AccountB2C accountB2CByIdClient = rattachementLigneService.getAccountB2CByIdClient(idClient);
-        return ResponseEntity.ok(accountB2CByIdClient);
-
-    }
 
 
 }
