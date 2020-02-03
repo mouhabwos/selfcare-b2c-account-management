@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
@@ -18,14 +17,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.CaptchaService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 
@@ -58,8 +55,6 @@ public class RattachementLigneServiceImplTest {
     private RattachementLigneRepository mockRattachementLigneRepository;
     @Autowired
     private AccountB2CRepository mockAccountB2CRepository;
-    @Mock
-    private CaptchaService mockCaptchaService;
 
     private RattachementLigneServiceImpl rattachementLigneServiceImpl;
 
@@ -79,11 +74,11 @@ public class RattachementLigneServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
     }
 
 
-    @Test
+    /*@Test
     public void testCheckNumberFixSucess() {
 
         //creation account
@@ -230,7 +225,7 @@ public class RattachementLigneServiceImplTest {
 
          rattachementLigneServiceImpl.getAccountB2CByIdClient(idClient);
 
-    }
+    }*/
 
     @Test
     public void testGetRattachementLignes() {
@@ -239,7 +234,7 @@ public class RattachementLigneServiceImplTest {
          String msisdn = "77000 00 00";
         mockAccountB2CRepository = mock(AccountB2CRepository.class);
         mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -267,7 +262,7 @@ public class RattachementLigneServiceImplTest {
         String msisdn = "77000 00 00";
         mockAccountB2CRepository = mock(AccountB2CRepository.class);
         mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, mockCaptchaService, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");

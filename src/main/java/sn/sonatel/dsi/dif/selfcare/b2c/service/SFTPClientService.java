@@ -71,13 +71,13 @@ public class SFTPClientService {
 
             }
         }
-            return fileName;
     } catch (IOException ex) {
         log.error("Error while upload file from SFTP ", ex.getMessage(),ex);
     } finally {
             log.error("Finally while upload file from SFTP ");
-            return fileName;
+
     }
+        return fileName;
     }
 
 }
