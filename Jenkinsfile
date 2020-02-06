@@ -14,7 +14,7 @@ pipeline {
       VERSION = readMavenPom().getVersion()
       NAME = readMavenPom().getArtifactId()
       PORT=8715
-      ENV_REC = 'dsiselfcarebc-rec'
+      ENV_REC = 'dsiselfcarebc-dev'
       ENV_DEV = 'dsiselfcarebc-dev'
       SERVICE_NAME = "${ARTIFACT_ID}-db"
 
