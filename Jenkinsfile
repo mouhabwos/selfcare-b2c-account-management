@@ -59,25 +59,25 @@ pipeline {
 
 
 
-    stage(' [DEV2] Build & Run Docker image') {
-        agent  { label 'docker-builder-dev3' }
-        options { skipDefaultCheckout() }
-        when {
-                       anyOf { branch 'develop'; branch 'release' }
-                    }
-      steps {
-
-          sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
-          sh 'docker images -f reference=${IMAGE} -qa | xargs --no-run-if-empty docker rmi'
-          sh 'rm -rf target/'
-
-          unstash 'target'
-          dir('target') {
-            sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-            sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
-          }
-      }
-    }
+//     stage(' [DEV2] Build & Run Docker image') {
+//         agent  { label 'docker-builder-dev3' }
+//         options { skipDefaultCheckout() }
+//         when {
+//                        anyOf { branch 'develop'; branch 'release' }
+//                     }
+//       steps {
+//
+//           sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
+//           sh 'docker images -f reference=${IMAGE} -qa | xargs --no-run-if-empty docker rmi'
+//           sh 'rm -rf target/'
+//
+//           unstash 'target'
+//           dir('target') {
+//             sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
+//             sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+//           }
+//       }
+//     }
 
 
     stage(' [REC] Build & Run Docker image') {
