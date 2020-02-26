@@ -55,4 +55,9 @@ Add new Class InfoNotification
 -->
     <include file="config/liquibase/changelog/20200226102503_changelog.xml" relativeToChangelogFile="false"/>
 
+    <!--
+Add Index to NotificationInformation
+-->
+
+    <include file="config/liquibase/changelog/20200227084042_changelog.xml" relativeToChangelogFile="false"/>
  </databaseChangeLog>

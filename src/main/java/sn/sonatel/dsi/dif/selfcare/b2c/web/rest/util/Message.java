@@ -137,5 +137,12 @@ public final class Message {
         }
     }
 
+    public static final class NotificationInformation{
+
+        public static final String MSISDN_FIREBASEID_BY_CODE_FORMULE = "Liste des msisdn avec les firebaseId par le codeFormule";
+
+        private NotificationInformation() {  super (); }
+    }
+
 
 }
