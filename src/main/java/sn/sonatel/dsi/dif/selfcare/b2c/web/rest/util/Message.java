@@ -56,7 +56,7 @@ public final class Message {
 
         public static final String DELETE_ALL = "Suppression multiple de ligne rattachee";
 
-        public static final String SAVE = "Rattachement de ligne mobile";
+        public static final String SAVE = "Rattachement de ligne";
         public static final String List_By_MSISDN = "Recuperation de la liste de numeros rattaches en fonction du login";
 
         public static final String SEARCH = "Rechercher une ligne rattachee";

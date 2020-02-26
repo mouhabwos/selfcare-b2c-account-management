@@ -122,6 +122,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             }
 
             if(!isInContactNumbers(ligneVM.getNumero(),ligneVM.getLogin())){
+                log.debug("Service Error forbiden: This number {} cannot be attached by user: {}", ligneVM.getNumero(), ligneVM.getLogin());
                 throw new BadRequestAlertException("Vous ne pouvez pas rattacher ce numero","RattachementLigne","notMyNumber");
             }
 

@@ -74,7 +74,7 @@ pipeline {
 //           unstash 'target'
 //           dir('target') {
 //             sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-//             sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+//             sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M --cpus=0.5  -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
 //           }
 //       }
 //     }
@@ -93,13 +93,20 @@ pipeline {
               unstash 'target'
               dir('target') {
                 sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-                sh 'docker run --name=${NAME} -d  --restart=always -e JAVA_OPTS="-Dspring.profiles.active=rec" --memory-reservation=256M --memory=768M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+                sh 'docker run --name=${NAME} -d  --restart=always -e JAVA_OPTS="-Dspring.profiles.active=rec" --memory-reservation=256M --memory=768M --cpus=0.5  -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
               }
           }
         }
 
 
- 
+ 		stage('Deploy UAT') {
+      			when {
+        			branch 'release'
+      			}
+      			steps {
+        			sh ' mvn clean install -Puat -DskipTests'
+      			}
+    		}
 
 
         stage("SonarQube Quality Gate") {
