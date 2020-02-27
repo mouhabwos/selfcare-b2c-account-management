@@ -22,8 +22,8 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: @eureka.instance.dev.hostname@
-        hostname: @eureka.instance.dev.hostname@
+        #ip-address: @eureka.instance.dev.hostname@
+        #hostname: @eureka.instance.dev.hostname@
     client:
         service-url:
             defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s-test.orange-sonatel.com/eureka/
