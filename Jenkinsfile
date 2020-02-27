@@ -61,30 +61,23 @@ pipeline {
  	 }
 
 
+    stage('Build & Push Docker image') {
+        agent  { label 'docker-builder-dev2-old' }
+        options { skipDefaultCheckout() }
+      steps {
 
+          sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
+          sh 'docker images -f reference=${IMAGE} -qa | xargs --no-run-if-empty docker rmi'
+          sh 'rm -rf target/'
 
-
-
-            /*  ================ Build & Push Docker image ================================= */
-
-        stage('Build & Push Docker image') {
-                      agent  { label 'docker-builder-dev2-old' }
-                      options { skipDefaultCheckout() }
-                  steps {
-
-                            sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
-                            sh 'docker images -f reference=${IMAGE} -qa | xargs --no-run-if-empty docker rmi'
-                            sh 'rm -rf target/'
-
-                            unstash 'target'
-                            dir('target') {
-                            sh 'docker build -t ${IMAGE} .'
-                            /* sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}' */
-                            sh 'docker push ${IMAGE}'
-                           }
-                  }
-              }
-
+          unstash 'target'
+          dir('target') {
+            sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
+            /* sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}' */
+            sh 'docker push ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+          }
+      }
+    }
 
             /*  ================ Mysql service DEV-REC ================================= */
     stage('Malaw DEV - Mysql service') {
