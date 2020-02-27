@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
@@ -34,6 +31,15 @@ public class NotificationInformationResource {
     public ResponseEntity<List<NotificationInformationDTO>> getNotificationInformationByCodeFormule(@PathVariable String codeFormule) {
         log.debug ( "REST request to get msisdn and firebaseId for code formule  {}", codeFormule );
         return ResponseEntity.ok(notificationInformationService.getNotificationInformationByCodeFormule(codeFormule));
+    }
+
+    @Auditable(description = Message.NotificationInformation.UPDATE_CODE_FORMULE_BY_MSISDN)
+    @PutMapping
+    @PreAuthorize("#informationDTO.msisdn == authentication.name")
+    public ResponseEntity updateCodeFormuleByMsisdn(@RequestBody NotificationInformationDTO informationDTO) {
+        log.debug ( "REST request to update for msisdn {}", informationDTO );
+        notificationInformationService.updateCodeFormuleByMsisdn(informationDTO);
+        return ResponseEntity.ok().build();
     }
 
 }
