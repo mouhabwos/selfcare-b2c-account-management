@@ -10,7 +10,7 @@ pipeline {
 //Utiliser Pipeline Utility Steps plugin pour lire des informations depuis pom.xml dans env variables
 
   environment {
-      IMAGE = 'registry.tools.orange-sonatel.com/dif/selfcare-b2c-account-management'
+      IMAGE = 'registry.tools.orange-sonatel.com/dif/selfcareb2c-accountmanagement'
       VERSION = readMavenPom().getVersion()
       NAME = readMavenPom().getArtifactId()
       PORT=8715
