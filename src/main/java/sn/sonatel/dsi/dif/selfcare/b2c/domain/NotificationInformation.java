@@ -3,20 +3,24 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
  * A InfoNotification.
  */
 @Entity
-@Table(name = "notification_information")
+@Table(name = "notification_information",
+    indexes = {
+        @Index(name = "NOTIFICATION_INFORMATION_INDX_0", columnList = "code_formule") })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NotificationInformation implements Serializable {
 
-
-    @Column(name = "code_formule")
+    @Size(min = 4, max = 5)
+    @Column(name = "code_formule", length = 5)
     private String codeFormule;
 
     @Column(name = "firebase_id")
