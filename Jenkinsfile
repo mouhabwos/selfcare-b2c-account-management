@@ -123,7 +123,7 @@ pipeline {
                     }
 
 
-             stage('Malaw REC - Mysql service') {
+             /*stage('Malaw REC - Mysql service') {
                     agent {label 'malaw-dev'}
                       when {
                         expression {
@@ -157,7 +157,7 @@ pipeline {
                                 }
                     }
             }
-
+*/
 
 
     stage('Malaw DEV - Deploy') {
@@ -189,7 +189,7 @@ pipeline {
                   }
             }
 
-      stage('Malaw REC - Deploy') {
+    /*  stage('Malaw REC - Deploy') {
               agent {label 'malaw-dev'}
                 steps {
                   //Generate maven-resource-plugin param files"
@@ -213,7 +213,7 @@ pipeline {
                     }
                   }
                 }
-              }
+              }*/
 
 
         stage("SonarQube Quality Gate") {
