@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -137,7 +136,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-    @PostAuthorize("#msisdn == authentication.name")
+    @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "REST request to get RattachementLigne : {}", msisdn );
