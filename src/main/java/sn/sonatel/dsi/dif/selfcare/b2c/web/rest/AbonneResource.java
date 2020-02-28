@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +34,7 @@ public class AbonneResource {
 
     @Auditable(description = Message.Abonne.IS_POSPAID)
     @GetMapping("/is-postpaid/{msisdn}/{msisdn1}")
-    @PostAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<Boolean> isPostpaid(@PathVariable String msisdn,@PathVariable String msisdn1) {
         log.debug ( "REST request to verify if  {} is pospaid ", msisdn1 );
             return new ResponseEntity<>(customerOfferService.isPostpaid(msisdn1), HttpStatus.OK);
