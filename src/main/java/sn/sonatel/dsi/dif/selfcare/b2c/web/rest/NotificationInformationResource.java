@@ -42,4 +42,12 @@ public class NotificationInformationResource {
         return ResponseEntity.ok().build();
     }
 
+
+    @Auditable(description = Message.NotificationInformation.GET_FIREBASEID_BY_MSISDN)
+    @GetMapping
+    public ResponseEntity<List<NotificationInformationDTO>> getFirebaseIdByMsisdn(@RequestBody List<String> listMsisdn) {
+        log.debug ( "REST request to get FirebaseId By Msisdn with list msisdn");
+        return ResponseEntity.ok().body(notificationInformationService.getFirebaseIdByMsisdn(listMsisdn));
+    }
+
 }

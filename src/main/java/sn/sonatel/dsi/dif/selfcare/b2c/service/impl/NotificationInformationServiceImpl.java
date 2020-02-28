@@ -10,6 +10,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,11 @@ public class NotificationInformationServiceImpl implements NotificationInformati
             byAccountB2CNumero.get().setCodeFormule(informationDTO.getCodeFormule());
             notificationInformationRepository.save(byAccountB2CNumero.get());
         }else throw new LigneNotFoundException();
+    }
+
+    @Override
+    public List<NotificationInformationDTO> getFirebaseIdByMsisdn(List<String> listMsisdn) {
+        log.debug ( "SERVICE request to get FirebaseId By Msisdn with list msisdn");
+        return notificationInformationMapper.toDto(notificationInformationRepository.findAllByAccountB2CNumeroIn(listMsisdn));
     }
 }
