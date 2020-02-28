@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.NotificationInformation;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -16,4 +17,5 @@ public interface NotificationInformationRepository extends JpaRepository<Notific
 
     List<NotificationInformation> findOneByCodeFormule(String codeFormule);
 
+    Optional<NotificationInformation> findOneByAccountB2CNumero(String msisdn);
 }
