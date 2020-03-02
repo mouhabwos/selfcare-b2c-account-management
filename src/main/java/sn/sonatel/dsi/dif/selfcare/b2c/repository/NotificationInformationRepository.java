@@ -18,4 +18,6 @@ public interface NotificationInformationRepository extends JpaRepository<Notific
     List<NotificationInformation> findOneByCodeFormule(String codeFormule);
 
     Optional<NotificationInformation> findOneByAccountB2CNumero(String msisdn);
+
+    List<NotificationInformation> findAllByAccountB2CNumeroIn(List<String> listMsisdn);
 }

@@ -142,6 +142,9 @@ public final class Message {
         public static final String MSISDN_FIREBASEID_BY_CODE_FORMULE = "Liste des msisdn avec les firebaseId par le codeFormule";
 
         public static final String UPDATE_CODE_FORMULE_BY_MSISDN = "Update code formule";
+
+        public static final String GET_FIREBASEID_BY_MSISDN = "Recuperation du firebaseId pour une liste de numero";
+
         private NotificationInformation() {  super (); }
     }
 

@@ -20,10 +20,14 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
 @RunWith(SpringRunner.class)
@@ -117,5 +121,23 @@ public class NotificationInformationResourceTest {
             .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
             .andExpect(status().isOk());
 
+    }
+
+
+
+    @Test
+    public void testGetFirebaseIdByMsisdn() throws Exception {
+
+        List<String> stringList = new ArrayList<>();
+        stringList.add("770010101");
+        stringList.add("770000001");
+        stringList.add("770000002");
+        stringList.add("770000003");
+
+        // Setup
+        restMockMvc.perform(get("/api/notification-information")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(stringList)))
+            .andExpect(status().isOk());
     }
 }
