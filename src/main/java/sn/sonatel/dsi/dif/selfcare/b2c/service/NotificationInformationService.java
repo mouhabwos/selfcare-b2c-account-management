@@ -13,4 +13,6 @@ public interface NotificationInformationService {
     void updateCodeFormuleByMsisdn(NotificationInformationDTO informationDTO);
 
     List<NotificationInformationDTO> getFirebaseIdByMsisdn(List<String> listMsisdn);
+
+    void register(NotificationInformationDTO informationDTO);
 }
