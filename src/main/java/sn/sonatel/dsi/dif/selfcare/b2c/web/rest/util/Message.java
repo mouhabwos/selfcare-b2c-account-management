@@ -145,6 +145,8 @@ public final class Message {
 
         public static final String GET_FIREBASEID_BY_MSISDN = "Recuperation du firebaseId pour une liste de numero";
 
+        public static final String REGISTER = "add information Notification";
+
         private NotificationInformation() {  super (); }
     }
 

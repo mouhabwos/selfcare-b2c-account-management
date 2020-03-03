@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
@@ -139,5 +138,85 @@ public class NotificationInformationResourceTest {
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(stringList)))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRegisterInformationPresent() throws Exception {
+
+        String codeUpdate = "7777";
+
+        //Save account
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("770010111");
+        accountB2C.setEmail("test785016@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+        NotificationInformation information = new NotificationInformation();
+        information.setCodeFormule("7878");
+        information.setFirebaseId("000001");
+        information.setAccountB2C(accountB2C);
+
+        notificationInformationRepository.save(information);
+
+        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+        informationDTO.setCodeFormule(codeUpdate);
+        informationDTO.setFirebaseId("888888");
+        informationDTO.setMsisdn(accountB2C.getNumero());
+
+        // Setup
+        restMockMvc.perform(post("/api/notification-information/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+            .andExpect(status().isBadRequest());
+
+    }
+
+
+
+    @Test
+    public void testRegisterNoPresent() throws Exception {
+
+
+
+        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+        informationDTO.setCodeFormule("9696");
+        informationDTO.setFirebaseId("888888");
+        informationDTO.setMsisdn("770003636");
+
+        // Setup
+        restMockMvc.perform(post("/api/notification-information/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+            .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void testRegisterCreated() throws Exception {
+
+        //Save account
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("770010115");
+        accountB2C.setEmail("test785015@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+
+        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+        informationDTO.setCodeFormule("0012");
+        informationDTO.setFirebaseId("888896");
+        informationDTO.setMsisdn(accountB2C.getNumero());
+
+        // Setup
+        restMockMvc.perform(post("/api/notification-information/register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+            .andExpect(status().isCreated());
+
     }
 }
