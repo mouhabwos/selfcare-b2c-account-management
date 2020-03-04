@@ -17,6 +17,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.NotificationInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
 
 import static org.mockito.ArgumentMatchers.any;

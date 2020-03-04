@@ -146,7 +146,6 @@ public class NotificationInformationResourceTest {
         String codeUpdate = "7777";
 
         //Save account
-
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("hello");
         accountB2C.setFirstName("hello");
@@ -218,5 +217,38 @@ public class NotificationInformationResourceTest {
             .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
             .andExpect(status().isCreated());
 
+    }
+
+
+    @Test
+    public void testGetFirebaseIdByListCodeFormule() throws Exception {
+
+        //Save account
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("780010115");
+        accountB2C.setEmail("test775015@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+        //    save notification information
+        NotificationInformation information = new NotificationInformation();
+        information.setAccountB2C(accountB2C);
+        information.setCodeFormule("9131");
+        notificationInformationRepository.save(information);
+
+        List<String> stringList = new ArrayList<>();
+        stringList.add("9131");
+        stringList.add("8080");
+
+        // Setup
+        restMockMvc.perform(get("/api/notification-information/by-codesFormule")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(stringList)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].msisdn").value(hasItem(accountB2C.getNumero())))
+            .andExpect(jsonPath("$.[*].codeFormule").value(hasItem(information.getCodeFormule())));
     }
 }

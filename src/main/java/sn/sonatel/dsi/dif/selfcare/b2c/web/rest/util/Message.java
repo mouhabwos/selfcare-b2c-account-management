@@ -147,6 +147,8 @@ public final class Message {
 
         public static final String REGISTER = "add information Notification";
 
+        public static final String MSISDN_FIREBASEID_BY_LIST_CODE_FORMULE = "Liste des msisdn avec les firebaseId pour une liste de codeFormule";
+
         private NotificationInformation() {  super (); }
     }
 

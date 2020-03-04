@@ -16,6 +16,8 @@ public interface NotificationInformationService {
 
     void register(NotificationInformationDTO informationDTO);
 
+    List<NotificationInformationDTO> getNotificationInformationByListCodeFormule(List<String> codeFormule);
+
     void addCodeFormuleCustomerOffer(String msisdn);
 
     void updateNotificationInformationFormulCode(String msisdn);
