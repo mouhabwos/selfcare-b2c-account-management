@@ -82,6 +82,12 @@ public class NotificationInformationServiceImpl implements NotificationInformati
     }
 
     @Override
+    public List<NotificationInformationDTO> getNotificationInformationByListCodeFormule(List<String> codeFormule) {
+        log.debug ( "SERVICE request to get FirebaseId By Msisdn with list codeFormule");
+        return notificationInformationMapper.toDto(notificationInformationRepository.findAllByCodeFormuleIn(codeFormule));
+    }
+
+    @Override
     public void addCodeFormuleCustomerOffer(String msisdn){
         log.debug ("Service to add codeFormule  for new user registration {}", msisdn);
         CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);

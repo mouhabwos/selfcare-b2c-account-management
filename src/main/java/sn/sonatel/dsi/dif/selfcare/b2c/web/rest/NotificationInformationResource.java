@@ -62,4 +62,10 @@ public class NotificationInformationResource {
 
     }
 
+    @Auditable(description = Message.NotificationInformation.MSISDN_FIREBASEID_BY_LIST_CODE_FORMULE)
+    @GetMapping("/by-codesFormule")
+    public ResponseEntity<List<NotificationInformationDTO>> getNotificationInformationByListCodeFormule(@RequestBody List<String> codeFormule) {
+        log.debug ( "REST request to get msisdn and firebaseId for list code formule  {}", codeFormule );
+        return ResponseEntity.ok(notificationInformationService.getNotificationInformationByListCodeFormule(codeFormule));
+    }
 }
