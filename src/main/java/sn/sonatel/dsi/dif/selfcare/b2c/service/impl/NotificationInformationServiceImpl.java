@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.NotificationInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.NotificationInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -21,13 +24,16 @@ public class NotificationInformationServiceImpl implements NotificationInformati
 
     private final Logger log = LoggerFactory.getLogger ( NotificationInformationServiceImpl.class );
 
+    private static final String CODE_FORMULE_HYBRIDE = "9132";
     private final NotificationInformationRepository notificationInformationRepository;
     private final NotificationInformationMapper notificationInformationMapper;
+    private final CustomerOfferService customerOfferService;
     private final AccountB2CRepository accountB2CRepository;
 
-    public NotificationInformationServiceImpl(NotificationInformationRepository notificationInformationRepository, NotificationInformationMapper notificationInformationMapper, AccountB2CRepository accountB2CRepository) {
+    public NotificationInformationServiceImpl(NotificationInformationRepository notificationInformationRepository, NotificationInformationMapper notificationInformationMapper, AccountB2CRepository accountB2CRepository, CustomerOfferService customerOfferService) {
         this.notificationInformationRepository = notificationInformationRepository;
         this.notificationInformationMapper = notificationInformationMapper;
+        this.customerOfferService = customerOfferService;
         this.accountB2CRepository = accountB2CRepository;
     }
 
@@ -74,4 +80,21 @@ public class NotificationInformationServiceImpl implements NotificationInformati
         }else throw new LigneNotFoundException();
 
     }
+
+    @Override
+    public void addCodeFormuleCustomerOffer(String msisdn){
+        log.debug ("Service to add codeFormule  for new user registration {}", msisdn);
+        CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
+        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+        informationDTO.setMsisdn(msisdn);
+
+        informationDTO.setCodeFormule(findCodeFormule(customerOffer.getOfferType(), customerOffer.getOfferId()));
+
+        register(informationDTO);
+    }
+
+    private String findCodeFormule(OfferTypeEnum offerType, String codeFormule){
+        return (OfferTypeEnum.HYBRIDE.equals(offerType))? CODE_FORMULE_HYBRIDE:codeFormule;
+    }
+
 }
