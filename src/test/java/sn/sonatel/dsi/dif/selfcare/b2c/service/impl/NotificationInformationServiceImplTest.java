@@ -17,7 +17,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.NotificationInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +29,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class NotificationInformationServiceImplTest {
 
     @Autowired
-    private NotificationInformationRepository mockNotificationInformationRepository;
+    private NotificationInformationRepository notificationInformationRepository;
     @Autowired
     private NotificationInformationMapper mockNotificationInformationMapper;
     @Autowired
@@ -43,7 +42,7 @@ public class NotificationInformationServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        notificationInformationServiceImplUnderTest = new NotificationInformationServiceImpl(mockNotificationInformationRepository, mockNotificationInformationMapper, accountB2CRepository, mockCustomerOfferService);
+        notificationInformationServiceImplUnderTest = new NotificationInformationServiceImpl(notificationInformationRepository, mockNotificationInformationMapper, accountB2CRepository, mockCustomerOfferService);
     }
 
 
@@ -70,6 +69,71 @@ public class NotificationInformationServiceImplTest {
 
         // Run the test
         notificationInformationServiceImplUnderTest.addCodeFormuleCustomerOffer(accountB2C.getNumero());
+
+        //verify that the add method was called with argument 'some string'
+        Mockito.verify(mockCustomerOfferService).getCustomerOffer(accountB2C.getNumero());
+    }
+
+
+
+    @Test
+    public void testUpdateCodeFormuleCustomerOffer() {
+        // Setup
+
+        //save account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("770010185");
+        accountB2C.setEmail("test785065@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+        // Configure CustomerOfferService.getCustomerOffer(...).
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("clientCode");
+        customerOffer.setCreateDate("createDate");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferId("9331");
+        when(mockCustomerOfferService.getCustomerOffer(anyString())).thenReturn(customerOffer);
+
+        // Run the test
+        notificationInformationServiceImplUnderTest.updateNotificationInformationFormulCode(accountB2C.getNumero());
+
+        //verify that the add method was called with argument 'some string'
+        Mockito.verify(mockCustomerOfferService).getCustomerOffer(accountB2C.getNumero());
+    }
+
+
+    @Test
+    public void testUpdateCodeFormuleCustomer() {
+        // Setup
+
+        //save account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("770010185");
+        accountB2C.setEmail("test785065@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+        // Configure CustomerOfferService.getCustomerOffer(...).
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("clientCode");
+        customerOffer.setCreateDate("createDate");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferId("9339");
+        when(mockCustomerOfferService.getCustomerOffer(anyString())).thenReturn(customerOffer);
+        //Save Notification information
+
+        NotificationInformation information = new NotificationInformation();
+        information.setCodeFormule("7878");
+        information.setFirebaseId("000001");
+        information.setAccountB2C(accountB2C);
+
+        notificationInformationRepository.save(information);
+
+        // Run the test
+        notificationInformationServiceImplUnderTest.updateNotificationInformationFormulCode(accountB2C.getNumero());
 
         //verify that the add method was called with argument 'some string'
         Mockito.verify(mockCustomerOfferService).getCustomerOffer(accountB2C.getNumero());

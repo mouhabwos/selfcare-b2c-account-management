@@ -17,4 +17,6 @@ public interface NotificationInformationService {
     void register(NotificationInformationDTO informationDTO);
 
     void addCodeFormuleCustomerOffer(String msisdn);
+
+    void updateNotificationInformationFormulCode(String msisdn);
 }

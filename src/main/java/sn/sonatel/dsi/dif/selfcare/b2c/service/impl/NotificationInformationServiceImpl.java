@@ -93,6 +93,22 @@ public class NotificationInformationServiceImpl implements NotificationInformati
         register(informationDTO);
     }
 
+    @Override
+    public void updateNotificationInformationFormulCode(String msisdn){
+
+        log.debug ("Service to update NotificationInformation from customer OFFER {}", msisdn);
+        Optional<NotificationInformation> byAccountB2CNumero = notificationInformationRepository.findOneByAccountB2CNumero(msisdn);
+        if(byAccountB2CNumero.isPresent()){
+            CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
+            NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+            informationDTO.setMsisdn(msisdn);
+            informationDTO.setCodeFormule(findCodeFormule(customerOffer.getOfferType(), customerOffer.getOfferId()));
+
+            updateCodeFormuleByMsisdn(informationDTO);
+
+        } else addCodeFormuleCustomerOffer(msisdn);
+    }
+
     private String findCodeFormule(OfferTypeEnum offerType, String codeFormule){
         return (OfferTypeEnum.HYBRIDE.equals(offerType))? CODE_FORMULE_HYBRIDE:codeFormule;
     }
