@@ -74,4 +74,10 @@ public class NotificationInformationServiceImpl implements NotificationInformati
         }else throw new LigneNotFoundException();
 
     }
+
+    @Override
+    public List<NotificationInformationDTO> getNotificationInformationByListCodeFormule(List<String> codeFormule) {
+        log.debug ( "SERVICE request to get FirebaseId By Msisdn with list codeFormule");
+        return notificationInformationMapper.toDto(notificationInformationRepository.findAllByCodeFormuleIn(codeFormule));
+    }
 }
