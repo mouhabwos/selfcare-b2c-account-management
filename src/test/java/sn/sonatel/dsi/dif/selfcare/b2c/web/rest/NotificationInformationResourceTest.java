@@ -251,4 +251,32 @@ public class NotificationInformationResourceTest {
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(accountB2C.getNumero())))
             .andExpect(jsonPath("$.[*].codeFormule").value(hasItem(information.getCodeFormule())));
     }
+
+
+    @Test
+    public void testUpdateCodeFormuleByMsisdnNoExistingInfo() throws Exception {
+
+        String codeUpdate = "7779";
+
+        //Save account
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("770010152");
+        accountB2C.setEmail("test785066@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+        informationDTO.setCodeFormule(codeUpdate);
+        informationDTO.setFirebaseId("888");
+        informationDTO.setMsisdn(accountB2C.getNumero());
+
+        // Setup
+        restMockMvc.perform(put("/api/notification-information")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+            .andExpect(status().isOk());
+
+    }
 }
