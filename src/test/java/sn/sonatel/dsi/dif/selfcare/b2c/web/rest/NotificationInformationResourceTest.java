@@ -243,9 +243,8 @@ public class NotificationInformationResourceTest {
         stringList.add("8080");
 
         // Setup
-        restMockMvc.perform(get("/api/notification-information/by-codesFormule")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(stringList)))
+        restMockMvc.perform(get("/api/notification-information/by-codesFormule?codeFormule=9131,8080")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(accountB2C.getNumero())))
