@@ -134,9 +134,8 @@ public class NotificationInformationResourceTest {
         stringList.add("770000003");
 
         // Setup
-        restMockMvc.perform(get("/api/notification-information")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(stringList)))
+        restMockMvc.perform(get("/api/notification-information?listMsisdn=770010101,770000001,770000002,770000003")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
     }
 
@@ -243,12 +242,39 @@ public class NotificationInformationResourceTest {
         stringList.add("8080");
 
         // Setup
-        restMockMvc.perform(get("/api/notification-information/by-codesFormule")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(stringList)))
+        restMockMvc.perform(get("/api/notification-information/by-codesFormule?codeFormule=9131,8080")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(accountB2C.getNumero())))
             .andExpect(jsonPath("$.[*].codeFormule").value(hasItem(information.getCodeFormule())));
+    }
+
+
+    @Test
+    public void testUpdateCodeFormuleByMsisdnNoExistingInfo() throws Exception {
+
+        String codeUpdate = "7779";
+
+        //Save account
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("hello");
+        accountB2C.setFirstName("hello");
+        accountB2C.setNumero("770010152");
+        accountB2C.setEmail("test785066@gmail.com");
+        accountB2C = accountB2CRepository.save(accountB2C);
+
+        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+        informationDTO.setCodeFormule(codeUpdate);
+        informationDTO.setFirebaseId("888");
+        informationDTO.setMsisdn(accountB2C.getNumero());
+
+        // Setup
+        restMockMvc.perform(put("/api/notification-information")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+            .andExpect(status().isOk());
+
     }
 }

@@ -54,7 +54,7 @@ public class NotificationInformationServiceImpl implements NotificationInformati
             }
             byAccountB2CNumero.get().setCodeFormule(informationDTO.getCodeFormule());
             notificationInformationRepository.save(byAccountB2CNumero.get());
-        }else throw new LigneNotFoundException();
+        }else register(informationDTO);
     }
 
     @Override

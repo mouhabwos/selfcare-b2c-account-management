@@ -46,7 +46,7 @@ public class NotificationInformationResource {
 
     @Auditable(description = Message.NotificationInformation.GET_FIREBASEID_BY_MSISDN)
     @GetMapping
-    public ResponseEntity<List<NotificationInformationDTO>> getFirebaseIdByMsisdn(@RequestBody List<String> listMsisdn) {
+    public ResponseEntity<List<NotificationInformationDTO>> getFirebaseIdByMsisdn(@RequestParam("listMsisdn") List<String> listMsisdn) {
         log.debug ( "REST request to get FirebaseId By Msisdn with list msisdn");
         return ResponseEntity.ok().body(notificationInformationService.getFirebaseIdByMsisdn(listMsisdn));
     }
@@ -64,7 +64,7 @@ public class NotificationInformationResource {
 
     @Auditable(description = Message.NotificationInformation.MSISDN_FIREBASEID_BY_LIST_CODE_FORMULE)
     @GetMapping("/by-codesFormule")
-    public ResponseEntity<List<NotificationInformationDTO>> getNotificationInformationByListCodeFormule(@RequestBody List<String> codeFormule) {
+    public ResponseEntity<List<NotificationInformationDTO>> getNotificationInformationByListCodeFormule(@RequestParam("codeFormule") List<String> codeFormule) {
         log.debug ( "REST request to get msisdn and firebaseId for list code formule  {}", codeFormule );
         return ResponseEntity.ok(notificationInformationService.getNotificationInformationByListCodeFormule(codeFormule));
     }
