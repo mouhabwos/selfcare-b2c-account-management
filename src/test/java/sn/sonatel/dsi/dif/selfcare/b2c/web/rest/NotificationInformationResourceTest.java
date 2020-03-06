@@ -134,9 +134,8 @@ public class NotificationInformationResourceTest {
         stringList.add("770000003");
 
         // Setup
-        restMockMvc.perform(get("/api/notification-information")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(stringList)))
+        restMockMvc.perform(get("/api/notification-information?listMsisdn=770010101,770000001,770000002,770000003")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
     }
 
