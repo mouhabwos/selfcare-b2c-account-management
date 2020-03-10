@@ -3,6 +3,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
@@ -55,6 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
 
@@ -583,6 +586,37 @@ public class RattachementLigneResourceIntTest {
             .offerName("Jamono New Scool");
 
         return customerOffer;
+    }
+
+    @Test
+    @Transactional
+    public void addRattachementLigneFixe() throws Exception {
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
+
+        AccountB2C u = new AccountB2C();
+        u.setNumero("775167605");
+        u.setFirstName("leyla");
+        u.setLastName("diallo");
+        u.setEmail("dia@gmail.com");
+        AccountB2C saveAccount = accountB2CRepository.save(u);
+
+        //Customer offer
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("11111");
+
+        RattachementLigneFixeVM ligneVM = new RattachementLigneFixeVM();
+
+        ligneVM.setLogin(u.getNumero());
+        ligneVM.setNumero("338328033");
+        ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
+        ligneVM.setIdClient(customerOffer.getClientCode());
+
+        // Create the RattachementLigne
+        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/fixe-register")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+            .andExpect(status().isBadRequest());
+
     }
 
 

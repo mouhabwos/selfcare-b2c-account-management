@@ -105,7 +105,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     @Override
     public RattachementLigne addRattachementLigne(RattachementLigneVM ligneVM) {
 
-        log.debug ( "Service to save RattachementLigne : {}", ligneVM );
+        log.debug ( "Service to save RattachementLigne register: {}", ligneVM );
         ligneVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getNumero()));
 
         ligneVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getLogin()));
@@ -201,6 +201,29 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     }
 
+    @Override
+    public RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneFixeVM){
+        log.debug ( "Service to save RattachementLigne Fixe: {}", ligneFixeVM );
+        ligneFixeVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneFixeVM.getNumero()));
+
+        ligneFixeVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneFixeVM.getLogin()));
+        checkNumberIfUsed(ligneFixeVM.getNumero(),ligneFixeVM.getLogin());
+        if(checkIdClient(ligneFixeVM.getNumero(),ligneFixeVM.getIdClient())){
+            Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(ligneFixeVM.getLogin());
+            if(account.isPresent()){
+                RattachementLigne ligne = new RattachementLigne();
+                ligne.setNumero(ligneFixeVM.getNumero());
+                ligne.setAccountB2C(account.get());
+                ligne.setTypeNumero(ligneFixeVM.getTypeNumero());
+                ligne.setIdClient(ligneFixeVM.getIdClient());
+                return rattachementLigneRepository.save(ligne);
+            }
+
+        }
+
+        throw new BadRequestAlertException("L id Client n existe pas","","");
+
+    }
 
     private void checkNumberIfUsed(String number, String login) {
 
@@ -260,6 +283,14 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
           return contactNumbers.contains(msisdn);
         }
         return false;
+    }
+
+    private boolean checkIdClient(String msisdn, String idClient){
+        CustomerOffer customerOffer = getSouscription(msisdn);
+        if(customerOffer != null){
+            String clientCode = customerOffer.getClientCode();
+            return clientCode.equals(idClient);
+        }else throw new NotFoundNumberException("");
     }
 
 }
