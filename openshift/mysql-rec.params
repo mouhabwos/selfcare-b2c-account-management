@@ -1,0 +1,3 @@
+SERVICE_NAME=${project.artifactId}-db
+IP_ADDRESS=10.137.52.11
+SERVICE_PORT=3306
