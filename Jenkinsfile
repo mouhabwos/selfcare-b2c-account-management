@@ -223,6 +223,15 @@ pipeline {
     /* ======================================  FIN Deploy DEV-REC  ======================================== */
 
 
+    		stage('Deploy UAT') {
+      			when {
+        			branch 'release'
+      			}
+      			steps {
+        			sh ' mvn clean install -Puat -DskipTests'
+      			}
+    		}
+
         stage("SonarQube Quality Gate") {
            steps{
                script{
