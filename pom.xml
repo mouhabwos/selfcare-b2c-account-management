@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.6.1</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -36,7 +36,7 @@
     <scm>
         <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</connection>
         <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</developerConnection>
-        <tag>v1.5.0</tag>
+        <tag>v1.6.1</tag>
         <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</url>
     </scm>
 
@@ -172,8 +172,7 @@
     </dependencyManagement>
 
     <dependencies>
-
-
+      
         <dependency>
             <groupId>sn.sonatel.dsi.dif.selfcare.utils</groupId>
             <artifactId>selfcare-logging</artifactId>
@@ -492,6 +491,11 @@
             <scope>test</scope>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
+        <dependency>
+                <groupId>co.elastic.logging</groupId>
+                <artifactId>log4j2-ecs-layout</artifactId>
+                <version>0.1.3</version>
+      </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -1421,7 +1425,7 @@
                     <version>1.12.0</version>
                 </dependency>
             </dependencies>
-        </profile>
+		</profile>
         <profile>
             <!--
                 Profile for applying IDE-specific configuration.
