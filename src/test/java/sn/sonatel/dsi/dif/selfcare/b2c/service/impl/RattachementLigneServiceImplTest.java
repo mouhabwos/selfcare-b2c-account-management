@@ -375,4 +375,65 @@ public class RattachementLigneServiceImplTest {
 
     }
 
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testRegisterRattachementLigneFixeBadIdClient(){
+
+        String codeClient = "3272889966666";
+        String numFixe = "338237244";
+        String login = "770502323";
+
+        // sauvegarde user in Account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(login);
+        accountB2C.setFirstName("hello");
+        accountB2C.setLastName("hello");
+        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+
+        //Mock response api get CustomerOffer
+        CustomerOffer customerOffer = getCustomer();
+
+        ResponseEntity responseEntity = ResponseEntity.ok(customerOffer);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
+        //call register ligne fixe
+        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        fixeVM.setIdClient(codeClient);
+        fixeVM.setLogin(login);
+        fixeVM.setNumero(numFixe);
+        fixeVM.setTypeNumero(TypeNumero.FIXE);
+
+       rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+    }
+
+
+    @Test(expected = NotFoundNumberException.class)
+    public void testRegisterRattachementLigneFixeOfferNotFound(){
+        mockAccountB2CRepository.flush();
+        mockRattachementLigneRepository.flush();
+        String codeClient = "966666";
+        String numFixe = "338237294";
+        String login = "770502003";
+
+        // sauvegarde user in Account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(login);
+        accountB2C.setFirstName("hello");
+        accountB2C.setLastName("hello");
+        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+
+        //Mock response api get CustomerOffer
+        ResponseEntity responseEntity = ResponseEntity.notFound().build();
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
+        //call register ligne fixe
+        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        fixeVM.setIdClient(codeClient);
+        fixeVM.setLogin(login);
+        fixeVM.setNumero(numFixe);
+        fixeVM.setTypeNumero(TypeNumero.FIXE);
+
+        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+    }
+
 }

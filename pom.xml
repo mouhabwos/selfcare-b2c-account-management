@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -36,7 +36,7 @@
     <scm>
         <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</connection>
         <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</developerConnection>
-        <tag>v1.6.0</tag>
+        <tag>v1.5.0</tag>
         <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</url>
     </scm>
 
@@ -172,7 +172,8 @@
     </dependencyManagement>
 
     <dependencies>
-      
+
+
         <dependency>
             <groupId>sn.sonatel.dsi.dif.selfcare.utils</groupId>
             <artifactId>selfcare-logging</artifactId>
@@ -492,11 +493,6 @@
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
         <dependency>
-                <groupId>co.elastic.logging</groupId>
-                <artifactId>log4j2-ecs-layout</artifactId>
-                <version>0.1.3</version>
-      </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
@@ -754,10 +750,10 @@
                     <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
                     <diffChangeLogFile>src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
                     <driver>com.mysql.jdbc.Driver</driver>
-                    <url>jdbc:mysql://10.100.97.175:3306/selfcare_b2c_account_management</url>
+                    <url>jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management</url>
                     <defaultSchemaName>selfcare_b2c_account_management</defaultSchemaName>
                     <username>root</username>
-                    <password>Son@tel2019</password>
+                    <password>digitalfactory</password>
                     <referenceUrl>hibernate:spring:sn.sonatel.dsi.dif.selfcare.b2c.domain?dialect=org.hibernate.dialect.MySQL5InnoDBDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                     <verbose>true</verbose>
                     <logging>debug</logging>
@@ -1425,7 +1421,7 @@
                     <version>1.12.0</version>
                 </dependency>
             </dependencies>
-		</profile>
+        </profile>
         <profile>
             <!--
                 Profile for applying IDE-specific configuration.
