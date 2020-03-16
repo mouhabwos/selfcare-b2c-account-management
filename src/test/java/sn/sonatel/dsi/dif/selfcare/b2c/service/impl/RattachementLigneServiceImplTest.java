@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +25,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -333,6 +336,104 @@ public class RattachementLigneServiceImplTest {
         int hashCode = information.hashCode();
         assertNotNull(hashCode);
 
+    }
+
+    @Test
+    public void testRegisterRattachementLigneFixe(){
+
+        String codeClient = "32722731";
+        String numFixe = "338237244";
+        String login = "770502323";
+
+        // sauvegarde user in Account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(login);
+        accountB2C.setFirstName("hello");
+        accountB2C.setLastName("hello");
+        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+
+        //Mock response api get CustomerOffer
+        CustomerOffer customerOffer = getCustomer();
+        customerOffer.setClientCode(codeClient);
+
+        ResponseEntity responseEntity = ResponseEntity.ok(customerOffer);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
+        //call register ligne fixe
+        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        fixeVM.setIdClient(customerOffer.getClientCode());
+        fixeVM.setLogin(login);
+        fixeVM.setNumero(numFixe);
+        fixeVM.setTypeNumero(TypeNumero.FIXE);
+
+        RattachementLigne ligneResponse = rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+        assertTrue(ligneResponse!=null);
+
+        Assert.assertEquals(fixeVM.getNumero(),ligneResponse.getNumero());
+
+
+    }
+
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testRegisterRattachementLigneFixeBadIdClient(){
+
+        String codeClient = "3272889966666";
+        String numFixe = "338237244";
+        String login = "770502323";
+
+        // sauvegarde user in Account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(login);
+        accountB2C.setFirstName("hello");
+        accountB2C.setLastName("hello");
+        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+
+        //Mock response api get CustomerOffer
+        CustomerOffer customerOffer = getCustomer();
+
+        ResponseEntity responseEntity = ResponseEntity.ok(customerOffer);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
+        //call register ligne fixe
+        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        fixeVM.setIdClient(codeClient);
+        fixeVM.setLogin(login);
+        fixeVM.setNumero(numFixe);
+        fixeVM.setTypeNumero(TypeNumero.FIXE);
+
+       rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+    }
+
+
+    @Test(expected = NotFoundNumberException.class)
+    public void testRegisterRattachementLigneFixeOfferNotFound(){
+        mockAccountB2CRepository.flush();
+        mockRattachementLigneRepository.flush();
+        String codeClient = "966666";
+        String numFixe = "338237294";
+        String login = "770502003";
+
+        // sauvegarde user in Account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(login);
+        accountB2C.setFirstName("hello");
+        accountB2C.setLastName("hello");
+        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+
+        //Mock response api get CustomerOffer
+        ResponseEntity responseEntity = ResponseEntity.notFound().build();
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
+        //call register ligne fixe
+        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        fixeVM.setIdClient(codeClient);
+        fixeVM.setLogin(login);
+        fixeVM.setNumero(numFixe);
+        fixeVM.setTypeNumero(TypeNumero.FIXE);
+
+        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
     }
 
 }

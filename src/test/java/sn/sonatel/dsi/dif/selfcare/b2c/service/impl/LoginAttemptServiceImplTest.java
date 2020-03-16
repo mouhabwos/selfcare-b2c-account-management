@@ -44,7 +44,7 @@ public class LoginAttemptServiceImplTest {
     @Mock
     private SelfcareOTPService serviceOTP;
 
-    @Autowired
+    @Mock
     private NotificationInformationService notificationInformationService;
 
     private void createEntity4() {

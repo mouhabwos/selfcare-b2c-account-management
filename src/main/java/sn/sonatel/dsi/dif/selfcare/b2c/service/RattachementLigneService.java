@@ -28,4 +28,6 @@ public interface RattachementLigneService {
 
      RattachementLignesDeleteMultipleVM deleteMultipleRattachementLigne(RattachementLignesDeleteMultipleVM deleteListe);
 
+    RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneFixeVM);
+
 }
