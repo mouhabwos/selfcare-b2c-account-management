@@ -12,7 +12,7 @@
     <repository>
       <id>nexus-release</id>
       <name>nexus releases</name>
-      <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
+      <url>http://nexus.tools.orange-sonatel.com/nexus/content/repositories/releases/</url>
     </repository>
   </repositories>
 
@@ -22,13 +22,13 @@
         <repository>
             <id>nexus</id>
             <name>RELEASE VERSION</name>
-            <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
+            <url>http://nexus.tools.orange-sonatel.com/nexus/content/repositories/releases/</url>
         </repository>
         <!-- Publish snapshots here -->
         <snapshotRepository>
             <id>nexus</id>
             <name>SNAPSHOTS VERSION</name>
-            <url>http://${server.nexus.url}/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus.tools.orange-sonatel.com/nexus/content/repositories/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
