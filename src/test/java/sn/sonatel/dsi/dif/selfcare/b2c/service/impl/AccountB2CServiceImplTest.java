@@ -63,7 +63,7 @@ public class AccountB2CServiceImplTest {
     @Mock
     private ValidationHmacService validationHmacService;
 
-    @Autowired
+    @Mock
     private NotificationInformationService notificationInformationService;
 
     @Before

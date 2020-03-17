@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -38,6 +37,7 @@ public class RattachementLigneResource {
     private final Logger log = LoggerFactory.getLogger ( RattachementLigneResource.class );
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementRattachementLigne";
+    private static final String ENDPOINT = "/api/rattachement-lignes/";
 
     private final RattachementLigneService rattachementLigneService;
 
@@ -60,7 +60,7 @@ public class RattachementLigneResource {
 
         RattachementLigne result = rattachementLigneService.createRattachementLigne(rattachementLigne);
 
-        return ResponseEntity.created ( new URI ( "/api/rattachement-lignes/" + result.getId () ) )
+        return ResponseEntity.created ( new URI ( ENDPOINT + result.getId () ) )
             .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, result.getId ().toString () ) )
             .body ( result );
     }
@@ -126,7 +126,7 @@ public class RattachementLigneResource {
 
         RattachementLigne rattachement = rattachementLigneService.addRattachementLigne(ligneVM);
 
-        return ResponseEntity.created ( new URI ( "/api/rattachement-lignes/" + rattachement.getId () ) )
+        return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
             .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
             .body ( rattachement );
     }
@@ -136,7 +136,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-    @PostAuthorize("#msisdn == authentication.name")
+    @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn) {
         log.debug ( "REST request to get RattachementLigne : {}", msisdn );
@@ -160,6 +160,16 @@ public class RattachementLigneResource {
 
     }
 
+    @Auditable(description = Message.Rattachement.SAVE)
+    @PostMapping("/rattachement-lignes/fixe-register")
+    @PreAuthorize("#ligneVM.login==authentication.name")
+    public ResponseEntity<RattachementLigne> addRattachementLigneFixe(
+        @Valid @RequestBody RattachementLigneFixeVM ligneVM) throws URISyntaxException {
 
+        RattachementLigne rattachement = rattachementLigneService.addRattachementLigneFixe(ligneVM);
+        return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
+            .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
+            .body ( rattachement );
+    }
 
 }
