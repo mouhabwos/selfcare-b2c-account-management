@@ -72,8 +72,8 @@ spring:
     thymeleaf:
         cache: true
     zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
-        base-url: http://localhost:9411
-        enabled: false
+        base-url: http://10.137.52.11:9411
+        enabled: true
         locator:
             discovery:
                 enabled: true
@@ -136,8 +136,8 @@ jhipster:
             report-frequency: 60 # in seconds
     logging:
         logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
-            enabled: false
-            host: localhost
+            enabled: true
+            host: 10.137.52.11
             port: 5000
             queue-size: 512
 oauth2:
