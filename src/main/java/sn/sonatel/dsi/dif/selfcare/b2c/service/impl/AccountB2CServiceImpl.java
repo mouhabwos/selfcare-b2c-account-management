@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.HttpClientErrorException;
@@ -46,14 +47,17 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final ValidationHmacService validationHmacService;
 
+    private final NotificationInformationService notificationInformationService;
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService) {
+
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService, NotificationInformationService notificationInformationService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
         this.sponseeService = sponseeService;
         this.boosterManager=boosterManager;
         this.validationHmacService = validationHmacService;
+        this.notificationInformationService = notificationInformationService;
     }
 
     @Override
@@ -262,7 +266,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
                 this.boosterManager.applyWelcomeBooster(result.getNumero());
                 sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
-
+                addCodeFormuleInformationNotification(result.getNumero());
                 return result;
             }
 
@@ -274,4 +278,8 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         throw new UserNoCreatedException();
     }
 
+    @Async
+    void addCodeFormuleInformationNotification(String msisdn){
+        notificationInformationService.addCodeFormuleCustomerOffer(msisdn);
+    }
 }

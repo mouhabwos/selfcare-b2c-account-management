@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -12,7 +12,7 @@
     <repository>
       <id>nexus-release</id>
       <name>nexus releases</name>
-      <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
+      <url>http://nexus.tools.orange-sonatel.com/nexus/content/repositories/releases/</url>
     </repository>
   </repositories>
 
@@ -22,13 +22,13 @@
         <repository>
             <id>nexus</id>
             <name>RELEASE VERSION</name>
-            <url>http://${server.nexus.url}/nexus/content/repositories/releases/</url>
+            <url>http://nexus.tools.orange-sonatel.com/nexus/content/repositories/releases/</url>
         </repository>
         <!-- Publish snapshots here -->
         <snapshotRepository>
             <id>nexus</id>
             <name>SNAPSHOTS VERSION</name>
-            <url>http://${server.nexus.url}/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus.tools.orange-sonatel.com/nexus/content/repositories/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
@@ -36,7 +36,7 @@
     <scm>
         <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</connection>
         <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</developerConnection>
-        <tag>v1.6.1</tag>
+        <tag>v1.6.0</tag>
         <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</url>
     </scm>
 
@@ -683,6 +683,78 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>openshift-configs</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/openshift</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>openshift</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/classes</outputDirectory>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                            <delimiters>
+                                <delimiter>@</delimiter>
+                            </delimiters>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>config/*.yml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>config/*.yml</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>docker-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/docker/</directory>
+                                    <filtering>true</filtering>
+                                    <excludes>
+                                        <exclude>**/*.yml</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <executions>
@@ -1061,6 +1133,140 @@
             </properties>
         </profile>
 
+        <!-- Profil UAT -->
+        <profile>
+            <id>uat</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-undertow</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>${maven-clean-plugin.version}</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>target/www/</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${maven-war-plugin.version}</version>
+                        <configuration>
+                            <failOnMissingWebXml>false</failOnMissingWebXml>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>${spring-boot.version}</version>
+                        <configuration>
+                            <mainClass>${start-class}</mainClass>
+                            <executable>true</executable>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build-info</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>${git-commit-id-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <includeOnlyProperties>
+                                <includeOnlyProperty>^git.commit.id.abbrev$</includeOnlyProperty>
+                                <includeOnlyProperty>^git.commit.id.describe$</includeOnlyProperty>
+                                <includeOnlyProperty>^git.branch$</includeOnlyProperty>
+                            </includeOnlyProperties>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <skip>false</skip>
+                                    <target>
+                                        <echo message="Création du répertoire de deploiement" />
+                                        <sshexec host="${server.care.host}" username="${server.care.username}" trust="true" password="${server.care.password}" failonerror="false" command="mkdir -p ${server.care.remotedir}" />
+
+                                        <echo message="Deploiement de Account Management  vers la machine ${server.care.host} (uat)" />
+                                        <scp trust="yes" file="${project.build.directory}/${project.build.finalName}.war" todir="${server.care.username}:${server.care.password}@${server.care.host}:${server.care.remotedir}/selfcareb2c-accountmanagement.war" />
+
+                                        <echo message="Permission" />
+                                        <sshexec host="${server.care.host}" username="${server.care.username}" trust="true" password="${server.care.password}" failonerror="false" command="chmod 755 ${server.care.remotedir}/*.war " />
+
+                                        <echo message="Stop Account Management" />
+                                        <sshexec host="${server.care.host}" username="${server.care.username}" trust="true" usepty="true" password="${server.care.password}" failonerror="true" command="sudo systemctl stop selfcare-b2c-account-management" />
+
+                                        <echo message="Start Account Management" />
+                                        <sshexec host="${server.care.host}" username="${server.care.username}" trust="true" usepty="true" password="${server.care.password}" failonerror="true" command="sudo systemctl start selfcare-b2c-account-management" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>commons-net</groupId>
+                                <artifactId>commons-net</artifactId>
+                                <version>1.4.1</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-commons-net</artifactId>
+                                <version>1.8.1</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.8.4</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                                <version>0.1.53</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <!-- default Spring profiles -->
+                <spring.profiles.active>uat${profile.swagger}${profile.no-liquibase}</spring.profiles.active>
+
+                <server.care.host>10.100.97.175</server.care.host>
+                <server.care.username>selfcare</server.care.username>
+                <server.care.password>selfc@re</server.care.password>
+                <server.care.remotedir>/var/selfcareb2c/backend</server.care.remotedir></properties>
+        </profile>
 
         <profile>
             <id>prod</id>

@@ -22,19 +22,17 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: @eureka.instance.rec.hostname@
-        hostname: @eureka.instance.rec.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.31:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.100.97.175:8761/eureka/
 
 spring:
     profiles:
-        active: rec
+        active: uat
         include:
         - swagger
         - chron
-        #- tls
+        #- liquibase
     devtools:
         restart:
             enabled: false
@@ -42,9 +40,9 @@ spring:
             enabled: false
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://10.100.97.175:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password:
+        password: Son@tel2019
         hikari:
             auto-commit: false
             data-source-properties:
@@ -65,7 +63,7 @@ spring:
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory
 
     liquibase:
-        contexts: rec
+        contexts: uat
     mail:
         host: 10.100.56.56
         port: 25
@@ -74,8 +72,8 @@ spring:
     thymeleaf:
         cache: true
     zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
-        base-url: http://localhost:9411
-        enabled: false
+        base-url: http://10.137.52.11:9411
+        enabled: true
         locator:
             discovery:
                 enabled: true
@@ -134,12 +132,12 @@ jhipster:
         jmx:
             enabled: true
         logs: # Reports Dropwizard metrics in the logs
-            enabled: false
+            enabled: true
             report-frequency: 60 # in seconds
     logging:
         logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
-            enabled: false
-            host: localhost
+            enabled: true
+            host: 10.137.52.11
             port: 5000
             queue-size: 512
 oauth2:
@@ -174,12 +172,12 @@ application:
     api-management:
         auth:
             grant_type: client_credentials
-            client_id: selfcare-b2c
-            client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
-            key-access-token-uri: https://iaam.orange-sonatel.com/auth/realms/apimanagement/protocol/openid-connect/token
+            client_id: selfcare-b2b
+            client_secret: b2ba6823-d8f4-43ba-a6ae-8767cedc681b
+            key-access-token-uri: http://api.rec.orange-sonatel.com/oauth/token
         url-api:
             base-name: api-accountmanagement
-            base-url: https://api.orange-sonatel.com
+            base-url: http://api.rec.orange-sonatel.com
             url-account-management: /api-accountmanagement
         party-management:
             name: api-partymanagement

@@ -65,6 +65,10 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Column(name = "email_activated")
     private boolean emailActivated = false;
 
+    @OneToMany(mappedBy = "accountB2C")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<NotificationInformation> notificationInformations = new HashSet<>();
+
     public ZonedDateTime getDerniereConnnexionDate() {
         return derniereConnnexionDate;
     }
@@ -196,6 +200,14 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     public void setSponsees(Set<Sponsee> sponsees) {
         this.sponsees = sponsees;
+    }
+
+    public Set<NotificationInformation> getNotificationInformations() {
+        return notificationInformations;
+    }
+
+    public void setNotificationInformations(Set<NotificationInformation> notificationInformations) {
+        this.notificationInformations = notificationInformations;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

@@ -63,10 +63,13 @@ public class AccountB2CServiceImplTest {
     @Mock
     private ValidationHmacService validationHmacService;
 
+    @Mock
+    private NotificationInformationService notificationInformationService;
+
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService, notificationInformationService);
     }
 
     private Optional<Sponsee> getSponsee(){
