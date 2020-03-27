@@ -2,6 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.NotificationInformation;
@@ -9,7 +11,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.NotificationInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
@@ -27,14 +29,14 @@ public class NotificationInformationServiceImpl implements NotificationInformati
     private static final String CODE_FORMULE_HYBRIDE = "9132";
     private final NotificationInformationRepository notificationInformationRepository;
     private final NotificationInformationMapper notificationInformationMapper;
-    private final CustomerOfferService customerOfferService;
     private final AccountB2CRepository accountB2CRepository;
+    private final CustomerOfferApiClient customerOfferApiClient;
 
-    public NotificationInformationServiceImpl(NotificationInformationRepository notificationInformationRepository, NotificationInformationMapper notificationInformationMapper, AccountB2CRepository accountB2CRepository, CustomerOfferService customerOfferService) {
+    public NotificationInformationServiceImpl(NotificationInformationRepository notificationInformationRepository, NotificationInformationMapper notificationInformationMapper, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient) {
         this.notificationInformationRepository = notificationInformationRepository;
         this.notificationInformationMapper = notificationInformationMapper;
-        this.customerOfferService = customerOfferService;
         this.accountB2CRepository = accountB2CRepository;
+        this.customerOfferApiClient = customerOfferApiClient;
     }
 
 
@@ -90,13 +92,16 @@ public class NotificationInformationServiceImpl implements NotificationInformati
     @Override
     public void addCodeFormuleCustomerOffer(String msisdn){
         log.debug ("Service to add codeFormule  for new user registration {}", msisdn);
-        CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
-        NotificationInformationDTO informationDTO = new NotificationInformationDTO();
-        informationDTO.setMsisdn(msisdn);
+        CustomerOffer customerOffer = getCustomerOffer(msisdn);
+        if(customerOffer.getOfferId()!= null) {
+            NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+            informationDTO.setMsisdn(msisdn);
 
-        informationDTO.setCodeFormule(findCodeFormule(customerOffer.getOfferType(), customerOffer.getOfferId()));
+            informationDTO.setCodeFormule(findCodeFormule(customerOffer.getOfferType(), customerOffer.getOfferId()));
 
-        register(informationDTO);
+            register(informationDTO);
+        }
+
     }
 
     @Override
@@ -105,17 +110,27 @@ public class NotificationInformationServiceImpl implements NotificationInformati
         log.debug ("Service to update NotificationInformation from customer OFFER {}", msisdn);
         Optional<NotificationInformation> byAccountB2CNumero = notificationInformationRepository.findOneByAccountB2CNumero(msisdn);
         if(byAccountB2CNumero.isPresent()){
-            CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
-            NotificationInformationDTO informationDTO = new NotificationInformationDTO();
-            informationDTO.setMsisdn(msisdn);
-            informationDTO.setCodeFormule(findCodeFormule(customerOffer.getOfferType(), customerOffer.getOfferId()));
+            CustomerOffer offer = getCustomerOffer(msisdn);
+            if(offer.getOfferId()!= null) {
+                NotificationInformationDTO informationDTO = new NotificationInformationDTO();
+                informationDTO.setMsisdn(msisdn);
+                informationDTO.setCodeFormule(findCodeFormule(offer.getOfferType(), offer.getOfferId()));
 
-            updateCodeFormuleByMsisdn(informationDTO);
+                updateCodeFormuleByMsisdn(informationDTO);
+            }
 
         } else addCodeFormuleCustomerOffer(msisdn);
     }
 
     private String findCodeFormule(OfferTypeEnum offerType, String codeFormule){
         return (OfferTypeEnum.HYBRIDE.equals(offerType))? CODE_FORMULE_HYBRIDE:codeFormule;
+    }
+
+    private CustomerOffer getCustomerOffer(String msisdn){
+        ResponseEntity<CustomerOffer> responseEntity = customerOfferApiClient.getCustomerOffer(msisdn);
+
+        if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
+            return responseEntity.getBody();
+        } else return new CustomerOffer();
     }
 }
