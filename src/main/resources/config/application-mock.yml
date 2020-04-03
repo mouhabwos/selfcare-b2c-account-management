@@ -24,10 +24,11 @@ eureka:
         #prefer-ip-address: true
         #ip-address: @eureka.instance.dev.hostname@
         #hostname: @eureka.instance.dev.hostname@
-
+        hostname: selfcareb2c-accountmanagement-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
+        nonSecurePort: 80
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-rec.k8s-test.orange-sonatel.com/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s-test.orange-sonatel.com/eureka/
 
 spring:
     profiles:
@@ -166,9 +167,9 @@ application:
             grant_type: client_credentials
             client_id: selfcare-b2c
             client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
-            key-access-token-uri: http://selfcareb2c-mockserver-dsiselfcarebc-dev.k8s-test.orange-sonatel.com/api/auth/realms/apimanagement/protocol/openid-connect/token
+            key-access-token-uri: 'http://selfcareb2c-mockserver-dsiselfcarebc-dev.k8s-test.orange-sonatel.com/api/auth/realms/apimanagement/protocol/openid-connect/token'
         url-api:
-            base-name: 'http://selfcareb2c-mockserver-dsiselfcarebc-dev.k8s-test.orange-sonatel.com'
+            base-name: api-accountmanagement
             base-url: http://selfcareb2c-mockserver-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
             url-account-management:
         party-management:
