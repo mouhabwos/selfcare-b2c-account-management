@@ -167,10 +167,10 @@ application:
             grant_type: client_credentials
             client_id: selfcare-b2c
             client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
-            key-access-token-uri: https://iaam.orange-sonatel.com/auth/realms/apimanagement/protocol/openid-connect/token
+            key-access-token-uri: http://localhost:8723/api/auth/realms/apimanagement/protocol/openid-connect/token
         url-api:
-            base-name: http://selfcareb2c-mockserver-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
-            base-url:
+            base-name: http://localhost:8723
+            base-url: http://localhost:8723
             url-account-management:
         party-management:
             name: api-partymanagement
