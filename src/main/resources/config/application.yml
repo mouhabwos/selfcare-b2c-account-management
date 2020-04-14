@@ -187,3 +187,52 @@ logging:
 #    microservice-name: Account Management
 #    app-name: Selfcare B2C
 #
+# Traceability related configuration
+audit:
+    enable: true
+    enable-error-logs: true
+    log-type:  "AUDIT"
+    log-file-name: "audit"
+    use-json-format: ${jhipster.logging.use-json-format:false}
+    fields-separator: "|"
+    app-name: ${spring.application.name:APP_NAME}
+    scrubbed-value: "********"
+    blacklisted-parameters:
+    - password
+    - pwd
+    - secret
+    - pincode
+    - codeclient
+    - canalid
+    - clientcode
+    - clientid
+    - idclient
+    - newpincode
+    - authorization
+    - api_key
+    - apikey
+    - token
+    - accesstoken
+    - refreshtoken
+    - sim
+    - idcard
+    http-headers:      #if you would like to log http headers
+    - x-selfcare-platform
+    - x-selfcare-isvirtual
+    - x-selfcare-uuid
+    - x-selfcare-serial
+    - x-selfcare-model
+    - x-selfcare-manufacturer
+    - x-selfcare-cordova
+    - x-selfcare-os-version
+    - x-selfcare-app-version
+    - X-Selfcare-Source
+    #- user-agent
+
+# APM related configuration
+elastic:
+    apm:
+        active: false
+        environment: test
+        server_urls: http://10.137.19.6:8200
+        enable_log_correlation: true
