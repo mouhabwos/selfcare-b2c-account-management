@@ -7,7 +7,7 @@ public class NotificationInformationDTO {
     private String firebaseId;
     private String msisdn;
 
-    @Size(min = 4, max = 5)
+    @Size(min = 4)
     private String codeFormule;
 
     public NotificationInformationDTO() {
