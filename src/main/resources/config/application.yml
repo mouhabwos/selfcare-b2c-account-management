@@ -217,15 +217,15 @@ audit:
     - sim
     - idcard
     http-headers:      #if you would like to log http headers
-    - x-selfcare-platform
-    - x-selfcare-isvirtual
-    - x-selfcare-uuid
-    - x-selfcare-serial
-    - x-selfcare-model
-    - x-selfcare-manufacturer
-    - x-selfcare-cordova
-    - x-selfcare-os-version
-    - x-selfcare-app-version
+    - X-Selfcare-Platform
+    - X-Selfcare-Isvirtual
+    - X-Selfcare-Uuid
+    - X-Selfcare-Serial
+    - X-Selfcare-Model
+    - X-Selfcare-Manufacturer
+    - X-Selfcare-Xordova
+    - X-Selfcare-Os-Version
+    - X-Selfcare-App-Version
     - X-Selfcare-Source
     #- user-agent
 
