@@ -77,21 +77,12 @@ public class OperationDTO {
     private String canal = "ORANGETMOI";
 
 
-    public void checkFormatPDFFile(String fileName){
+    public void checkFormatFile(String fileName){
         int indexOf = fileName.lastIndexOf('.');
         String extension = fileName.substring(indexOf);
         if(!extension.matches(Constants.PDF_FILE_EXTENSION_REGEX) && !extension.matches(Constants.IMAGE_EXTENSION_REGEX)){
-            throw new BadRequestAlertException("Le ficher doit etre un document .pdf ", fileName,"");
+            throw new BadRequestAlertException("Le ficher doit etre soit un document (.pdf, .doc, .docx) ou une image (.png, .jpg, .jpeg)", fileName,"");
         }
-    }
-
-    public void checkFormatImageFile(String fileName){
-        int indexOf = fileName.lastIndexOf('.');
-        String extension = fileName.substring(indexOf);
-        if(!extension.matches(Constants.IMAGE_EXTENSION_REGEX)){
-            throw new BadRequestAlertException("Le format de l'image doit etre .png, .jpg, .jpeg ", fileName,"");
-        }
-
     }
 
 }
