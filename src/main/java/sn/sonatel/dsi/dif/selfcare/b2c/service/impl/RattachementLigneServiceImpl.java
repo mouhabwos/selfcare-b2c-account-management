@@ -209,6 +209,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         ligneFixeVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneFixeVM.getLogin()));
         checkNumberIfUsed(ligneFixeVM.getNumero(),ligneFixeVM.getLogin());
         if(checkIdClient(ligneFixeVM.getNumero(),ligneFixeVM.getIdClient())){
+            isAnOrganizationNumber(ligneFixeVM.getNumero());
             Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(ligneFixeVM.getLogin());
             if(account.isPresent()){
                 RattachementLigne ligne = new RattachementLigne();
@@ -291,6 +292,13 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             String clientCode = customerOffer.getClientCode();
             return clientCode.equals(idClient);
         }else throw new NotFoundNumberException("");
+    }
+
+    private void isAnOrganizationNumber(String msisdn){
+        InfoClientWrapper informations = abonneService.getInformations(msisdn);
+        if(informations.getClientType()!= ClientType.INDIVIDUAL && informations.getClientType()==ClientType.ORGANIZATION){
+            throw new BadRequestAlertException("Vous ne pouvez pas rattacher un numero d entreprise","","");
+        }
     }
 
 }

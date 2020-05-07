@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
@@ -23,6 +24,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
@@ -359,6 +361,10 @@ public class RattachementLigneServiceImplTest {
         ResponseEntity responseEntity = ResponseEntity.ok(customerOffer);
         when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
 
+        InfoClientWrapper infoClientWrapper = new InfoClientWrapper();
+        infoClientWrapper.setClientType(ClientType.INDIVIDUAL);
+        when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapper);
+
         //call register ligne fixe
         RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
         fixeVM.setIdClient(customerOffer.getClientCode());
@@ -390,11 +396,17 @@ public class RattachementLigneServiceImplTest {
         accountB2C.setLastName("hello");
         AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
 
+        InfoClientWrapper infoClientWrapper = new InfoClientWrapper();
+        infoClientWrapper.setClientType(ClientType.INDIVIDUAL);
+        when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapper);
+
         //Mock response api get CustomerOffer
         CustomerOffer customerOffer = getCustomer();
 
         ResponseEntity responseEntity = ResponseEntity.ok(customerOffer);
+
         when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
 
         //call register ligne fixe
         RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
@@ -434,6 +446,44 @@ public class RattachementLigneServiceImplTest {
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
         rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+    }
+
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testRegisterRattachementLigneFixeWithOrganizationNumber(){
+
+        String codeClient = "32722731";
+        String numFixe = "338237244";
+        String login = "770502323";
+
+        // sauvegarde user in Account
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero(login);
+        accountB2C.setFirstName("hello");
+        accountB2C.setLastName("hello");
+        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+
+        //Mock response api get CustomerOffer
+        CustomerOffer customerOffer = getCustomer();
+        customerOffer.setClientCode(codeClient);
+
+        ResponseEntity responseEntity = ResponseEntity.ok(customerOffer);
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
+
+        InfoClientWrapper infoClientWrapper = new InfoClientWrapper();
+        infoClientWrapper.setClientType(ClientType.ORGANIZATION);
+        when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapper);
+
+        //call register ligne fixe
+        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        fixeVM.setIdClient(customerOffer.getClientCode());
+        fixeVM.setLogin(login);
+        fixeVM.setNumero(numFixe);
+        fixeVM.setTypeNumero(TypeNumero.FIXE);
+
+        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+
     }
 
 }
