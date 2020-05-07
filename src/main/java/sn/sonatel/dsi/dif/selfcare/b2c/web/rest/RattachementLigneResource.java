@@ -160,7 +160,7 @@ public class RattachementLigneResource {
 
     }
 
-    @Auditable(description = Message.Rattachement.SAVE)
+    @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
     @PostMapping("/rattachement-lignes/fixe-register")
     @PreAuthorize("#ligneVM.login==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigneFixe(
