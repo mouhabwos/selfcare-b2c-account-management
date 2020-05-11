@@ -18,8 +18,8 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NotificationInformation implements Serializable {
 
-    @Size(min = 4, max = 5)
-    @Column(name = "code_formule", length = 5)
+    @Size(min = 4, max = 30)
+    @Column(name = "code_formule")
     private String codeFormule;
 
     @Column(name = "firebase_id")
