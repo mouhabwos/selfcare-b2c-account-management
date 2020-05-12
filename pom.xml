@@ -53,8 +53,9 @@
         <eureka.instance.dev.hostname>10.137.52.32</eureka.instance.dev.hostname>
         <eureka.instance.rec.hostname>10.137.52.31</eureka.instance.rec.hostname>
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
-              <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
+        <juf.version>2.1.7</juf.version>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
@@ -173,11 +174,7 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>sn.sonatel.dsi.dif.selfcare.utils</groupId>
-            <artifactId>selfcare-logging</artifactId>
-            <version>1.0.5</version>
-        </dependency>
+
 
         <dependency>
             <groupId>io.github.jhipster</groupId>
@@ -544,6 +541,12 @@
             <groupId>com.springml</groupId>
             <artifactId>sftp.client</artifactId>
             <version>1.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>sn.sonatel.dsi.dac.dif.ds.juf</groupId>
+            <artifactId>juf-starter-logging</artifactId>
+            <version>${juf.version}</version>
         </dependency>
 
     </dependencies>
