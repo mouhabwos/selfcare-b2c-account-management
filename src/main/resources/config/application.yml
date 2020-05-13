@@ -65,7 +65,7 @@ management:
         web:
             base-path: /management
             exposure:
-                include: ["configprops", "env", "health", "info", "threaddump", "logfile" ]
+                include: ["configprops", "env", "health", "info", "threaddump", "logfile","refresh" ]
     endpoint:
         health:
             show-details: when_authorized
