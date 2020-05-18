@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
+import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
@@ -19,7 +20,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
-import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
