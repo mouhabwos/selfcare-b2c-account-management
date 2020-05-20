@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NotificationInformation implements Serializable {
 
-    @Size(min = 4, max = 30)
+    @Size(min = 4)
     @Column(name = "code_formule")
     private String codeFormule;
 

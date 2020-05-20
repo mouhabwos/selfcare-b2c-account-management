@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.config.EnableIntegration;
@@ -40,6 +41,7 @@ import java.util.Collection;
 @EnableFeignClients
 @IntegrationComponentScan
 @EnableIntegration
+@RefreshScope
 public class SelfcareB2CApp {
 
     private static final Logger log = LoggerFactory.getLogger(SelfcareB2CApp.class);

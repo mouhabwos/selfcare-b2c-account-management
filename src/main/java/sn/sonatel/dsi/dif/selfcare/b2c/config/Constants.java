@@ -24,7 +24,7 @@ public final class Constants {
 
     public static final String MOTDEPASSE_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\w~@#$%^&*+=`|{}:;!.?\\\"()\\[\\]-]{8,}$";
 
-    public static final String PDF_FILE_EXTENSION_REGEX = "(.pdf|.PDF)$";
+    public static final String PDF_FILE_EXTENSION_REGEX = "(.pdf|.PDF|.doc|.DOC|.docx|.DOCX)$";
 
     public static final String IMAGE_EXTENSION_REGEX = "(.png|.jpg|.jpeg|.PNG|.JPG|.JPEG)$";
 

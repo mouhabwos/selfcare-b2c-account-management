@@ -35,6 +35,7 @@ public class UrgenceDepannageServiceImplTest {
     private static final String stringOperationDTO = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
     private static final String stringOperationDTOErrorCode = "{\n" + "\t\"operationCode\":\"operation-test\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
     private static final String CANAL = "";
+    private static final String stringOperationDTONoValideMsisdn = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"000046563\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
 
     private UrgenceDepannageService urgenceDepannageService;
 
@@ -220,6 +221,17 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
+
+    }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testOuvertureCompteNotValideMsisdn() throws Exception {
+
+        Mail mail = getMailEntity();
+
+        when(mailSendRepository.save(any())).thenReturn(mail);
+
+        urgenceDepannageService.ouvertureCompte(stringOperationDTONoValideMsisdn, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
 
     }
 

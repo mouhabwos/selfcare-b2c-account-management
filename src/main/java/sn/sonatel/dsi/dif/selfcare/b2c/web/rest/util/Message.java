@@ -63,7 +63,7 @@ public final class Message {
 
         public static final String CHECK_NUMBER_FIXE = "Verification de la disponibilite du numero fix";
 
-        public static final String ADD_LIGNE_FIXE = "Creation de rattachement de ligne fixe";
+        public static final String ADD_LIGNE_FIXE = "Rattachement de ligne fixe via l ID CLIENT";
 
 
         private Rattachement() {
