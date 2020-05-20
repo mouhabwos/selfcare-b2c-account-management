@@ -122,6 +122,6 @@ public class SFTPClientServiceTest {
     public void testFileOperationDTO() {
 
         OperationDTO dto = new OperationDTO();
-        dto.checkFormatPDFFile("test.dfppp");
+        dto.checkFormatFile("test.dfppp");
     }
 }

@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.7.2-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -1218,7 +1218,7 @@
                                         <echo message="Création du répertoire de deploiement" />
                                         <sshexec host="${server.care.host}" username="${server.care.username}" trust="true" password="${server.care.password}" failonerror="false" command="mkdir -p ${server.care.remotedir}" />
 
-                                        <echo message="Deploiement de Account Management  vers la machine ${server.care.host} (uat)" />
+                                        <echo message="Deploiement de Account Management vers la machine ${server.care.host} (uat)" />
                                         <scp trust="yes" file="${project.build.directory}/${project.build.finalName}.war" todir="${server.care.username}:${server.care.password}@${server.care.host}:${server.care.remotedir}/selfcareb2c-accountmanagement.war" />
 
                                         <echo message="Permission" />
