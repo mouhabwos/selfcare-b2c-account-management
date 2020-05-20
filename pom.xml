@@ -55,7 +55,7 @@
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-        <juf.version>2.1.7</juf.version>
+        <juf.version>2.2.0</juf.version>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
