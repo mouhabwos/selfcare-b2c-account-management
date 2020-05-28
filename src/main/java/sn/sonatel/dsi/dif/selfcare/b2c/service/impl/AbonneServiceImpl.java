@@ -12,6 +12,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 @Service
@@ -74,6 +75,27 @@ public class AbonneServiceImpl implements AbonneService {
         return infoClientWrapper;
     }
 
+    @Override
+    public ResponseEntity<String> getBirthDate(String msisdn) {
+
+        String birthDate = null;
+
+        ResponseEntity<IndividualInformation> responseEntity = partyManagementApiClient.getIndividualInformation(msisdn);
+
+        if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
+            if(responseEntity.getBody().getBirthDate() != null){
+                birthDate = responseEntity.getBody().getBirthDate();
+            }
+            else{
+                throw new BadRequestAlertException("Ce numero ne renvoie pas de date de naissance","birthDate","msisdn.birthDate");
+            }
+        }
+        if(responseEntity.getStatusCode() == HttpStatus.NOT_FOUND){
+            throw new BadRequestAlertException("Ce numéro est rattaché a une entreprise","birthDate","msisdn.birthDate");
+        }
+
+        return ResponseEntity.ok(birthDate);
+    }
 
 
     @Override
