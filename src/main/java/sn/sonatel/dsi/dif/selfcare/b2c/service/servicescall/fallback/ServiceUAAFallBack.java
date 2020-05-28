@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
@@ -24,7 +25,16 @@ public class ServiceUAAFallBack implements ServiceUAA {
 
     @Override
     public ResponseEntity register(@Valid ManagedUserVM managedUserVM) {
+        return this.handleError();
+    }
 
+    @Override
+    public ResponseEntity updateUser(@Valid UserDTOExploitant userDTO) {
+
+        return this.handleError();
+    }
+
+    private ResponseEntity handleError(){
         if (throwable instanceof FeignException && ((FeignException) throwable).status() == 400) {
 
             log.debug("Error status 400 SelfcareUAA BAD REQUEST : {} ", throwable.getMessage());
@@ -44,5 +54,6 @@ public class ServiceUAAFallBack implements ServiceUAA {
         log.debug("----- Error ServiceUAAfallback Register user to SelfcareUAA with following error : {} ",throwable);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("-/-((-_-))-/-");
     }
+
 
 }

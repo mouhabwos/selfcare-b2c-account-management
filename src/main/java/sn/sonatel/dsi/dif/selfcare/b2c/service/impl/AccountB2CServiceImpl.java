@@ -18,6 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
@@ -124,7 +125,13 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public int updateAccountForExploitation(String msisdn,AccountDTOExploitant accountB2C) {
         log.debug("Service to updateAccountForExploitation with msisdn {} adn data {}",msisdn,accountB2C);
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
-        return accountB2CRepository.updateAccountForExploitant(msisdn, accountB2C.getFirstName(), accountB2C.getLastName());
+        int accountForExploitantResult = accountB2CRepository.updateAccountForExploitant(msisdn, accountB2C.getFirstName(), accountB2C.getLastName());
+        UserDTOExploitant dtoExploitant = new UserDTOExploitant();
+        dtoExploitant.setLogin(msisdn);
+        dtoExploitant.setFirstName(accountB2C.getFirstName());
+        dtoExploitant.setLastName(accountB2C.getLastName());
+        this.selfcareUAAService.updateUser(dtoExploitant);
+        return accountForExploitantResult;
     }
 
     @Override
