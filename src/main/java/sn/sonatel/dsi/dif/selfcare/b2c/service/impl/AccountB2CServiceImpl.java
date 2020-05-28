@@ -17,6 +17,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
@@ -117,6 +118,13 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         b2C.setAttempts(accountB2C.getAttempts());
         b2C.setDerniereConnnexionDate(accountB2C.getDerniereConnnexionDate());
         return accountB2CRepository.save(b2C);
+    }
+
+    @Override
+    public int updateAccountForExploitation(String msisdn,AccountDTOExploitant accountB2C) {
+        log.debug("Service to updateAccountForExploitation with msisdn {} adn data {}",msisdn,accountB2C);
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+        return accountB2CRepository.updateAccountForExploitant(msisdn, accountB2C.getFirstName(), accountB2C.getLastName());
     }
 
     @Override

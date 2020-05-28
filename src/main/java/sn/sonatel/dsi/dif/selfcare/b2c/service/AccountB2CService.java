@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
@@ -19,6 +20,8 @@ public interface AccountB2CService {
     AccountB2C registerAccountB2C(ManagedUserVM managedUserVM);
 
     AccountB2C updateAccountB2C(AccountB2CDTO accountB2C);
+
+    int updateAccountForExploitation(String msisdn,AccountDTOExploitant accountB2C);
 
     Page<AccountB2C> getAllAccountB2C(Pageable pageable);
 
