@@ -1,21 +1,23 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -129,5 +131,46 @@ public class AbonneServiceImplTest {
         boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
 
         assertTrue(orangeNumber);
+    }
+
+    @Test
+    public void testGetBirthDate(){
+
+        String msisdn = "776713165";
+
+        IndividualInformation individualInformation = new IndividualInformation();
+        individualInformation.setBirthDate("1996-03-21");
+
+        when(mockPartyManagementApiClient.getIndividualInformation(msisdn)).thenReturn(ResponseEntity.ok(individualInformation));
+
+        ResponseEntity<String> birthDate = abonneServiceImplUnderTest.getBirthDate(msisdn);
+
+        Assert.assertEquals("1996-03-21", birthDate.getBody());
+
+    }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testGetBirthDateReturn400(){
+
+        String msisdn = "776713165";
+
+        IndividualInformation individualInformation = new IndividualInformation();
+        individualInformation.setBirthDate(null);
+
+        when(mockPartyManagementApiClient.getIndividualInformation(msisdn)).thenReturn(ResponseEntity.ok(individualInformation));
+
+        ResponseEntity<String> birthDate = abonneServiceImplUnderTest.getBirthDate(msisdn);
+
+    }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void GetBirthDateReturn400(){
+
+        String msisdn = "776713165";
+
+        when(mockPartyManagementApiClient.getIndividualInformation(msisdn)).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+        ResponseEntity<String> birthDate = abonneServiceImplUnderTest.getBirthDate(msisdn);
+
     }
 }
