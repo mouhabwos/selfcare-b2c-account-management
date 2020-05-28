@@ -32,6 +32,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
@@ -308,15 +309,6 @@ public class AccountB2CResourceIntTest {
             .andExpect(jsonPath("$.[*].imageProfil").value(hasItem(DEFAULT_IMAGE_PRFIL)));
     }
 
-
-    @Test
-    @Transactional
-    public void getNonExistingAccountB2C() throws Exception {
-        // Get the accountB2C
-        restAccountB2CMockMvc.perform(get("/api/account-management/account-b-2-cs/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
-    }
-
     @Test
     @Transactional
     public void updateAccountB2C() throws Exception {
@@ -351,6 +343,55 @@ public class AccountB2CResourceIntTest {
         assertThat(testAccountB2C.getLastName()).isEqualTo(UPDATED_LAST_NAME);
         assertThat(testAccountB2C.getEmail()).isEqualTo(UPDATED_EMAIL);
 
+    }
+
+    @Test
+    @Transactional
+    public void updateAccountB2CBySI() throws Exception {
+        // Initialize the database
+        accountB2CRepository.saveAndFlush(accountB2C);
+        em.detach(accountB2C);
+
+
+        //int databaseSizeBeforeUpdate = accountB2CRepository.findAll().size();
+
+        String numberToUpdate = accountB2C.getNumero();
+        AccountDTOExploitant exploitant= new AccountDTOExploitant();
+        exploitant.setFirstName("EXPLOITANTFIRST");
+        exploitant.setLastName("EXPLOITANTlast");
+
+        restAccountB2CMockMvc.perform(put("/api/account-management/account-b-2-cs/{msisdn}",numberToUpdate)
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(exploitant)))
+            .andExpect(status().isOk());
+
+        // Validate the AccountB2C in the database
+        Optional<AccountB2C> oneByNumero = accountB2CRepository.findOneByNumero(numberToUpdate);
+        assertThat(oneByNumero.isPresent()).isTrue();
+        assertThat(oneByNumero.get().getFirstName()).isEqualTo(exploitant.getFirstName());
+        assertThat(oneByNumero.get().getLastName()).isEqualTo(exploitant.getLastName());
+
+    }
+
+    @Test
+    @Transactional
+    public void updateAccountB2CBySIInvalidNumber() throws Exception {
+        // Initialize the database
+        accountB2CRepository.saveAndFlush(accountB2C);
+        em.detach(accountB2C);
+
+
+        //int databaseSizeBeforeUpdate = accountB2CRepository.findAll().size();
+
+        String numberToUpdate = accountB2C.getNumero()+"44";
+        AccountDTOExploitant exploitant= new AccountDTOExploitant();
+        exploitant.setFirstName("EXPLOITANTFIRST");
+        exploitant.setLastName("EXPLOITANTlast");
+
+        restAccountB2CMockMvc.perform(put("/api/account-management/account-b-2-cs/{msisdn}",numberToUpdate)
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(exploitant)))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
