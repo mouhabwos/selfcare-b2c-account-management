@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import liquibase.util.file.FilenameUtils;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
@@ -76,12 +77,19 @@ public class OperationDTO {
     @Setter(AccessLevel.PUBLIC)
     private String canal = "ORANGETMOI";
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String nameFile = "";
 
-    public void checkFormatFile(String fileName){
-        int indexOf = fileName.lastIndexOf('.');
-        String extension = fileName.substring(indexOf);
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String operation = "";
+
+
+    public void checkFormatFile(MultipartFile file){
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         if(!extension.matches(Constants.PDF_FILE_EXTENSION_REGEX) && !extension.matches(Constants.IMAGE_EXTENSION_REGEX)){
-            throw new BadRequestAlertException("Le ficher doit etre soit un document (.pdf, .doc, .docx) ou une image (.png, .jpg, .jpeg)", fileName,"");
+            throw new BadRequestAlertException("Le ficher doit etre soit un document (.pdf, .doc, .docx) ou une image (.png, .jpg, .jpeg)", file.getOriginalFilename(),"");
         }
     }
 

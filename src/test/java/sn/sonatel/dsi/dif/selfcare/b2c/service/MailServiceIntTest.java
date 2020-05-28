@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import io.github.jhipster.config.JHipsterProperties;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 
 import org.junit.Test;
@@ -16,14 +17,16 @@ import org.springframework.core.io.Resource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 
 import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
@@ -32,12 +35,10 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
 @RunWith(SpringRunner.class)
@@ -84,34 +85,55 @@ public class MailServiceIntTest {
 
          private MailService mailServiceUnderTest;
 
-         private UserInfoOuvertureCompte userInfoWithResources;
+         private OperationDTO userInfoWithResources;
 
         @Before
-        public void setup() {
+        public void setup() throws Exception {
             MockitoAnnotations.initMocks(this);
             doNothing().when(javaMailSender).send(any(MimeMessage.class));
             mailService = new MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine, applicationProperties);
             mailServiceUnderTest = new MailService(mockJHipsterProperties, mockJavaMailSender, mockMessageSource, mockTemplateEngine, mockApplicationProperties);
-            userInfoWithResources=initUserInfoWithResources();
+            userInfoWithResources = initUserInfoWithResources();
         }
 
-        private UserInfoOuvertureCompte initUserInfoWithResources(){
+    private OperationDTO operationDTO() throws Exception {
+        OperationDTO operationDTO = new OperationDTO();
+
+
+        String filePdf = "fichierTest.pdf";
+        String image = "imageTest.png";
+
+        File filePdfM = new File(filePdf);
+        File fileImageRectoM = new File(image);
+        File fileImageVersoM = new File(image);
+
+        FileInputStream inputPDF = new FileInputStream(filePdfM);
+        FileInputStream inputRecto = new FileInputStream(filePdfM);
+        FileInputStream inputVerso = new FileInputStream(filePdfM);
+
+        MultipartFile multipartFilePDF = new MockMultipartFile("file", filePdfM.getName(), "text/plain", IOUtils.toByteArray(inputPDF));
+        MultipartFile multipartFileRecto = new MockMultipartFile("file", fileImageRectoM.getName(), "text/plain", IOUtils.toByteArray(inputRecto));
+        MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
+
+
+        operationDTO.setFirstName("firstName");
+        operationDTO.setOperationCode("operation-200");
+        operationDTO.setLastName("lastname");
+        operationDTO.setNumero("777777700");
+        operationDTO.setEmail("email@gmail.com");
+        operationDTO.setFormulaire(multipartFilePDF);
+        operationDTO.setRectoID(multipartFileRecto);
+        operationDTO.setVerso(multipartFileVerso);
+
+        return operationDTO;
+    }
+
+        private OperationDTO initUserInfoWithResources() throws Exception {
 
             Resource resource = new DefaultResourceLoader().getResource("classpath:mail/activationEmail.html");
 
-            UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-            user.setEmail("test@gmail.com");
-            user.setNumero("771326617");
-            user.setFirstName("bouya");
-            user.setLastName("kande");
-            user.setOperation("Ouverture compte OM");
-            user.setFormulaire("1.PNG");
-            user.setRectoID("1.PNG");
-            user.setVersoID("1.PNG");
-            user.setObjectFormulaire(resource);
-            user.setObjectRectoID(resource);
-            user.setObjectVersoID(resource);
-
+            OperationDTO user = new OperationDTO();
+            user = operationDTO();
             return user;
         }
 
@@ -201,32 +223,17 @@ public class MailServiceIntTest {
 
     @Test
     public void testSendEmailToServiceClient() throws Exception {
-        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-        user.setNumero("771326617");
-        user.setFirstName("bouya");
-        user.setLastName("kande");
-        user.setOperation("Ouverture compte OM");
-        user.setFormulaire("formulaire_inscription_om_original.pdf");
-        user.setRectoID("1.PNG");
-        user.setVersoID("1.PNG");
-        mailService.sendEmailToServiceClient(user, "mail/ouverturCompteEmail","email.activation.title");
+        OperationDTO user = operationDTO();
+        mailService.sendEmailToServiceClient(user, "mail/ouverturCompteEmail","Erreur transaction Orange Money");
 
     }
 
 
   @Test
     public void testSendEmailFromServiceClientWithException() throws Exception {
-        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-        user.setNumero("771326617");
-        user.setFirstName("bouya");
-        user.setLastName("kande");
-        user.setOperation("Ouverture compte OM");
-        user.setFormulaire("formulaire_inscription_om_original.pdf");
-        user.setRectoID("1.PNG");
-        user.setVersoID("1.PNG");
-        user.setObjectVersoID(null);
-        user.setObjectFormulaire(null);
-        user.setObjectRectoID(null);
+      OperationDTO user = operationDTO();
+        user.setFormulaire(null);
+        user.setRectoID(null);
         doThrow(MailSendException.class).when(javaMailSender).send(any(MimeMessage.class));
         mailService.sendEmailWithAttachement("john.doe@example.com", "testSubject", "testContent", true, false, user);
 
@@ -246,17 +253,7 @@ public class MailServiceIntTest {
 
             MailService mailServicem = mock(MailService.class);
             doThrow(MailSendException.class).when(javaMailSender).send(any(MimeMessage.class));
-            UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-            user.setNumero("771326617");
-            user.setFirstName("bouya");
-            user.setLastName("kande");
-            user.setOperation("Ouverture compte OM");
-            user.setFormulaire("formulaire_inscription_om_original.pdf");
-            user.setRectoID("1.PNG");
-            user.setVersoID("1.PNG");
-            user.setObjectVersoID(recupFile());
-            user.setObjectFormulaire(recupFile());
-           user.setObjectRectoID(recupFile());
+            OperationDTO user = operationDTO();
             user.setNumero("774565252");
             mailService.sendEmailWithAttachement(Constants.EMAIL_SERVICE_CLIENT,"testSubject", "testContent", true, true, user);
 
@@ -271,18 +268,7 @@ public class MailServiceIntTest {
         final String content = "content";
         final boolean isMultipart = true;
         final boolean isHtml = false;
-        final UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-        user.setNumero("771326617");
-        user.setFirstName("bouya");
-        user.setLastName("kande");
-        user.setOperation("Ouverture compte OM");
-        user.setFormulaire("pom.xml");
-        user.setRectoID("pom.xml");
-        user.setVersoID("pom.xml");
-        user.setObjectVersoID(recupFile());
-        user.setObjectFormulaire(recupFile());
-        user.setObjectRectoID(recupFile());
-        user.setNumero("774565252");
+        final OperationDTO user = operationDTO();
 
         // Run the test
         mailServiceUnderTest.sendEmailWithAttachement(to, subject, content, isMultipart, isHtml, user);
@@ -292,20 +278,12 @@ public class MailServiceIntTest {
 
     @Test
     public void sendEmailToServiceClient() throws Exception {
-        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-
-        user.setNumero("771326617");
-        user.setFirstName("bouya");
-        user.setLastName("kande");
-        user.setOperation("Ouverture compte OM");
-        user.setFormulaire("formulaire_inscription_om_original.pdf");
-        user.setRectoID("1.PNG");
-        user.setVersoID("1.PNG");
-        user.setObjectVersoID(null);
-        user.setObjectFormulaire(null);
-        user.setObjectRectoID(null);
+        OperationDTO user = operationDTO();
+        user.setVerso(null);
+        user.setFormulaire(null);
+        user.setRectoID(null);
         user.setNumero("774565252");
-        mailService.sendEmailToServiceClient(user);
+        mailService.sendEmailToServiceClient(user,"Erreur transaction Orange Money");
     }
 
     @Test
@@ -332,9 +310,9 @@ public class MailServiceIntTest {
     public void testSendEmailWithAttachementOptional2() throws Exception {
 
 
-        UserInfoOuvertureCompte userOptional  = initUserInfoWithResources();
+        OperationDTO userOptional  = new OperationDTO();
         userOptional.setEmail("test@gmail.com");
-        userOptional.setObjectVersoID(null);
+        userOptional.setFormulaire(null);
         mailService.sendEmailWithAttachement("john.doe@example.com", "testSubject", "testContent", true, true,userOptional);
         verify(javaMailSender).send(messageCaptor.capture());
         MimeMessage message = messageCaptor.getValue();

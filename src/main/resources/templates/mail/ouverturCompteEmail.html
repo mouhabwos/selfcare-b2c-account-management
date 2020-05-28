@@ -8,20 +8,19 @@
 <p th:text="#{email.opening.greeting}">
     Cher
 </p>
-<p th:text="#{email.opening.text1(${user.getOperationTitre()})}">
+<p th:text="#{email.opening.text1}">
     Cher
 </p>
 <p th:text="#{email.opening.text2}">
 </p>
 <p th:text="#{email.opening.text4 (${user.numero})}">
 </p>
-<p th:text="#{email.opening.firstName (${user.getFirsName()})}">
+<p th:text="#{email.opening.firstName (${user.firstName})}">
 </p>
-<p th:text="#{email.opening.lastName (${user.getLastName()})}">
+<p th:text="#{email.opening.lastName (${user.lastName})}">
 </p>
-<p th:text="#{email.opening.email (${user.getEmail()})}">
+<p th:text="#{email.opening.email (${user.email})}">
 </p>
-
 <p>
     <span th:text="#{email.opening.text3}">Cordialement, </span>
     <br/>
