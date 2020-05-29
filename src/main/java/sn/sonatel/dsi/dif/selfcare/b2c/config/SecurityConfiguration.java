@@ -1,17 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2JwtAccessTokenConverter;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2Properties;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2SignatureVerifierClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.AuthoritiesConstants;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,8 +15,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2JwtAccessTokenConverter;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.oauth2.OAuth2Properties;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.AuthoritiesConstants;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2SignatureVerifierClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.interceptor.RestTemplateAddTokenInterceptor;
 
 import java.util.Collections;

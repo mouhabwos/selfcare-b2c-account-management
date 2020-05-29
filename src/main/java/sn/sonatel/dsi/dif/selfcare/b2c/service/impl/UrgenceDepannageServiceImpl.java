@@ -12,6 +12,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -64,11 +65,11 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         long millis = date.getTime();
 
         // verification of validity files
-        operationDTO.checkFormatImageFile(operationDTO.getRectoID().getOriginalFilename());
-        operationDTO.checkFormatPDFFile(operationDTO.getFormulaire().getOriginalFilename());
+        operationDTO.checkFormatFile(operationDTO.getRectoID().getOriginalFilename());
+        operationDTO.checkFormatFile(operationDTO.getFormulaire().getOriginalFilename());
 
         if(operationDTO.getVerso() != null){
-            operationDTO.checkFormatImageFile(operationDTO.getVerso().getOriginalFilename());
+            operationDTO.checkFormatFile(operationDTO.getVerso().getOriginalFilename());
         }
 
         // get operation title
@@ -113,7 +114,9 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     private OperationDTO convertStringToOperationDTO(String operationDTO) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(operationDTO, OperationDTO.class);
+        OperationDTO dto = mapper.readValue(operationDTO, OperationDTO.class);
+        dto.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(dto.getNumero()));
+        return dto;
 
 
     }

@@ -21,14 +21,14 @@ logging:
 
 eureka:
     instance:
-        #prefer-ip-address: true
+        prefer-ip-address: true
         #ip-address: @eureka.instance.dev.hostname@
         #hostname: @eureka.instance.dev.hostname@
-        hostname: selfcareb2c-accountmanagement-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
-        nonSecurePort: 80
+        #hostname: selfcareb2c-accountmanagement-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
+        #nonSecurePort: 80
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s-test.orange-sonatel.com/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@10.137.18.143:8761/eureka/,http://admin:${jhipster.registry.password}@10.137.18.82:8762/eureka/
 
 spring:
     profiles:
@@ -47,9 +47,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://10.137.16.118:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password: digitalfactory
+        password:
         hikari:
             auto-commit: false
             data-source-properties:
