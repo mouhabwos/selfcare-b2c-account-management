@@ -60,4 +60,11 @@ Add Index to NotificationInformation
 -->
 
     <include file="config/liquibase/changelog/20200227084042_changelog.xml" relativeToChangelogFile="false"/>
- </databaseChangeLog>
+
+    <!--
+update varchar code_formule to NotificationInformation table
+-->
+    <include file="config/liquibase/changelog/20200603164323_changelog.xml" relativeToChangelogFile="false"/>
+
+
+</databaseChangeLog>
