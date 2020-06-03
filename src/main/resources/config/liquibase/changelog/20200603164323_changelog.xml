@@ -3,7 +3,7 @@
     <changeSet author="bouyakande (generated)" id="1591202616393-1">
         <modifyDataType
             columnName="code_formule"
-            newDataType="varchar(2048)"
+            newDataType="varchar(30)"
             tableName="notification_information"/>
     </changeSet>
 </databaseChangeLog>
