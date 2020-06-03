@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -71,10 +72,6 @@ public class NotificationInformation implements Serializable {
 
     @Override
     public String toString() {
-        return "InfoNotification{" +
-            "codeFormule='" + codeFormule + '\'' +
-            ", firebaseId='" + firebaseId + '\'' +
-            ", id=" + id +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

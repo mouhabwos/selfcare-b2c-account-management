@@ -55,6 +55,7 @@
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
               <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
+        <juf.version>2.1.2</juf.version>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
@@ -173,10 +174,11 @@
 
     <dependencies>
 
+        <!-- add dependency juf -->
         <dependency>
-            <groupId>sn.sonatel.dsi.dif.selfcare.utils</groupId>
-            <artifactId>selfcare-logging</artifactId>
-            <version>1.0.5</version>
+            <groupId>sn.sonatel.dsi.dac.dif.ds.juf</groupId>
+            <artifactId>juf-starter-logging</artifactId>
+            <version>${juf.version}</version>
         </dependency>
 
         <dependency>

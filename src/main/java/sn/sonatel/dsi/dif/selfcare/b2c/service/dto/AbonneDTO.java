@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 /**
  * Created by centonni on 15/11/18.
@@ -42,10 +43,6 @@ public class AbonneDTO {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"nomAbonne\":" + nomAbonne + ',' +
-            "\"prenomAbonne\":" + prenomAbonne +
-            "\"msisdn\":" + msisdn +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

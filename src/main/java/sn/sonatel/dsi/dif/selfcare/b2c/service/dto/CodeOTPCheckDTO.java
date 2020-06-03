@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -53,8 +54,7 @@ public class CodeOTPCheckDTO {
 
     @Override
     public String toString() {
-        return "CodeOTPCheckVM{" + "msisdn='" + msisdn + '\'' + ", code='" + "******" + '\''
-            + ", valid=" + valid + '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 
 }
