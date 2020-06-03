@@ -15,6 +15,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
+
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
@@ -42,6 +44,8 @@ public class UrgenceDepannageServiceImplTest {
     @Mock
     private MailSendRepository mailSendRepository;
 
+    @Autowired
+    private MailService mailService;
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -52,7 +56,7 @@ public class UrgenceDepannageServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, applicationProperties, ftpService);
+        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, applicationProperties, ftpService, mailService);
     }
 
     private OperationDTO operationDTO() throws Exception {
