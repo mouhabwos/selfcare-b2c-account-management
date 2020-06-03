@@ -8,6 +8,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
@@ -30,16 +31,21 @@ import java.util.*;
 @Service
 class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
+    private static final String CODE_ERREUR_TRANSACTION_OM = "operation-300";
+
     private final MailSendRepository mailSendRepository;
 
     private final ApplicationProperties applicationProperties;
 
     private final SFTPClientService ftpService;
 
-    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ApplicationProperties applicationProperties, SFTPClientService ftpService) {
+    private final MailService mailService;
+
+    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ApplicationProperties applicationProperties, SFTPClientService ftpService, MailService mailService) {
         this.mailSendRepository = mailSendRepository;
         this.applicationProperties = applicationProperties;
         this.ftpService = ftpService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -65,11 +71,11 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         long millis = date.getTime();
 
         // verification of validity files
-        operationDTO.checkFormatFile(operationDTO.getRectoID().getOriginalFilename());
-        operationDTO.checkFormatFile(operationDTO.getFormulaire().getOriginalFilename());
+        operationDTO.checkFormatFile(operationDTO.getRectoID());
+        operationDTO.checkFormatFile(operationDTO.getFormulaire());
 
         if(operationDTO.getVerso() != null){
-            operationDTO.checkFormatFile(operationDTO.getVerso().getOriginalFilename());
+            operationDTO.checkFormatFile(operationDTO.getVerso());
         }
 
         // get operation title
@@ -82,11 +88,21 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
         Mail mail = sauvegardeFiles(operationDTO,millis);
 
+        String nameFile = constructionNameFile(operationDTO.getNumero(), operationDTO.getCanal());
+
         // send to server ftp
+        String zipFiles = ftpService.zipFiles(multipartFiles, nameFile);
+        if(operationDTO.getOperationCode().equals(CODE_ERREUR_TRANSACTION_OM)){
 
-        String zipFiles = ftpService.zipFiles(multipartFiles, constructionNameFile(operationDTO.getNumero(), operationDTO.getCanal()));
-        ftpService.sendFileToServerFtp(zipFiles);
+            // send mail to service
+            operationDTO.setNameFile(zipFiles);
+            mailService.sendEmailToServiceClient(operationDTO,getTitleOperation(operationDTO.getOperationCode()));
 
+        }else {
+
+
+            ftpService.sendFileToServerFtp(zipFiles);
+        }
         return  mail.getIdRequest()+"";
 
     }

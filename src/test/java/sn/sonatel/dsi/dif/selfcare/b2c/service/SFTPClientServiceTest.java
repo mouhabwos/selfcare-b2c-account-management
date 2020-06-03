@@ -117,11 +117,4 @@ public class SFTPClientServiceTest {
         // Verify the results
         assertEquals("nameZip.zip", result);
     }
-
-    @Test(expected = BadRequestAlertException.class)
-    public void testFileOperationDTO() {
-
-        OperationDTO dto = new OperationDTO();
-        dto.checkFormatFile("test.dfppp");
-    }
 }

@@ -29,12 +29,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.DowloadManager;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
@@ -114,9 +112,6 @@ public class AccountB2CResourceIntTest {
 
     @Autowired
     private MailService mailService;
-
-    @Mock
-    private DowloadManager dowloadManager;
 
     @Autowired
     private AccountB2CResource accountBCResource;
@@ -569,51 +564,6 @@ public class AccountB2CResourceIntTest {
 
     }
 
-
-    @Test
-    public void testSendMail() throws Exception {
-
-        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-        user.setNumero("771326617");
-        user.setFirstName("bouya");
-        user.setLastName("kande");
-        user.setOperation("Ouverture compte OM");
-        user.setOperationTitle("Ouverture compte OM");
-        user.setFormulaire("1.PNG");
-        user.setRectoID("1.PNG");
-        user.setVersoID("1.PNG");
-        user.setEmail("bouya@gmail.com");
-      //  accountBCResource.sendmail(user);
-
-        restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(user)));
-
-
-
-    }
-
-    @Test
-    public void testSendMailWithEmptyAttachment() throws Exception {
-
-        UserInfoOuvertureCompte user = new UserInfoOuvertureCompte();
-        user.setNumero("771326617");
-        user.setFirstName("bouya");
-        user.setLastName("kande");
-        user.setOperation("Ouverture compte OM");
-        user.setOperationTitle("Ouverture compte OM");
-        user.setFormulaire("1.PNG");
-        user.setRectoID("1.PNG");
-        user.setEmail("bouya@gmail.com");
-        //user.setObjectRectoID();
-
-        restAccountB2CMockMvc.perform(post("/api/account-management/mail/ouverture-compte" )
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(user)));
-
-
-
-    }
 
 
     /**
