@@ -62,7 +62,7 @@ pipeline {
 
 
     stage('Build & Push Docker image') {
-        agent  { label 'docker-builder-dev2-old' }
+        agent  { label 'docker-builder' }
         options { skipDefaultCheckout() }
       steps {
 

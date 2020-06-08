@@ -5,6 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -13,7 +14,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserInfoOuvertureCompte;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 
 
 import javax.mail.internet.MimeMessage;
@@ -70,13 +71,13 @@ public class MailService {
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
 
-                log.warn("Email could not be sent to user '{}'", to, e);
+            log.warn("Email could not be sent to user '{}'", to, e);
 
         }
     }
 
     @Async
-    public void sendEmailWithAttachement(String to, String subject, String content, boolean isMultipart, boolean isHtml, UserInfoOuvertureCompte user) {
+    public void sendEmailWithAttachement(String to, String subject, String content, boolean isMultipart, boolean isHtml, OperationDTO operationDTO) {
         log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
             isMultipart, isHtml, to, subject, content);
 
@@ -89,19 +90,13 @@ public class MailService {
             message.setFrom(applicationProperties.getSelfcareMail().getSenderAddress(),applicationProperties.getSelfcareMail().getSenderName());
             message.setSubject(subject);
             message.setText(content, isHtml);
-
-            message.addAttachment(user.getRectoID(), user.getObjectRectoID());
-
-            if(user.getObjectVersoID()!=null){
-                message.addAttachment(user.getVersoID(), user.getObjectVersoID());
-            }
-
-            message.addAttachment(user.getFormulaire(), user.getObjectFormulaire());
+            FileSystemResource fileZip = getFileZip(operationDTO.getNameFile());
+            message.addAttachment(operationDTO.getNameFile(), fileZip);
 
             javaMailSender.send(mimeMessage);
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
-                log.warn("Email could not be sent to user '{}'", to, e);
+            log.warn("Email could not be sent to user '{}'", to, e);
 
         }
     }
@@ -132,11 +127,11 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailToServiceClient(UserInfoOuvertureCompte user, String templateName, String subject) {
+    public void sendEmailToServiceClient(OperationDTO operationDTO, String templateName, String subject) {
         Locale locale = Locale
             .forLanguageTag("fr");
         Context context = new Context(locale);
-        context.setVariable(USER, user);
+        context.setVariable(USER, operationDTO);
 
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         context.setVariable(EMAIL_ADMIN, applicationProperties.getEmailAdmin());
@@ -144,17 +139,21 @@ public class MailService {
         context.setVariable(RANDOM, random);
         String content = templateEngine.process(templateName, context);
 
-        sendEmailWithAttachement(applicationProperties.getEmailServiceClientOrange(), subject, content, true, true, user);
+        sendEmailWithAttachement(applicationProperties.getEmailServiceClientOrange(), subject, content, true, true, operationDTO);
     }
 
     /**
      * Mail sent to the user to activate his account  when he create his account himself
-     * @param user
+     * @param operationDTO
      */
     @Async
-    public void sendEmailToServiceClient(UserInfoOuvertureCompte user) {
+    public void sendEmailToServiceClient(OperationDTO operationDTO, String titreOperation) {
         log.debug("Sending activation email to '{}'", "");
-        sendEmailToServiceClient(user, "mail/ouverturCompteEmail", "[Orange et Moi ]"+user.getOperationTitle()+"- "+user.getNumero());
+        sendEmailToServiceClient(operationDTO, "mail/ouverturCompteEmail", "[Orange et Moi ]"+titreOperation+"- "+operationDTO.getNumero());
     }
 
+    private FileSystemResource getFileZip(String nameFile){
+        String tempFile = applicationProperties.getTmpPath()+nameFile;
+        return new FileSystemResource(tempFile);
+    }
 }

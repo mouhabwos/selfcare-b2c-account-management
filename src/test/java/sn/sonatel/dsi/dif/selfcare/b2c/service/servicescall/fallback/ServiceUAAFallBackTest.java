@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import java.util.Collection;
@@ -36,6 +37,8 @@ public class ServiceUAAFallBackTest {
         serviceUAAFallBackUnderTest = new ServiceUAAFallBack(FeignException.errorStatus("UAA", response));
 
         serviceUAAFallBackUnderTest.register(new ManagedUserVM());
+        serviceUAAFallBackUnderTest.updateUser(new UserDTOExploitant());
+
 
     }
 
@@ -57,6 +60,8 @@ public class ServiceUAAFallBackTest {
         serviceUAAFallBackUnderTest = new ServiceUAAFallBack(FeignException.errorStatus("UAA", response));
 
         serviceUAAFallBackUnderTest.register(new ManagedUserVM());
+        serviceUAAFallBackUnderTest.updateUser(new UserDTOExploitant());
+
 
     }
 
@@ -74,6 +79,7 @@ public class ServiceUAAFallBackTest {
         serviceUAAFallBackUnderTest = new ServiceUAAFallBack(FeignException.errorStatus("UAA", response));
 
         serviceUAAFallBackUnderTest.register(new ManagedUserVM());
+        serviceUAAFallBackUnderTest.updateUser(new UserDTOExploitant());
 
     }
 
@@ -91,6 +97,7 @@ public class ServiceUAAFallBackTest {
         serviceUAAFallBackUnderTest = new ServiceUAAFallBack(FeignException.errorStatus("UAA", response));
 
         serviceUAAFallBackUnderTest.register(new ManagedUserVM());
+        serviceUAAFallBackUnderTest.updateUser(new UserDTOExploitant());
 
     }
 

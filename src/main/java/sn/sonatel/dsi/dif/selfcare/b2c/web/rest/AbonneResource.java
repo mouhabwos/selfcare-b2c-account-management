@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.annotation.Auditable;
 
 @RestController
 @RequestMapping("/api/abonne")
@@ -63,6 +63,15 @@ public class AbonneResource {
     public ResponseEntity<Boolean> isOrangeNumber(@PathVariable String msisdn) {
         log.debug ( "REST request to get information  organization : {}", msisdn );
         return ResponseEntity.ok(abonneService.isOrangeNumber(msisdn));
+
+    }
+
+    @Auditable(description = Message.Abonne.BIRTHDATE)
+    @GetMapping("/birthDate/{msisdn}")
+    @Timed
+    public ResponseEntity<String> birthDate(@PathVariable String msisdn) {
+        log.debug ( "REST request to get birthDate : {}", msisdn );
+        return abonneService.getBirthDate(msisdn);
 
     }
 

@@ -12,6 +12,7 @@ public final class Message {
         public static final String SOUSC_USER = "Recuperation de la souscription de l abonne";
         public static final String INFO_ABONNE = "Recuperation des informations de l abonne";
         public static final String CUSTOMEROFFER = "Recuperation du custommer offer de l abonne";
+        public static final String BIRTHDATE = "Recuperation de la date de naissance de l abonne";
         public static final String IS_ORANGE_NUMBER = "Verifier si le numero est un numero orange";
 
         private Abonne() {
@@ -76,6 +77,7 @@ public final class Message {
 
         public static final String ADD = "Creation de compte B2C";
         public static final String UPDATE = "Modification de compte B2C";
+        public static final String UPDATE_EXPLOITANT = "Modification de compte B2C par un compte exploitant";
         public static final String LIST = "Recuperation de la Lister des comptes B2C crees";
         public static final String LIST_BY_ID = "Recuperation d un compte B2C par id";
         public static final String DELETE = "Suppression d'un compte utilisateur";

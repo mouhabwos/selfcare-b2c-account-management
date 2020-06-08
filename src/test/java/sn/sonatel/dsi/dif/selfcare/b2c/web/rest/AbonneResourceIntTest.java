@@ -19,6 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 
 
 import static org.mockito.Mockito.mock;
@@ -101,5 +102,17 @@ public class AbonneResourceIntTest {
             .andExpect(content().string("false"));
     }
 
+
+    @Test
+    public void testGetBirthDate() throws Exception {
+        PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
+        IndividualInformation individualInformation = new IndividualInformation();
+        individualInformation.setBirthDate("1996-05-08");
+
+        when(partyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(ResponseEntity.ok(individualInformation));
+        restAbonneMockMvc.perform(get("/api/abonne/birthDate/{msisdn}", "DEFAULT_NUMERO"))
+            .andExpect(status().isOk());
+
+    }
 
 }

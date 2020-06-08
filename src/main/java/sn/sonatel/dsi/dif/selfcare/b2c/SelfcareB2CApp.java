@@ -21,7 +21,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.env.Environment;
-import sn.sonatel.dsi.dif.selfcare.utils.selfcarelogging.service.LoggingProperties;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.*;
@@ -37,7 +36,7 @@ import java.util.Collection;
     excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = OAuth2InterceptedFeignConfiguration.class)
 )
 @SpringBootApplication
-@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class, LoggingProperties.class})
+@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 @EnableDiscoveryClient
 @EnableFeignClients
 @IntegrationComponentScan
