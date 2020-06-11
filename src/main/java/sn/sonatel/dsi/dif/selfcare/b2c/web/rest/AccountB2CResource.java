@@ -13,6 +13,7 @@ import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -112,6 +113,20 @@ public class AccountB2CResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, accountB2C.getId().toString()))
             .body(result);
+    }
+
+
+    @Auditable(description = Message.Account.UPDATE_EXPLOITANT)
+    @PutMapping("/account-b-2-cs/{msisdn}")
+    @PreAuthorize("hasRole('ROLE_EXPLOITANT')")
+    public ResponseEntity updateAccountB2CBySI(@PathVariable("msisdn") String msisdn, @Valid @RequestBody AccountDTOExploitant accountB2C) {
+        log.debug("REST request to update AccountB2C by exploitant for msisdn {} : {}",msisdn, accountB2C);
+
+        this.accountB2CService.updateAccountForExploitation(msisdn,accountB2C);
+
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, msisdn))
+            .build();
     }
 
 

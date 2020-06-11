@@ -45,10 +45,7 @@ public class AccountB2CServiceImplTest {
     private RattachementLigneRepository mockRattachementLigneRepository;
     @Mock
     private SelfcareUAAService mockSelfcareUAAService;
-    @Mock
-    private MailService mockMailService;
-    @Mock
-    private DowloadManager mockDowloadManager;
+
     @Mock
     private BoosterManager boosterManager;
 
