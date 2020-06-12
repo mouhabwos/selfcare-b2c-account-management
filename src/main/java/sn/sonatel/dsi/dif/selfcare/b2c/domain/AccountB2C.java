@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -234,18 +235,6 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"firstName\":" + firstName + ',' +
-            "\"lastName\":" + lastName + ',' +
-            "\"email\":" + email + ',' +
-            "\"imageProfil\":" + imageProfil + ',' +
-            "\"activationKey\":" + activationKey + ',' +
-            "\"langKey\":" + langKey + ',' +
-            "\"attempts\":" + attempts + ',' +
-            "\"derniereConnnexionDate\":" + derniereConnnexionDate + ',' +
-            "\"tutoViewed\":" + tutoViewed + ',' +
-            "\"emailActivated\":" + emailActivated + ',' +
-            "\"numero\":" + numero +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

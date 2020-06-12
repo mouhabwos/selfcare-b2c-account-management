@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponsorDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 public class SponsorUploadResponse extends SponsorDTO {
 
@@ -26,9 +27,6 @@ public class SponsorUploadResponse extends SponsorDTO {
 
     @Override
     public String toString() {
-        return "SponsorUploadResponse{" +
-            "errorMsg='" + errorMsg + '\'' +
-            ", typeResp='" + typeResp + '\'' +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

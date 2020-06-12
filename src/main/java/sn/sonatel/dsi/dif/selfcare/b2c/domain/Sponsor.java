@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -106,12 +108,6 @@ public class Sponsor implements Serializable {
 
     @Override
     public String toString() {
-        return "Sponsor{" +
-            "id=" + getId() +
-            ", msisdn='" + getMsisdn() + "'" +
-            ", matricule='" + getMatricule() + "'" +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            "}";
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

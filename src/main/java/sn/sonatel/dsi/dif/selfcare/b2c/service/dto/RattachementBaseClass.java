@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Constants;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -66,11 +67,7 @@ public class RattachementBaseClass {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"numero\":" + numero + ',' +
-            "\"login\":" + login + ',' +
-            "\"typeNumero\":" + typeNumero +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }
 

@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.Scope;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.validation.constraints.*;
 import java.util.Set;
@@ -133,10 +134,7 @@ public class UserDTO extends UserBaseClass {
     }
 
     public String toString() {
-		return "UserDTO{" + "login='" + login + '\'' + ", firstName='" + firstName + '\''
-				+ ", lastName='" + lastName + '\'' + ", email='" + email + '\''
-				+ ", imageUrl='" + imageUrl + '\'' + ", activated=" + activated
-				+ ", langKey='" + langKey  + "}";
+		return LogUtil.convertObjectToJsonResponse(this);
 	}
 
 
