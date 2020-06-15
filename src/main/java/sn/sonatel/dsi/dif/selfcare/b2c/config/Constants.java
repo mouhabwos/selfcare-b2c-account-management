@@ -31,7 +31,7 @@ public final class Constants {
 
     public static final String SELFCARE_B2C_SOAP_SERVICE = "selfcare-b2c-soap";
 
-    public static final String SELFCARE_UAA_SERVICE = "selfcare-uaa";
+    public static final String SELFCARE_UAA_SERVICE = "selfcare-b2c-uaa";
 
     public static final String SELFCARE_FILE_MANAGER_SERVICE = "selfcare-file-manager";
 
