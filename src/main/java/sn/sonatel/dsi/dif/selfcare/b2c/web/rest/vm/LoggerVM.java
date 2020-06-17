@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm;
 
 import ch.qos.logback.classic.Logger;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 /**
  * View Model object for storing a Logback logger.
@@ -38,9 +39,6 @@ public class LoggerVM {
 
     @Override
     public String toString() {
-        return "LoggerVM{" +
-            "name='" + name + '\'' +
-            ", level='" + level + '\'' +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

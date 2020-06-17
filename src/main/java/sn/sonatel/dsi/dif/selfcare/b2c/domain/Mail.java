@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,7 +20,6 @@ import java.io.Serializable;
 @Table(name = "mail")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@ToString(doNotUseGetters = true)
 public class Mail implements Serializable {
 
     @Getter(AccessLevel.PUBLIC)
@@ -94,4 +94,8 @@ public class Mail implements Serializable {
     @Column(name = "lastname", nullable = false)
     private  String lastName;
 
+    @Override
+    public String toString() {
+        return LogUtil.convertObjectToJsonResponse(this);
+    }
 }

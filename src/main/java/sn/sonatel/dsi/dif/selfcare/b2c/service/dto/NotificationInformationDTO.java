@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 import javax.validation.constraints.Size;
 
 public class NotificationInformationDTO {
@@ -40,10 +42,6 @@ public class NotificationInformationDTO {
 
     @Override
     public String toString() {
-        return "NotificationInformationDTO{" +
-            "firebaseId='" + firebaseId + '\'' +
-            ", msisdn='" + msisdn + '\'' +
-            ", codeFormule='" + codeFormule + '\'' +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }
