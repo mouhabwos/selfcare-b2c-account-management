@@ -68,6 +68,7 @@ public class AbonneResource {
 
     @Auditable(description = Message.Abonne.BIRTHDATE)
     @GetMapping("/birthDate/{msisdn}")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
     public ResponseEntity<String> birthDate(@PathVariable String msisdn) {
         log.debug ( "REST request to get birthDate : {}", msisdn );
