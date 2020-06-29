@@ -8,9 +8,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
@@ -22,11 +24,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
@@ -113,6 +116,29 @@ public class AbonneResourceIntTest {
         restAbonneMockMvc.perform(get("/api/abonne/birthDate/{msisdn}", "DEFAULT_NUMERO"))
             .andExpect(status().isOk());
 
+    }
+
+
+    @Test
+    public void getCustomerOfferWithoutClientCode() throws Exception {
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+
+        when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
+
+        restAbonneMockMvc.perform(get("/api/abonne/v2/customerOffer/{msisdn}", DEFAULT_NUMERO))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.clientCode").isEmpty())
+            .andExpect(jsonPath("$.offerName").value(customerOffer.getOfferName()))
+            .andExpect(jsonPath("$.offerId").value(customerOffer.getOfferId()));
     }
 
 }

@@ -49,6 +49,7 @@ public class AbonneResource {
      */
     @Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v1/customerOffer/{msisdn}")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable String msisdn){
         log.debug ( "REST request to get CustomerOffer : {}", msisdn );
@@ -73,6 +74,17 @@ public class AbonneResource {
     public ResponseEntity<String> birthDate(@PathVariable String msisdn) {
         log.debug ( "REST request to get birthDate : {}", msisdn );
         return abonneService.getBirthDate(msisdn);
+
+    }
+
+    @Auditable(description = Message.Abonne.CUSTOMEROFFER)
+    @GetMapping("/v2/customerOffer/{msisdn}")
+    @Timed
+    public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable String msisdn){
+        log.debug ( "REST V2 request to get CustomerOffer : {}", msisdn );
+        CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
+        customerOffer.setClientCode("");
+        return ResponseEntity.ok(customerOffer);
 
     }
 
