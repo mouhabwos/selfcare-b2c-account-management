@@ -49,7 +49,6 @@ public class AbonneResource {
      */
     @Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v1/customerOffer/{msisdn}")
-    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable String msisdn){
         log.debug ( "REST request to get CustomerOffer : {}", msisdn );
