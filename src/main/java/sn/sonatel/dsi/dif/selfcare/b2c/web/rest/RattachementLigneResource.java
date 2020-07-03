@@ -47,7 +47,7 @@ public class RattachementLigneResource {
         this.rattachementLigneService = rattachementLigneService;
     }
 
-    @Auditable(description = Message.Rattachement.ADD)
+    //@Auditable(description = Message.Rattachement.ADD)
     @PostMapping("/rattachement-lignes")
     @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
@@ -67,7 +67,7 @@ public class RattachementLigneResource {
 
 
 
-    @Auditable(description = Message.Rattachement.UPDATE)
+    //@Auditable(description = Message.Rattachement.UPDATE)
     @PutMapping("/rattachement-lignes")
     @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) {
@@ -85,7 +85,7 @@ public class RattachementLigneResource {
 
 
 
-    @Auditable(description = Message.Rattachement.LIST)
+    //@Auditable(description = Message.Rattachement.LIST)
     @GetMapping("/rattachement-lignes")
     @PreAuthorize("#rattachementLigne.login == authentication.name")
     public ResponseEntity<List<RattachementLigne>> getAllRattachementLignes(Pageable pageable) {
@@ -96,7 +96,7 @@ public class RattachementLigneResource {
     }
 
 
-    @Auditable(description = Message.Rattachement.LIST_BY_ID)
+    //@Auditable(description = Message.Rattachement.LIST_BY_ID)
     @GetMapping("/rattachement-lignes/{id}")
     @PreAuthorize("isFullyAuthenticated()")
     public ResponseEntity<RattachementLigne> getRattachementLigne(@PathVariable Long id) {
@@ -107,7 +107,7 @@ public class RattachementLigneResource {
 
 
 
-    @Auditable(description = Message.Rattachement.DELETE)
+    //@Auditable(description = Message.Rattachement.DELETE)
     @DeleteMapping("/rattachement-lignes/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRattachementLigne(@PathVariable Long id) {
@@ -118,7 +118,7 @@ public class RattachementLigneResource {
 
 
 
-    @Auditable(description = Message.Rattachement.SAVE)
+    //@Auditable(description = Message.Rattachement.SAVE)
     @PostMapping("/rattachement-lignes/register")
     @PreAuthorize("#ligneVM.login==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
@@ -133,7 +133,7 @@ public class RattachementLigneResource {
 
 
 
-    @Auditable(description = Message.Rattachement.List_By_MSISDN)
+    //@Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
     @PreAuthorize("#msisdn == authentication.name")
@@ -148,7 +148,7 @@ public class RattachementLigneResource {
 
 
 
-    @Auditable(description = Message.Rattachement.DELETE_ALL)
+    //@Auditable(description = Message.Rattachement.DELETE_ALL)
     @PostMapping("/rattachement-lignes/delete-multiple")
     @Timed
     @PreAuthorize("#deleteListe.login == authentication.name")
@@ -160,7 +160,7 @@ public class RattachementLigneResource {
 
     }
 
-    @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
+    //@Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
     @PostMapping("/rattachement-lignes/fixe-register")
     @PreAuthorize("#ligneVM.login==authentication.name")
     public ResponseEntity<RattachementLigne> addRattachementLigneFixe(
