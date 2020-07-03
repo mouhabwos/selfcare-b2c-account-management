@@ -53,7 +53,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.ADD)
+    //@Auditable(description = Message.Account.ADD)
     @PostMapping("/account-b-2-cs")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2CDto)  {
@@ -67,7 +67,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.ADD)
+    //@Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C : {}", managedUserVM);
@@ -85,7 +85,7 @@ public class AccountB2CResource {
 
     }
 
-    @Auditable(description = Message.Account.ADD)
+    //@Auditable(description = Message.Account.ADD)
     @PostMapping("/v2/register")
     public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C version 2 : {}", managedUserVM);
@@ -100,7 +100,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.UPDATE)
+    //@Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
     @PreAuthorize("#accountB2C.numero == authentication.name")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
@@ -116,7 +116,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.UPDATE_EXPLOITANT)
+    //@Auditable(description = Message.Account.UPDATE_EXPLOITANT)
     @PutMapping("/account-b-2-cs/{msisdn}")
     @PreAuthorize("hasRole('ROLE_EXPLOITANT')")
     public ResponseEntity updateAccountB2CBySI(@PathVariable("msisdn") String msisdn, @Valid @RequestBody AccountDTOExploitant accountB2C) {
@@ -130,7 +130,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.LIST)
+    //@Auditable(description = Message.Account.LIST)
     @GetMapping("/account-b-2-cs")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<AccountB2C>> getAllAccountB2CS(Pageable pageable) {
@@ -141,7 +141,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.CHECK_Numero)
+    //@Auditable(description = Message.Account.CHECK_Numero)
     @PostMapping("/v2/check_number")
     public ResponseEntity checkNumberV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
         checkNumberRequest.setUuid(uuid);
@@ -149,7 +149,7 @@ public class AccountB2CResource {
         return ResponseEntity.ok().build();
     }
 
-    @Auditable(description = Message.Account.CHECK_Email)
+    //@Auditable(description = Message.Account.CHECK_Email)
     @PostMapping("/email-already-exist")
     @Timed
     public boolean emailExistingVerify(@Valid @RequestBody EmailExistDTO email) {
@@ -158,7 +158,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.GET_ACCOUNT)
+    //@Auditable(description = Message.Account.GET_ACCOUNT)
     @GetMapping("/account/{login}")
     @Timed
     @PreAuthorize("#login == authentication.name")
@@ -174,7 +174,7 @@ public class AccountB2CResource {
      * @param msisdn
      * @return Response ok if
      */
-    @Auditable(description = Message.Account.UPDATE_TUTORIAL_VIEW)
+    //@Auditable(description = Message.Account.UPDATE_TUTORIAL_VIEW)
     @GetMapping("/view-tutorial/{msisdn}")
     @Timed
     public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
@@ -190,7 +190,7 @@ public class AccountB2CResource {
      * @return Response the view status
      * @Throws BadRequestException when account not found
      */
-    @Auditable(description = Message.Account.TUTORIAL_VIEW_STATUS)
+    //@Auditable(description = Message.Account.TUTORIAL_VIEW_STATUS)
     @GetMapping("/view-tutorial/status/{msisdn}")
     @Timed
     public ResponseEntity<Boolean> checkTutorialViewStatus(@PathVariable String msisdn){
@@ -200,7 +200,7 @@ public class AccountB2CResource {
     }
 
 
-    @Auditable(description = Message.Account.CHECK_Numero)
+    //@Auditable(description = Message.Account.CHECK_Numero)
     @GetMapping("/v2/check_number/{msisdn}")
     public Boolean checkNumberV2(@PathVariable  String  msisdn) {
         log.debug("REST request to check number : {}", msisdn);
