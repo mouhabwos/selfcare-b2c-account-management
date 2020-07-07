@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -40,10 +42,6 @@ public class RattachementLignesDeleteMultipleVM {
 
     @Override
     public String toString() {
-        return "RattachementLignesDeleteMultipleVM{" +
-            "listMsisdn:" + listMsisdn +
-            ", login:'" + login + '\'' +
-            ", deleted:" + deleted +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

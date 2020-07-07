@@ -1,4 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 
@@ -97,15 +99,6 @@ public class SponseeDTO {
     @Override
     public String toString() {
 
-        return "{" +
-            "\"id\":" + id + ',' +
-            "\"msisdn\":" + msisdn + ',' +
-            "\"firstName\":" + firstName + ',' +
-            "\"lastName\":" + lastName + ',' +
-            "\"effective\":" + isEffective() + ',' +
-            "\"createdDate\":" + getCreatedDate() + ',' +
-            "\"enabled\":" + isEnabled() +
-            "\"msisdnSponsor\":" + msisdnSponsor +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

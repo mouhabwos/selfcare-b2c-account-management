@@ -187,6 +187,7 @@ logging:
 #    microservice-name: Account Management
 #    app-name: Selfcare B2C
 #
+
 # Traceability related configuration
 audit:
     enable: true
@@ -198,36 +199,18 @@ audit:
     app-name: ${spring.application.name:APP_NAME}
     scrubbed-value: "********"
     blacklisted-parameters:
-    - password
-    - pwd
-    - secret
-    - pincode
-    - codeclient
-    - canalid
-    - clientcode
-    - clientid
-    - idclient
-    - newpincode
-    - authorization
-    - api_key
-    - apikey
-    - token
-    - accesstoken
-    - refreshtoken
-    - sim
-    - idcard
+        - idClient
+        - clientCode
     http-headers:      #if you would like to log http headers
-    - X-Selfcare-Platform
-    - X-Selfcare-Isvirtual
-    - X-Selfcare-Uuid
-    - X-Selfcare-Serial
-    - X-Selfcare-Model
-    - X-Selfcare-Manufacturer
-    - X-Selfcare-Xordova
-    - X-Selfcare-Os-Version
-    - X-Selfcare-App-Version
-    - X-Selfcare-Source
-    #- user-agent
+        - X-Selfcare-Platform
+        - X-Selfcare-Isvirtual
+        - X-Selfcare-Uuid
+        - X-Selfcare-Serial
+        - X-Selfcare-Model
+        - X-Selfcare-Manufacturer
+        - X-Selfcare-Xordova
+        - X-Selfcare-Os-Version
+        - X-Selfcare-App-Version
 
 # APM related configuration
 elastic:

@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -89,10 +90,6 @@ public class RattachementLigne extends NumeroDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"id\":" + getId() +  "," +
-            "\"numero\":" + getNumero() + "," +
-            "\"typeNumero\":" + getTypeNumero() +
-            "}";
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }
