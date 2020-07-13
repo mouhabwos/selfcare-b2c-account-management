@@ -32,7 +32,7 @@ public class AbonneResource {
     }
 
 
-    @Auditable(description = Message.Abonne.IS_POSPAID)
+    //@Auditable(description = Message.Abonne.IS_POSPAID)
     @GetMapping("/is-postpaid/{msisdn}/{msisdn1}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<Boolean> isPostpaid(@PathVariable String msisdn,@PathVariable String msisdn1) {
@@ -47,7 +47,7 @@ public class AbonneResource {
      * @since 1.1.4
      *
      */
-    @Auditable(description = Message.Abonne.CUSTOMEROFFER)
+    //@Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v1/customerOffer/{msisdn}")
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable String msisdn){
@@ -57,7 +57,7 @@ public class AbonneResource {
 
     }
 
-    @Auditable(description = Message.Abonne.IS_ORANGE_NUMBER)
+    //@Auditable(description = Message.Abonne.IS_ORANGE_NUMBER)
     @GetMapping("/v1/is-orange-number/{msisdn}")
     @Timed
     public ResponseEntity<Boolean> isOrangeNumber(@PathVariable String msisdn) {
@@ -66,12 +66,24 @@ public class AbonneResource {
 
     }
 
-    @Auditable(description = Message.Abonne.BIRTHDATE)
+    //@Auditable(description = Message.Abonne.BIRTHDATE)
     @GetMapping("/birthDate/{msisdn}")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
     public ResponseEntity<String> birthDate(@PathVariable String msisdn) {
         log.debug ( "REST request to get birthDate : {}", msisdn );
         return abonneService.getBirthDate(msisdn);
+
+    }
+
+    //@Auditable(description = Message.Abonne.CUSTOMEROFFER)
+    @GetMapping("/v2/customerOffer/{msisdn}")
+    @Timed
+    public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable String msisdn){
+        log.debug ( "REST V2 request to get CustomerOffer : {}", msisdn );
+        CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
+        customerOffer.setClientCode("");
+        return ResponseEntity.ok(customerOffer);
 
     }
 
