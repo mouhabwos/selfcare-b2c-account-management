@@ -93,4 +93,10 @@ public class OperationDTO {
         }
     }
 
+    public void checkFormatNumber(String msisdn){
+        if(!msisdn.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
+            throw new BadRequestAlertException("Le numero doit etre un numéro mobile orange valide", msisdn,"");
+        }
+    }
+
 }
