@@ -22,11 +22,11 @@ logging:
 eureka:
     instance:
         prefer-ip-address: true
-        ip-address: @eureka.instance.rec.hostname@
-        hostname: @eureka.instance.rec.hostname@
+        #ip-address: @eureka.instance.rec.hostname@
+        #hostname: @eureka.instance.rec.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@10.137.52.31:8761/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@registry-rec.k8s-test.orange-sonatel.com/eureka/
 
 spring:
     profiles:
