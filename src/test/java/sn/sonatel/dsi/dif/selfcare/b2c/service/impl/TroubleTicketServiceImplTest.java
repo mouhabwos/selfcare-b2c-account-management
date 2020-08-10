@@ -12,6 +12,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.TroubleTicketApiClient
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.*;
+
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TroubleTicketServiceImplTest {
@@ -26,10 +28,45 @@ public class TroubleTicketServiceImplTest {
 
     private final static String REQUEST_ID = "51022830";
 
+    static Map<String, String> titleMap = new HashMap<>();
+    static Map<String, String> descriptionMap = new HashMap<>();
+    static Map<String, String> historicMap = new HashMap<>();
+    static Map<String, Integer> orderMap = new HashMap<>();
+
     @Before
     public void setUp() {
         initMocks(this);
         troubleTicketService = new TroubletIcketServiceImpl(troubleTicketApiClient, applicationProperties);
+    }
+
+   static  {
+        titleMap.put("rejected-title","Rejetée");
+        titleMap.put("cancelled-title","Annulée");
+        titleMap.put("acknowledged-request-title","Validée");
+        titleMap.put("held-request-title","Réalisable");
+        titleMap.put("in-progress-title","En Cours");
+        titleMap.put("held-incident-title","Signalée");
+        titleMap.put("pending-title","ABSENTAVIS");
+        titleMap.put("acknowledged-incident-title","Orienté");
+
+        descriptionMap.put("rejected-request-description","Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client");
+        descriptionMap.put("cancelled-description","Votre demande a été annulée pour non faisabilité technique ou sur demande du client");
+        descriptionMap.put("acknowledged-request-description","Votre demande a été validée, vous serez contacté prochainement par nos équipes");
+        descriptionMap.put("held-request-description","Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais");
+        descriptionMap.put("in-progress-request-description","Votre demande est en cours de traitement, vous serez contacter par nos équipes.");
+        descriptionMap.put("held-incident-description","Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.");
+        descriptionMap.put("pending-description","Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau");
+        descriptionMap.put("in-progress-incident-description","Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.");
+        descriptionMap.put("acknowledged-incident-description","Votre dérangement a été envoyée aux équipes techniques");
+        descriptionMap.put("rejected-incident-description","Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client");
+
+        historicMap.put("positive","true");
+        historicMap.put("negative","false");
+
+        orderMap.put("first",1);
+        orderMap.put("second",2);
+        orderMap.put("third",3);
+
     }
 
     @Test
@@ -38,13 +75,19 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.REQUEST);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.INPROGRESS);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST)).
             thenReturn(ResponseEntity.ok(troubleTicket));
 
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST);
 
-        Assert.assertEquals("INPROGRESS", responseEntity.getBody().getStatus());
+        Assert.assertEquals("INPROGRESS", Objects.requireNonNull(responseEntity.getBody()).getStatus());
         Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().getType());
         Assert.assertEquals("Votre demande est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().getDescription());
@@ -60,6 +103,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.REQUEST);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.CANCELLED);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -81,6 +130,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.REQUEST);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.REJECTED);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -101,6 +156,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.REQUEST);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.ACKNOWLEDGED);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -123,6 +184,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.REQUEST);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.HELD);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -145,6 +212,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.INCIDENT);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.ACKNOWLEDGED);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -167,6 +240,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.INCIDENT);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.HELD);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -189,6 +268,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.INCIDENT);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.INPROGRESS);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -211,6 +296,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.INCIDENT);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.REJECTED);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -232,6 +323,12 @@ public class TroubleTicketServiceImplTest {
         TroubleTicket troubleTicket = new TroubleTicket();
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.INCIDENT);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.PENDING);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT)).
             thenReturn(ResponseEntity.ok(troubleTicket));
@@ -244,6 +341,38 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals("Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau", responseEntity.getBody().getDescription());
         Assert.assertEquals("ABSENTAVIS", responseEntity.getBody().getTitle());
         Assert.assertEquals(false, responseEntity.getBody().getHistoric());
+
+    }
+
+    @Test
+    public void getRequestStatusByMsisdn(){
+
+        List<TroubleTicket> troubleTicketList = new LinkedList<>();
+
+        TroubleTicket troubleTicket = new TroubleTicket();
+        troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.REQUEST);
+        troubleTicket.setStatus(TroubleTicket.StatusEnum.INPROGRESS);
+        troubleTicket.setId(REQUEST_ID);
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
+
+        troubleTicketList.add(troubleTicket);
+
+        Mockito.when(troubleTicketApiClient.getTroubleTicketByMsisdn("338239614",TroubleTicket.TicketTypeEnum.REQUEST)).
+            thenReturn(ResponseEntity.ok(troubleTicketList));
+
+        ResponseEntity<List<RequestStatusDTO>> responseEntity = troubleTicketService.getRequestStatusByMisisdn("338239614",TroubleTicket.TicketTypeEnum.REQUEST);
+
+        Assert.assertEquals("INPROGRESS", Objects.requireNonNull(responseEntity.getBody()).get(0).getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().get(0).getRequestId());
+        Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().get(0).getType());
+        Assert.assertEquals("Votre demande est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().get(0).getDescription());
+        Assert.assertEquals("En Cours", responseEntity.getBody().get(0).getTitle());
+        Assert.assertEquals(1, responseEntity.getBody().get(0).getOrder());
+        Assert.assertEquals(true, responseEntity.getBody().get(0).getHistoric());
 
     }
 }
