@@ -39,6 +39,13 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
     private static final String KEY_PENDING_DESCRIPTION = "pending-description";
     private static final String KEY_ACKNOWLEDGED_INCIDENT_DESCRIPTION = "acknowledged-incident-description";
 
+    private static final String KEY_ORDER_FIRST = "first";
+    private static final String KEY_ORDER_SECOND = "second";
+    private static final String KEY_ORDER_THIRD = "third";
+
+    private static final String KEY_HISTORIC_TRUE = "positive";
+    private static final String KEY_HISTORIC_FALSE = "negative";
+
     private static String rejected = "Rejetée";
     private static String cancelled = "Annulée";
     private static String acknowledgedRequest = "Validée";
@@ -58,6 +65,13 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
     private static String heldIncidentDescription = "Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.";
     private static String pendingDescription = "Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau";
     private static String acknowwledgedIncidentDescription = "Votre dérangement a été envoyée aux équipes techniques";
+
+    private static String firstPosition = "1";
+    private static String secondPosition = "2";
+    private static String thirdPosition = "3";
+
+    private static String trueValue = "true";
+    private static String falseValue = "false";
 
     public TroubletIcketServiceImpl(TroubleTicketApiClient troubleTicketApiClient, ApplicationProperties applicationProperties) {
         this.troubleTicketApiClient = troubleTicketApiClient;
@@ -106,29 +120,29 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                 case "REJECTED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_REJECTED_TITLE,rejected));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_REJECTED_REQUEST_DESCRIPTION, rejectedRequestDescription));
-                    requestStatusDTO.setHistoric(false);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_FALSE, falseValue)));
                     break;
                 case "CANCELLED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_CANCELLED_TITLE,cancelled));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_CANCELLED_DESCRIPTION,cancelledDescription));
-                    requestStatusDTO.setHistoric(false);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_FALSE, falseValue)));
                     break;
                 case "ACKNOWLEDGED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_ACKNOWLEDGED_REQUEST_TITLE, acknowledgedRequest));
-                    requestStatusDTO.setHistoric(true);
-                    requestStatusDTO.setOrder(3);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_TRUE, trueValue)));
+                    requestStatusDTO.setOrder(Integer.parseInt(applicationProperties.getOrder().getOrDefault(KEY_ORDER_THIRD, thirdPosition)));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_ACKNOWLEDGED_REQUEST_DESCRIPTION,acknowledgedRequestDescription));
                     break;
                 case "HELD":
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_HELD_REQUEST_DESCRIPTION,heldRequestDescription));
-                    requestStatusDTO.setOrder(2);
+                    requestStatusDTO.setOrder(Integer.parseInt(applicationProperties.getOrder().getOrDefault(KEY_ORDER_SECOND, secondPosition)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_HELD_REQUEST_TITLE, heldRequest));
-                    requestStatusDTO.setHistoric(true);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_TRUE, trueValue)));
                     break;
                 case "INPROGRESS":
-                    requestStatusDTO.setHistoric(true);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_TRUE, trueValue)));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_IN_PROGRESS_REQUEST_DESCRIPTION,inProgressRequestDescription));
-                    requestStatusDTO.setOrder(1);
+                    requestStatusDTO.setOrder(Integer.parseInt(applicationProperties.getOrder().getOrDefault(KEY_ORDER_FIRST, firstPosition)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_IN_PROGRESS_TITLE, inProgress));
                     break;
                 default:
@@ -141,30 +155,30 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO.setStatus(troubleTicket.getStatus());
             switch (troubleTicket.getStatus()){
                 case "HELD":
-                    requestStatusDTO.setOrder(2);
-                    requestStatusDTO.setHistoric(true);
+                    requestStatusDTO.setOrder(Integer.parseInt(applicationProperties.getOrder().getOrDefault(KEY_ORDER_SECOND, secondPosition)));
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_TRUE, trueValue)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_HELD_INCIDENT_TITLE, heldIncident));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_HELD_INCIDENT_DESCRIPTION,heldIncidentDescription));
                     break;
                 case "PENDING":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_PENDING_TITLE,pending));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_PENDING_DESCRIPTION,pendingDescription));
-                    requestStatusDTO.setHistoric(false);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_FALSE, falseValue)));
                     break;
                 case "INPROGRESS":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_IN_PROGRESS_TITLE, inProgress));
-                    requestStatusDTO.setHistoric(true);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_TRUE, trueValue)));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_IN_PROGRESS_INCIDENT_DESCRIPTION,inProgressIncidentDescription));
-                    requestStatusDTO.setOrder(1);
+                    requestStatusDTO.setOrder(Integer.parseInt(applicationProperties.getOrder().getOrDefault(KEY_ORDER_FIRST, firstPosition)));
                     break;
                 case "ACKNOWLEDGED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_ACKNOWLEDGED_INCIDENT_TITLE, acknowwledgedIncident));
-                    requestStatusDTO.setOrder(3);
+                    requestStatusDTO.setOrder(Integer.parseInt(applicationProperties.getOrder().getOrDefault(KEY_ORDER_THIRD, thirdPosition)));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_ACKNOWLEDGED_INCIDENT_DESCRIPTION, acknowwledgedIncidentDescription));
-                    requestStatusDTO.setHistoric(true);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_TRUE, trueValue)));
                     break;
                 case "REJECTED":
-                    requestStatusDTO.setHistoric(false);
+                    requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().getOrDefault(KEY_HISTORIC_FALSE, falseValue)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().getOrDefault(KEY_REJECTED_TITLE,rejected));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().getOrDefault(KEY_REJECTED_INCIDENT_DESCRIPTION,rejectedIncidentDescription));
                     break;

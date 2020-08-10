@@ -33,7 +33,8 @@ public class ApplicationProperties {
 
     private Map<String,String> requestTitleMap = new HashMap<>();
     private Map<String,String> requestDescriptionMap = new HashMap<>();
-
+    private Map<String,String> order = new HashMap<>();
+    private Map<String,String> historic = new HashMap<>();
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
 
@@ -163,6 +164,23 @@ public class ApplicationProperties {
 
     public void setRequestDescriptionMap(Map<String, String> requestDescriptionMap) {
         this.requestDescriptionMap = requestDescriptionMap;
+    }
+
+
+    public Map<String, String> getOrder() {
+        return order;
+    }
+
+    public void setOrder(Map<String, String> order) {
+        this.order = order;
+    }
+
+    public Map<String, String> getHistoric() {
+        return historic;
+    }
+
+    public void setHistoric(Map<String, String> historic) {
+        this.historic = historic;
     }
 
     /**
