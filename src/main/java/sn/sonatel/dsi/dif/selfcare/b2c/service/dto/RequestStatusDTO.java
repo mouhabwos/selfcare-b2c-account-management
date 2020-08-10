@@ -4,12 +4,21 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 
 public class RequestStatusDTO {
 
+    private String requestId;
     private String status;
     private String title;
     private String description;
     private TroubleTicket.TicketTypeEnum type;
     private int order;
     private Boolean historic;
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
     public String getStatus() {
         return status;
@@ -58,4 +67,5 @@ public class RequestStatusDTO {
     public void setHistoric(Boolean historic) {
         this.historic = historic;
     }
+
 }

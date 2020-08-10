@@ -45,6 +45,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST);
 
         Assert.assertEquals("INPROGRESS", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().getType());
         Assert.assertEquals("Votre demande est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().getDescription());
         Assert.assertEquals("En Cours", responseEntity.getBody().getTitle());
@@ -66,6 +67,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST);
 
         Assert.assertEquals("CANCELLED", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().getType());
         Assert.assertEquals("Votre demande a été annulée pour non faisabilité technique ou sur demande du client", responseEntity.getBody().getDescription());
         Assert.assertEquals("Annulée", responseEntity.getBody().getTitle());
@@ -86,6 +88,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST);
 
         Assert.assertEquals("REJECTED", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().getType());
         Assert.assertEquals("Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client", responseEntity.getBody().getDescription());
         Assert.assertEquals("Rejetée", responseEntity.getBody().getTitle());
@@ -105,6 +108,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST);
 
         Assert.assertEquals("ACKNOWLEDGED", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().getType());
         Assert.assertEquals("Votre demande a été validée, vous serez contacté prochainement par nos équipes", responseEntity.getBody().getDescription());
         Assert.assertEquals("Validée", responseEntity.getBody().getTitle());
@@ -126,6 +130,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST);
 
         Assert.assertEquals("HELD", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().getType());
         Assert.assertEquals("Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais", responseEntity.getBody().getDescription());
         Assert.assertEquals("Réalisable", responseEntity.getBody().getTitle());
@@ -147,6 +152,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT);
 
         Assert.assertEquals("ACKNOWLEDGED", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().getType());
         Assert.assertEquals("Votre dérangement a été envoyée aux équipes techniques", responseEntity.getBody().getDescription());
         Assert.assertEquals("Orienté", responseEntity.getBody().getTitle());
@@ -168,6 +174,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT);
 
         Assert.assertEquals("HELD", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().getType());
         Assert.assertEquals("Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.", responseEntity.getBody().getDescription());
         Assert.assertEquals("Signalée", responseEntity.getBody().getTitle());
@@ -189,6 +196,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT);
 
         Assert.assertEquals("INPROGRESS", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().getType());
         Assert.assertEquals("Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().getDescription());
         Assert.assertEquals("En Cours", responseEntity.getBody().getTitle());
@@ -210,6 +218,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT);
 
         Assert.assertEquals("REJECTED", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().getType());
         Assert.assertEquals("Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client", responseEntity.getBody().getDescription());
         Assert.assertEquals("Rejetée", responseEntity.getBody().getTitle());
@@ -230,6 +239,7 @@ public class TroubleTicketServiceImplTest {
         ResponseEntity<RequestStatusDTO> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT);
 
         Assert.assertEquals("PENDING", responseEntity.getBody().getStatus());
+        Assert.assertEquals(REQUEST_ID, responseEntity.getBody().getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().getType());
         Assert.assertEquals("Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau", responseEntity.getBody().getDescription());
         Assert.assertEquals("ABSENTAVIS", responseEntity.getBody().getTitle());

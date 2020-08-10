@@ -14,11 +14,13 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/abonne")
 public class AbonneResource {
 
-    private final Logger log = LoggerFactory.getLogger ( RattachementLigneResource.class );
+    private final Logger log = LoggerFactory.getLogger ( AbonneResource.class );
 
     private final CustomerOfferService customerOfferService;
     private final AbonneService abonneService;
@@ -92,6 +94,13 @@ public class AbonneResource {
     public ResponseEntity<RequestStatusDTO> getRequestStatusById(@PathVariable String id, @RequestParam(name = "type") TroubleTicket.TicketTypeEnum type){
 
         return troubleTicketService.getRequestStatusById(id,type);
+    }
+
+    @GetMapping("/request-status")
+    //@Auditable(description = Message.Client.GET_REQUEST_STATUS)
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMsisdn(@RequestParam(name = "msisdn") String msisdn, @RequestParam(name = "type") TroubleTicket.TicketTypeEnum type){
+
+        return troubleTicketService.getRequestStatusByMisisdn(msisdn,type);
     }
 
 }

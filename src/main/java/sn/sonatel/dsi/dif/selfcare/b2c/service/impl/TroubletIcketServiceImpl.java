@@ -9,6 +9,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.TroubleTicketApiClient
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Service
 public class TroubletIcketServiceImpl implements TroubleTicketService {
 
@@ -74,12 +77,30 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 
+    @Override
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMisisdn(String msisdn, TroubleTicket.TicketTypeEnum type) {
+
+        ResponseEntity<List<TroubleTicket>> responseEntity = troubleTicketApiClient.getTroubleTicketByMsisdn(msisdn, type);
+        List<RequestStatusDTO> resultList = new LinkedList<>();
+        if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
+            //result = responseEntity.getBody();
+            for(TroubleTicket troubleTicket : responseEntity.getBody()){
+                RequestStatusDTO requestStatusDTO = mapTroubleTicketToRequestStatus(troubleTicket);
+                resultList.add(requestStatusDTO);
+            }
+            return ResponseEntity.ok(resultList);
+        }
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+    }
+
     private RequestStatusDTO mapTroubleTicketToRequestStatus(TroubleTicket troubleTicket){
 
         RequestStatusDTO requestStatusDTO = new RequestStatusDTO();
 
         if(troubleTicket.getTicketType().equals(TroubleTicket.TicketTypeEnum.REQUEST.toString())){
             requestStatusDTO.setType(TroubleTicket.TicketTypeEnum.REQUEST);
+            requestStatusDTO.setRequestId(troubleTicket.getId());
             requestStatusDTO.setStatus(troubleTicket.getStatus());
             switch (troubleTicket.getStatus()){
                 case "REJECTED":
