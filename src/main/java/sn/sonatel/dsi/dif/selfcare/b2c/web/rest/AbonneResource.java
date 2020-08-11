@@ -6,15 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
 @RestController
 @RequestMapping("/api/abonne")
@@ -24,11 +22,13 @@ public class AbonneResource {
 
     private final CustomerOfferService customerOfferService;
     private final AbonneService abonneService;
+    private final TroubleTicketService troubleTicketService;
 
-    public AbonneResource(CustomerOfferService customerOfferService, AbonneService abonneService) {
+    public AbonneResource(CustomerOfferService customerOfferService, AbonneService abonneService, TroubleTicketService troubleTicketService) {
 
         this.customerOfferService = customerOfferService;
         this.abonneService = abonneService;
+        this.troubleTicketService = troubleTicketService;
     }
 
 
@@ -85,6 +85,13 @@ public class AbonneResource {
         customerOffer.setClientCode("");
         return ResponseEntity.ok(customerOffer);
 
+    }
+
+    @GetMapping("/request-status/{id}")
+    //@Auditable(description = Message.Client.GET_REQUEST_STATUS)
+    public ResponseEntity<RequestStatusDTO> getRequestStatusById(@PathVariable String id, @RequestParam(name = "type") TroubleTicket.TicketTypeEnum type){
+
+        return troubleTicketService.getRequestStatusById(id,type);
     }
 
 }

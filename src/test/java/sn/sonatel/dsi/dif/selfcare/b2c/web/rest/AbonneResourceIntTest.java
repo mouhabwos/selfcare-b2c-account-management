@@ -12,24 +12,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
-
-import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
@@ -50,11 +48,14 @@ public class AbonneResourceIntTest {
     @Mock
     private AbonneService abonneService;
 
+    @Mock
+    private TroubleTicketService troubleTicketService;
+
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneService);
+        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneService, troubleTicketService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
     }
@@ -69,6 +70,16 @@ public class AbonneResourceIntTest {
 
         restAbonneMockMvc.perform(get("/api/abonne/is-postpaid/{msisdn1}/{msisdn}", DEFAULT_NUMERO,DEFAULT_NUMERO_TO_VERIFIER))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getRequestStatus() throws Exception {
+
+        ResponseEntity<RequestStatusDTO> response = ResponseEntity.status(HttpStatus.OK).build();
+        when(resource.getRequestStatusById(Mockito.any(),Mockito.any())).thenReturn(response);
+
+        restAbonneMockMvc.perform(get("/api/abonne/request-status/{requestId}?type=REQUEST", 51022830))
+            .andExpect(status().isOk());
     }
 
 
