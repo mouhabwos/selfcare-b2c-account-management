@@ -133,7 +133,7 @@ public class AbonneResourceIntTest {
 
         when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
 
-        restAbonneMockMvc.perform(get("/api/abonne/customerOffer/for-another/{msisdn}", DEFAULT_NUMERO))
+        restAbonneMockMvc.perform(get("/api/abonne/v2/customerOffer/{msisdn}", DEFAULT_NUMERO))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.clientCode").isEmpty())

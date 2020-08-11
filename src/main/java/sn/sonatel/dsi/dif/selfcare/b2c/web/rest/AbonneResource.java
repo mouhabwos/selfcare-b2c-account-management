@@ -78,7 +78,7 @@ public class AbonneResource {
     }
 
     @Auditable(description = Message.Abonne.CUSTOMEROFFER)
-    @GetMapping("/customerOffer/for-another/{msisdn}")
+    @GetMapping("/v2/customerOffer/{msisdn}")
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable String msisdn){
         log.debug ( "REST V2 request to get CustomerOffer : {}", msisdn );
