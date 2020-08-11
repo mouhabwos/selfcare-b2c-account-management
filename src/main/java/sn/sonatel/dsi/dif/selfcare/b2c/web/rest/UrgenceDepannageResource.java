@@ -44,7 +44,7 @@ public class UrgenceDepannageResource {
 
         String idRequest = urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso,canal);
 
-        return ResponseEntity.accepted ().body(new URI ( "/api/v1/mail/ouverture-compte/status/" +idRequest ));
+        return ResponseEntity.accepted ().body(idRequest);
 
     }
 
