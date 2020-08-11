@@ -24,6 +24,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.List;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -75,10 +77,10 @@ public class AbonneResourceIntTest {
     @Test
     public void getRequestStatus() throws Exception {
 
-        ResponseEntity<RequestStatusDTO> response = ResponseEntity.status(HttpStatus.OK).build();
-        when(resource.getRequestStatusById(Mockito.any(),Mockito.any())).thenReturn(response);
+        ResponseEntity<List<RequestStatusDTO>> response = ResponseEntity.status(HttpStatus.OK).build();
+        when(resource.getRequestStatusById(Mockito.any())).thenReturn(response);
 
-        restAbonneMockMvc.perform(get("/api/abonne/request-status/{requestId}?type=REQUEST", 51022830))
+        restAbonneMockMvc.perform(get("/api/abonne/request/{requestId}", 51022830))
             .andExpect(status().isOk());
     }
 

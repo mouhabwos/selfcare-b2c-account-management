@@ -11,6 +11,7 @@ public class RequestStatusDTO {
     private TroubleTicket.TicketTypeEnum type;
     private int order;
     private Boolean historic;
+    private Boolean currentState = false;
 
     public String getRequestId() {
         return requestId;
@@ -68,4 +69,11 @@ public class RequestStatusDTO {
         this.historic = historic;
     }
 
+    public Boolean getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(Boolean currentState) {
+        this.currentState = currentState;
+    }
 }
