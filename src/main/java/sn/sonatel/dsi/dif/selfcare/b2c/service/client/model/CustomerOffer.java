@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferGammeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.validation.Valid;
 
@@ -297,20 +298,7 @@ public class CustomerOffer   {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"clientCode\":" + clientCode + ',' +
-            "\"createDate\":" + createDate + ',' +
-            "\"data\":" + data +
-            "\"endUserId\":" + endUserId + ',' +
-            "\"offerCode\":" + offerCode + ',' +
-            "\"offerGamme\":" + offerGamme +
-            "\"offerName\":" + offerName + ',' +
-            "\"offerStatus\":" + offerStatus + ',' +
-            "\"offerType\"" + offerType + ',' +
-            "\"sms\":" + sms + ',' +
-            "\"voice\":" + voice + ',' +
-            "\"offerId\":" + offerId + ',' +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }
 

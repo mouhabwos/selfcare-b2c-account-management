@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -161,14 +162,6 @@ public class Sponsee implements Serializable {
 
     @Override
     public String toString() {
-        return "Sponsee{" +
-            "id=" + getId() +
-            ", msisdn='" + getMsisdn() + "'" +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
-            ", effective='" + isEffective() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", enabled='" + isEnabled() + "'" +
-            "}";
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,17 +17,19 @@ import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
@@ -47,11 +50,14 @@ public class AbonneResourceIntTest {
     @Mock
     private AbonneService abonneService;
 
+    @Mock
+    private TroubleTicketService troubleTicketService;
+
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
-        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneService);
+        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneService, troubleTicketService);
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
     }
@@ -66,6 +72,16 @@ public class AbonneResourceIntTest {
 
         restAbonneMockMvc.perform(get("/api/abonne/is-postpaid/{msisdn1}/{msisdn}", DEFAULT_NUMERO,DEFAULT_NUMERO_TO_VERIFIER))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getRequestStatus() throws Exception {
+
+        ResponseEntity<List<RequestStatusDTO>> response = ResponseEntity.status(HttpStatus.OK).build();
+        when(resource.getRequestStatusById(Mockito.any())).thenReturn(response);
+
+        restAbonneMockMvc.perform(get("/api/abonne/request/{requestId}", 51022830))
+            .andExpect(status().isOk());
     }
 
 
@@ -113,6 +129,29 @@ public class AbonneResourceIntTest {
         restAbonneMockMvc.perform(get("/api/abonne/birthDate/{msisdn}", "DEFAULT_NUMERO"))
             .andExpect(status().isOk());
 
+    }
+
+
+    @Test
+    public void getCustomerOfferWithoutClientCode() throws Exception {
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+
+        when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
+
+        restAbonneMockMvc.perform(get("/api/abonne/v2/customerOffer/{msisdn}", DEFAULT_NUMERO))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.clientCode").isEmpty())
+            .andExpect(jsonPath("$.offerName").value(customerOffer.getOfferName()))
+            .andExpect(jsonPath("$.offerId").value(customerOffer.getOfferId()));
     }
 
 }

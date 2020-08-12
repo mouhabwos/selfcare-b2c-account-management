@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 import javax.validation.constraints.NotNull;
 
 public class SponsorDTO {
@@ -57,11 +59,6 @@ public class SponsorDTO {
 
     @Override
     public String toString() {
-        return "SponsorDTO{" +
-            "msisdn='" + msisdn + '\'' +
-            ", matricule='" + matricule + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 /**
  * Created by centonni on 30/11/18.
  */
@@ -67,13 +69,6 @@ public class SouscriptionDto {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"msisdn\":" + msisdn + ',' +
-            "\"profil\":" + profil + ',' +
-            "\"nomOffre\":" + nomOffre + ',' +
-            "\"codeOffre\":" + codeOffre + ',' +
-            "\"code\":" + code + ',' +
-            "\"message\":" + message +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }

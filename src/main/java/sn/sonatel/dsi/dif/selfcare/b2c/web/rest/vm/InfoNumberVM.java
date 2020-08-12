@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
+
 public class InfoNumberVM {
 
     private String msisdn;
@@ -34,10 +36,6 @@ public class InfoNumberVM {
 
     @Override
     public String toString() {
-        return "{" +
-            "\"msisdn\":" + msisdn + ',' +
-            "\"profil\":" + profil + ',' +
-            "\"formule\":" + formule + ',' +
-            '}';
+        return LogUtil.convertObjectToJsonResponse(this);
     }
 }
