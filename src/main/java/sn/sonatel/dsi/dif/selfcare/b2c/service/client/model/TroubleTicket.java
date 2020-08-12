@@ -123,6 +123,23 @@ public enum TicketTypeEnum {
   **/
   private TicketTypeEnum ticketType = null;
 
+    /**
+     * Unique identifier of the trouble ticket
+     * @return id
+     **/
+    @JsonProperty("id")
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public TroubleTicket id(String id) {
+        this.id = id;
+        return this;
+    }
 
  /**
    * The current status of the trouble ticket

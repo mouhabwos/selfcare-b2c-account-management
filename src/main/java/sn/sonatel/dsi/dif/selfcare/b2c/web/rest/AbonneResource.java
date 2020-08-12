@@ -11,14 +11,15 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/abonne")
 public class AbonneResource {
 
-    private final Logger log = LoggerFactory.getLogger ( RattachementLigneResource.class );
+    private final Logger log = LoggerFactory.getLogger ( AbonneResource.class );
 
     private final CustomerOfferService customerOfferService;
     private final AbonneService abonneService;
@@ -87,11 +88,18 @@ public class AbonneResource {
 
     }
 
-    @GetMapping("/request-status/{id}")
+    @GetMapping("/request/{id}")
     //@Auditable(description = Message.Client.GET_REQUEST_STATUS)
-    public ResponseEntity<RequestStatusDTO> getRequestStatusById(@PathVariable String id, @RequestParam(name = "type") TroubleTicket.TicketTypeEnum type){
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusById(@PathVariable String id){
 
-        return troubleTicketService.getRequestStatusById(id,type);
+        return troubleTicketService.getRequestStatusById(id);
+    }
+
+    @GetMapping("/requests")
+    //@Auditable(description = Message.Client.GET_REQUEST_STATUS)
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMsisdn(@RequestParam(name = "msisdn") String msisdn){
+
+        return troubleTicketService.getRequestStatusByMisisdn(msisdn);
     }
 
 }

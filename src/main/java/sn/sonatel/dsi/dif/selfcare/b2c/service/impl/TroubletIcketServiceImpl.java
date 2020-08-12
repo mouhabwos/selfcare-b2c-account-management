@@ -9,6 +9,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.TroubleTicketApiClient
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 @Service
 public class TroubletIcketServiceImpl implements TroubleTicketService {
 
@@ -49,21 +53,144 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
     }
 
     @Override
-    public ResponseEntity<RequestStatusDTO> getRequestStatusById(String id, TroubleTicket.TicketTypeEnum type) {
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusById(String id) {
 
-        ResponseEntity<TroubleTicket> responseEntity = troubleTicketApiClient.getTroubleTicketById(id, type);
+        ResponseEntity<TroubleTicket> troubleRequest = troubleTicketApiClient.getTroubleTicketById(id, TroubleTicket.TicketTypeEnum.REQUEST);
+        ResponseEntity<TroubleTicket> troubleIncdent = troubleTicketApiClient.getTroubleTicketById(id, TroubleTicket.TicketTypeEnum.INCIDENT);
         RequestStatusDTO result;
-        if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
-            result = mapTroubleTicketToRequestStatus(responseEntity.getBody());
-            return ResponseEntity.ok(result);
+        if(troubleRequest.getStatusCode() == HttpStatus.OK && troubleRequest.getBody() != null){
+            result = mapTroubleTicketToRequestStatus(troubleRequest.getBody());
+            if(result.getHistoric()){
+                List<RequestStatusDTO> resultList = orderRequest(result);
+                resultList.forEach(e->e.setRequestId(result.getRequestId()));
+                return ResponseEntity.ok(resultList);
+            }
+            else {
+                List<RequestStatusDTO> requestStatusDTOList = new LinkedList<>();
+                requestStatusDTOList.add(result);
+                return ResponseEntity.ok(requestStatusDTOList);
+            }
+        }
+        if(troubleIncdent.getStatusCode() == HttpStatus.OK && troubleIncdent.getBody() != null){
+            result = mapTroubleTicketToRequestStatus(troubleIncdent.getBody());
+            if(result.getHistoric()){
+                List<RequestStatusDTO> resultList = orderRequest(result);
+                resultList.forEach(e->e.setRequestId(result.getRequestId()));
+                return ResponseEntity.ok(resultList);
+            }
+            else {
+                List<RequestStatusDTO> requestStatusDTOList = new LinkedList<>();
+                requestStatusDTOList.add(result);
+                return ResponseEntity.ok(requestStatusDTOList);
+            }
         }
 
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 
+    @Override
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMisisdn(String msisdn) {
+
+        ResponseEntity<List<TroubleTicket>> responseRequest = troubleTicketApiClient.getTroubleTicketByMsisdn(msisdn, TroubleTicket.TicketTypeEnum.REQUEST);
+        ResponseEntity<List<TroubleTicket>> responseIncident = troubleTicketApiClient.getTroubleTicketByMsisdn(msisdn, TroubleTicket.TicketTypeEnum.INCIDENT);
+
+        List<TroubleTicket> troubleTicketList = new LinkedList<>();
+        List<RequestStatusDTO> resultList = new LinkedList<>();
+        if(responseRequest.getStatusCode() == HttpStatus.OK && responseRequest.getBody() != null){
+            troubleTicketList.addAll(responseRequest.getBody());
+        }
+        if(responseIncident.getStatusCode() == HttpStatus.OK && responseIncident.getBody() != null){
+            troubleTicketList.addAll(responseIncident.getBody());
+        }
+            for(TroubleTicket troubleTicket : troubleTicketList){
+                RequestStatusDTO requestStatusDTO = mapTroubleTicketToRequestStatus(troubleTicket);
+                resultList.add(requestStatusDTO);
+            }
+            return ResponseEntity.ok(resultList);
+
+    }
+
+    public List<RequestStatusDTO> orderRequest(RequestStatusDTO requestStatusDTO){
+
+        List<RequestStatusDTO> requestStatusDTOList = getAllRequestsOrderedBYType(requestStatusDTO.getType());
+        requestStatusDTO.setCurrentState(true);
+        boolean gotOrder = false;
+        for (Iterator<RequestStatusDTO> iterator = requestStatusDTOList.iterator(); iterator.hasNext();){
+            if(iterator.next().getOrder() == requestStatusDTO.getOrder()){
+                iterator.remove();
+                gotOrder = true;
+            }
+        }
+        if(gotOrder){
+            requestStatusDTOList.add(requestStatusDTO);
+        }
+
+        return requestStatusDTOList;
+    }
+
+    public List<RequestStatusDTO> getAllRequestsOrderedBYType(TroubleTicket.TicketTypeEnum typeEnum){
+
+        List<RequestStatusDTO> resultList = new LinkedList<>();
+        if(typeEnum == TroubleTicket.TicketTypeEnum.REQUEST){
+            RequestStatusDTO requestStatusDTO1 = new RequestStatusDTO();
+            requestStatusDTO1.setTitle(applicationProperties.getRequestTitleMap().get(KEY_IN_PROGRESS_TITLE));
+            requestStatusDTO1.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_IN_PROGRESS_REQUEST_DESCRIPTION));
+            requestStatusDTO1.setType(TroubleTicket.TicketTypeEnum.REQUEST);
+            requestStatusDTO1.setStatus(TroubleTicket.StatusEnum.INPROGRESS.value());
+            requestStatusDTO1.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
+            resultList.add(requestStatusDTO1);
+
+            RequestStatusDTO requestStatusDTO2 = new RequestStatusDTO();
+            requestStatusDTO2.setTitle(applicationProperties.getRequestTitleMap().get(KEY_HELD_REQUEST_TITLE));
+            requestStatusDTO2.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_REQUEST_DESCRIPTION));
+            requestStatusDTO2.setType(TroubleTicket.TicketTypeEnum.REQUEST);
+            requestStatusDTO2.setStatus(TroubleTicket.StatusEnum.HELD.value());
+            requestStatusDTO2.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
+            resultList.add(requestStatusDTO2);
+
+            RequestStatusDTO requestStatusDTO3 = new RequestStatusDTO();
+            requestStatusDTO3.setTitle(applicationProperties.getRequestTitleMap().get(KEY_ACKNOWLEDGED_REQUEST_TITLE));
+            requestStatusDTO3.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_ACKNOWLEDGED_REQUEST_DESCRIPTION));
+            requestStatusDTO3.setType(TroubleTicket.TicketTypeEnum.REQUEST);
+            requestStatusDTO3.setStatus(TroubleTicket.StatusEnum.ACKNOWLEDGED.value());
+            requestStatusDTO3.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
+            resultList.add(requestStatusDTO3);
+
+        }
+        if(typeEnum == TroubleTicket.TicketTypeEnum.INCIDENT){
+            RequestStatusDTO requestStatusDTO1 = new RequestStatusDTO();
+            requestStatusDTO1.setTitle(applicationProperties.getRequestTitleMap().get(KEY_IN_PROGRESS_TITLE));
+            requestStatusDTO1.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_IN_PROGRESS_INCIDENT_DESCRIPTION));
+            requestStatusDTO1.setType(TroubleTicket.TicketTypeEnum.INCIDENT);
+            requestStatusDTO1.setStatus(TroubleTicket.StatusEnum.INPROGRESS.value());
+            requestStatusDTO1.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
+            resultList.add(requestStatusDTO1);
+
+            RequestStatusDTO requestStatusDTO2 = new RequestStatusDTO();
+            requestStatusDTO2.setTitle(applicationProperties.getRequestTitleMap().get(KEY_HELD_INCIDENT_TITLE));
+            requestStatusDTO2.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION));
+            requestStatusDTO2.setType(TroubleTicket.TicketTypeEnum.INCIDENT);
+            requestStatusDTO2.setStatus(TroubleTicket.StatusEnum.HELD.value());
+            requestStatusDTO2.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
+            resultList.add(requestStatusDTO2);
+
+            RequestStatusDTO requestStatusDTO3 = new RequestStatusDTO();
+            requestStatusDTO3.setTitle(applicationProperties.getRequestTitleMap().get(KEY_ACKNOWLEDGED_INCIDENT_TITLE));
+            requestStatusDTO3.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_ACKNOWLEDGED_INCIDENT_DESCRIPTION));
+            requestStatusDTO3.setType(TroubleTicket.TicketTypeEnum.INCIDENT);
+            requestStatusDTO3.setStatus(TroubleTicket.StatusEnum.ACKNOWLEDGED.value());
+            requestStatusDTO3.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
+            resultList.add(requestStatusDTO3);
+
+        }
+
+        return resultList;
+    }
+
     private RequestStatusDTO mapTroubleTicketToRequestStatus(TroubleTicket troubleTicket){
 
         RequestStatusDTO requestStatusDTO = new RequestStatusDTO();
+        requestStatusDTO.setRequestId(troubleTicket.getId());
 
         if(troubleTicket.getTicketType().equals(TroubleTicket.TicketTypeEnum.REQUEST.toString())){
             requestStatusDTO.setType(TroubleTicket.TicketTypeEnum.REQUEST);
