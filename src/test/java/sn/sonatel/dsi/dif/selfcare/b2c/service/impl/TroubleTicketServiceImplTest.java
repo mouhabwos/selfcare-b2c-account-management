@@ -376,6 +376,24 @@ public class TroubleTicketServiceImplTest {
     }
 
     @Test
+    public void getRequestStatusForWrongId(){
+
+        Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
+        Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
+        Mockito.when(applicationProperties.getRequestDescriptionMap()).thenReturn(descriptionMap);
+        Mockito.when(applicationProperties.getRequestTitleMap()).thenReturn(titleMap);
+
+        Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.INCIDENT)).
+            thenReturn(ResponseEntity.notFound().build());
+        Mockito.when(troubleTicketApiClient.getTroubleTicketById(REQUEST_ID,TroubleTicket.TicketTypeEnum.REQUEST)).
+            thenReturn(ResponseEntity.notFound().build());
+
+        ResponseEntity<List<RequestStatusDTO>> responseEntity = troubleTicketService.getRequestStatusById(REQUEST_ID);
+
+        Assert.assertEquals(Collections.emptyList(), responseEntity.getBody());
+    }
+
+    @Test
     public void getRequestStatusByMsisdn(){
 
         List<TroubleTicket> troubleTicketList = new LinkedList<>();

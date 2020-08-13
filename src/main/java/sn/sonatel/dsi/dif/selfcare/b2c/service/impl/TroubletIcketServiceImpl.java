@@ -9,6 +9,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.TroubleTicketApiClient
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,6 +84,9 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                 requestStatusDTOList.add(result);
                 return ResponseEntity.ok(requestStatusDTOList);
             }
+        }
+        if(troubleRequest.getStatusCode() == HttpStatus.NOT_FOUND && troubleIncdent.getStatusCode() == HttpStatus.NOT_FOUND){
+            return ResponseEntity.ok(Collections.emptyList());
         }
 
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
