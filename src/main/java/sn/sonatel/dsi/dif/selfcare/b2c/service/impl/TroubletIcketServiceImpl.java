@@ -85,11 +85,8 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                 return ResponseEntity.ok(requestStatusDTOList);
             }
         }
-        if(troubleRequest.getStatusCode() == HttpStatus.NOT_FOUND && troubleIncdent.getStatusCode() == HttpStatus.NOT_FOUND){
-            return ResponseEntity.ok(Collections.emptyList());
-        }
 
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        return ResponseEntity.ok(Collections.emptyList());
     }
 
     @Override
@@ -108,6 +105,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
         }
             for(TroubleTicket troubleTicket : troubleTicketList){
                 RequestStatusDTO requestStatusDTO = mapTroubleTicketToRequestStatus(troubleTicket);
+                requestStatusDTO.setCurrentState(true);
                 resultList.add(requestStatusDTO);
             }
             return ResponseEntity.ok(resultList);
@@ -141,7 +139,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO1.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_IN_PROGRESS_REQUEST_DESCRIPTION));
             requestStatusDTO1.setType(TroubleTicket.TicketTypeEnum.REQUEST);
             requestStatusDTO1.setStatus(TroubleTicket.StatusEnum.INPROGRESS.value());
-            requestStatusDTO1.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
+            requestStatusDTO1.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
             resultList.add(requestStatusDTO1);
 
             RequestStatusDTO requestStatusDTO2 = new RequestStatusDTO();
@@ -149,7 +147,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO2.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_REQUEST_DESCRIPTION));
             requestStatusDTO2.setType(TroubleTicket.TicketTypeEnum.REQUEST);
             requestStatusDTO2.setStatus(TroubleTicket.StatusEnum.HELD.value());
-            requestStatusDTO2.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
+            requestStatusDTO2.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
             resultList.add(requestStatusDTO2);
 
             RequestStatusDTO requestStatusDTO3 = new RequestStatusDTO();
@@ -157,7 +155,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO3.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_ACKNOWLEDGED_REQUEST_DESCRIPTION));
             requestStatusDTO3.setType(TroubleTicket.TicketTypeEnum.REQUEST);
             requestStatusDTO3.setStatus(TroubleTicket.StatusEnum.ACKNOWLEDGED.value());
-            requestStatusDTO3.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
+            requestStatusDTO3.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
             resultList.add(requestStatusDTO3);
 
         }
@@ -167,7 +165,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO1.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_IN_PROGRESS_INCIDENT_DESCRIPTION));
             requestStatusDTO1.setType(TroubleTicket.TicketTypeEnum.INCIDENT);
             requestStatusDTO1.setStatus(TroubleTicket.StatusEnum.INPROGRESS.value());
-            requestStatusDTO1.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
+            requestStatusDTO1.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
             resultList.add(requestStatusDTO1);
 
             RequestStatusDTO requestStatusDTO2 = new RequestStatusDTO();
@@ -175,7 +173,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO2.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION));
             requestStatusDTO2.setType(TroubleTicket.TicketTypeEnum.INCIDENT);
             requestStatusDTO2.setStatus(TroubleTicket.StatusEnum.HELD.value());
-            requestStatusDTO2.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
+            requestStatusDTO2.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
             resultList.add(requestStatusDTO2);
 
             RequestStatusDTO requestStatusDTO3 = new RequestStatusDTO();
@@ -183,7 +181,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO3.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_ACKNOWLEDGED_INCIDENT_DESCRIPTION));
             requestStatusDTO3.setType(TroubleTicket.TicketTypeEnum.INCIDENT);
             requestStatusDTO3.setStatus(TroubleTicket.StatusEnum.ACKNOWLEDGED.value());
-            requestStatusDTO3.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
+            requestStatusDTO3.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
             resultList.add(requestStatusDTO3);
 
         }
@@ -213,19 +211,19 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                 case "ACKNOWLEDGED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_ACKNOWLEDGED_REQUEST_TITLE));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
-                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
+                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_ACKNOWLEDGED_REQUEST_DESCRIPTION));
                     break;
                 case "HELD":
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_REQUEST_DESCRIPTION));
-                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
+                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_HELD_REQUEST_TITLE));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
                     break;
                 case "INPROGRESS":
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_IN_PROGRESS_REQUEST_DESCRIPTION));
-                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
+                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_IN_PROGRESS_TITLE));
                     break;
                 default:
@@ -238,7 +236,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             requestStatusDTO.setStatus(troubleTicket.getStatus());
             switch (troubleTicket.getStatus()){
                 case "HELD":
-                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_SECOND));
+                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_HELD_INCIDENT_TITLE));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION));
@@ -252,11 +250,11 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_IN_PROGRESS_TITLE));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_IN_PROGRESS_INCIDENT_DESCRIPTION));
-                    requestStatusDTO.setOrder((applicationProperties.getOrder().get(KEY_ORDER_FIRST)));
+                    requestStatusDTO.setOrder((applicationProperties.getOrder().get(KEY_ORDER_SECOND)));
                     break;
                 case "ACKNOWLEDGED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_ACKNOWLEDGED_INCIDENT_TITLE));
-                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
+                    requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_FIRST));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_ACKNOWLEDGED_INCIDENT_DESCRIPTION));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
                     break;
