@@ -42,9 +42,9 @@ public class UrgenceDepannageResource {
     public ResponseEntity sendmail(@RequestPart String operationDTO, @RequestPart MultipartFile formulaire, @RequestPart MultipartFile rectoID, @RequestPart( required = false) MultipartFile verso, @RequestHeader(name = "X-CANAL", required = false) String canal) throws IOException, URISyntaxException {
         log.info("REST request to register ouverture-compte");
 
-        String idRequest = urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso,canal);
+         urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso,canal);
 
-        return ResponseEntity.accepted ().body(idRequest);
+        return ResponseEntity.accepted ().build();
 
     }
 
