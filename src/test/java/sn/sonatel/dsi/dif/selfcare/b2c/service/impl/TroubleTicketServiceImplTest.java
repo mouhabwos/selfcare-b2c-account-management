@@ -96,7 +96,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().get(2).getType());
         Assert.assertEquals("Votre demande est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().get(2).getDescription());
         Assert.assertEquals("En Cours", responseEntity.getBody().get(2).getTitle());
-        Assert.assertEquals(1, responseEntity.getBody().get(2).getOrder());
+        Assert.assertEquals(2, responseEntity.getBody().get(2).getOrder());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
 
     }
@@ -187,7 +187,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals("Votre demande a été validée, vous serez contacté prochainement par nos équipes", responseEntity.getBody().get(2).getDescription());
         Assert.assertEquals("Validée", responseEntity.getBody().get(2).getTitle());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
-        Assert.assertEquals(3, responseEntity.getBody().get(2).getOrder());
+        Assert.assertEquals(1, responseEntity.getBody().get(2).getOrder());
 
     }
 
@@ -218,7 +218,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals("Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais", responseEntity.getBody().get(2).getDescription());
         Assert.assertEquals("Réalisable", responseEntity.getBody().get(2).getTitle());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
-        Assert.assertEquals(2, responseEntity.getBody().get(2).getOrder());
+        Assert.assertEquals(3, responseEntity.getBody().get(2).getOrder());
 
     }
 
@@ -248,7 +248,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().get(2).getType());
         Assert.assertEquals("Votre dérangement a été envoyée aux équipes techniques", responseEntity.getBody().get(2).getDescription());
         Assert.assertEquals("Orienté", responseEntity.getBody().get(2).getTitle());
-        Assert.assertEquals(3, responseEntity.getBody().get(2).getOrder());
+        Assert.assertEquals(1, responseEntity.getBody().get(2).getOrder());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
 
     }
@@ -279,7 +279,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().get(2).getType());
         Assert.assertEquals("Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.", responseEntity.getBody().get(2).getDescription());
         Assert.assertEquals("Signalée", responseEntity.getBody().get(2).getTitle());
-        Assert.assertEquals(2, responseEntity.getBody().get(2).getOrder());
+        Assert.assertEquals(3, responseEntity.getBody().get(2).getOrder());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
 
     }
@@ -310,7 +310,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().get(2).getType());
         Assert.assertEquals("Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().get(2).getDescription());
         Assert.assertEquals("En Cours", responseEntity.getBody().get(2).getTitle());
-        Assert.assertEquals(1, responseEntity.getBody().get(2).getOrder());
+        Assert.assertEquals(2, responseEntity.getBody().get(2).getOrder());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
 
     }
@@ -423,7 +423,7 @@ public class TroubleTicketServiceImplTest {
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.REQUEST, responseEntity.getBody().get(0).getType());
         Assert.assertEquals("Votre demande est en cours de traitement, vous serez contacter par nos équipes.", responseEntity.getBody().get(0).getDescription());
         Assert.assertEquals("En Cours", responseEntity.getBody().get(0).getTitle());
-        Assert.assertEquals(1, responseEntity.getBody().get(0).getOrder());
+        Assert.assertEquals(2, responseEntity.getBody().get(0).getOrder());
         Assert.assertEquals(true, responseEntity.getBody().get(0).getHistoric());
 
     }
