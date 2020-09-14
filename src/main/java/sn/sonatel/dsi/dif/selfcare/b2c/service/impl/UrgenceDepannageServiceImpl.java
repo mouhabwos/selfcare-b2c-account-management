@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,13 +25,13 @@ import java.util.*;
 /**
  * @author BOUYA KANDE
  * @since 1.1.4
- *
- *
  */
 
 @Transactional
 @Service
 class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
+
+    private final Logger log = LoggerFactory.getLogger(UrgenceDepannageServiceImpl.class);
 
     private static final String CODE_ERREUR_TRANSACTION_OM = "operation-300";
 
@@ -53,6 +55,10 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
 
         OperationDTO operationDTO = convertStringToOperationDTO(dto);
+
+        // check format msisdn
+        operationDTO.checkFormatNumber(operationDTO.getNumero());
+
         operationDTO.setFormulaire(formulaire);
         operationDTO.setVerso(versoID);
         operationDTO.setRectoID(rectoID);
@@ -86,7 +92,7 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         }
 
 
-        Mail mail = sauvegardeFiles(operationDTO,millis);
+        //Mail mail = sauvegardeFiles(operationDTO,millis);
 
         String nameFile = constructionNameFile(operationDTO.getNumero(), operationDTO.getCanal());
 
@@ -98,12 +104,16 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
             operationDTO.setNameFile(zipFiles);
             mailService.sendEmailToServiceClient(operationDTO,getTitleOperation(operationDTO.getOperationCode()));
 
-        }else {
+        } else {
 
-
-            ftpService.sendFileToServerFtp(zipFiles);
+            try {
+                ftpService.sendFileToServerFtp(zipFiles);
+                log.error("@@@@@@@@@@@@@@@@@__________SUCCESS UPLOAD FILE___________@@@@@@@@@@@@@@@@@@@");
+            } catch (Exception e) {
+                log.error("@@@@@@@@@@@@@@@@@__________ERROR UPLOAD FILE__________@@@@@@@@@@@@@@@@@@@, {}, {}", e.getMessage(), e);
+            }
         }
-        return  mail.getIdRequest()+"";
+        return  nameFile;
 
     }
 
