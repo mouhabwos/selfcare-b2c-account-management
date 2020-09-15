@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
@@ -35,16 +32,13 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     private static final String CODE_ERREUR_TRANSACTION_OM = "operation-300";
 
-    private final MailSendRepository mailSendRepository;
-
     private final ApplicationProperties applicationProperties;
 
     private final SFTPClientService ftpService;
 
     private final MailService mailService;
 
-    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ApplicationProperties applicationProperties, SFTPClientService ftpService, MailService mailService) {
-        this.mailSendRepository = mailSendRepository;
+    UrgenceDepannageServiceImpl( ApplicationProperties applicationProperties, SFTPClientService ftpService, MailService mailService) {
         this.applicationProperties = applicationProperties;
         this.ftpService = ftpService;
         this.mailService = mailService;
@@ -73,8 +67,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
             multipartFiles.add(versoID);
         }
 
-        Date date = new Date();
-        long millis = date.getTime();
 
         // verification of validity files
         operationDTO.checkFormatFile(operationDTO.getRectoID());
@@ -91,8 +83,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
             throw new BadRequestAlertException("Le code de l operation est introuvable", operationDTO.getOperationCode(),"");
         }
 
-
-        //Mail mail = sauvegardeFiles(operationDTO,millis);
 
         String nameFile = constructionNameFile(operationDTO.getNumero(), operationDTO.getCanal());
 
@@ -117,26 +107,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     }
 
-    private Mail sauvegardeFiles(OperationDTO operationDTO, long millis){
-
-        Mail mail = new Mail();
-        if(operationDTO.getVerso()!= null){
-            mail.setIdVerso(operationDTO.getVerso().getOriginalFilename());
-        }
-
-        mail.setIdRequest(operationDTO.getNumero()+"_"+millis);
-        mail.setStatus(StatusMail.IN_PROGRESS);
-        mail.setEmail(operationDTO.getEmail());
-        mail.setIdFormulaire(operationDTO.getFormulaire().getOriginalFilename());
-        mail.setIdRecto(operationDTO.getRectoID().getOriginalFilename());
-        mail.setOperationTitre(operationDTO.getOperationTitre());
-        mail.setFirsName(operationDTO.getFirstName());
-        mail.setLastName(operationDTO.getLastName());
-        mail.setNumero(operationDTO.getNumero());
-
-         return mailSendRepository.save(mail);
-
-    }
 
     private OperationDTO convertStringToOperationDTO(String operationDTO) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
