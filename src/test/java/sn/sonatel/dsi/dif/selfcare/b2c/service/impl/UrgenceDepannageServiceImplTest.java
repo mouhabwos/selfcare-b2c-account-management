@@ -58,7 +58,7 @@ public class UrgenceDepannageServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        urgenceDepannageService = new UrgenceDepannageServiceImpl(mailSendRepository, applicationProperties, ftpService, mailService);
+        urgenceDepannageService = new UrgenceDepannageServiceImpl(applicationProperties, ftpService, mailService);
     }
 
     private OperationDTO operationDTO() throws Exception {
