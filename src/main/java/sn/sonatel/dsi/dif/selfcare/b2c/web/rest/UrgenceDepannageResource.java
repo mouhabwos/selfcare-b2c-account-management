@@ -13,8 +13,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * @author BOUYA KANDE
@@ -39,12 +37,12 @@ public class UrgenceDepannageResource {
 
     @Auditable(description = Message.Account.OUVERTURE_COMPTE)
     @PostMapping(value = "/v1/mail/ouverture-compte",consumes = {MediaType.ALL_VALUE})
-    public ResponseEntity sendmail(@RequestPart String operationDTO, @RequestPart MultipartFile formulaire, @RequestPart MultipartFile rectoID, @RequestPart( required = false) MultipartFile verso, @RequestHeader(name = "X-CANAL", required = false) String canal) throws IOException, URISyntaxException {
+    public ResponseEntity sendmail(@RequestPart String operationDTO, @RequestPart MultipartFile formulaire, @RequestPart MultipartFile rectoID, @RequestPart( required = false) MultipartFile verso, @RequestHeader(name = "X-CANAL", required = false) String canal) throws IOException {
         log.info("REST request to register ouverture-compte");
 
-        String idRequest = urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso,canal);
+         urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso,canal);
 
-        return ResponseEntity.accepted ().body(new URI ( "/api/v1/mail/ouverture-compte/status/" +idRequest ));
+        return ResponseEntity.accepted ().build();
 
     }
 

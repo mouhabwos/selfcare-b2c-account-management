@@ -1,13 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
@@ -23,17 +22,15 @@ import java.util.*;
 /**
  * @author BOUYA KANDE
  * @since 1.1.4
- *
- *
  */
 
 @Transactional
 @Service
 class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
-    private static final String CODE_ERREUR_TRANSACTION_OM = "operation-300";
+    private final Logger log = LoggerFactory.getLogger(UrgenceDepannageServiceImpl.class);
 
-    private final MailSendRepository mailSendRepository;
+    private static final String CODE_ERREUR_TRANSACTION_OM = "operation-300";
 
     private final ApplicationProperties applicationProperties;
 
@@ -41,8 +38,7 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
     private final MailService mailService;
 
-    UrgenceDepannageServiceImpl(MailSendRepository mailSendRepository, ApplicationProperties applicationProperties, SFTPClientService ftpService, MailService mailService) {
-        this.mailSendRepository = mailSendRepository;
+    UrgenceDepannageServiceImpl( ApplicationProperties applicationProperties, SFTPClientService ftpService, MailService mailService) {
         this.applicationProperties = applicationProperties;
         this.ftpService = ftpService;
         this.mailService = mailService;
@@ -53,6 +49,10 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
 
 
         OperationDTO operationDTO = convertStringToOperationDTO(dto);
+
+        // check format msisdn
+        operationDTO.checkFormatNumber(operationDTO.getNumero());
+
         operationDTO.setFormulaire(formulaire);
         operationDTO.setVerso(versoID);
         operationDTO.setRectoID(rectoID);
@@ -67,8 +67,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
             multipartFiles.add(versoID);
         }
 
-        Date date = new Date();
-        long millis = date.getTime();
 
         // verification of validity files
         operationDTO.checkFormatFile(operationDTO.getRectoID());
@@ -86,8 +84,6 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
         }
 
 
-        Mail mail = sauvegardeFiles(operationDTO,millis);
-
         String nameFile = constructionNameFile(operationDTO.getNumero(), operationDTO.getCanal());
 
         // send to server ftp
@@ -98,35 +94,19 @@ class UrgenceDepannageServiceImpl implements UrgenceDepannageService {
             operationDTO.setNameFile(zipFiles);
             mailService.sendEmailToServiceClient(operationDTO,getTitleOperation(operationDTO.getOperationCode()));
 
-        }else {
+        } else {
 
-
-            ftpService.sendFileToServerFtp(zipFiles);
+            try {
+                ftpService.sendFileToServerFtp(zipFiles);
+                log.error("@@@@@@@@@@@@@@@@@__________SUCCESS UPLOAD FILE___________@@@@@@@@@@@@@@@@@@@");
+            } catch (Exception e) {
+                log.error("@@@@@@@@@@@@@@@@@__________ERROR UPLOAD FILE__________@@@@@@@@@@@@@@@@@@@, {}, {}", e.getMessage(), e);
+            }
         }
-        return  mail.getIdRequest()+"";
+        return  nameFile;
 
     }
 
-    private Mail sauvegardeFiles(OperationDTO operationDTO, long millis){
-
-        Mail mail = new Mail();
-        if(operationDTO.getVerso()!= null){
-            mail.setIdVerso(operationDTO.getVerso().getOriginalFilename());
-        }
-
-        mail.setIdRequest(operationDTO.getNumero()+"_"+millis);
-        mail.setStatus(StatusMail.IN_PROGRESS);
-        mail.setEmail(operationDTO.getEmail());
-        mail.setIdFormulaire(operationDTO.getFormulaire().getOriginalFilename());
-        mail.setIdRecto(operationDTO.getRectoID().getOriginalFilename());
-        mail.setOperationTitre(operationDTO.getOperationTitre());
-        mail.setFirsName(operationDTO.getFirstName());
-        mail.setLastName(operationDTO.getLastName());
-        mail.setNumero(operationDTO.getNumero());
-
-         return mailSendRepository.save(mail);
-
-    }
 
     private OperationDTO convertStringToOperationDTO(String operationDTO) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

@@ -24,7 +24,7 @@ eureka:
         #prefer-ip-address: true
         #ip-address: @eureka.instance.dev.hostname@
         #hostname: @eureka.instance.dev.hostname@
-        hostname: selfcareb2c-accountmanagement-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
+        hostname: selfcareb2c-accountmanagement-http-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
         nonSecurePort: 80
     client:
         service-url:
@@ -166,11 +166,11 @@ application:
         auth:
             grant_type: client_credentials
             client_id: selfcare-b2c
-            client_secret: 0617c771-a015-46eb-b514-2789d11ad710
-            key-access-token-uri: https://api.preprod.orange-sonatel.com/oauth/token
+            client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
+            key-access-token-uri: https://iaam.orange-sonatel.com/auth/realms/apimanagement/protocol/openid-connect/token
         url-api:
             base-name: api-accountmanagement
-            base-url: https://api.preprod.orange-sonatel.com
+            base-url: https://api.orange-sonatel.com
             url-account-management: /api-accountmanagement
         party-management:
             name: api-partymanagement

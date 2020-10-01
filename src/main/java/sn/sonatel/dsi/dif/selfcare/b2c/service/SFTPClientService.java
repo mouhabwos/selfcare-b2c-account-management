@@ -3,7 +3,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
@@ -33,7 +32,7 @@ public class SFTPClientService {
     }
 
 
-    @Async
+    //@Async
     public void sendFileToServerFtp(String fileName) {
         log.debug("@@@@@@@@@@  Service upload file to server SFTP: {}    @@@@@@@@@@@@", fileName);
         File file =  new File(applicationProperties.getTmpPath()+fileName);

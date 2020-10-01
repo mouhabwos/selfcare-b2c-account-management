@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class AbonneResource {
     }
 
 
-    //@Auditable(description = Message.Abonne.IS_POSPAID)
+    @Auditable(description = Message.Abonne.IS_POSPAID)
     @GetMapping("/is-postpaid/{msisdn}/{msisdn1}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<Boolean> isPostpaid(@PathVariable String msisdn,@PathVariable String msisdn1) {
@@ -48,8 +50,9 @@ public class AbonneResource {
      * @since 1.1.4
      *
      */
-    //@Auditable(description = Message.Abonne.CUSTOMEROFFER)
+    @Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v1/customerOffer/{msisdn}")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable String msisdn){
         log.debug ( "REST request to get CustomerOffer : {}", msisdn );
@@ -58,7 +61,7 @@ public class AbonneResource {
 
     }
 
-    //@Auditable(description = Message.Abonne.IS_ORANGE_NUMBER)
+    @Auditable(description = Message.Abonne.IS_ORANGE_NUMBER)
     @GetMapping("/v1/is-orange-number/{msisdn}")
     @Timed
     public ResponseEntity<Boolean> isOrangeNumber(@PathVariable String msisdn) {
@@ -67,7 +70,7 @@ public class AbonneResource {
 
     }
 
-    //@Auditable(description = Message.Abonne.BIRTHDATE)
+    @Auditable(description = Message.Abonne.BIRTHDATE)
     @GetMapping("/birthDate/{msisdn}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
@@ -77,7 +80,7 @@ public class AbonneResource {
 
     }
 
-    //@Auditable(description = Message.Abonne.CUSTOMEROFFER)
+    @Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v2/customerOffer/{msisdn}")
     @Timed
     public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable String msisdn){
