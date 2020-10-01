@@ -1,7 +1,7 @@
 pipeline {
 
   agent  {
-      label 'gateway'
+      label 'sdd'
   }
   options {
       timeout(time: 120, unit: 'MINUTES')

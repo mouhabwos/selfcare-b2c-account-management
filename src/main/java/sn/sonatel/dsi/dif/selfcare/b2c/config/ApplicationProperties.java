@@ -6,7 +6,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Properties specific to Selfcare B 2 C.
@@ -29,6 +31,10 @@ public class ApplicationProperties {
     private String hmacSecret;
     private String tmpPath;
 
+    private Map<String,String> requestTitleMap = new HashMap<>();
+    private Map<String,String> requestDescriptionMap = new HashMap<>();
+    private Map<String, Integer> order = new HashMap<>();
+    private Map<String,String> historic = new HashMap<>();
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
 
@@ -142,6 +148,38 @@ public class ApplicationProperties {
 
     public void setTmpPath(String tmpPath) {
         this.tmpPath = tmpPath;
+    }
+
+    public Map<String, String> getRequestTitleMap() {
+        return requestTitleMap;
+    }
+
+    public void setRequestTitleMap(Map<String, String> requestTitleMap) {
+        this.requestTitleMap = requestTitleMap;
+    }
+
+    public Map<String, String> getRequestDescriptionMap() {
+        return requestDescriptionMap;
+    }
+
+    public void setRequestDescriptionMap(Map<String, String> requestDescriptionMap) {
+        this.requestDescriptionMap = requestDescriptionMap;
+    }
+
+    public Map<String, Integer> getOrder() {
+        return order;
+    }
+
+    public void setOrder(Map<String, Integer> order) {
+        this.order = order;
+    }
+
+    public Map<String, String> getHistoric() {
+        return historic;
+    }
+
+    public void setHistoric(Map<String, String> historic) {
+        this.historic = historic;
     }
 
     /**
