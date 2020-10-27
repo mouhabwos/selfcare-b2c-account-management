@@ -138,10 +138,10 @@ public class RattachementLigneResource {
     @Timed
     @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
-        @PathVariable String msisdn) {
-        log.debug ( "REST request to get RattachementLigne : {}", msisdn );
+        @PathVariable String msisdn, @RequestParam(required = false, defaultValue = "true") boolean withCustomerOffer) {
+        log.debug ( "REST request to get RattachementLigne : {}, {}", msisdn, withCustomerOffer );
 
-        List<InfoNumberVM> infoNumberVMList = rattachementLigneService.getRattachementLignes(msisdn);
+        List<InfoNumberVM> infoNumberVMList = rattachementLigneService.getRattachementLignes(msisdn, withCustomerOffer);
 
         return ResponseEntity.ok ( infoNumberVMList );
     }
