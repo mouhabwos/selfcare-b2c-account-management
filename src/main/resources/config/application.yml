@@ -211,6 +211,8 @@ audit:
         - X-Selfcare-Xordova
         - X-Selfcare-Os-Version
         - X-Selfcare-App-Version
+        - X-Selfcare-Device-Type
+        - X-Selfcare-Device-Imei
 
 # APM related configuration
 elastic:
