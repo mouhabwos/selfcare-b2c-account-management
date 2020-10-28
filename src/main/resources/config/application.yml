@@ -208,9 +208,12 @@ audit:
         - X-Selfcare-Serial
         - X-Selfcare-Model
         - X-Selfcare-Manufacturer
-        - X-Selfcare-Xordova
+        - X-Selfcare-Cordova
         - X-Selfcare-Os-Version
+        - X-Selfcare-Source
         - X-Selfcare-App-Version
+        - X-Selfcare-Device-Type
+        - X-Selfcare-Device-Imei
 
 # APM related configuration
 elastic:
