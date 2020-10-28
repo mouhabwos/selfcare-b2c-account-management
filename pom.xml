@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.10.3-SNAPSHOT</version>
+    <version>1.11.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>selfcare-b2c-account-management</name>
 
@@ -1265,8 +1265,8 @@
                 <spring.profiles.active>uat${profile.swagger}${profile.no-liquibase}</spring.profiles.active>
 
                 <server.care.host>10.100.97.175</server.care.host>
-                <server.care.username>selfcare</server.care.username>
-                <server.care.password>selfc@re</server.care.password>
+                <server.care.username>s_selfcareops</server.care.username>
+                <server.care.password>selfc@re20</server.care.password>
                 <server.care.remotedir>/var/selfcareb2c/backend</server.care.remotedir></properties>
         </profile>
 

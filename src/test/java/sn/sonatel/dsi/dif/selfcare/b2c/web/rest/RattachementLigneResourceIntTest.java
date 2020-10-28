@@ -619,5 +619,18 @@ public class RattachementLigneResourceIntTest {
 */
     }
 
+    @Test
+    @Transactional
+    public void getAllRattachementLigneByMsisdn() throws Exception {
+        // Initialize the database
+        rattachementLigneRepository.saveAndFlush(rattachementLigne);
+        addRattachement();
+
+        // Get all the rattachementLigneList
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "770167600")
+            .param("withCustomerOffer", "false"))
+            .andExpect(status().isOk());
+    }
+
 
 }

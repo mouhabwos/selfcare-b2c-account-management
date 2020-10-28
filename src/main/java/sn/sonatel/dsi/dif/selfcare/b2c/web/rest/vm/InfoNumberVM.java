@@ -6,9 +6,9 @@ public class InfoNumberVM {
 
     private String msisdn;
 
-    private String profil;
+    private String profil = "";
 
-    private String formule;
+    private String formule = "";
 
     public String getMsisdn() {
         return msisdn;

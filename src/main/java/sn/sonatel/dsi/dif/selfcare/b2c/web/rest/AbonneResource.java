@@ -92,14 +92,14 @@ public class AbonneResource {
     }
 
     @GetMapping("/request/{id}")
-    //@Auditable(description = Message.Client.GET_REQUEST_STATUS)
+    @Auditable(description = Message.Abonne.GET_REQUEST_STATUS_BY_ID)
     public ResponseEntity<List<RequestStatusDTO>> getRequestStatusById(@PathVariable String id){
 
         return troubleTicketService.getRequestStatusById(id);
     }
 
     @GetMapping("/requests")
-    //@Auditable(description = Message.Client.GET_REQUEST_STATUS)
+    @Auditable(description = Message.Abonne.GET_REQUEST_STATUS_BY_MSISDN)
     public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMsisdn(@RequestParam(name = "msisdn") String msisdn){
 
         return troubleTicketService.getRequestStatusByMisisdn(msisdn);

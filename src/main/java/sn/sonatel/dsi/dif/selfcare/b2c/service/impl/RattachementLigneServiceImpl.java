@@ -138,7 +138,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
     @Override
-    public List<InfoNumberVM> getRattachementLignes(String msisdn) {
+    public List<InfoNumberVM> getRattachementLignes(String msisdn, boolean withCustomerOffer) {
         log.debug("Service to get all RattachementLigne : {}", msisdn);
 
         List<InfoNumberVM> infoNumberVMList = new ArrayList<>();
@@ -151,8 +151,10 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             List<RattachementLigne> list = rattachementLigneRepository.findAllByAccountB2C(user.get());
 
             for (RattachementLigne rattachementLigne : list) {
-
-                InfoNumberVM infoNumberVMS =getInfoNumber(rattachementLigne.getNumero());
+                InfoNumberVM infoNumberVMS = new InfoNumberVM();
+                if(withCustomerOffer){
+                     infoNumberVMS = getInfoNumber(rattachementLigne.getNumero());
+                }
 
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
 
