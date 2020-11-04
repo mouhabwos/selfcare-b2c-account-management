@@ -25,17 +25,17 @@ public class CustomerOfferRetrieveService {
     @Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result != null && #result.getBody() != null")
     public ResponseEntity getCachedCustomerOffer(String msisdn) {
 
-        log.info("@@@@@@ Retrieving cached api management customer offer for user {} @@@@@@", msisdn);
+        log.debug("Retrieving cached api management customer offer for user {} @@@@@@", msisdn);
 
         ResponseEntity result = customerOfferApiClient.getCustomerOffer(msisdn);
 
         if (result!= null && result.getBody()!=null){
 
-            log.info("Successfully get customer offer from api management");
+            log.debug("Successfully get customer offer from api management");
             return result;
 
         }else {
-            log.info(" @@@@@@ Failed to get customer offer  form api management with response {} @@@@@@ ",result);
+            log.debug("Failed to get customer offer  form api management with response {} @@@@@@ ",result);
         }
 
         return ResponseEntity.notFound().build();
