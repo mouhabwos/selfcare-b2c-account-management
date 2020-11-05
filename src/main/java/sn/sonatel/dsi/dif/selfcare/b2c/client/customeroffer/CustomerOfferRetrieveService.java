@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.client.customeroffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,10 @@ public class CustomerOfferRetrieveService {
     }
 
 
-    @Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.status!=200")
+    @Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.getStatusCode()==200")
     public ResponseEntity getCachedCustomerOffer(String msisdn) {
 
-        log.debug("Retrieving cached api management customer offer for user {} @@@@@@", msisdn);
+        log.debug("Retrieving cached api management customer offer for user {} ", msisdn);
 
         ResponseEntity result = customerOfferApiClient.getCustomerOffer(msisdn);
 
@@ -35,7 +36,26 @@ public class CustomerOfferRetrieveService {
             return result;
 
         }else {
-            log.debug("Failed to get customer offer  form api management with response {} @@@@@@ ",result);
+            log.debug("Failed to get customer offer  form api management with response {}  ",result);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @CachePut(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.getStatusCode()==200")
+    public ResponseEntity updateCachedCustomerOffer(String msisdn) {
+
+        log.debug(" Retrieving cached api management customer offer for user {} ", msisdn);
+
+        ResponseEntity result = customerOfferApiClient.getCustomerOffer(msisdn);
+
+        if (result!= null && result.getBody()!=null){
+
+            log.debug("Successfully get customer offer from api management");
+            return result;
+
+        }else {
+            log.info("  Failed to get customer offer  form api management with response {}  ",result);
         }
 
         return ResponseEntity.notFound().build();
