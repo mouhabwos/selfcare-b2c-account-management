@@ -23,7 +23,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -43,12 +42,15 @@ public class NotificationInformationServiceImplTest {
     @Mock
     private CustomerOfferApiClient customerOfferApiClient;
 
+    @Mock
+    private CustomerOfferService customerOfferService;
+
     private NotificationInformationServiceImpl notificationInformationServiceImplUnderTest;
 
     @Before
     public void setUp() {
         initMocks(this);
-        notificationInformationServiceImplUnderTest = new NotificationInformationServiceImpl(notificationInformationRepository, mockNotificationInformationMapper, accountB2CRepository, customerOfferApiClient);
+        notificationInformationServiceImplUnderTest = new NotificationInformationServiceImpl(notificationInformationRepository, mockNotificationInformationMapper, accountB2CRepository, customerOfferApiClient, customerOfferService);
     }
 
 
