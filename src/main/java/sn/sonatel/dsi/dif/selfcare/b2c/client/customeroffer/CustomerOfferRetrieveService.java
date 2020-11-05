@@ -22,7 +22,7 @@ public class CustomerOfferRetrieveService {
     }
 
 
-    @Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result == null |  #result.getBody() == null")
+    @Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.status!=200")
     public ResponseEntity getCachedCustomerOffer(String msisdn) {
 
         log.debug("Retrieving cached api management customer offer for user {} @@@@@@", msisdn);
