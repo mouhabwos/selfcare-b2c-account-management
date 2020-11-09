@@ -201,16 +201,19 @@ audit:
     blacklisted-parameters:
         - idClient
         - clientCode
-    http-headers:      #if you would like to log http headers
+    http-headers:           #if you would like to log http headers
         - X-Selfcare-Platform
         - X-Selfcare-Isvirtual
         - X-Selfcare-Uuid
         - X-Selfcare-Serial
         - X-Selfcare-Model
         - X-Selfcare-Manufacturer
-        - X-Selfcare-Xordova
+        - X-Selfcare-Cordova
         - X-Selfcare-Os-Version
         - X-Selfcare-App-Version
+        - X-Selfcare-Source
+        - X-Selfcare-Device-Type
+        - X-Selfcare-Device-Imei
 
 # APM related configuration
 elastic:
