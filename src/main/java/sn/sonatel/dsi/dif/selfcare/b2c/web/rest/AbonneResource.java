@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOffe
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.RedocMessages;
 
 import java.util.List;
 
@@ -105,12 +107,16 @@ public class AbonneResource {
         return troubleTicketService.getRequestStatusByMisisdn(msisdn);
     }
 
+    @ApiOperation(value = Message.Abonne.IS_ORGANIZATION_NUMBER,
+                  notes = RedocMessages.Abonne.DESCRIPTION_IS_ORGANIZATION_NUMBER )
     @Auditable(description = Message.Abonne.IS_ORGANIZATION_NUMBER)
-    @GetMapping("/v1/is-organization-number/{msisdn}")
+    @GetMapping("/v1/is-coorporate-number/{msisdn}")
     @Timed
-    public ResponseEntity<Boolean> isOrganizationNumber(@PathVariable String msisdn) {
+    public ResponseEntity<Boolean> isCoorporateNumber(@PathVariable(name =  "msisdn",
+        value = RedocMessages.Abonne.VALUE_MSISDN_DESCRIPTION,
+        required = true) String msisdn) {
         log.debug ( "REST request to to find out if the number {} belongs to a organization", msisdn );
-        return ResponseEntity.ok(abonneService.isOrganizationNumber(msisdn));
+        return ResponseEntity.ok(abonneService.isCoorporateNumber(msisdn));
     }
 
 }

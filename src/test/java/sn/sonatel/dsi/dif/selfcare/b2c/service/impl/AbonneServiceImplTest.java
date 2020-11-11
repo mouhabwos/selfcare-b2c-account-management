@@ -15,7 +15,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
-import javax.validation.constraints.AssertFalse;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -165,8 +164,8 @@ public class AbonneServiceImplTest {
 
         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(response);
-        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(response);
+        when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
+        when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
 
         // Run the test
         boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
@@ -183,8 +182,8 @@ public class AbonneServiceImplTest {
         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body(getIndividualInformation(msisdn));
 
-        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(responseEntity);
-        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(response);
+        when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(responseEntity);
+        when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
 
         // Run the test
         boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
@@ -204,8 +203,8 @@ public class AbonneServiceImplTest {
         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body(organization);
 
-        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(response);
-        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(responseEntity);
+        when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(response);
+        when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(responseEntity);
 
         // Run the test
         boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
@@ -259,7 +258,7 @@ public class AbonneServiceImplTest {
         ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(getInfoClientWrapperIndividual().getInformation());
         when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(informationResponseEntity);
 
-        boolean organizationNumber = abonneServiceImplUnderTest.isOrganizationNumber("770000000");
+        boolean organizationNumber = abonneServiceImplUnderTest.isCoorporateNumber("770000000");
         Assert.assertFalse(organizationNumber);
     }
 
@@ -275,7 +274,7 @@ public class AbonneServiceImplTest {
         ResponseEntity<OrganizationInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getOrganization());
         when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(informationResponseEntity);
 
-        boolean organizationNumber = abonneServiceImplUnderTest.isOrganizationNumber("782362572");
+        boolean organizationNumber = abonneServiceImplUnderTest.isCoorporateNumber("782362572");
         Assert.assertTrue(organizationNumber);
     }
 

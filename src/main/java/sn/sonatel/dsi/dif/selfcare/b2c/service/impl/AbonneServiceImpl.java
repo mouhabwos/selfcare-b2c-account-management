@@ -98,7 +98,7 @@ public class AbonneServiceImpl implements AbonneService {
     }
 
     @Override
-    public boolean isOrganizationNumber(String msisdn) {
+    public boolean isCoorporateNumber(String msisdn) {
         InfoClientWrapper informations = getInformations(msisdn);
         return (informations.getClientType().equals(ClientType.ORGANIZATION));
     }

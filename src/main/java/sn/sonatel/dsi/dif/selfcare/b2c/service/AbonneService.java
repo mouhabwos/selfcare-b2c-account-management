@@ -14,5 +14,5 @@ public interface AbonneService {
 
     ResponseEntity<String> getBirthDate(String msisdn);
 
-    boolean isOrganizationNumber(String msisdn);
+    boolean isCoorporateNumber(String msisdn);
 }
