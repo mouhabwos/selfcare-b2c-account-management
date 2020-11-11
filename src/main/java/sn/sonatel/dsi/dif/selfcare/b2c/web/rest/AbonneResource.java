@@ -105,4 +105,12 @@ public class AbonneResource {
         return troubleTicketService.getRequestStatusByMisisdn(msisdn);
     }
 
+    @Auditable(description = Message.Abonne.IS_ORGANIZATION_NUMBER)
+    @GetMapping("/v1/is-organization-number/{msisdn}")
+    @Timed
+    public ResponseEntity<Boolean> isOrganizationNumber(@PathVariable String msisdn) {
+        log.debug ( "REST request to to find out if the number {} belongs to a organization", msisdn );
+        return ResponseEntity.ok(abonneService.isOrganizationNumber(msisdn));
+    }
+
 }

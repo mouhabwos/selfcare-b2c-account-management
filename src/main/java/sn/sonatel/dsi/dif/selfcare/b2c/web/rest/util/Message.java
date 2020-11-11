@@ -16,6 +16,7 @@ public final class Message {
         public static final String IS_ORANGE_NUMBER = "Verifier si le numero est un numero orange";
         public static final String GET_REQUEST_STATUS_BY_ID = "Recuperation Statut d une demande par son id";
         public static final String GET_REQUEST_STATUS_BY_MSISDN = "Recuperation Statut d une demande par le numero";
+        public static final String IS_ORGANIZATION_NUMBER = "Verifier si le numero est un numero d entreprise";
 
         private Abonne() {
             super ();
