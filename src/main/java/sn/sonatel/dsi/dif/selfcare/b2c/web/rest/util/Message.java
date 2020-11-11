@@ -68,6 +68,8 @@ public final class Message {
 
         public static final String ADD_LIGNE_FIXE = "Rattachement de ligne fixe via l ID CLIENT";
 
+        public static final String SAVE_RATTACHEMENT_LIGNE_BY_CNI = "Rattachement de ligne ";
+
 
         private Rattachement() {
             super ();
