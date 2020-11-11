@@ -30,4 +30,6 @@ public interface RattachementLigneService {
 
     RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneFixeVM);
 
+    RattachementLigne rattachementLigneByCni(RattachementLigneCNIVM rattachementLigneCNIVM);
+
 }

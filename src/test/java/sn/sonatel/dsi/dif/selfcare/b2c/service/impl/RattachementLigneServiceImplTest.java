@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +28,12 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneCNIVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 
 import javax.validation.constraints.AssertTrue;
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -55,6 +58,82 @@ public class RattachementLigneServiceImplTest {
     private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
 
     private static final TypeNumero TYPE_NUMERO_FIX = TypeNumero.FIXE;
+
+    private static final String RESPONSE_NUMERO_ORGANIZATION = "{\n" +
+        "    \"clientType\": \"ORGANIZATION\",\n" +
+        "    \"information\": {\n" +
+        "        \"id\": null,\n" +
+        "        \"contactNumbers\": [],\n" +
+        "        \"givenName\": null,\n" +
+        "        \"familyName\": null,\n" +
+        "        \"birthDate\": null,\n" +
+        "        \"title\": null,\n" +
+        "        \"status\": null,\n" +
+        "        \"gender\": null,\n" +
+        "        \"maritalStatus\": null,\n" +
+        "        \"type\": null,\n" +
+        "        \"individualIdentification\": []\n" +
+        "    },\n" +
+        "    \"organization\": {\n" +
+        "        \"id\": \"782363572\",\n" +
+        "        \"href\": null,\n" +
+        "        \"isLegalEntity\": null,\n" +
+        "        \"type\": null,\n" +
+        "        \"tradingName\": \"SONATEL MOBILES\",\n" +
+        "        \"nameType\": null,\n" +
+        "        \"status\": \"ACTIF\",\n" +
+        "        \"organizationIdentification\": [\n" +
+        "            {\n" +
+        "                \"id\": null,\n" +
+        "                \"type\": \"COMPANYREGISTRATIONNUMBER\",\n" +
+        "                \"identificationId\": \"SNDKR1999B1877\",\n" +
+        "                \"issuingAuthority\": null,\n" +
+        "                \"href\": null,\n" +
+        "                \"issuingDate\": \"2007-02-08T12:00:00\",\n" +
+        "                \"expiryDate\": null\n" +
+        "            }\n" +
+        "        ]\n" +
+        "    }\n" +
+        "}";
+
+    private static final String RESPONSE_NUMERO_INDIVIDUAL = "{\n" +
+        "    \"clientType\": \"INDIVIDUAL\",\n" +
+        "    \"information\": {\n" +
+        "        \"id\": \"781040956\",\n" +
+        "        \"contactNumbers\": [" +
+        "        ],\n" +
+        "        \"givenName\": \"TEST\",\n" +
+        "        \"familyName\": \"TEST\",\n" +
+        "        \"birthDate\": \"1000-00-00\",\n" +
+        "        \"title\": \"MME\",\n" +
+        "        \"status\": \"ACTIF\",\n" +
+        "        \"gender\": \"FEMALE\",\n" +
+        "        \"maritalStatus\": null,\n" +
+        "        \"type\": null,\n" +
+        "        \"individualIdentification\": [\n" +
+        "            {\n" +
+        "                \"id\": null,\n" +
+        "                \"type\": \"IDENTITYCARD\",\n" +
+        "                \"identificationId\": \"000000060000\",\n" +
+        "                \"issuingAuthority\": null,\n" +
+        "                \"href\": null,\n" +
+        "                \"issuingDate\": null,\n" +
+        "                \"expiryDate\": null\n" +
+        "            }\n" +
+        "        ]\n" +
+        "    },\n" +
+        "    \"organization\": {\n" +
+        "        \"id\": null,\n" +
+        "        \"href\": null,\n" +
+        "        \"isLegalEntity\": null,\n" +
+        "        \"type\": null,\n" +
+        "        \"tradingName\": null,\n" +
+        "        \"nameType\": null,\n" +
+        "        \"status\": null,\n" +
+        "        \"organizationIdentification\": []\n" +
+        "    }\n" +
+        "}";
+
 
     @Autowired
     private RattachementLigneRepository mockRattachementLigneRepository;
@@ -527,5 +606,99 @@ public class RattachementLigneServiceImplTest {
         assertEquals("",result.get(0).getProfil());
         assertEquals("", result.get(0).getFormule());
     }
+
+    @Test(expected = BadRequestAlertException.class)
+    public void testRattachementLignesByCNIWithBadRequest() throws IOException {
+
+        RattachementLigneCNIVM ligneCNIVM = getRattachementLigneCNIVM();
+        AccountB2C account = getAccount();
+        account.setNumero(ligneCNIVM.getLogin());
+        account.setEmail(ligneCNIVM.getLogin()+"@orange.com");
+        mockAccountB2CRepository.save(account);
+        InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
+        when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
+
+        rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+    }
+
+    @Test
+    public void testRattachementLignesByCNIIndividual() throws IOException {
+
+        RattachementLigneCNIVM ligneCNIVM = getRattachementLigneCNIVM();
+        ligneCNIVM.setNumero("781040956");
+        ligneCNIVM.setLogin("780000001");
+        ligneCNIVM.setIdentificationId("000000060000");
+        AccountB2C account = getAccount();
+        account.setNumero(ligneCNIVM.getLogin());
+        account.setEmail(ligneCNIVM.getLogin()+"@orange.com");
+        mockAccountB2CRepository.save(account);
+        InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
+        when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
+
+        RattachementLigne rattachementLigne = rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+
+        assertEquals(ligneCNIVM.getLogin(), rattachementLigne.getAccountB2C().getNumero());
+        assertEquals(ligneCNIVM.getNumero(), rattachementLigne.getNumero());
+
+
+    }
+
+    @Test
+    public void testRattachementLignesByCNIOrganization() throws IOException {
+
+        RattachementLigneCNIVM ligneCNIVM = getRattachementLigneCNIVM();
+        ligneCNIVM.setNumero("780000056");
+        ligneCNIVM.setLogin("780000002");
+        ligneCNIVM.setIdentificationId("SNDKR1999B1877");
+        AccountB2C account = getAccount();
+        account.setNumero(ligneCNIVM.getLogin());
+        account.setEmail(ligneCNIVM.getLogin()+"@orange.com");
+        mockAccountB2CRepository.save(account);
+        InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperOrganization();
+        when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
+
+        RattachementLigne rattachementLigne = rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+
+        assertEquals(ligneCNIVM.getLogin(), rattachementLigne.getAccountB2C().getNumero());
+        assertEquals(ligneCNIVM.getNumero(), rattachementLigne.getNumero());
+
+
+    }
+
+    private RattachementLigneCNIVM getRattachementLigneCNIVM(){
+        RattachementLigneCNIVM ligneCNIVM = new RattachementLigneCNIVM();
+        ligneCNIVM.setIdentificationId("CNI11111111111111");
+        ligneCNIVM.setLogin("781210941");
+        ligneCNIVM.setNumero("770000011");
+        ligneCNIVM.setTypeNumero(TypeNumero.MOBILE);
+        return ligneCNIVM;
+    }
+
+    private AccountB2C getAccount(){
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("");
+        accountB2C.setId(143L);
+        accountB2C.setEmail("");
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        return accountB2C;
+    }
+
+    private InfoClientWrapper getInfoClientWrapperOrganization() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        InfoClientWrapper infoClientWrapper = mapper.readValue(RESPONSE_NUMERO_ORGANIZATION, InfoClientWrapper.class);
+        return infoClientWrapper;
+    }
+
+    private InfoClientWrapper getInfoClientWrapperIndividual() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        InfoClientWrapper infoClientWrapper = mapper.readValue(RESPONSE_NUMERO_INDIVIDUAL, InfoClientWrapper.class);
+
+        return infoClientWrapper;
+    }
+
+
+
+
 
 }
