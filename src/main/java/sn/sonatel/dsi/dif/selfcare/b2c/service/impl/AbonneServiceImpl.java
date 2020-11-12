@@ -97,6 +97,12 @@ public class AbonneServiceImpl implements AbonneService {
         return ResponseEntity.ok(birthDate);
     }
 
+    @Override
+    public boolean isCoorporateNumber(String msisdn) {
+        InfoClientWrapper informations = getInformations(msisdn);
+        return (informations.getClientType().equals(ClientType.ORGANIZATION));
+    }
+
 
     @Override
     public boolean isOrangeNumber(String msisdn){
