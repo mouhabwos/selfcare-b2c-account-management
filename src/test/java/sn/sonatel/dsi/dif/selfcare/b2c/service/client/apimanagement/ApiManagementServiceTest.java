@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.customeroffer.CustomerOfferRetrieveService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ServiceUnavailableException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -17,15 +17,24 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ApiManagementServiceTest {
 
-    @Mock
-    private CustomerOfferApiClient mockCustomerOfferApiClient;
 
     private CustomerOfferService customerOfferServiceUnderTest;
+
+    private static final String responseBody = "{\n" +
+        "    \"title\": \"Offer not found\",\n" +
+        "    \"status\": 404,\n" +
+        "    \"detail\": \"code:60\",\n" +
+        "    \"message\": \"Error Offer not found.\",\n" +
+        "    \"params\": \"77000000\"\n" +
+        "}";
+
+    @Mock
+    private CustomerOfferRetrieveService customerOfferRetrieveService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        customerOfferServiceUnderTest = new CustomerOfferService(mockCustomerOfferApiClient);
+        customerOfferServiceUnderTest = new CustomerOfferService(customerOfferRetrieveService);
     }
 
     @Test
@@ -42,7 +51,7 @@ public class ApiManagementServiceTest {
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.OK).body(customerOffer);
 
-        when(mockCustomerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
+        when(customerOfferRetrieveService.getCachedCustomerOffer(anyString())).thenReturn(response);
 
         // Run the test
         final CustomerOffer result = customerOfferServiceUnderTest.getCustomerOffer(customerOffer.getEndUserId());
@@ -52,12 +61,12 @@ public class ApiManagementServiceTest {
     }
 
 
-    @Test(expected = NotFoundNumberException.class)
+    @Test(expected = ServiceUnavailableException.class)
     public void testGetCustomerOfferNotFoundException() {
 
-        ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        when(mockCustomerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
+        when(customerOfferRetrieveService.getCachedCustomerOffer(anyString())).thenReturn(response);
 
         customerOfferServiceUnderTest.getCustomerOffer("test");
 
