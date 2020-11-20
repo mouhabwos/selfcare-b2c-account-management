@@ -24,10 +24,12 @@ public interface RattachementLigneService {
 
      RattachementLigne addRattachementLigne(RattachementLigneVM ligneVM);
 
-     List<InfoNumberVM> getRattachementLignes(String msisdn);
+     List<InfoNumberVM> getRattachementLignes(String msisdn, boolean withCustomerOffer);
 
      RattachementLignesDeleteMultipleVM deleteMultipleRattachementLigne(RattachementLignesDeleteMultipleVM deleteListe);
 
     RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneFixeVM);
+
+    RattachementLigne rattachementLigneByCni(RattachementLigneCNIVM rattachementLigneCNIVM);
 
 }

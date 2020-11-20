@@ -17,6 +17,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
@@ -138,7 +139,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     }
 
     @Override
-    public List<InfoNumberVM> getRattachementLignes(String msisdn) {
+    public List<InfoNumberVM> getRattachementLignes(String msisdn, boolean withCustomerOffer) {
         log.debug("Service to get all RattachementLigne : {}", msisdn);
 
         List<InfoNumberVM> infoNumberVMList = new ArrayList<>();
@@ -151,8 +152,10 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             List<RattachementLigne> list = rattachementLigneRepository.findAllByAccountB2C(user.get());
 
             for (RattachementLigne rattachementLigne : list) {
-
-                InfoNumberVM infoNumberVMS =getInfoNumber(rattachementLigne.getNumero());
+                InfoNumberVM infoNumberVMS = new InfoNumberVM();
+                if(withCustomerOffer){
+                     infoNumberVMS = getInfoNumber(rattachementLigne.getNumero());
+                }
 
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
 
@@ -224,6 +227,40 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         throw new BadRequestAlertException("L id Client n existe pas","","");
 
+    }
+
+    @Override
+    public RattachementLigne rattachementLigneByCni(RattachementLigneCNIVM rattachementLigneCNIVM) {
+        log.debug("Service to add rattachementLigne by identification id of user : {}", rattachementLigneCNIVM);
+
+        rattachementLigneCNIVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getNumero()));
+
+        rattachementLigneCNIVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getLogin()));
+        RattachementLigne rattachement = new RattachementLigne();
+        if (rattachementLigneCNIVM.getNumero().matches(Constants.VALIDE_NUMBER_ORANGE_FIXE_MOBILE)) {
+            checkNumberIfUsed(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getLogin());
+
+            Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
+
+            if (!accountB2C.isPresent()) {
+                log.debug ( "Error login not found : {}", rattachementLigneCNIVM.getLogin() );
+                throw new LigneNotFoundException();
+            }
+
+            if(!isIdentifiedByThisCni(rattachementLigneCNIVM.getNumero(),rattachementLigneCNIVM.getIdentificationId())){
+                log.debug("Service Error : This number {} cannot be attached by user: {}", rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId());
+                throw new BadRequestAlertException("Le CNI saisie ne correspond pas au numero d identification du numero que vous voulez rattacher ","RattachementLigne","notMyNumber");
+            }
+
+            rattachement.setNumero(rattachementLigneCNIVM.getNumero());
+            rattachement.setTypeNumero(rattachementLigneCNIVM.getTypeNumero());
+
+            rattachement.setAccountB2C(accountB2C.get());
+            rattachement = rattachementLigneRepository.save(rattachement);
+            sponseeService.updateEffectiveInscriptionOfSponsee(rattachement.getNumero());
+        }
+
+        return rattachement;
     }
 
     private void checkNumberIfUsed(String number, String login) {
@@ -299,6 +336,28 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         if(informations.getClientType()!= ClientType.INDIVIDUAL && informations.getClientType()==ClientType.ORGANIZATION){
             throw new BadRequestAlertException("Vous ne pouvez pas rattacher un numero d entreprise","","");
         }
+    }
+
+    private boolean isIdentifiedByThisCni(String msisdn, String identificationId){
+
+        InfoClientWrapper informations = abonneService.getInformations(msisdn);
+
+        if(informations.getClientType().equals(ClientType.INDIVIDUAL)){
+            Set<OrganizationIdentification> identificationSet = informations.getInformation().getIndividualIdentification();
+            return isTheSameIdentification(identificationSet, identificationId);
+        }else if(informations.getClientType().equals(ClientType.ORGANIZATION)){
+            Set<OrganizationIdentification> organizationSet = informations.getOrganization().getOrganizationIdentification();
+            return isTheSameIdentification(organizationSet, identificationId);
+        }
+        return false;
+    }
+    private boolean isTheSameIdentification( Set<OrganizationIdentification> organizationIdentifications,String identificationId ){
+        for (OrganizationIdentification organizationIdentification:
+            organizationIdentifications) {
+            if(identificationId.equals(organizationIdentification.getIdentificationId()))
+                return true;
+        }
+        return false;
     }
 
 }

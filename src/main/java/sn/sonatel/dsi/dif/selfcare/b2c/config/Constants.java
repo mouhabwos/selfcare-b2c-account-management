@@ -81,6 +81,8 @@ public final class Constants {
 
     public static final String ORANGE_ET_MOI ="OrangeetMoi";
 
+    public static final String API_MANAGEMENT_CUSTOMER_OFFER_NAME="api-customer-offer";
+
     private Constants() {
 
         //Default constructor

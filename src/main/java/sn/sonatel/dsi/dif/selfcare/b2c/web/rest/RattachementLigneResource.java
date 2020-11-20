@@ -138,10 +138,10 @@ public class RattachementLigneResource {
     @Timed
     @PreAuthorize("#msisdn == authentication.name")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
-        @PathVariable String msisdn) {
-        log.debug ( "REST request to get RattachementLigne : {}", msisdn );
+        @PathVariable String msisdn, @RequestParam(required = false, defaultValue = "true") boolean withCustomerOffer) {
+        log.debug ( "REST request to get RattachementLigne : {}, {}", msisdn, withCustomerOffer );
 
-        List<InfoNumberVM> infoNumberVMList = rattachementLigneService.getRattachementLignes(msisdn);
+        List<InfoNumberVM> infoNumberVMList = rattachementLigneService.getRattachementLignes(msisdn, withCustomerOffer);
 
         return ResponseEntity.ok ( infoNumberVMList );
     }
@@ -167,6 +167,18 @@ public class RattachementLigneResource {
         @Valid @RequestBody RattachementLigneFixeVM ligneVM) throws URISyntaxException {
 
         RattachementLigne rattachement = rattachementLigneService.addRattachementLigneFixe(ligneVM);
+        return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
+            .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
+            .body ( rattachement );
+    }
+
+    @Auditable(description = Message.Rattachement.SAVE_RATTACHEMENT_LIGNE_BY_CNI)
+    @PostMapping("/v2/rattachement-lignes/register/by-cni")
+    @PreAuthorize("#rattachementLigneCNIVM.login==authentication.name")
+    public ResponseEntity<RattachementLigne> rattachementLigneByCni(
+        @Valid @RequestBody RattachementLigneCNIVM rattachementLigneCNIVM) throws URISyntaxException {
+        log.debug ( "REST request to add RattachementLigne by cni : {}", rattachementLigneCNIVM );
+        RattachementLigne rattachement = rattachementLigneService.rattachementLigneByCni(rattachementLigneCNIVM);
         return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
             .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
             .body ( rattachement );

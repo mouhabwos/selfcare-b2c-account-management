@@ -201,7 +201,7 @@ audit:
     blacklisted-parameters:
         - idClient
         - clientCode
-    http-headers:           #if you would like to log http headers
+    http-headers:      #if you would like to log http headers
         - X-Selfcare-Platform
         - X-Selfcare-Isvirtual
         - X-Selfcare-Uuid
@@ -210,6 +210,7 @@ audit:
         - X-Selfcare-Manufacturer
         - X-Selfcare-Cordova
         - X-Selfcare-Os-Version
+        - X-Selfcare-Source
         - X-Selfcare-App-Version
         - X-Selfcare-Source
         - X-Selfcare-Device-Type

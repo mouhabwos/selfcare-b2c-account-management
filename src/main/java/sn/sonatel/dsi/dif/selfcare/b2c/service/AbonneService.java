@@ -13,4 +13,6 @@ public interface AbonneService {
     InfoClientWrapper getInformations(String msisdn);
 
     ResponseEntity<String> getBirthDate(String msisdn);
+
+    boolean isCoorporateNumber(String msisdn);
 }

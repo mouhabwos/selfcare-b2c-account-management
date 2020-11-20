@@ -14,6 +14,9 @@ public final class Message {
         public static final String CUSTOMEROFFER = "Recuperation du custommer offer de l abonne";
         public static final String BIRTHDATE = "Recuperation de la date de naissance de l abonne";
         public static final String IS_ORANGE_NUMBER = "Verifier si le numero est un numero orange";
+        public static final String GET_REQUEST_STATUS_BY_ID = "Recuperation Statut d une demande par son id";
+        public static final String GET_REQUEST_STATUS_BY_MSISDN = "Recuperation Statut d une demande par le numero";
+        public static final String IS_ORGANIZATION_NUMBER = "Verifier si le numero est un numero d entreprise";
 
         private Abonne() {
             super ();
@@ -65,6 +68,8 @@ public final class Message {
         public static final String CHECK_NUMBER_FIXE = "Verification de la disponibilite du numero fix";
 
         public static final String ADD_LIGNE_FIXE = "Rattachement de ligne fixe via l ID CLIENT";
+
+        public static final String SAVE_RATTACHEMENT_LIGNE_BY_CNI = "Rattachement de ligne ";
 
 
         private Rattachement() {

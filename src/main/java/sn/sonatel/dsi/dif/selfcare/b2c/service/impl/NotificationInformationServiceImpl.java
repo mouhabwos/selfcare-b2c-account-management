@@ -12,6 +12,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.NotificationInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
@@ -31,12 +32,14 @@ public class NotificationInformationServiceImpl implements NotificationInformati
     private final NotificationInformationMapper notificationInformationMapper;
     private final AccountB2CRepository accountB2CRepository;
     private final CustomerOfferApiClient customerOfferApiClient;
+    private final CustomerOfferService customerOfferService;
 
-    public NotificationInformationServiceImpl(NotificationInformationRepository notificationInformationRepository, NotificationInformationMapper notificationInformationMapper, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient) {
+    public NotificationInformationServiceImpl(NotificationInformationRepository notificationInformationRepository, NotificationInformationMapper notificationInformationMapper, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient, CustomerOfferService customerOfferService) {
         this.notificationInformationRepository = notificationInformationRepository;
         this.notificationInformationMapper = notificationInformationMapper;
         this.accountB2CRepository = accountB2CRepository;
         this.customerOfferApiClient = customerOfferApiClient;
+        this.customerOfferService = customerOfferService;
     }
 
 
@@ -49,6 +52,7 @@ public class NotificationInformationServiceImpl implements NotificationInformati
     @Override
     public void updateCodeFormuleByMsisdn(NotificationInformationDTO informationDTO){
         log.debug ("Service to update NotificationInformation  {}", informationDTO);
+        customerOfferService.updateCachedCustomerOffer(informationDTO.getMsisdn());
         Optional<NotificationInformation> byAccountB2CNumero = notificationInformationRepository.findOneByAccountB2CNumero(informationDTO.getMsisdn());
         if(byAccountB2CNumero.isPresent()){
             if(informationDTO.getFirebaseId() != null && !informationDTO.getFirebaseId().equals("")){

@@ -56,10 +56,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberFixVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
 
 /**
  * Test class for the RattachementLigneResource REST controller.
@@ -619,5 +616,41 @@ public class RattachementLigneResourceIntTest {
 */
     }
 
+    @Test
+    @Transactional
+    public void getAllRattachementLigneByMsisdn() throws Exception {
+        // Initialize the database
+        rattachementLigneRepository.saveAndFlush(rattachementLigne);
+        addRattachement();
+
+        // Get all the rattachementLigneList
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "770167600")
+            .param("withCustomerOffer", "false"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    public void rattachementLigneByCNI() throws Exception {
+        // Initialize the database
+        rattachementLigneRepository.saveAndFlush(rattachementLigne);
+        RattachementLigneCNIVM rattachementLigneCNIVM = getRattachementLigneCNIVM();
+
+        // Get all the rattachementLigneList
+        restRattachementLigneMockMvc.perform(post("/v2/rattachement-lignes/register/by-cni")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(rattachementLigneCNIVM)))
+            .andExpect(status().isNotFound());
+    }
+
+
+    private RattachementLigneCNIVM getRattachementLigneCNIVM(){
+        RattachementLigneCNIVM ligneCNIVM = new RattachementLigneCNIVM();
+        ligneCNIVM.setIdentificationId("CNI11111111111111");
+        ligneCNIVM.setLogin("781210941");
+        ligneCNIVM.setNumero("770000011");
+        ligneCNIVM.setTypeNumero(TypeNumero.MOBILE);
+        return ligneCNIVM;
+    }
 
 }
