@@ -944,6 +944,26 @@
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>package-sql-files</id>
+                        <configuration>
+                            <skipAssembly>${skip.assembly}</skipAssembly>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- <plugin>
                 <groupId>io.swagger</groupId>
