@@ -253,7 +253,7 @@ public class ApplicationProperties {
 
         @Getter(AccessLevel.PUBLIC)
         @Setter(AccessLevel.PUBLIC)
-        private final Auth auth = new Auth();
+        private final Oauth2 oauth2 = new Oauth2();
 
         @Getter(AccessLevel.PUBLIC)
         @Setter(AccessLevel.PUBLIC)
@@ -263,7 +263,7 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         private final PartyManagement partyManagement = new PartyManagement();
 
-        public static class Auth{
+        public static class Oauth2{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
@@ -279,7 +279,7 @@ public class ApplicationProperties {
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
-            private String keyAccessTokenUri;
+            private String clientTokenUri;
 
         }
 
