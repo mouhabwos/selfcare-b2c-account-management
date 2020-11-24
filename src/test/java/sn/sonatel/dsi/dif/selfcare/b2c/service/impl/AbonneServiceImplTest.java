@@ -68,8 +68,7 @@ public class AbonneServiceImplTest {
         "    \"clientType\": \"INDIVIDUAL\",\n" +
         "    \"information\": {\n" +
         "        \"id\": \"781040956\",\n" +
-        "        \"contactNumbers\": [" +
-        "        ],\n" +
+        "        \"contactNumbers\": [\"770000000\",\"770000001\" ],\n" +
         "        \"givenName\": \"TEST\",\n" +
         "        \"familyName\": \"TEST\",\n" +
         "        \"birthDate\": \"1000-00-00\",\n" +
@@ -276,6 +275,30 @@ public class AbonneServiceImplTest {
 
         boolean organizationNumber = abonneServiceImplUnderTest.isCoorporateNumber("782362572");
         Assert.assertTrue(organizationNumber);
+    }
+
+    @Test
+    public void testGetMyContactNumbersWithNotValidMsisdn() throws IOException {
+        InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperOrganization();
+        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
+
+        ResponseEntity<OrganizationInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getOrganization());
+        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(informationResponseEntity);
+
+        Set<String> contactNumbers = abonneServiceImplUnderTest.getMyContactNumbers("test");
+        Assert.assertTrue(contactNumbers.isEmpty());
+    }
+
+    @Test
+    public void testGetMyContactNumbers() throws IOException {
+        InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
+        ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getInformation());
+
+        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(informationResponseEntity);
+        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
+
+        Set<String> contactNumbers = abonneServiceImplUnderTest.getMyContactNumbers("test");
+        Assert.assertEquals(2,contactNumbers.size());
     }
 
     private InfoClientWrapper getInfoClientWrapperOrganization() throws IOException {
