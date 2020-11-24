@@ -20,6 +20,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.RedocMessages;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/abonne")
@@ -148,6 +149,18 @@ public class AbonneResource {
         required = true) String msisdn) {
         log.debug ( "REST request to to find out if the number {} belongs to a organization", msisdn );
         return ResponseEntity.ok(abonneService.isCoorporateNumber(msisdn));
+    }
+
+    @ApiOperation(value = Message.Abonne.CONTACT_NUMBERS,
+        notes = RedocMessages.Abonne.DESCRIPTION_GET_CONTACT_NUMBERS)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "")})
+    @Auditable(description = Message.Abonne.CONTACT_NUMBERS)
+    @PreAuthorize("#msisdn==authentication.name")
+    @GetMapping("/v1/contact-numbers/{msisdn}")
+    @Timed
+    public ResponseEntity<Set<String>> getMyContactNumbers(@PathVariable(name =  "msisdn", required = true) String msisdn) {
+        log.debug ( "REST request to get the contacts number for the user {}", msisdn );
+        return ResponseEntity.ok(abonneService.getMyContactNumbers(msisdn));
     }
 
 }
