@@ -163,4 +163,12 @@ public class AbonneResourceIntTest {
 
     }
 
+    @Test
+    public void testGetMyContactNumbers() throws Exception {
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/contact-numbers/{msisdn}", "782363572"))
+            .andExpect(status().isOk());
+
+    }
+
 }

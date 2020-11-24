@@ -50,7 +50,7 @@ public class CustomerOfferService {
         return profile.equals(ProfilType.POSTPAID.name());
     }
 
-    public void UpdateCachedCustomerOffer(String msisdn){
+    public void updateCachedCustomerOffer(String msisdn){
         log.debug ( "Service for Update Cached CustomerOffer for client {}", msisdn );
         customerOfferRetrieveService.updateCachedCustomerOffer(msisdn);
     }
