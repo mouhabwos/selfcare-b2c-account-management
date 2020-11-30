@@ -154,4 +154,21 @@ public class AbonneResourceIntTest {
             .andExpect(jsonPath("$.offerId").value(customerOffer.getOfferId()));
     }
 
+    @Test
+    public void testIsOrganizationNumber() throws Exception {
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/is-coorporate-number/{msisdn}", "DEFAULT_NUMERO"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("false"));
+
+    }
+
+    @Test
+    public void testGetMyContactNumbers() throws Exception {
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/contact-numbers/{msisdn}", "782363572"))
+            .andExpect(status().isOk());
+
+    }
+
 }

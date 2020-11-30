@@ -15,6 +15,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class AbonneServiceImpl implements AbonneService {
 
@@ -97,12 +100,29 @@ public class AbonneServiceImpl implements AbonneService {
         return ResponseEntity.ok(birthDate);
     }
 
+    @Override
+    public boolean isCoorporateNumber(String msisdn) {
+        InfoClientWrapper informations = getInformations(msisdn);
+        return (informations.getClientType().equals(ClientType.ORGANIZATION));
+    }
+
 
     @Override
     public boolean isOrangeNumber(String msisdn){
         log.debug("Service check number orange information msisdn: {}", msisdn);
         AbonneDTO informationAbonne = getInformationAbonne(msisdn);
         return informationAbonne.getMsisdn() != null;
+    }
+
+    @Override
+    public Set<String> getMyContactNumbers(String msisdn){
+        InfoClientWrapper informationsClientWrapper = getInformations(msisdn);
+
+        if(informationsClientWrapper.getClientType().equals(ClientType.INDIVIDUAL)){
+            return informationsClientWrapper.getInformation().getContactNumbers();
+        }
+
+        return new HashSet<>();
     }
 
 

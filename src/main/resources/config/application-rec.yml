@@ -189,6 +189,35 @@ application:
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange
 
+    order:
+        first: 1
+        second: 2
+        third: 3
+    historic:
+        positive: true
+        negative: false
+    request-title-map:
+        rejected-title: Rejetée
+        cancelled-title: Annulée
+        acknowledged-request-title: Validée
+        held-request-title: Réalisable
+        in-progress-title: En Cours
+        held-incident-title: Signalée
+        pending-title: ABSENTAVIS
+        acknowledged-incident-title: Orienté
+    request-description-map:
+        rejected-request-description: Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client
+        cancelled-description: Votre demande a été annulée pour non faisabilité technique ou sur demande du client
+        acknowledged-request-description: Votre demande a été validée, vous serez contacté prochainement par nos équipes
+        held-request-description: Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais
+        in-progress-request-description: Votre demande est en cours de traitement, vous serez contacter par nos équipes.
+        held-incident-description: Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.
+        pending-description: Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau
+        in-progress-incident-description: Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.
+        acknowledged-incident-description: Votre dérangement a été envoyée aux équipes techniques
+        rejected-incident-description: Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client
+
+
     selfcare-mail:
         sender-address: mailer.orangeetmoi@orange-sonatel.com
         sender-name: Orange et Moi

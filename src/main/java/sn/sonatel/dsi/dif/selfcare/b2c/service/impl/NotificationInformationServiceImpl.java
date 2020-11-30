@@ -52,7 +52,7 @@ public class NotificationInformationServiceImpl implements NotificationInformati
     @Override
     public void updateCodeFormuleByMsisdn(NotificationInformationDTO informationDTO){
         log.debug ("Service to update NotificationInformation  {}", informationDTO);
-        customerOfferService.UpdateCachedCustomerOffer(informationDTO.getMsisdn());
+        customerOfferService.updateCachedCustomerOffer(informationDTO.getMsisdn());
         Optional<NotificationInformation> byAccountB2CNumero = notificationInformationRepository.findOneByAccountB2CNumero(informationDTO.getMsisdn());
         if(byAccountB2CNumero.isPresent()){
             if(informationDTO.getFirebaseId() != null && !informationDTO.getFirebaseId().equals("")){
