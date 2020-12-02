@@ -225,7 +225,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         }
 
-        throw new BadRequestAlertException("L id Client n existe pas","","");
+        throw new BadRequestAlertException("L’id client renseigné n’est pas conforme","","");
 
     }
 
@@ -249,7 +249,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
             if(!isIdentifiedByThisCni(rattachementLigneCNIVM.getNumero(),rattachementLigneCNIVM.getIdentificationId())){
                 log.debug("Service Error : This number {} cannot be attached by user: {}", rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId());
-                throw new BadRequestAlertException("Le CNI saisie ne correspond pas au numero d identification du numero que vous voulez rattacher ","RattachementLigne","notMyNumber");
+                throw new BadRequestAlertException("Ce numéro n'est pas identifié avec cette pièce d’identité, veuillez vérifier à nouveau ","RattachementLigne","notMyNumber");
             }
 
             rattachement.setNumero(rattachementLigneCNIVM.getNumero());
