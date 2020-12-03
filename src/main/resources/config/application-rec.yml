@@ -189,6 +189,34 @@ application:
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange
 
+    order:
+        first: 1
+        second: 2
+        third: 3
+    historic:
+        positive: true
+        negative: false
+    request-title-map:
+        rejected-title: Rejetée
+        cancelled-title: Annulée
+        acknowledged-request-title: Validée
+        held-request-title:  Réalisable
+        in-progress-title: En Cours
+        held-incident-title: Signalée
+        pending-title: ABSENTAVIS
+        acknowledged-incident-title: Orienté
+    request-description-map:
+        rejected-request-description: Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client
+        cancelled-description: Nous vous informons que votre demande est pour le moment irréalisable, rendez-vous sur www.orange.sn pour consulter nos autres offres internet. Merci pour votre fidélité
+        acknowledged-request-description: Nous vous informons que votre demande est validée. Nos équipes techniques vous contacteront pour l’installation de la ligne dans les 10 jours après la validation. Merci pour votre fidélité
+        held-request-description: Nous vous informons que votre demande est réalisable. Vous serez contacté dans les 48 Heures . Merci pour votre fidélité
+        in-progress-request-description: Nous vous informons que votre demande est enregistrée et est en cours d’étude, le délai est de 10 jours. Nous vous invitons à patienter
+        held-incident-description:  Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.
+        pending-description: Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau
+        in-progress-incident-description: Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.
+        acknowledged-incident-description: Votre dérangement a été envoyée aux équipes techniques
+        rejected-incident-description: Votre dérangement n a pas abouti. Veuillez vous rapprocher du Service Client
+
     selfcare-mail:
         sender-address: mailer.orangeetmoi@orange-sonatel.com
         sender-name: Orange et Moi
