@@ -1,0 +1,11 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Sogui (generated)" id="1606922321519-1">
+        <addColumn tableName="device_infos">
+            <column name="accountb2c_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Sogui (generated)" id="1606922321519-3">
+        <addForeignKeyConstraint baseColumnNames="accountb2c_id" baseTableName="device_infos" constraintName="FKdfhlpg466bfii24ogx4x9on3p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="account_b_2_c"/>
+    </changeSet>
+</databaseChangeLog>
