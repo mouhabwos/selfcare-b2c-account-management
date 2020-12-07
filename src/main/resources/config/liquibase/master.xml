@@ -13,6 +13,7 @@
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191024112804_added_entity_Sponsor.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191024172822_added_entity_Sponsee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20201202143632_added_entity_DeviceInfos.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20190308110242_added_entity_constraints_RattachementLigne.xml"
              relativeToChangelogFile="false"/>
@@ -65,6 +66,9 @@ Add Index to NotificationInformation
 update varchar code_formule to NotificationInformation table
 -->
     <include file="config/liquibase/changelog/20200603164323_changelog.xml" relativeToChangelogFile="false"/>
-
+    <!--add clientId column  to AccountB2C table -->
+    <include file="config/liquibase/changelog/20201202142819_changelog.xml" relativeToChangelogFile="false"/>
+    <!--add deviceInfos constraints -->
+    <include file="config/liquibase/changelog/20201202151822_changelog.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
