@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
 /**
- * Performance test for the AccountB2C entity.
+ * Performance test for the DeviceInfos entity.
  */
-class AccountB2CGatlingTest extends Simulation {
+class DeviceInfosGatlingTest extends Simulation {
 
     val context: LoggerContext = LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext]
     // Log all HTTP requests
@@ -49,7 +49,7 @@ class AccountB2CGatlingTest extends Simulation {
         "Authorization" -> "Bearer ${access_token}"
     )
 
-    val scn = scenario("Test the AccountB2C entity")
+    val scn = scenario("Test the DeviceInfos entity")
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
@@ -74,33 +74,29 @@ class AccountB2CGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all accountB2CS")
-            .get("/services/selfcare-b2c-account-management/api/account-b-2-cs")
+            exec(http("Get all deviceInfos")
+            .get("/services/selfcare-b2c-account-management/api/device-infos")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
-            .exec(http("Create new accountB2C")
-            .post("/services/selfcare-b2c-account-management/api/account-b-2-cs")
+            .exec(http("Create new deviceInfos")
+            .post("/services/selfcare-b2c-account-management/api/device-infos")
             .headers(headers_http_authenticated)
             .body(StringBody("""{
                 "id":null
-                , "numero":"SAMPLE_TEXT"
-                , "firstName":"SAMPLE_TEXT"
-                , "lastName":"SAMPLE_TEXT"
-                , "email":"SAMPLE_TEXT"
-                , "imagePrfil":"SAMPLE_TEXT"
+                , "deviceId":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
-            .check(headerRegex("Location", "(.*)").saveAs("new_accountB2C_url"))).exitHereIfFailed
+            .check(headerRegex("Location", "(.*)").saveAs("new_deviceInfos_url"))).exitHereIfFailed
             .pause(10)
             .repeat(5) {
-                exec(http("Get created accountB2C")
-                .get("/services/selfcare-b2c-account-management${new_accountB2C_url}")
+                exec(http("Get created deviceInfos")
+                .get("/services/selfcare-b2c-account-management${new_deviceInfos_url}")
                 .headers(headers_http_authenticated))
                 .pause(10)
             }
-            .exec(http("Delete created accountB2C")
-            .delete("/services/selfcare-b2c-account-management${new_accountB2C_url}")
+            .exec(http("Delete created deviceInfos")
+            .delete("/services/selfcare-b2c-account-management${new_deviceInfos_url}")
             .headers(headers_http_authenticated))
             .pause(10)
         }

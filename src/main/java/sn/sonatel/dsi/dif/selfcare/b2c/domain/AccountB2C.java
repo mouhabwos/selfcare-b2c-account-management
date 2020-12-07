@@ -40,6 +40,9 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Column(name = "image_profil")
     private String imageProfil;
 
+    @Column(name = "client_id")
+    private String clientId;
+
     @Size(max = 20)
     private String activationKey;
 
@@ -56,6 +59,9 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
     private Set<Sponsee> sponsees = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
+    private Set<DeviceInfos> deviceInfos = new HashSet<>();
 
     @Column(name = "derniere_connnexion_date", nullable = true)
     private ZonedDateTime derniereConnnexionDate;
@@ -130,6 +136,14 @@ public class AccountB2C extends NumeroDTO implements Serializable {
         this.imageProfil = imageProfil;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
     public Set<RattachementLigne> getUsers() {
         return users;
     }
@@ -201,6 +215,14 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     public void setSponsees(Set<Sponsee> sponsees) {
         this.sponsees = sponsees;
+    }
+
+    public Set<DeviceInfos> getDeviceInfos() {
+        return deviceInfos;
+    }
+
+    public void setDeviceInfos(Set<DeviceInfos> deviceInfos) {
+        this.deviceInfos = deviceInfos;
     }
 
     public Set<NotificationInformation> getNotificationInformations() {
