@@ -17,11 +17,8 @@ public class ValidationHmacService {
 
     private final ApplicationProperties applicationProperties;
 
-    private final SHA256Handler sha256Handler;
-
-    public ValidationHmacService(ApplicationProperties applicationProperties, SHA256Handler sha256Handler) {
+    public ValidationHmacService(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
-        this.sha256Handler = sha256Handler;
     }
 
     /**
@@ -47,7 +44,7 @@ public class ValidationHmacService {
      * @author: bouya
      */
     public boolean compareHmac(String hmac, String msisdn, String uuid) {
-        String computedHmac = sha256Handler.encryptSHA256(String.format("%s%s%s%s", INDICATIF+msisdn, uuid, new SimpleDateFormat("dd/MM/yyyy").format(new Date()), applicationProperties.getHmacSecret()));
+        String computedHmac = SHA256Handler.encryptSHA256(String.format("%s%s%s%s", INDICATIF+msisdn, uuid, new SimpleDateFormat("dd/MM/yyyy").format(new Date()), applicationProperties.getHmacSecret()));
         return computedHmac.equals(hmac);
     }
 }

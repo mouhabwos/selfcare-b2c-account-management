@@ -43,6 +43,9 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Column(name = "client_id")
     private String clientId;
 
+    @Column(name = "hash_msisdn")
+    private String hashMsisdn;
+
     @Size(max = 20)
     private String activationKey;
 
@@ -142,6 +145,14 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getHashMsisdn() {
+        return hashMsisdn;
+    }
+
+    public void setHashMsisdn(String hashMsisdn) {
+        this.hashMsisdn = hashMsisdn;
     }
 
     public Set<RattachementLigne> getUsers() {
