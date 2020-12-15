@@ -25,6 +25,8 @@ public class ManagedUserVM extends UserDTO {
 
     private String uuid;
 
+    private String clientId;
+
     public ManagedUserVM(String password) {
         this.password = password;
 
@@ -57,6 +59,14 @@ public class ManagedUserVM extends UserDTO {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override
