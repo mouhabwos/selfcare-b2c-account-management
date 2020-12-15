@@ -276,6 +276,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setFirstName(managedUserVM.getFirstName());
                 result.setLastName(managedUserVM.getLastName());
                 result.setImageProfil(managedUserVM.getImageprofil());
+                result.setHashMsisdn(SHA256Handler.encryptSHA256(managedUserVM.getLogin()));
                 result.setEmail(managedUserVM.getEmail());
                 result = accountB2CRepository.save(result);
 
