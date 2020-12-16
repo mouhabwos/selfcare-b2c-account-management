@@ -202,11 +202,13 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_REJECTED_TITLE));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_REJECTED_REQUEST_DESCRIPTION));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_FALSE)));
+                    requestStatusDTO.setCurrentState(true);
                     break;
                 case "CANCELLED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_CANCELLED_TITLE));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_CANCELLED_DESCRIPTION));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_FALSE)));
+                    requestStatusDTO.setCurrentState(true);
                     break;
                 case "ACKNOWLEDGED":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_ACKNOWLEDGED_REQUEST_TITLE));
@@ -245,6 +247,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_PENDING_TITLE));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_PENDING_DESCRIPTION));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_FALSE)));
+                    requestStatusDTO.setCurrentState(true);
                     break;
                 case "INPROGRESS":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_IN_PROGRESS_TITLE));
@@ -262,6 +265,7 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_FALSE)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_REJECTED_TITLE));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_REJECTED_INCIDENT_DESCRIPTION));
+                    requestStatusDTO.setCurrentState(true);
                     break;
                 default:
                     requestStatusDTO.setTitle("INCONNNU");
