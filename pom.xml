@@ -6,7 +6,7 @@
     <artifactId>selfcareb2c-accountmanagement</artifactId>
     <version>1.11.7-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>selfcare-b2c-account-management</name>
+    <name>Selfcare B2C Account Management</name>
 
   <repositories>
     <repository>
