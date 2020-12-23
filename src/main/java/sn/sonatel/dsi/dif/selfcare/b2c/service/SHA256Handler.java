@@ -7,15 +7,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Service
-public class SHA256Handler {
+public final class SHA256Handler {
 
     private static final String SHA_256 = "SHA-256";
 
-    public SHA256Handler() {
+    private SHA256Handler() {
         //default constructor
     }
 
-    public String encryptSHA256(String value) {
+    public static String encryptSHA256(String value) {
         try {
             MessageDigest digest = MessageDigest.getInstance(SHA_256);
             byte[] encodedHash = digest.digest(value.getBytes(StandardCharsets.UTF_8));

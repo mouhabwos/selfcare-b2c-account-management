@@ -34,7 +34,7 @@ public class ValidationHmacServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        validationHmacServiceUnderTest = new ValidationHmacService(mockApplicationProperties, sha256Handler);
+        validationHmacServiceUnderTest = new ValidationHmacService(mockApplicationProperties);
     }
 
     @Test
