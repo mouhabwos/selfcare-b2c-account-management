@@ -10,7 +10,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.WelcomeBoosterStatus;
 
 import java.util.List;
 
-@AuthorizedFeignClient( name = Constants.SELFCARE_CONSO_SERVICE, fallbackFactory = BoosterClientFallbackFactory.class)
+@AuthorizedFeignClient( name = Constants.SELFCARE_BOOSTER_SERVICE, fallbackFactory = BoosterClientFallbackFactory.class)
 public interface BoosterClient {
 
     @PutMapping("/api/boosters/welcome-booster/{msisdn}")
