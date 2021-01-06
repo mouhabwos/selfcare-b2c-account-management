@@ -5,23 +5,28 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.BoosterManagerService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.WelcomeBoosterStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -69,16 +74,22 @@ public class SponseeServiceImplTest {
     @Autowired
     private BoosterClient boosterClient;
 
+    @Mock
+    private BoosterManagerService boosterManagerService;
+
+    @Mock
+    private CustomerOfferService customerOfferService;
+
 
     @Before
     public void setUp() {
         initMocks(this);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
     }
 
     public void forMockService() {
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
     }
     private AccountB2C getAccount(){
         AccountB2C accountB2C = new AccountB2C();
@@ -116,6 +127,40 @@ public class SponseeServiceImplTest {
         return Optional.of(sponsor);
     }
 
+    private List<BoosterPromo> getListPromoBooster(){
+        BoosterPromo boosterPromo = new BoosterPromo();
+        boosterPromo.setId(12L);
+        BoosterPromo.Gift gift = new BoosterPromo.Gift();
+        gift.setId(45L);
+        gift.setValueType(BoosterPromo.Gift.ValueType.AMONT);
+        gift.setValue(100.00);
+        gift.setType(BoosterPromo.Gift.GiftType.RECHARGE);
+        boosterPromo.setGift(gift);
+        List<BoosterPromo> boosterPromos = new ArrayList<>();
+        boosterPromos.add(boosterPromo);
+
+        BoosterPromo.Partner partner = new BoosterPromo.Partner();
+        partner.setCode("code111");
+        partner.setName("TRACE TV");
+
+        gift = new BoosterPromo.Gift();
+        boosterPromo = new BoosterPromo();
+
+        gift.setId(56L);
+        gift.setValueType(BoosterPromo.Gift.ValueType.PERCENTAGE);
+        gift.setValue(100.00);
+        gift.setType(BoosterPromo.Gift.GiftType.COUPON);
+        gift.setPartner(partner);
+
+
+        boosterPromo.setGift(gift);
+        boosterPromo.setId(90L);
+
+        boosterPromos.add(boosterPromo);
+        return boosterPromos;
+
+    }
+
     @Test
     public void testSendSmsToSponsee() {
         // Setup
@@ -123,9 +168,23 @@ public class SponseeServiceImplTest {
         final String msisdnDest = "770000006";
 
         Optional<Sponsee> optionalSponsee = Optional.of(getSponsee());
+
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+        when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
+
         when(mockSponseeRepository.findOneByMsisdn(anyString())).thenReturn(optionalSponsee);
 
         when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+        List<BoosterPromo> listPromoBooster = getListPromoBooster();
+        when(boosterManagerService.getActiveWelcomeBoosterValue(any(), anyString())).thenReturn(listPromoBooster);
 
         // Run the test
         sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
@@ -161,6 +220,17 @@ public class SponseeServiceImplTest {
         final String msisdnSource = "770000005";
         final String msisdnDest = "770000006";
 
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+        when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
+
         Optional<Sponsee> optionalSponsee = Optional.of(getSponsee());
         when(mockSponseeRepository.findOneByMsisdn(anyString())).thenReturn(optionalSponsee);
 
@@ -175,7 +245,7 @@ public class SponseeServiceImplTest {
     public void testFindAllSponseeByMsisdn() {
         mockSponseeRepository = mock(SponseeRepository.class);
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository,rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository,rattachementLigneRepository, boosterManagerService);
         Sponsee sponsee = new Sponsee();
         sponsee.setId(78L);
         sponsee.setMsisdn("778520000");
@@ -212,7 +282,7 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithNumAlreadyUsed(){
 
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
 
        AccountB2C accountB2C = getAccount();
@@ -234,7 +304,7 @@ public class SponseeServiceImplTest {
     @Test(expected = BadRequestAlertException.class)
     public void testRegisterSponseeAlreadyRattachedException(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
 
         // -------- save sponsor
@@ -264,7 +334,7 @@ public class SponseeServiceImplTest {
     @Test
     public void testUpdateSponsee(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         //save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -298,7 +368,7 @@ public class SponseeServiceImplTest {
     @Test
     public void testGetSponseeById(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -332,7 +402,7 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithExceptionAlreadyRattached(){
 
         rattachementLigneRepository = mock(RattachementLigneRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
 
         // -------- save sponsor
@@ -360,15 +430,26 @@ public class SponseeServiceImplTest {
 
         boosterClient = mock(BoosterClient.class);
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         sponseeRepository.deleteAll();
-        List<WelcomeBoosterStatus> statuses = new ArrayList<>();
+        List<BoosterPromo> statuses = new ArrayList<>();
 
-        ResponseEntity<List<WelcomeBoosterStatus>> listResponseEntity = ResponseEntity.ok().body(statuses);
+        ResponseEntity<List<BoosterPromo>> listResponseEntity = ResponseEntity.ok().body(statuses);
 
-        when(boosterClient.getActiveWelcomeBoosterValue()).thenReturn(listResponseEntity);
+        when(boosterClient.getActiveWelcomeBoosterValue(anyString(), anyString(), anyString())).thenReturn(listResponseEntity);
         when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+        when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
 
         //save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -403,14 +484,25 @@ public class SponseeServiceImplTest {
 
         boosterClient = mock(BoosterClient.class);
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterClient);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         sponseeRepository.deleteAll();
 
-        ResponseEntity<List<WelcomeBoosterStatus>> listResponseEntity = ResponseEntity.ok().body(null);
+        ResponseEntity<List<BoosterPromo>> listResponseEntity = ResponseEntity.ok().body(null);
 
-        when(boosterClient.getActiveWelcomeBoosterValue()).thenReturn(listResponseEntity);
+        when(boosterClient.getActiveWelcomeBoosterValue(anyString(),anyString(),anyString())).thenReturn(listResponseEntity);
         when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+
+        CustomerOffer customerOffer = new CustomerOffer();
+        customerOffer.setClientCode("0012707812");
+        customerOffer.setCreateDate("2011-05-26T15:51:10");
+        customerOffer.setEndUserId("771326617");
+        customerOffer.setOfferCode("9131");
+        customerOffer.setOfferType(OfferTypeEnum.PREPAID);
+        customerOffer.setOfferStatus("ACTIF");
+        customerOffer.setOfferName("Jamono New Scool");
+
+        when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
 
         //save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
