@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
@@ -547,11 +548,11 @@ public class SponseeResourceIntTest {
         boosterStatus.setType(boosterType);
         boosterStatus.setStatus(status);
 
-        List<WelcomeBoosterStatus> statuses = new ArrayList<>();
+        List<BoosterPromo> statuses = new ArrayList<>();
 
-        ResponseEntity<List<WelcomeBoosterStatus>> listResponseEntity = ResponseEntity.ok().body(statuses);
+        ResponseEntity<List<BoosterPromo>> listResponseEntity = ResponseEntity.ok().body(statuses);
         when(sponseesRepository.findOneByMsisdn(anyString())).thenReturn(Optional.of(sponsee));
-        when(boosterClient.getActiveWelcomeBoosterValue()).thenReturn(listResponseEntity);
+        when(boosterClient.getActiveWelcomeBoosterValue(anyString(), anyString(), anyString())).thenReturn(listResponseEntity);
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
 

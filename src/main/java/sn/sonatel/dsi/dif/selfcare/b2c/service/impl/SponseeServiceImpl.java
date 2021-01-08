@@ -1,19 +1,18 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.springframework.data.domain.PageImpl;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.BoosterManagerService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.WelcomeBoosterStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.errors.ErrorMessages;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import org.slf4j.Logger;
@@ -47,6 +46,12 @@ public class SponseeServiceImpl implements SponseeService {
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementSponseeServiceImpl";
 
+    private static final String TRIGGER_TYPE_FORM_INSCRIPTION = "FORM_INSCRIPTION";
+
+    private static final String FRCFA = " FCFA";
+
+    private static final String POURCENTAGE = " %";
+
     private final ApplicationProperties applicationProperties;
 
     private final ServicesOTP servicesOTP;
@@ -55,16 +60,16 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    private final BoosterClient boosterClient;
+    private final BoosterManagerService boosterManagerService;
 
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, BoosterClient boosterClient) {
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, BoosterManagerService boosterManagerService) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
         this.applicationProperties = applicationProperties;
         this.servicesOTP = servicesOTP;
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.boosterClient = boosterClient;
+        this.boosterManagerService = boosterManagerService;
     }
 
 
@@ -134,11 +139,10 @@ public class SponseeServiceImpl implements SponseeService {
         MessageVM messageVM = new MessageVM();
         messageVM.setMsisdn(msisdnDest);
         messageVM.setSourceAddress(msisdnSource);
-        WelcomeBoosterStatus welcomeBooster = getWelcomeBoosterStatus();
+        String messagePro = getMessagePromo(msisdnDest, TRIGGER_TYPE_FORM_INSCRIPTION);
 
-        if(welcomeBooster.getValue() != null){
-            String messagePromo = String.format(applicationProperties.getSendSms().getSponsorship().getSmsPromo(),welcomeBooster.getValue().getAmount(), welcomeBooster.getValue().getUnit());
-            messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),messagePromo));
+        if(messagePro != null && !messagePro.equals("")){
+            messageVM.setMessage(messagePro);
         }else messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),""));
 
 
@@ -292,15 +296,30 @@ public class SponseeServiceImpl implements SponseeService {
 
     }
 
-    private WelcomeBoosterStatus getWelcomeBoosterStatus(){
+    private String getMessagePromo(String msisdn, String trigger){
 
-        ResponseEntity<List<WelcomeBoosterStatus>> activeWelcomeBoosterValue = boosterClient.getActiveWelcomeBoosterValue();
-        if(activeWelcomeBoosterValue.getBody() != null && !activeWelcomeBoosterValue.getBody().isEmpty()){
-            return activeWelcomeBoosterValue.getBody().get(0);
-        }
+        List<BoosterPromo> boosterPromos = boosterManagerService.getActiveWelcomeBoosterValue(msisdn, trigger);
+        if(boosterPromos!= null && !boosterPromos.isEmpty()){
+            StringBuilder values = new StringBuilder();
+            for (BoosterPromo promo : boosterPromos) {
 
-        return new WelcomeBoosterStatus();
+                if(promo.getGift().getType().equals(BoosterPromo.Gift.GiftType.COUPON)){
+                    values.append(BoosterPromo.Gift.GiftType.COUPON+" "+promo.getGift().getPartner().getName()+", ");
+                } else if(promo.getGift().getValue() != null && promo.getGift().getType().equals(BoosterPromo.Gift.GiftType.RECHARGE)){
+
+                    if(promo.getGift().getValueType().equals(BoosterPromo.Gift.ValueType.AMONT)){
+                        values.append(promo.getGift().getValue()+FRCFA+", ");
+                    }else if(promo.getGift().getValueType().equals(BoosterPromo.Gift.ValueType.PERCENTAGE)){
+                        values.append(promo.getGift().getValue()+POURCENTAGE+", ");
+                    }
+                }
+            }
+
+            String messagePromo = String.format(applicationProperties.getSendSms().getSponsorship().getSmsPromo(),values.toString());
+            return String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),messagePromo);
+
+        } else return "";
+
     }
-
 
 }

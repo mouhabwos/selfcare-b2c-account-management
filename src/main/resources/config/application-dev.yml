@@ -231,7 +231,7 @@ application:
         sponsorship:
             sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. %s FI rek la http://bit.ly/2NHn5aS ou sur www.orangeetmoi.sn
             sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
-            sms-promo: Fais le aujourd hui et gagne %s %s.
+            sms-promo: Fais le aujourd hui et gagne %s.
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
 
