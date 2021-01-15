@@ -13,7 +13,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -212,43 +211,22 @@ public class AbonneServiceImplTest {
     }
 
     @Test
-    public void testGetBirthDate(){
+    public void testGetIndividualInfos(){
 
         String msisdn = "776713165";
 
         IndividualInformation individualInformation = new IndividualInformation();
         individualInformation.setBirthDate("1996-03-21");
+        individualInformation.setGivenName("Pape Sogui");
+        individualInformation.setFamilyName("KONATE");
 
         when(mockPartyManagementApiClient.getIndividualInformation(msisdn)).thenReturn(ResponseEntity.ok(individualInformation));
 
-        ResponseEntity<String> birthDate = abonneServiceImplUnderTest.getBirthDate(msisdn);
+        IndividualInformation information = abonneServiceImplUnderTest.getIndividualInformations(msisdn);
 
-        Assert.assertEquals("1996-03-21", birthDate.getBody());
-
-    }
-
-    @Test(expected = BadRequestAlertException.class)
-    public void testGetBirthDateReturn400(){
-
-        String msisdn = "776713165";
-
-        IndividualInformation individualInformation = new IndividualInformation();
-        individualInformation.setBirthDate(null);
-
-        when(mockPartyManagementApiClient.getIndividualInformation(msisdn)).thenReturn(ResponseEntity.ok(individualInformation));
-
-        ResponseEntity<String> birthDate = abonneServiceImplUnderTest.getBirthDate(msisdn);
-
-    }
-
-    @Test(expected = BadRequestAlertException.class)
-    public void GetBirthDateReturn400(){
-
-        String msisdn = "776713165";
-
-        when(mockPartyManagementApiClient.getIndividualInformation(msisdn)).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-
-        ResponseEntity<String> birthDate = abonneServiceImplUnderTest.getBirthDate(msisdn);
+        Assert.assertEquals("1996-03-21", information.getBirthDate());
+        Assert.assertEquals(individualInformation.getGivenName(), information.getGivenName());
+        Assert.assertEquals(individualInformation.getFamilyName(), information.getFamilyName());
 
     }
 
