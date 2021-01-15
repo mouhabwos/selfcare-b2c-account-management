@@ -120,13 +120,13 @@ public class AbonneResourceIntTest {
 
 
     @Test
-    public void testGetBirthDate() throws Exception {
+    public void testGetClientInfo() throws Exception {
         PartyManagementApiClient partyManagementApiClient = mock(PartyManagementApiClient.class);
         IndividualInformation individualInformation = new IndividualInformation();
         individualInformation.setBirthDate("1996-05-08");
 
         when(partyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(ResponseEntity.ok(individualInformation));
-        restAbonneMockMvc.perform(get("/api/abonne/birthDate/{msisdn}", "DEFAULT_NUMERO"))
+        restAbonneMockMvc.perform(get("/api/abonne/infos-client/{msisdn}", "DEFAULT_NUMERO"))
             .andExpect(status().isOk());
 
     }

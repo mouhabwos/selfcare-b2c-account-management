@@ -15,6 +15,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.RedocMessages;
@@ -88,17 +89,17 @@ public class AbonneResource {
 
     }
 
-    @ApiOperation(value = Message.Abonne.BIRTHDATE,
-        notes = RedocMessages.Abonne.DESCRIPTION_BIRTHDATE,
+    @ApiOperation(value = Message.Abonne.INFOS_CLIENT,
+        notes = RedocMessages.Abonne.INFOS_CLIENT,
         response = ResponseEntity.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Ce numero ne renvoie pas de date de naissance "), @ApiResponse(code = 200, message = "")})
-    @Auditable(description = Message.Abonne.BIRTHDATE)
-    @GetMapping("/birthDate/{msisdn}")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Ce numéro est rattaché a une entreprise"), @ApiResponse(code = 200, message = "")})
+    @Auditable(description = Message.Abonne.INFOS_CLIENT)
+    @GetMapping("/infos-client/{msisdn}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
-    public ResponseEntity<String> birthDate(@PathVariable(name =  "msisdn", required = true) String msisdn) {
+    public ResponseEntity<IndividualInformation> individualInfos(@PathVariable(name =  "msisdn", required = true) String msisdn) {
         log.debug ( "REST request to get birthDate : {}", msisdn );
-        return abonneService.getBirthDate(msisdn);
+        return ResponseEntity.ok(abonneService.getIndividualInformations(msisdn));
 
     }
 
