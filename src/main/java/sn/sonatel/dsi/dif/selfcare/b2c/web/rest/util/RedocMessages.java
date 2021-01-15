@@ -12,7 +12,7 @@ public final class RedocMessages {
         public static final String DESCRIPTION_CUSTOMEROFFER_NUMBER = "Cette api permet de récupérer la souscription de l'utilisateur";
         public static final String DESCRIPTION_IS_ORGANIZATION_NUMBER = "Cette api permet de savoir si le numéro saisie est un numéro d'entreprise ou pas";
         public static final String DESCRIPTION_IS_ORANGE_NUMBER ="Cette api permet de savoir si le numéro de téléphone saisie est un numéro orange valide";
-        public static final String DESCRIPTION_BIRTHDATE ="Cette api permet de récupérer la date de naissance du numéro téléphone saisie";
+        public static final String INFOS_CLIENT ="Cette api permet de récupérer les infos du numéro téléphone saisi";
         public static final String DESCRIPTION_CUSTOMEROFFER_V2_NUMBER = "Cette api permet de récupérer la souscription de l'utilisateur (Dans cette version l'idClient a été masqué pour des raisons de sécurités)";
         public static final String DESCRIPTION_GET_REQUEST_STATUS_BY_ID = "";
         public static final String DESCRIPTION_GET_CONTACT_NUMBERS = "Cette API permet de recuperer toutes les lignes appartenant a un utilisateur";

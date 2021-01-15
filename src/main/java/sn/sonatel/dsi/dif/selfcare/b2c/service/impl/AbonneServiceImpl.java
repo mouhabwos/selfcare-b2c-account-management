@@ -79,25 +79,16 @@ public class AbonneServiceImpl implements AbonneService {
     }
 
     @Override
-    public ResponseEntity<String> getBirthDate(String msisdn) {
+    public IndividualInformation getIndividualInformations(String msisdn) {
 
-        String birthDate = null;
-
-        ResponseEntity<IndividualInformation> responseEntity = partyManagementApiClient.getIndividualInformation(msisdn);
-
-        if(responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null){
-            if(responseEntity.getBody().getBirthDate() != null){
-                birthDate = responseEntity.getBody().getBirthDate();
-            }
-            else{
-                throw new BadRequestAlertException("Ce numero ne renvoie pas de date de naissance","birthDate","msisdn.birthDate");
-            }
+        InfoClientWrapper infoClientWrapper = getInformations(msisdn);
+        if(infoClientWrapper.getClientType() == ClientType.INDIVIDUAL){
+            return infoClientWrapper.getInformation();
         }
-        if(responseEntity.getStatusCode() == HttpStatus.NOT_FOUND){
-            throw new BadRequestAlertException("Ce numéro est rattaché a une entreprise","birthDate","msisdn.birthDate");
+        else {
+            throw new BadRequestAlertException("Ce numéro est rattaché a une entreprise","infos","msisdn.infos");
         }
 
-        return ResponseEntity.ok(birthDate);
     }
 
     @Override
