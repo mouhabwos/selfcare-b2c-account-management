@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -29,4 +30,7 @@ public interface AccountB2CRepository extends JpaRepository<AccountB2C, Long> {
     @Query(nativeQuery=true, value = "UPDATE account_b_2_c SET first_name=:firstname, last_name=:lastname WHERE numero=:msisdn ")
     int updateAccountForExploitant(@Param("msisdn")String msisdn, @Param("firstname") String firstname, @Param("lastname") String lastname);
 
+    @Query(value = "SELECT account.* FROM account_b_2_c account WHERE account.first_name='' OR account.last_name='' limit 0,?1",
+        nativeQuery = true)
+    List<AccountB2C> findAllAccountB2CWithEmptyFirstnameOrLastname(int limit);
 }

@@ -355,6 +355,19 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
         private String cronDisabledSponsee;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String cronUpdateFirstnameLastname;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private boolean cronUpdateFirstnameLastnameActivated;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private String numberOfRowsToReturn;
+
     }
 
     public static class ServeurFtp{
