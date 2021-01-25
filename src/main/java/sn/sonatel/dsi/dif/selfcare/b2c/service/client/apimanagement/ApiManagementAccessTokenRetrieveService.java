@@ -32,13 +32,13 @@ public class ApiManagementAccessTokenRetrieveService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", applicationProperties.getApiManagement().getAuth().getGrantType());
-        map.add("client_id", applicationProperties.getApiManagement().getAuth().getClientId());
-        map.add("client_secret", applicationProperties.getApiManagement().getAuth().getClientSecret());
+        map.add("grant_type", applicationProperties.getApiManagement().getOauth2().getGrantType());
+        map.add("client_id", applicationProperties.getApiManagement().getOauth2().getClientId());
+        map.add("client_secret", applicationProperties.getApiManagement().getOauth2().getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        ResponseEntity<AuthenticationToken> response = restTemplate.postForEntity(applicationProperties.getApiManagement().getAuth().getKeyAccessTokenUri(), request, AuthenticationToken.class);
+        ResponseEntity<AuthenticationToken> response = restTemplate.postForEntity(applicationProperties.getApiManagement().getOauth2().getClientTokenUri(), request, AuthenticationToken.class);
 
         return response.getBody().accessToken;
 

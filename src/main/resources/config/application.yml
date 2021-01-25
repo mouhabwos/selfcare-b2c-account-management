@@ -212,6 +212,7 @@ audit:
         - X-Selfcare-Os-Version
         - X-Selfcare-Source
         - X-Selfcare-App-Version
+        - X-Selfcare-Source
         - X-Selfcare-Device-Type
         - X-Selfcare-Device-Imei
 
