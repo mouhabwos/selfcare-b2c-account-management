@@ -16,6 +16,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
@@ -51,8 +52,10 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final NotificationInformationService notificationInformationService;
 
+    private final AbonneService abonneService;
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService, NotificationInformationService notificationInformationService) {
+
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService, NotificationInformationService notificationInformationService, AbonneService abonneService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.selfcareUAAService = selfcareUAAService;
@@ -60,6 +63,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         this.boosterManager=boosterManager;
         this.validationHmacService = validationHmacService;
         this.notificationInformationService = notificationInformationService;
+        this.abonneService = abonneService;
     }
 
     @Override
@@ -282,6 +286,9 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result = accountB2CRepository.save(result);
 
                 this.boosterManager.applyWelcomeBooster(result.getNumero());
+                if(result.getFirstName().equals("") || result.getLastName().equals("")){
+                    updateFirstnameAndLasname(result);
+                }
                 sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
                 addCodeFormuleInformationNotification(result.getNumero());
                 return result;
@@ -298,5 +305,22 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Async
     void addCodeFormuleInformationNotification(String msisdn){
         notificationInformationService.addCodeFormuleCustomerOffer(msisdn);
+    }
+
+    @Async
+    void updateFirstnameAndLasname(AccountB2C account){
+        log.debug(" Update user information for Account : {}", account);
+        if(account.getFirstName().equals("") && account.getLastName().equals("")){
+            AbonneDTO informationAbonne = abonneService.getInformationAbonne(account.getNumero());
+
+            if(!informationAbonne.getNomAbonne().equals("")){
+                account.setLastName(informationAbonne.getNomAbonne());
+                account = accountB2CRepository.save(account);
+            }
+            if(!informationAbonne.getPrenomAbonne().equals("")){
+                account.setFirstName(informationAbonne.getPrenomAbonne());
+                accountB2CRepository.save(account);
+            }
+        }
     }
 }

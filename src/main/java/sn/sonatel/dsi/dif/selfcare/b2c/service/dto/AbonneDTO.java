@@ -11,9 +11,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 public class AbonneDTO {
 
 
-    private String nomAbonne;
+    private String nomAbonne = "";
 
-    private String prenomAbonne;
+    private String prenomAbonne = "";
 
     private String msisdn;
 
