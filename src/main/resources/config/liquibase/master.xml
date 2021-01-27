@@ -73,4 +73,8 @@ update varchar code_formule to NotificationInformation table
     <!--add hashMsisdn to account_b2c -->
     <include file="config/liquibase/changelog/20201214160516_changelog.xml" relativeToChangelogFile="false"/>
 
+    <!--add created_date to account_b2c -->
+    <include file="config/liquibase/changelog/20210128160600_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210128202305_changelog.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

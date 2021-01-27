@@ -24,4 +24,11 @@ public final class RedocMessages {
             super ();
         }
     }
+
+    public static final class ExportUsers{
+
+        public static final String DESCRIPTION_EXPORT_ALL_USER = "Cette api permet d exporter la liste de touts les utilisateurs Orange et Moi dans un fichier excel qui sera compressé puis envoyer par mail a l admin connecté";
+
+        private ExportUsers() {  super (); }
+    }
 }

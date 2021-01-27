@@ -5,20 +5,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
+import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringRunner.class)
@@ -33,10 +35,16 @@ public class SchedulerServiceTest {
     @Autowired
     private AccountB2CRepository accountB2CRepository;
 
+    @Mock
+    private AbonneService abonneService;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
     @Before
     public void setUp() {
         initMocks(this);
-        schedulerServiceUnderTest = new SchedulerService(mockSponseeRepository);
+        schedulerServiceUnderTest = new SchedulerService(mockSponseeRepository, accountB2CRepository, abonneService, applicationProperties);
     }
 
     private AccountB2C getAccount(){
@@ -80,5 +88,41 @@ public class SchedulerServiceTest {
         Assert.assertEquals(sponsee.getAccountB2C().getNumero(),sponseeOptional.get().getAccountB2C().getNumero());
         Assert.assertEquals(sponsee.getFirstName(),sponseeOptional.get().getFirstName());
         Assert.assertEquals(sponsee.getLastName(),sponseeOptional.get().getLastName());
+    }
+
+    @Test
+    public void testUpdateFirstnameAndLastname(){
+
+        accountB2CRepository.deleteAll();
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setNumero("770000000");
+        accountB2C.setFirstName("");
+        accountB2C.setLastName("");
+
+        accountB2CRepository.save(accountB2C);
+
+        AccountB2C account2 = new AccountB2C();
+        account2.setNumero("770000001");
+        account2.setFirstName("");
+        account2.setLastName("");
+
+        accountB2CRepository.save(account2);
+
+        AbonneDTO abonneDTO = new AbonneDTO();
+        abonneDTO.setPrenomAbonne("prenom");
+        abonneDTO.setNomAbonne("nom");
+
+        Mockito.when(abonneService.getInformationAbonne(Mockito.anyString())).thenReturn(abonneDTO);
+
+        schedulerServiceUnderTest.updateFirstnameAndLastname();
+
+        List<AccountB2C> b2CList = accountB2CRepository.findAll();
+
+
+        Assert.assertEquals(2,b2CList.size());
+        Assert.assertEquals(abonneDTO.getNomAbonne(),b2CList.get(0).getLastName());
+        Assert.assertEquals(abonneDTO.getPrenomAbonne(),b2CList.get(0).getFirstName());
+
     }
 }

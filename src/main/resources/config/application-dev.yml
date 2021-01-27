@@ -234,6 +234,9 @@ application:
             sms-promo: Fais le aujourd hui et gagne %s %s.
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
+        cron-update-firstname-lastname: "00 00 00 * * ?"
+        cron-update-firstname-lastname-activated: true
+        number-of-rows-to-return: 1000
 
     hmac-secret: secretToShareWithGatewayOM
 
