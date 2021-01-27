@@ -18,6 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -29,6 +30,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -63,10 +65,13 @@ public class AccountB2CServiceImplTest {
     @Mock
     private NotificationInformationService notificationInformationService;
 
+    @Mock
+    private AbonneService abonneServiceMock;
+
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService, notificationInformationService);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService, notificationInformationService, abonneServiceMock);
     }
 
     private Optional<Sponsee> getSponsee(){
@@ -104,18 +109,26 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin("775266363");
         managedUserVM.setEmail("testmail@gmail.com");
-        managedUserVM.setLastName("lastname");
-        managedUserVM.setFirstName("firstname");
+        managedUserVM.setLastName("");
+        managedUserVM.setFirstName("");
+
+        AbonneDTO abonneDTO = new AbonneDTO();
+        abonneDTO.setNomAbonne("lastname");
+        abonneDTO.setPrenomAbonne("");
+
+        when(abonneServiceMock.getInformationAbonne(anyString())).thenReturn(abonneDTO);
+
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
         when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
-        AccountB2C expectedResult = new AccountB2C();
 
         // Run the test
         AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
 
         // Verify the results
         assertNotNull(result);
+        assertTrue(abonneDTO.getPrenomAbonne().equals(""));
+        assertEquals(abonneDTO.getNomAbonne(),result.getLastName());
     }
 
     @Test
@@ -283,10 +296,15 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setHmac("ce55ff824f9e0e518f0bb121d1a164b40d13a0f1bb6ff2364e1aee0a599c4305");
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin("775266300");
-        managedUserVM.setLastName("lastname");
-        managedUserVM.setFirstName("firstname");
+        managedUserVM.setLastName("");
+        managedUserVM.setFirstName("");
+
+        AbonneDTO abonneDTO = new AbonneDTO();
+        abonneDTO.setNomAbonne("lastname");
+        abonneDTO.setPrenomAbonne("firstname");
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
+        when(abonneServiceMock.getInformationAbonne(anyString())).thenReturn(abonneDTO);
         when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
         when(validationHmacService.validateHmac(anyString(),anyString(),anyString())).thenReturn(true);
@@ -296,6 +314,7 @@ public class AccountB2CServiceImplTest {
 
         // Verify the results
         assertNotNull(result);
+        assertEquals(abonneDTO.getNomAbonne(),result.getLastName());
     }
 
     @Test(expected = BadRequestAlertException.class)

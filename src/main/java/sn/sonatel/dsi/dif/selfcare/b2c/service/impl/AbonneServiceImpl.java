@@ -39,8 +39,6 @@ public class AbonneServiceImpl implements AbonneService {
             ClientType clientType = infoClientWrapper.getClientType();
         switch (clientType){
             case ORGANIZATION:
-                abonneDTO.setNomAbonne("");
-                abonneDTO.setPrenomAbonne("");
                 abonneDTO.setMsisdn(infoClientWrapper.getOrganization().getId());
                 return abonneDTO;
 

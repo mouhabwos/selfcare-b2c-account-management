@@ -172,11 +172,11 @@ application:
     email-service-client-orange: fatou.diaw@orange-sonatel.com
 
     api-management:
-        auth:
-            grant_type: client_credentials
-            client_id: selfcare-b2c
-            client_secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
-            key-access-token-uri: https://api.orange-sonatel.com/oauth/token
+        oauth2:
+            client-token-uri: https://api.orange-sonatel.com/oauth/token
+            client-id: selfcare-b2c
+            client-secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
+            grant-type: client_credentials
         url-api:
             base-name: api-accountmanagement
             base-url: https://api.orange-sonatel.com
@@ -240,6 +240,9 @@ application:
             sms-promo: Fais le aujourd hui et gagne %s .
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
+        cron-update-firstname-lastname: "00 00 00 * * ?"
+        cron-update-firstname-lastname-activated: true
+        number-of-rows-to-return: 1000
 
     hmac-secret: secretToShareWithGatewayOM
 
