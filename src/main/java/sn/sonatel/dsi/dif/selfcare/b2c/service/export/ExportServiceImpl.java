@@ -9,10 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.SecurityUtils;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 
@@ -47,10 +45,8 @@ public class ExportServiceImpl implements ExportService {
 
     @Async
     @Override
-    public void exportAllUsers(){
-        log.debug ( "Service request to export All User in to an excel file");
-
-        String mail = SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM_ACCOUNT);
+    public void exportAllUsers(String mailAdmin){
+        log.debug ( "Service request to export All User in to an excel file with email : {}", mailAdmin);
 
         List<AccountB2C> accountB2CList = accountB2CRepository.findAll();
         if(!accountB2CList.isEmpty()){
@@ -62,7 +58,7 @@ public class ExportServiceImpl implements ExportService {
             // This data needs to be written (Object[])
             Map<String, Object[]> data = getMapData( accountB2CList);
 
-            creationsAndExportFileCSV(accountB2CList, data, mail, sourceFile, sourceFileZip);
+            creationsAndExportFileCSV(accountB2CList, data, mailAdmin, sourceFile, sourceFileZip);
         }
 
     }

@@ -1,8 +1,9 @@
-package sn.sonatel.dsi.dif.selfcare.b2c;
+package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
@@ -23,7 +25,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import javax.persistence.EntityManager;
 
+import java.security.Principal;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
@@ -70,6 +75,9 @@ public class ExportResourceIntTest {
     @Transactional
     public void testExportAllUsers() throws Exception {
 
+        Principal mockPrincipal = Mockito.mock(Principal.class);
+        Mockito.when(mockPrincipal.getName()).thenReturn("export@orange-sonatel.com");
+
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setNumero("770000000");
         accountB2C.setFirstName("");
@@ -84,7 +92,7 @@ public class ExportResourceIntTest {
 
         accountB2CRepository.save(account2);
 
-        restMockMvc.perform(get("/api/export/all-users"))
+        restMockMvc.perform(post("/api/export/all-users").principal(mockPrincipal))
             .andExpect(status().isAccepted());
 
     }
