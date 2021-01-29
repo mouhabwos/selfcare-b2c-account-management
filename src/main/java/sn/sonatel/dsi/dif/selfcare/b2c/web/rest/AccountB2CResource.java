@@ -67,7 +67,7 @@ public class AccountB2CResource {
     }
 
 
-    //@Auditable(description = Message.Account.ADD)
+    @Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C : {}", managedUserVM);
@@ -85,7 +85,7 @@ public class AccountB2CResource {
 
     }
 
-    //@Auditable(description = Message.Account.ADD)
+    @Auditable(description = Message.Account.ADD)
     @PostMapping("/v2/register")
     public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C version 2 : {}", managedUserVM);
