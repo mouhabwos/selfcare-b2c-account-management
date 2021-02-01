@@ -152,6 +152,44 @@ public class MailService {
         sendEmailToServiceClient(operationDTO, "mail/ouverturCompteEmail", "[Orange et Moi ]"+titreOperation+"- "+operationDTO.getNumero());
     }
 
+    @Async
+    public void sendEmailToAdmin(String recipient , String nameFile) {
+        log.debug("Service Sending mail email to '{}'", recipient);
+
+        Locale locale = Locale
+            .forLanguageTag("fr");
+        Context context = new Context(locale);
+        String random = RandomStringUtils.randomAlphabetic(20);
+        context.setVariable(RANDOM, random);
+        String content = templateEngine.process("mail/exportUsersEmail", context);
+        sendEmailWithFile(recipient, "[Orange et Moi ] Exportation des Utilisateurs", content, true, true, nameFile);
+    }
+
+    @Async
+    public void sendEmailWithFile(String to, String subject, String content, boolean isMultipart, boolean isHtml, String nameFile) {
+        log.debug("Service to Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+            isMultipart, isHtml, to, subject, content);
+
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+
+            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
+            message.setTo(to);
+            message.setFrom(applicationProperties.getSelfcareMail().getSenderAddress(),applicationProperties.getSelfcareMail().getSenderName());
+            message.setSubject(subject);
+            message.setText(content, isHtml);
+            FileSystemResource fileZip = new FileSystemResource(nameFile);
+            message.addAttachment(nameFile, fileZip);
+
+            javaMailSender.send(mimeMessage);
+            log.debug("Success Sent email to User '{}'", to);
+        } catch (Exception e) {
+            log.warn("Email could not to be sent  user '{}'", to, e);
+
+        }
+    }
+
     private FileSystemResource getFileZip(String nameFile){
         String tempFile = applicationProperties.getTmpPath()+nameFile;
         return new FileSystemResource(tempFile);

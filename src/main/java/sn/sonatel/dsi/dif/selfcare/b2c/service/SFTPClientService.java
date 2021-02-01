@@ -71,12 +71,38 @@ public class SFTPClientService {
             }
         }
     } catch (IOException ex) {
-        log.error("Error while upload file from SFTP ", ex.getMessage(),ex);
+        log.error("Error while upload file from SFTP {}, {} ", ex.getMessage(),ex);
     } finally {
             log.error("Finally while upload file from SFTP ");
 
     }
         return fileName;
+    }
+
+    public String compressFile(String sourceFile, String  sourceFileZip){
+
+        try{
+            try (FileOutputStream fos = new FileOutputStream(sourceFileZip)) {
+                try (ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+                    File fileToZip = new File(sourceFile);
+                    try (FileInputStream fis = new FileInputStream(fileToZip)) {
+                        ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                        zipOut.putNextEntry(zipEntry);
+                        byte[] bytes = new byte[1024];
+                        int length;
+                        while ((length = fis.read(bytes)) >= 0) {
+                            zipOut.write(bytes, 0, length);
+                        }
+                    }
+                }
+            }
+
+            return sourceFileZip;
+        } catch (IOException ignored){
+            log.debug ( "Error during export : {}, {}",ignored.getCause(), ignored.getMessage());
+        }
+
+        return "";
     }
 
 }
