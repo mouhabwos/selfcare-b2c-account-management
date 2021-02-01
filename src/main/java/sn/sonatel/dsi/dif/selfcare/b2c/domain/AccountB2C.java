@@ -4,12 +4,14 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.annotation.CreatedDate;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -54,6 +56,11 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     @Column(name = "attempts", nullable = false)
     private int attempts=0;
+
+    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
+    //@JsonIgnore
+    private Instant createdDate = Instant.now();
 
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -242,6 +249,14 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     public void setNotificationInformations(Set<NotificationInformation> notificationInformations) {
         this.notificationInformations = notificationInformations;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

@@ -160,5 +160,12 @@ public final class Message {
         private NotificationInformation() {  super (); }
     }
 
+    public static final class ExportUsers{
+
+        public static final String EXPORT_ALL_USER = "Exporter la liste de touts les utilisateurs Orange et Moi dans un fichier excel";
+
+        private ExportUsers() {  super (); }
+    }
+
 
 }
