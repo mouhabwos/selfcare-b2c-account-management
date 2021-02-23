@@ -164,4 +164,13 @@ public class AbonneResource {
         return ResponseEntity.ok(abonneService.getMyContactNumbers(msisdn));
     }
 
+    @Auditable(description = Message.Abonne.STATUS_MSISDN)
+    @GetMapping("/v1/number/{msisdn}/status")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
+    @Timed
+    public ResponseEntity<String> getNumberStatus(@PathVariable(name =  "msisdn") String msisdn) {
+        log.debug ( "REST request to get Status of : {}", msisdn );
+        return abonneService.getNumberStatus(msisdn);
+    }
+
 }

@@ -18,6 +18,7 @@ public final class Message {
         public static final String GET_REQUEST_STATUS_BY_MSISDN = "Recuperation Statut d une demande par le numero";
         public static final String IS_ORGANIZATION_NUMBER = "Verifier si le numero est un numero d entreprise";
         public static final String CONTACT_NUMBERS = "Recuperation de la liste des numero identifiees d un abonne par le msisdn";
+        public static final String STATUS_MSISDN = "Recuperation du statut d un numero";
 
         private Abonne() {
             super ();
