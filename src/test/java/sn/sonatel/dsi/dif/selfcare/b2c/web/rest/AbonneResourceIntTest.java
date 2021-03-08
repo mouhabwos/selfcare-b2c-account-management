@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,6 +53,9 @@ public class AbonneResourceIntTest {
 
     @Mock
     private TroubleTicketService troubleTicketService;
+
+    @Autowired
+    private AbonneService abonneServiceTest;
 
     @Before
     public void setUp() throws Exception {
@@ -170,5 +174,29 @@ public class AbonneResourceIntTest {
             .andExpect(status().isOk());
 
     }
+
+    @Test
+    public void testGetNumberStatus() throws Exception {
+
+        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneServiceTest, troubleTicketService);
+        this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/number/{msisdn}/status", "338328033"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("ACTIVATED"));
+    }
+
+
+    @Test
+    public void testGetNumberStatusWithError() throws Exception {
+
+        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneServiceTest, troubleTicketService);
+        this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
+
+        restAbonneMockMvc.perform(get("/api/abonne/v1/number/{msisdn}/status", "330000000"))
+            .andExpect(status().isNotFound());
+    }
+
+
 
 }

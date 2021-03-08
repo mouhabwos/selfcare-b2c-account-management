@@ -114,6 +114,15 @@ public class AbonneServiceImpl implements AbonneService {
         return new HashSet<>();
     }
 
+    @Override
+    public ResponseEntity<String> getNumberStatus(String msisdn) {
+        log.debug("Service get Status Number: {}", msisdn);
+        InfoClientWrapper informations = getInformations(msisdn);
+        if(informations.getClientType().equals(ClientType.INDIVIDUAL)){
+           return ResponseEntity.ok(informations.getInformation().getStatus());
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 }
 
