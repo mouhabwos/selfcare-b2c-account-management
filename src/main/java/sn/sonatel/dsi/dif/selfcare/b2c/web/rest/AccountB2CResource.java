@@ -87,7 +87,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/v2/register")
-    public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+    public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C version 2 : {}", managedUserVM);
 
         if (managedUserVM.getId() != null) {
@@ -143,7 +143,7 @@ public class AccountB2CResource {
 
     //@Auditable(description = Message.Account.CHECK_Numero)
     @PostMapping("/v2/check_number")
-    public ResponseEntity checkNumberV2(@RequestHeader("X-UUID") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+    public ResponseEntity checkNumberV2(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
         checkNumberRequest.setUuid(uuid);
         accountB2CService.checkNumberV2(checkNumberRequest);
         return ResponseEntity.ok().build();
