@@ -27,6 +27,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -178,9 +179,7 @@ public class AbonneResourceIntTest {
     @Test
     public void testGetNumberStatus() throws Exception {
 
-        final AbonneResource abonneResource = new AbonneResource( customerOfferService, abonneServiceTest, troubleTicketService);
-        this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
-
+        when(abonneService.getNumberStatus(anyString())).thenReturn(ResponseEntity.ok("ACTIVATED"));
         restAbonneMockMvc.perform(get("/api/abonne/v1/number/{msisdn}/status", "338328033"))
             .andExpect(status().isOk())
             .andExpect(content().string("ACTIVATED"));
