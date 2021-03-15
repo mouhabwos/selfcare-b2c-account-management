@@ -279,6 +279,32 @@ public class AbonneServiceImplTest {
         Assert.assertEquals(2,contactNumbers.size());
     }
 
+    @Test
+    public void testGetNumberStatus() throws IOException {
+
+        InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
+
+
+        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
+
+
+        ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getInformation());
+        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(informationResponseEntity);
+
+        ResponseEntity<String> responseEntity = abonneServiceImplUnderTest.getNumberStatus("330000000");
+        Assert.assertEquals(ResponseEntity.ok("ACTIF"),responseEntity);
+    }
+
+    @Test
+    public void testGetNumberStatusWithNotFoundException(){
+
+        when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
+        when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
+
+        ResponseEntity<String> responseEntity = abonneServiceImplUnderTest.getNumberStatus("330000000");
+        Assert.assertEquals(ResponseEntity.notFound().build(),responseEntity);
+    }
+
     private InfoClientWrapper getInfoClientWrapperOrganization() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         InfoClientWrapper infoClientWrapper = mapper.readValue(RESPONSE_NUMERO_ORGANIZATION, InfoClientWrapper.class);
