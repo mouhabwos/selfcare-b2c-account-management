@@ -345,7 +345,7 @@ pipeline {
               // Determines next version, updates poms and creates the commit
               // Add security in branchingModel, to only have semantic versions for releases/*
               sh  '''
-                    ./mvnw -B -X -Pprod1 -Darguments="-DskipTests" release:clean release:prepare release:perform \
+                    ./mvnw -B -X -Pprod -Darguments="-DskipTests" release:clean release:prepare release:perform \
                         -DtagPattern=@{SYSTEM_COMPONENT}_@{VERSION}_@{DATE} \
                         -DbranchingModel=".*:@{VERSION}.@{BUILD}" \
                   '''
