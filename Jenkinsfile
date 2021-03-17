@@ -336,22 +336,52 @@ pipeline {
  */
 
 
-    stage('Release On Nexus') {
-     when {
-      branch 'master'
-     }
-      steps {
-        build job: 'selfcare-b2c-account-management-release'
-       }
-    }
+      stage('Release On Nexus') {
+          when { anyOf { branch 'master' } }
+          steps {
+              echo 'Perform master'
+              sh 'git checkout master'
 
+              // Determines next version, updates poms and creates the commit
+              // Add security in branchingModel, to only have semantic versions for releases/*
+              sh  '''
+                    ./mvnw -B -X -Pprod1 -Darguments="-DskipTests" release:clean release:prepare release:perform \
+                        -DtagPattern=@{SYSTEM_COMPONENT}_@{VERSION}_@{DATE} \
+                        -DbranchingModel=".*:@{VERSION}.@{BUILD}" \
+                  '''
+              stash includes: 'target/checkout/target/*', name: 'release'
+
+          }
+          post {
+              success {
+                  echo "[SUCCESS] New Version released !!!"
+              }
+          }
+      }
 
       stage('Push Docker image') {
-        when { branch 'master' }
-        agent  { label 'docker-builder-rec3' }
-        steps {
-          sh 'docker push ${IMAGE}:${VERSION}.${BUILD_NUMBER}'
-        }
+          when { anyOf { branch 'master' } }
+          agent  { label 'docker-builder-dev' }
+          options { skipDefaultCheckout() }
+          steps {
+              script {
+                  def releaseVersion = "$VERSION".split('-')[0]
+                  echo "release version is ${releaseVersion}"
+
+                  unstash 'release'
+
+                  dir('target/checkout/target') {
+                      sh "docker build -t ${IMAGE}:${releaseVersion} ."
+                      sh "docker push ${IMAGE}:${releaseVersion}"
+                  }
+              }
+          }
+           post {
+                  always {
+                      echo "[ALWAYS] Clean directory !!!"
+                      deleteDir()
+                        }
+                }
       }
 
 
@@ -359,12 +389,16 @@ pipeline {
 
   post {
 
-   changed {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'gaglo.kokou@orange-sonatel.com'
+     changed {
+      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'Team.selfcare-b2c@orange-sonatel.com'
    }
     failure {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'gaglo.kokou@orange-sonatel.com'
+      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'Team.selfcare-b2c@orange-sonatel.com'
    }
+    always {
+      echo "[ALWAYS] Clean directory !!!"
+      cleanWs()
+      }
 
   }
 }
