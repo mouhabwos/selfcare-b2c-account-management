@@ -76,4 +76,7 @@ update varchar code_formule to NotificationInformation table
     <!--add created_date to account_b2c -->
     <include file="config/liquibase/changelog/20210128160600_changelog.xml" relativeToChangelogFile="false"/>
 
+    <!--  liquibase changelogs : for creation spring batch tables -->
+    <include file="config/liquibase/changelog/spring_batch_20210222111909_changelog.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>
