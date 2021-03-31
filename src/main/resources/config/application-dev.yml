@@ -47,8 +47,8 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: dbuser
+        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
         password: digitalfactory
         hikari:
             auto-commit: false
@@ -86,6 +86,9 @@ spring:
         locator:
             discovery:
                 enabled: true
+    batch:
+        job:
+            enabled: false
 
 server:
     port: @server.port.docker.expose@

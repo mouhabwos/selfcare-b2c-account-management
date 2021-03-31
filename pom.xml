@@ -511,6 +511,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.0.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- SPRING BATCH DEPENDENCCY -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -854,9 +861,9 @@
                     <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
                     <diffChangeLogFile>src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
                     <driver>com.mysql.jdbc.Driver</driver>
-                    <url>jdbc:mysql://10.137.52.11:3306/selfcare_b2c_account_management</url>
+                    <url>jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management</url>
                     <defaultSchemaName>selfcare_b2c_account_management</defaultSchemaName>
-                    <username>dbuser</username>
+                    <username>root</username>
                     <password>digitalfactory</password>
                     <referenceUrl>hibernate:spring:sn.sonatel.dsi.dif.selfcare.b2c.domain?dialect=org.hibernate.dialect.MySQL5InnoDBDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                     <verbose>true</verbose>
