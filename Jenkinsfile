@@ -50,15 +50,6 @@ pipeline {
     }
 
 
-     stage('SonarQube Scan') {
-       steps{
-         script{
-             withSonarQubeEnv('SonarQubeServer') {
-             sh 'mvn sonar:sonar -X'
-            }
-        }
-      }
- 	 }
 
 
     stage('Build & Push Docker image') {
@@ -84,7 +75,7 @@ pipeline {
             agent {label 'malaw-dev'}
               when {
                 allOf {
-     		        branch 'develop'
+     		        branch 'uploadFile'
                    expression {
                   openshift.withCluster() {
                     openshift.withProject("${ENV_DEV}") {
@@ -164,7 +155,7 @@ pipeline {
     /* ======================================  DEBUT Deploy DEV-REC  ======================================== */
                 stage('Malaw DEV - Deploy') {
                     agent {label 'malaw-dev'}
-                  when { branch 'develop'}
+                  when { branch 'uploadFile'}
                       steps {
                         //Generate maven-resource-plugin param files"
                         sh 'mvn validate'
@@ -232,20 +223,7 @@ pipeline {
       			}
     		}
 
-        stage("SonarQube Quality Gate") {
-           steps{
-               script{
-                 timeout(time: 10, unit: 'MINUTES') {
-                    sleep 5
-                    def qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
-                      error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                    }
-                 }
 
-               }
-             }
-         }
 
 
 

@@ -31,6 +31,10 @@ public class ApplicationProperties {
     private String hmacSecret;
     private String tmpPath;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String apiUploadFileManager;
+
     private Map<String,String> requestTitleMap = new HashMap<>();
     private Map<String,String> requestDescriptionMap = new HashMap<>();
     private Map<String, Integer> order = new HashMap<>();
