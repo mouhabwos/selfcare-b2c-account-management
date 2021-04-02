@@ -86,6 +86,9 @@ spring:
         locator:
             discovery:
                 enabled: true
+    batch:
+        job:
+            enabled: false
 
 server:
     port: @server.port.docker.expose@

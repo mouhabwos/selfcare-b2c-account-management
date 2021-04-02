@@ -79,6 +79,9 @@ spring:
         locator:
             discovery:
                 enabled: true
+    batch:
+        job:
+            enabled: false
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
