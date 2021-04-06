@@ -31,6 +31,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.notification.conf.batch.dto.AccountMsisdn;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.FileInformationService;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -46,6 +47,12 @@ public class BatchConfiguration {
     public static final String JOB_EXPORT_INFO_USER_NAME = "processingJobExportInfoUser";
 
     private final HSSFWorkbook workbook = new HSSFWorkbook();
+
+    private final FileInformationService fileInformationService;
+
+    public BatchConfiguration(FileInformationService fileInformationService) {
+        this.fileInformationService = fileInformationService;
+    }
 
     @Bean
     public JobLauncher asyncJobLauncher(JobRepository jobRepository) {
@@ -85,7 +92,7 @@ public class BatchConfiguration {
 
     @Bean
     JobListener jobListener() {
-        return new JobListener(workbook);
+        return new JobListener(workbook, fileInformationService);
     }
 
     @Bean

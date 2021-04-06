@@ -20,7 +20,7 @@ public interface RattachementLigneRepository extends JpaRepository<RattachementL
 
     Optional<RattachementLigne> findByNumero(String numero);
 
-    List<RattachementLigne> findByAccountB2C_Numero(String numero);
+    List<RattachementLigne> findAllByAccountB2CNumero(String numero);
 
     /**
      *
