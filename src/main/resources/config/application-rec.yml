@@ -79,6 +79,9 @@ spring:
         locator:
             discovery:
                 enabled: true
+    batch:
+        job:
+            enabled: false
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
@@ -170,7 +173,9 @@ application:
     url-otp: http://selfcare-otp
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: fatou.diaw@orange-sonatel.com
-
+    file-manager:
+        base-name: http://selfcare-b2c-file-manager
+        api-upload: /api/upload
     api-management:
         oauth2:
             client-token-uri: https://api.orange-sonatel.com/oauth/token

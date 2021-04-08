@@ -69,7 +69,9 @@ spring:
             enabled: true
     thymeleaf:
         mode: HTML
-
+    batch:
+        job:
+            enabled: false
 
 server:
     port: 10344
@@ -126,6 +128,10 @@ jhipster:
 
 # application:
 application:
+    file-manager:
+        base-name: http://selfcare-b2c-file-manager
+        api-upload: /api/upload
+    tmp-path: src/test/resources/files/
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange
     order:

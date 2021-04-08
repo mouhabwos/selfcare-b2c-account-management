@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -19,16 +20,15 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.export.ExportService;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.ExportResource;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.SponsorResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import javax.persistence.EntityManager;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.security.Principal;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
@@ -96,4 +96,17 @@ public class ExportResourceIntTest {
             .andExpect(status().isAccepted());
 
     }
+
+    @Test
+    public void testImporFileMsisdn() throws Exception {
+
+        File resourcesDirectory = new File("src/test/resources/files/numero.csv");
+
+        MockMultipartFile file = new MockMultipartFile("file", "files/numero.csv", "", Files.readAllBytes(resourcesDirectory.toPath()));
+
+        restMockMvc.perform(multipart("/api/export/v1/file-campaign-flow")
+            .file(file))
+            .andExpect(status().isAccepted());
+    }
+
 }

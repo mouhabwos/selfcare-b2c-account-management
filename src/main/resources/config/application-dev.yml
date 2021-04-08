@@ -86,6 +86,9 @@ spring:
         locator:
             discovery:
                 enabled: true
+    batch:
+        job:
+            enabled: false
 
 server:
     port: @server.port.docker.expose@
@@ -162,6 +165,9 @@ application:
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: Bouya.KANDE@orange-sonatel.com
 
+    file-manager:
+        base-name: http://selfcare-b2c-file-manager
+        api-upload: /api/upload
     api-management:
         oauth2:
             client-token-uri: https://api.orange-sonatel.com/oauth/token

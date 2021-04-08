@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -57,6 +58,10 @@ public class ApplicationProperties {
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     private final ServeurFtp serveurFtp = new ServeurFtp();
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private final FileManager fileManager = new FileManager();
 
     public String getHmacSecret() {
         return hmacSecret;
@@ -391,5 +396,11 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
         private String directory;
+    }
+
+    @Data
+    public static class FileManager{
+        private String baseName;
+        private String apiUpload;
     }
 }

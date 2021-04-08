@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.export.ExportService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
@@ -39,6 +41,18 @@ public class ExportResource {
         exportService.exportAllUsers(principal.getName());
         return ResponseEntity.accepted().build();
 
+    }
+
+    @ApiOperation(value = Message.ExportUsers.IMPORT_FILE_MSISDN,
+        notes = RedocMessages.ExportUsers.DESCRIPTION_IMPORT_FILE_MSISDN,
+        response = ResponseEntity.class)
+    @Auditable(description = Message.ExportUsers.IMPORT_FILE_MSISDN)
+    @PostMapping("/v1/file-campaign-flow")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity uploadFileMsisdn(@RequestPart(name = "file") MultipartFile file){
+        log.debug ( "REST request to upload file of list of Msisdn ");
+        exportService.uploadFileMsisdn(file);
+        return ResponseEntity.accepted().build();
     }
 
 

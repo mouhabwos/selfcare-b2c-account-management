@@ -127,7 +127,8 @@
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/CustomSecurityResolver.java,
             src/main/resources/templates/error.html,
             src/main/resources/static/index.html,
-            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/service/serviceclient/configuration/ApiKeyRequestInterceptor.java
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/service/serviceclient/configuration/ApiKeyRequestInterceptor.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/notification/conf/batch/JobListener.java
 
         </sonar.exclusions>
         <sonar.issue.ignore.multicriteria>S3437,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
@@ -510,6 +511,32 @@
             <version>5.1.2.RELEASE</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.0.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- SPRING BATCH DEPENDENCCY -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+        </dependency>
+        <!-- FIN SPRING BATCH DEPENDENCCY -->
 
         <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
         <dependency>
