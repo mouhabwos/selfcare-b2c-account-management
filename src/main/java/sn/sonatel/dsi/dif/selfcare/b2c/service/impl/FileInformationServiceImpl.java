@@ -37,7 +37,7 @@ public class FileInformationServiceImpl implements FileInformationService {
     private final RestTemplate restTemplate;
     private final ApplicationProperties applicationProperties;
 
-    public FileInformationServiceImpl(FileInformationRepository fileInformationRepository, @Qualifier("vanillaRestTemplate") RestTemplate restTemplate, ApplicationProperties applicationProperties) {
+    public FileInformationServiceImpl(FileInformationRepository fileInformationRepository, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, ApplicationProperties applicationProperties) {
         this.fileInformationRepository = fileInformationRepository;
         this.restTemplate = restTemplate;
         this.applicationProperties = applicationProperties;
@@ -110,6 +110,7 @@ public class FileInformationServiceImpl implements FileInformationService {
         return page;
     }
 
+
     private ResponseEntity<String> uploadFile(File file){
         log.debug("Service request to upload file in fileManager");
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
@@ -117,9 +118,9 @@ public class FileInformationServiceImpl implements FileInformationService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
-        return restTemplate.exchange(applicationProperties.getApiUploadFileManager(),
+        String urlApiUpload = applicationProperties.getFileManager().getBaseName()+applicationProperties.getFileManager().getApiUpload();
+        return restTemplate.exchange(urlApiUpload,
             HttpMethod.POST, requestEntity, String.class);
     }
-
 
 }

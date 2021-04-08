@@ -128,7 +128,9 @@ jhipster:
 
 # application:
 application:
-    api-upload-file-manager: http://selfcare-filemanager-http-dsiselfcarebb-dev.k8s-test.orange-sonatel.com/api/upload
+    file-manager:
+        base-name: http://selfcare-b2c-file-manager
+        api-upload: /api/upload
     tmp-path: src/test/resources/files/
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange

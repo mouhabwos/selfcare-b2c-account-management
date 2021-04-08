@@ -47,8 +47,8 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: dbuser
+        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
         password: digitalfactory
         hikari:
             auto-commit: false
@@ -165,7 +165,9 @@ application:
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: Bouya.KANDE@orange-sonatel.com
 
-    api-upload-file-manager: http://selfcare-b2cfilemanager-http-dsiselfcarebc-dev.k8s-test.orange-sonatel.com/api/upload
+    file-manager:
+        base-name: http://selfcare-b2c-file-manager
+        api-upload: /api/upload
     api-management:
         oauth2:
             client-token-uri: https://api.orange-sonatel.com/oauth/token
