@@ -79,4 +79,7 @@ update varchar code_formule to NotificationInformation table
     <!--  liquibase changelogs : for creation spring batch tables -->
     <include file="config/liquibase/changelog/spring_batch_20210222111909_changelog.xml" relativeToChangelogFile="false"/>
 
+    <!--  liquibase changelogs : for creation tables file_information -->
+    <include file="config/liquibase/changelog/20210331135812_changelog.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>
