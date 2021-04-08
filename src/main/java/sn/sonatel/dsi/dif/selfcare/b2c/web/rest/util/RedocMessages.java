@@ -29,6 +29,7 @@ public final class RedocMessages {
 
         public static final String DESCRIPTION_EXPORT_ALL_USER = "Cette api permet d exporter la liste de touts les utilisateurs Orange et Moi dans un fichier excel qui sera compressé puis envoyer par mail a l admin connecté";
         public static final String DESCRIPTION_IMPORT_FILE_MSISDN = "Cette api permet de recupere les informations (HashMsisdn, nom et prenom) pour les mettre dans un fichier csv et l'uploader sur FileManager";
+        public static final String DESCRIPTION_UPLOADED_FILE_INFORMATION = "Cette api permet de recupere les informations des fichiers uploade (utilisateur, date de l upload, le status et le nom du fichier)";
 
         private ExportUsers() {  super (); }
     }

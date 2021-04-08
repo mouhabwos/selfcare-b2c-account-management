@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,14 +15,17 @@ import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.FileInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.SearchFilterItem;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.FileInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.security.SecurityUtils;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.FileInformationService;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import javax.batch.runtime.BatchStatus;
 import java.io.File;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Service
@@ -74,6 +80,37 @@ public class FileInformationServiceImpl implements FileInformationService {
         return information;
     }
 
+    @Override
+    public Page<FileInformation> getInformationFileUploaded(SearchFilterItem searchFilterItem, Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate, String user) {
+        log.debug("Service request to get information of file uploaded : {}, {}, {}, {}", searchFilterItem, startDate, endDate, user);
+
+        Page<FileInformation> page = new PageImpl<>(new ArrayList<>());
+
+        switch(searchFilterItem) {
+            case BETWEEN_TWO_DATES:
+                if(startDate != null && endDate != null && user != null){
+                    page = fileInformationRepository.findAllByCreatedDateBetweenAndCreatedByUserOrderByCreatedDate(startDate, endDate, user, pageable);
+                }else {
+                    throw new BadRequestAlertException("Les champs startDate, endDate et user sont obligatoire","","");
+                }
+                break;
+
+            case BY_USER:
+                if( user == null){
+                    throw new BadRequestAlertException("Veuillez renseigner le login de l'utilisateur à rechercher","","");
+                }
+                page = fileInformationRepository.findAllByCreatedByUser( user, pageable);
+                break;
+
+            case ALL:
+                page = fileInformationRepository.findAll(pageable);
+                break;
+        }
+
+        return page;
+    }
+
+
     private ResponseEntity<String> uploadFile(File file){
         log.debug("Service request to upload file in fileManager");
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
@@ -85,6 +122,5 @@ public class FileInformationServiceImpl implements FileInformationService {
         return restTemplate.exchange(urlApiUpload,
             HttpMethod.POST, requestEntity, String.class);
     }
-
 
 }
