@@ -165,6 +165,7 @@ public final class Message {
 
         public static final String EXPORT_ALL_USER = "Exporter la liste de touts les utilisateurs Orange et Moi dans un fichier excel";
         public static final String IMPORT_FILE_MSISDN = "Upload des informations des utilisations via une liste de numero";
+        public static final String UPLOADED_FILE_INFORMATION = "Recuperation de la liste des informations des fichiers uploade";
 
         private ExportUsers() {  super (); }
     }
