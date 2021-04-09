@@ -7,5 +7,5 @@ public interface ExportService {
 
     void exportAllUsers(String mailAdmin);
 
-    void uploadFileMsisdn(MultipartFile file);
+    void uploadFileMsisdn(MultipartFile file, String login);
 }

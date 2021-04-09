@@ -56,9 +56,9 @@ public class ExportResource {
     @Auditable(description = Message.ExportUsers.IMPORT_FILE_MSISDN)
     @PostMapping("/v1/file-campaign-flow")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity uploadFileMsisdn(@RequestPart(name = "file") MultipartFile file){
+    public ResponseEntity uploadFileMsisdn(@RequestPart(name = "file") MultipartFile file, Principal principal){
         log.debug ( "REST request to upload file of list of Msisdn ");
-        exportService.uploadFileMsisdn(file);
+        exportService.uploadFileMsisdn(file, principal.getName());
         return ResponseEntity.accepted().build();
     }
 

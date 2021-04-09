@@ -154,12 +154,15 @@ public class ExportResourceIntTest {
     @Test
     public void testImporFileMsisdn() throws Exception {
 
+        Principal mockPrincipal = Mockito.mock(Principal.class);
+        Mockito.when(mockPrincipal.getName()).thenReturn("export@orange-sonatel.com");
+
         File resourcesDirectory = new File("src/test/resources/files/numero.csv");
 
         MockMultipartFile file = new MockMultipartFile("file", "files/numero.csv", "", Files.readAllBytes(resourcesDirectory.toPath()));
 
         restMockMvc.perform(multipart("/api/export/v1/file-campaign-flow")
-            .file(file))
+            .file(file).principal(mockPrincipal))
             .andExpect(status().isAccepted());
     }
 
