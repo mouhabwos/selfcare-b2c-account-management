@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 
-import static sn.sonatel.dsi.dif.selfcare.b2c.config.Constants.API_MANAGEMENT_CUSTOMER_OFFER_NAME;
 
 @Service
 public class CustomerOfferRetrieveService {
@@ -23,7 +22,7 @@ public class CustomerOfferRetrieveService {
     }
 
 
-    @Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.getStatusCode()==200")
+    //@Cacheable(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.getStatusCode()==200")
     public ResponseEntity getCachedCustomerOffer(String msisdn) {
 
         log.debug("Retrieving cached api management customer offer for user {} ", msisdn);
@@ -42,7 +41,7 @@ public class CustomerOfferRetrieveService {
         return ResponseEntity.notFound().build();
     }
 
-    @CachePut(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.getStatusCode()==200")
+    //@CachePut(value = API_MANAGEMENT_CUSTOMER_OFFER_NAME, key = "#msisdn", unless="#result.getStatusCode()==200")
     public ResponseEntity updateCachedCustomerOffer(String msisdn) {
 
         log.debug(" Retrieving cached api management customer offer for user {} ", msisdn);
