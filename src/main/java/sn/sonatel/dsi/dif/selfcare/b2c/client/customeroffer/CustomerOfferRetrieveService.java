@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 
-import static sn.sonatel.dsi.dif.selfcare.b2c.config.Constants.API_MANAGEMENT_CUSTOMER_OFFER_NAME;
 
 @Service
 public class CustomerOfferRetrieveService {
