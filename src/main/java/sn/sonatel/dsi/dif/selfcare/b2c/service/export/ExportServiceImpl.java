@@ -6,17 +6,26 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.notification.conf.batch.BatchConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service
 public class ExportServiceImpl implements ExportService {
@@ -27,6 +36,12 @@ public class ExportServiceImpl implements ExportService {
 
     private static final String NAME_FILE_ZIP_USERS = "UsersOrangeEtMoi.zip";
 
+    private static final String KEY_NAME_FILE_SOURCE = "sourceFile";
+
+    public static final String KEY_NAME_LOGIN = "login";
+
+    private static final String EXTENSION = ".csv";
+
     private final AccountB2CRepository accountB2CRepository;
 
     private final ApplicationProperties applicationProperties;
@@ -35,12 +50,18 @@ public class ExportServiceImpl implements ExportService {
 
     private final MailService mailService;
 
+    private final JobLauncher asyncJobLauncher;
 
-    public ExportServiceImpl(AccountB2CRepository accountB2CRepository, ApplicationProperties applicationProperties, SFTPClientService sftpClientService, MailService mailService) {
+    private final Job job;
+
+
+    public ExportServiceImpl(AccountB2CRepository accountB2CRepository, ApplicationProperties applicationProperties, SFTPClientService sftpClientService, MailService mailService, JobLauncher asyncJobLauncher, Job job) {
         this.accountB2CRepository = accountB2CRepository;
         this.applicationProperties = applicationProperties;
         this.sftpClientService = sftpClientService;
         this.mailService = mailService;
+        this.asyncJobLauncher = asyncJobLauncher;
+        this.job = job;
     }
 
     @Async
@@ -61,6 +82,32 @@ public class ExportServiceImpl implements ExportService {
             creationsAndExportFileCSV(accountB2CList, data, mailAdmin, sourceFile, sourceFileZip);
         }
 
+    }
+
+    @Override
+    public void uploadFileMsisdn(MultipartFile file, String login) {
+        log.debug ( "Service request to upload file of list of Msisdn ");
+        try {
+            //Send File uploaded into /tmp
+            String time = System.currentTimeMillis()+EXTENSION;
+            String nameFile = "Msisdn_File"+time;
+            String sourceFile = applicationProperties.getTmpPath() +nameFile;
+            File fileSourcePath =  new File(sourceFile);
+            Files.copy(file.getInputStream(), fileSourcePath.toPath(),REPLACE_EXISTING);
+
+            //Add file name into jobParameters Obbject
+            JobParameters params = new JobParametersBuilder()
+                .addString(KEY_NAME_FILE_SOURCE, sourceFile)
+                .addString(KEY_NAME_LOGIN, login)
+                .addString(BatchConfiguration.JOB_EXPORT_INFO_USER_NAME, String.valueOf(System.currentTimeMillis()))
+                .toJobParameters();
+
+            // Job excecution
+            asyncJobLauncher.run(job, params);
+
+        }catch (Exception ignored){
+            log.error("Error when saving list of Msisdn for boosterId : {}, with error : {}",ignored, ignored.getMessage());
+        }
     }
 
 

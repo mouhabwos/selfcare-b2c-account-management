@@ -714,7 +714,7 @@ public class AccountB2CResourceIntTest {
 
         restAccountB2CMockMvc.perform(post("/api/account-management/v2/register")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .header("X-UUID", UUID)
+            .header("X-Selfcare-Uuid", UUID)
             .content(TestUtil.convertObjectToJsonBytes(b2C)))
             .andExpect(status().isOk());
 

@@ -31,7 +31,7 @@ public class CustomSecurityResolver {
         LinkedList<String> list= new LinkedList<>();
         list.add(login());
 
-        List<RattachementLigne> lignesRattaches = accountManagementClient.findByAccountB2C_Numero(login());
+        List<RattachementLigne> lignesRattaches = accountManagementClient.findAllByAccountB2CNumero(login());
 
         if (!lignesRattaches.isEmpty()){
 

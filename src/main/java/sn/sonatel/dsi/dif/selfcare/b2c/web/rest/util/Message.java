@@ -18,6 +18,7 @@ public final class Message {
         public static final String GET_REQUEST_STATUS_BY_MSISDN = "Recuperation Statut d une demande par le numero";
         public static final String IS_ORGANIZATION_NUMBER = "Verifier si le numero est un numero d entreprise";
         public static final String CONTACT_NUMBERS = "Recuperation de la liste des numero identifiees d un abonne par le msisdn";
+        public static final String STATUS_MSISDN = "Recuperation du statut d un numero";
 
         private Abonne() {
             super ();
@@ -163,6 +164,8 @@ public final class Message {
     public static final class ExportUsers{
 
         public static final String EXPORT_ALL_USER = "Exporter la liste de touts les utilisateurs Orange et Moi dans un fichier excel";
+        public static final String IMPORT_FILE_MSISDN = "Upload des informations des utilisations via une liste de numero";
+        public static final String UPLOADED_FILE_INFORMATION = "Recuperation de la liste des informations des fichiers uploade";
 
         private ExportUsers() {  super (); }
     }
