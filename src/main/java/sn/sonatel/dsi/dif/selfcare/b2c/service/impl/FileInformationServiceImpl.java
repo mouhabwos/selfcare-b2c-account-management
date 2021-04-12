@@ -13,11 +13,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.FileInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.SearchFilterItem;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.FileInformationRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.SecurityUtils;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.FileInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
@@ -45,12 +43,10 @@ public class FileInformationServiceImpl implements FileInformationService {
 
 
     @Override
-    public FileInformation save(String sourceFile, Date dateCreation) {
+    public FileInformation save(String sourceFile, Date dateCreation, String login) {
         log.debug("Service request to upload and save information upload file with information : {}", sourceFile);
         FileInformation information = new FileInformation();
         try {
-            //Get user login
-            String login = SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM_ACCOUNT);
 
             //Get file into tmp path
             File file = new File(sourceFile);

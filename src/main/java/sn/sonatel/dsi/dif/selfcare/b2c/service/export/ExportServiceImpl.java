@@ -38,6 +38,8 @@ public class ExportServiceImpl implements ExportService {
 
     private static final String KEY_NAME_FILE_SOURCE = "sourceFile";
 
+    public static final String KEY_NAME_LOGIN = "login";
+
     private static final String EXTENSION = ".csv";
 
     private final AccountB2CRepository accountB2CRepository;
@@ -83,7 +85,7 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public void uploadFileMsisdn(MultipartFile file) {
+    public void uploadFileMsisdn(MultipartFile file, String login) {
         log.debug ( "Service request to upload file of list of Msisdn ");
         try {
             //Send File uploaded into /tmp
@@ -96,6 +98,7 @@ public class ExportServiceImpl implements ExportService {
             //Add file name into jobParameters Obbject
             JobParameters params = new JobParametersBuilder()
                 .addString(KEY_NAME_FILE_SOURCE, sourceFile)
+                .addString(KEY_NAME_LOGIN, login)
                 .addString(BatchConfiguration.JOB_EXPORT_INFO_USER_NAME, String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
 
