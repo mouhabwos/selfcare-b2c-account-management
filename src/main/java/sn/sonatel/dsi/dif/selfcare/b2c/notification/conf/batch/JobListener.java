@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static javax.batch.runtime.BatchStatus.COMPLETED;
 import static javax.batch.runtime.BatchStatus.STARTED;
+import static sn.sonatel.dsi.dif.selfcare.b2c.service.export.ExportServiceImpl.KEY_NAME_LOGIN;
 
 
 @Slf4j
@@ -61,7 +62,8 @@ public class JobListener implements JobExecutionListener {
                 fileOutputStream.close();
                 workbook.close();
                 String fileNameSource = recipientFile+".csv";
-                fileInformationService.save(fileNameSource, jobExecution.getCreateTime());
+                String login = jobExecution.getJobParameters().getString(KEY_NAME_LOGIN);
+                fileInformationService.save(fileNameSource, jobExecution.getCreateTime(), login);
             } catch (IOException e) {
                 log.error("Error when closing file with message : {}", e.getMessage());
             }

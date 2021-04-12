@@ -67,7 +67,7 @@ public class FileInformationServiceImplTest {
 
         Mockito.when(restTemplate.exchange(Mockito.anyString(),Mockito.any(HttpMethod.class),Mockito.any(HttpEntity.class),Mockito.any(Class.class))).thenReturn(ResponseEntity.ok(fileNameResponse));
 
-        FileInformation response = fileInformationServiceImpl.save(sourceFile, date);
+        FileInformation response = fileInformationServiceImpl.save(sourceFile, date, "test@orange-sonatel.com");
 
         Assert.assertEquals(BatchStatus.COMPLETED.name(), response.getStatus());
         Assert.assertEquals(fileNameResponse, response.getFileName());
@@ -82,7 +82,7 @@ public class FileInformationServiceImplTest {
         Date date = new Date();
 
         Mockito.when(restTemplate.exchange(Mockito.anyString(),Mockito.any(HttpMethod.class),Mockito.any(HttpEntity.class),Mockito.any(Class.class))).thenReturn(ResponseEntity.ok().build());
-        FileInformation response = fileInformationServiceImpl.save(sourceFile, date);
+        FileInformation response = fileInformationServiceImpl.save(sourceFile, date, "test@orange-sonatel.com");
         Assert.assertEquals(BatchStatus.FAILED.name(), response.getStatus());
     }
 
@@ -93,7 +93,7 @@ public class FileInformationServiceImplTest {
 
         Mockito.when(restTemplate.exchange(Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.any(Class.class))).thenReturn(ResponseEntity.badRequest().build());
 
-        FileInformation response = fileInformationServiceImpl.save(sourceFile, date);
+        FileInformation response = fileInformationServiceImpl.save(sourceFile, date, "test@orange-sonatel.com");
         Assert.assertEquals(BatchStatus.FAILED.name(), response.getStatus());
     }
 
@@ -101,7 +101,7 @@ public class FileInformationServiceImplTest {
     public void testSaveFileInformationWithErrorFilename(){
         String sourceFile = "src/test/resources/files/numero.csvd";
         Date date = new Date();
-        fileInformationServiceImpl.save(sourceFile, date);
+        fileInformationServiceImpl.save(sourceFile, date, "test@orange-sonatel.com");
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 
 public interface FileInformationService {
 
-    FileInformation save(String sourceFile, Date dateCreation);
+    FileInformation save(String sourceFile, Date dateCreation, String login);
 
     Page<FileInformation> getInformationFileUploaded(SearchFilterItem searchFilterItem, Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate, String user);
 }
