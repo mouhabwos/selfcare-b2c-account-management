@@ -224,8 +224,4 @@ elastic:
         server_urls: http://10.137.19.6:8200
         enable_log_correlation: true
 
-#org:
-    #owasp:
-        #esapi:
-            #opsteam: 'config/owasp/ESAPI.properties'
-            #resources: 'config/owasp/ESAPI.properties'
+
