@@ -84,7 +84,7 @@ pipeline {
             agent {label 'malaw-dev'}
               when {
                 allOf {
-     		        branch 'develop'
+     		        branch 'SELB2C-3429'
                    expression {
                   openshift.withCluster() {
                     openshift.withProject("${ENV_DEV}") {
@@ -164,7 +164,7 @@ pipeline {
     /* ======================================  DEBUT Deploy DEV-REC  ======================================== */
                 stage('Malaw DEV - Deploy') {
                     agent {label 'malaw-dev'}
-                  when { branch 'develop'}
+                  when { branch 'SELB2C-3429'}
                       steps {
                         //Generate maven-resource-plugin param files"
                         sh 'mvn validate'
