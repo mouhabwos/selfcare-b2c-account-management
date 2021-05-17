@@ -128,7 +128,10 @@
             src/main/resources/templates/error.html,
             src/main/resources/static/index.html,
             src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/service/serviceclient/configuration/ApiKeyRequestInterceptor.java,
-            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/notification/conf/batch/JobListener.java
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/notification/conf/batch/JobListener.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/xss/XSSFilter.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/xss/XSSUtils.java,
+            src/main/java/sn/sonatel/dsi/dif/selfcare/b2c/security/xss/XSSRequestWrapper.java
 
         </sonar.exclusions>
         <sonar.issue.ignore.multicriteria>S3437,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>

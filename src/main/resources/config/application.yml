@@ -223,5 +223,3 @@ elastic:
         environment: test
         server_urls: http://10.137.19.6:8200
         enable_log_correlation: true
-
-

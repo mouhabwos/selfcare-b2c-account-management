@@ -52,7 +52,7 @@ public class SponsorResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @Auditable(description = Message.Sponsor.CREATE)
-    //@PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PostMapping("/sponsors")
     public ResponseEntity<Sponsor> createSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException, SponsorException {
         log.debug("REST request to save Sponsor : {}", sponsor);
@@ -75,7 +75,7 @@ public class SponsorResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @Auditable(description = Message.Sponsor.UPDATE)
-   // @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @PutMapping("/sponsors")
     public ResponseEntity<Sponsor> updateSponsor(@RequestBody Sponsor sponsor) throws URISyntaxException {
         log.debug("REST request to update Sponsor : {}", sponsor);
@@ -97,7 +97,7 @@ public class SponsorResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sponsors in body.
      */
     @Auditable(description = Message.Sponsor.LIST)
-  //  @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
+    @PreAuthorize("hasRole('ROLE_B2C_ADMIN_MARKETING')")
     @GetMapping("/sponsors")
     public ResponseEntity<List<Sponsor>> getAllSponsors(Pageable pageable) {
         log.debug("REST request to get a page of Sponsors");
