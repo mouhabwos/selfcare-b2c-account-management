@@ -13,11 +13,11 @@ ADD entrypoint.sh entrypoint.sh
 RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
 
 RUN mkdir esapi
-WORKDIR /home/jhipster/esapi
+#WORKDIR /home/jhipster/esapi
 
 
-ADD ESAPI.properties ESAPI.properties
-RUN chmod 755 ESAPI.properties && chown jhipster:jhipster ESAPI.properties
+ADD ESAPI.properties /esapi/ESAPI.properties
+RUN chmod 755 /esapi/ESAPI.properties && chown jhipster:jhipster /esapi/ESAPI.properties
 
 USER jhipster
 
