@@ -14,10 +14,10 @@ RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
 
 RUN mkdir esapi
 #WORKDIR /home/jhipster/esapi
-
-
 ADD ESAPI.properties /esapi/ESAPI.properties
-RUN chmod 755 /esapi/ESAPI.properties && chown jhipster:jhipster /esapi/ESAPI.properties
+RUN chmod 755  /esapi/ESAPI.properties && chown jhipster:jhipster /esapi/ESAPI.properties
+#WORKDIR /home/jhipster
+
 
 USER jhipster
 
