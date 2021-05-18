@@ -9,7 +9,19 @@ RUN adduser -D -s /bin/sh jhipster
 WORKDIR /home/jhipster
 
 ADD entrypoint.sh entrypoint.sh
+
 RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
+
+# Add the ESAPI.properties file in /home/jhipster/esapi
+RUN mkdir esapi
+WORKDIR /home/jhipster/esapi
+ADD ESAPI.properties ESAPI.properties
+RUN chmod 755  ESAPI.properties && chown jhipster:jhipster ESAPI.properties
+
+
+WORKDIR /home/jhipster
+
+
 USER jhipster
 
 ADD ${project.artifactId}-${project.version}.${project.packaging} ${project.artifactId}.${project.packaging}
