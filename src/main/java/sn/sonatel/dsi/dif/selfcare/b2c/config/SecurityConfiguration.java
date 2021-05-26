@@ -41,8 +41,6 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .csrf()
             .disable()
             .headers()
-            .xssProtection()
-            .and()
             .frameOptions()
             .disable()
         .and()
