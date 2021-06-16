@@ -56,7 +56,7 @@
               <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
         <juf.version>2.3.5</juf.version>
-        <juf.security.version>2.4.0</juf.security.version>
+        <juf.security.version>2.5.0</juf.security.version>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
