@@ -79,6 +79,24 @@ pipeline {
       }
     }
 
+
+
+         stage("SonarQube Quality Gate") {
+          steps{
+              script{
+                timeout(time: 10, unit: 'MINUTES') {
+                   sleep 5
+                   def qg = waitForQualityGate()
+                   if (qg.status != 'OK') {
+                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                   }
+                }
+
+              }
+            }
+        }
+
+    
             /*  ================ Mysql service DEV-REC ================================= */
     stage('Malaw DEV - Mysql service') {
             agent {label 'malaw-dev'}
@@ -221,32 +239,6 @@ pipeline {
                      }
 
     /* ======================================  FIN Deploy DEV-REC  ======================================== */
-
-
-    		stage('Deploy UAT') {
-      			when {
-        			branch 'release'
-      			}
-      			steps {
-        			sh ' mvn clean install -Puat -DskipTests'
-      			}
-    		}
-
-        stage("SonarQube Quality Gate") {
-           steps{
-               script{
-                 timeout(time: 10, unit: 'MINUTES') {
-                    sleep 5
-                    def qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
-                      error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                    }
-                 }
-
-               }
-             }
-         }
-
 
 
 

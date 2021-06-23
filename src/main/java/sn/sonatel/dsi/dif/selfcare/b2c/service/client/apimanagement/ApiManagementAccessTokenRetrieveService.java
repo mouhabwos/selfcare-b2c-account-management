@@ -5,13 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 
@@ -21,34 +16,36 @@ public class ApiManagementAccessTokenRetrieveService {
     private final RestTemplate restTemplate;
     private final ApplicationProperties applicationProperties;
 
-    public ApiManagementAccessTokenRetrieveService(@Qualifier("vanillaRestTemplate") RestTemplate restTemplate, ApplicationProperties applicationProperties) {
+    public ApiManagementAccessTokenRetrieveService(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, ApplicationProperties applicationProperties) {
         this.restTemplate = restTemplate;
         this.applicationProperties = applicationProperties;
     }
 
     String retrieveToken(){
 
+        ApplicationProperties.ApiManagement.Oauth2 oauth2 =this.applicationProperties.getApiManagement().getOauth2();
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", applicationProperties.getApiManagement().getOauth2().getGrantType());
-        map.add("client_id", applicationProperties.getApiManagement().getOauth2().getClientId());
-        map.add("client_secret", applicationProperties.getApiManagement().getOauth2().getClientSecret());
+        ResponseEntity<AuthenticationToken> response = restTemplate.exchange(oauth2.getClientTokenUri(),
+            HttpMethod.GET,
+            entity,
+            AuthenticationToken.class,
+            oauth2.getGrantType(),
+            oauth2.getClientId(),
+            oauth2.getClientSecret()
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-
-        ResponseEntity<AuthenticationToken> response = restTemplate.postForEntity(applicationProperties.getApiManagement().getOauth2().getClientTokenUri(), request, AuthenticationToken.class);
-
+        );
         return response.getBody().accessToken;
-
     }
 
 
     @Getter
     @Setter
     @NoArgsConstructor
-    private static class AuthenticationToken {
+   private static class AuthenticationToken {
 
         @JsonProperty("access_token")
         private String accessToken;
