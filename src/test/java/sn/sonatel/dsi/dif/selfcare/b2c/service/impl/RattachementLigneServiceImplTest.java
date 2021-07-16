@@ -366,6 +366,45 @@ public class RattachementLigneServiceImplTest {
         assertEquals(expectedResult, result);
     }
 
+    @Test
+    public void testGetRattachementLignesWithNullOfferTypeAndOfferName() {
+
+        // Setup
+        String msisdn = "77000 00 00";
+
+        mockAccountB2CRepository = mock(AccountB2CRepository.class);
+        mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("");
+        accountB2C.setFirstName("");
+        accountB2C.setNumero(msisdn);
+
+        Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
+        when(mockAccountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
+
+        RattachementLigne ligne = new RattachementLigne();
+        ligne.setAccountB2C(accountB2C);
+        ligne.setNumero("330000000");
+        ligne.setTypeNumero(TypeNumero.FIXE);
+        List<RattachementLigne> rattachementLignes = new ArrayList<>();
+        rattachementLignes.add(ligne);
+        when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
+
+        CustomerOffer customerOffer = new CustomerOffer();
+
+        when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(ResponseEntity.ok(customerOffer));
+
+        // Run the test
+        final List<InfoNumberVM> result = rattachementLigneServiceImpl.getRattachementLignes(msisdn, true);
+
+        // Verify the results
+        assertEquals(1, result.size());
+        assertEquals("", result.get(0).getFormule());
+        assertEquals("", result.get(0).getProfil());
+    }
+
     private CustomerOffer getCustomer(){
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("32722731");
