@@ -283,6 +283,18 @@ public class AccountB2C extends NumeroDTO implements Serializable {
 
     @Override
     public String toString() {
-        return LogUtil.convertObjectToJsonResponse(this);
+        return "AccountB2C{" +
+            "firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", email='" + email + '\'' +
+            ", imageProfil='" + imageProfil + '\'' +
+            ", activationKey='" + activationKey + '\'' +
+            ", langKey='" + langKey + '\'' +
+            ", attempts=" + attempts +
+            ", createdDate=" + createdDate +
+            ", derniereConnnexionDate=" + derniereConnnexionDate +
+            ", tutoViewed=" + tutoViewed +
+            ", emailActivated=" + emailActivated +
+            '}';
     }
 }
