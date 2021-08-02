@@ -190,6 +190,10 @@ logging:
 
 # Traceability related configuration
 audit:
+    security:
+        xss:
+            excluded-urls:
+                - /api/v1/mail/ouverture-compte
     enable: true
     enable-error-logs: true
     log-type:  "AUDIT"

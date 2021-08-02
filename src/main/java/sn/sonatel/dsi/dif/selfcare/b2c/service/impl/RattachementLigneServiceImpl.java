@@ -176,8 +176,11 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             CustomerOffer  customerOffer = getSouscription(msisdn);
             if (customerOffer != null) {
 
-                infoNumberVMS.setProfil(customerOffer.getOfferType().toString());
-                infoNumberVMS.setFormule(customerOffer.getOfferName());
+               String offerType = ((customerOffer.getOfferType() != null) ? customerOffer.getOfferType().toString() : "");
+                infoNumberVMS.setProfil(offerType);
+
+                String offerName = ((customerOffer.getOfferName() != null) ? customerOffer.getOfferName() : "");
+                infoNumberVMS.setFormule(offerName);
 
             } else {
                 infoNumberVMS.setProfil("");
