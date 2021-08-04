@@ -55,7 +55,7 @@
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
               <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-        <juf.version>2.3.5</juf.version>
+        <juf.version>2.5.5</juf.version>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
@@ -179,6 +179,11 @@
         <dependency>
             <groupId>sn.sonatel.dsi.dac.dif.ds.juf</groupId>
             <artifactId>juf-starter-logging</artifactId>
+            <version>${juf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>sn.sonatel.dsi.dac.dif.ds.juf</groupId>
+            <artifactId>juf-starter-security</artifactId>
             <version>${juf.version}</version>
         </dependency>
 
