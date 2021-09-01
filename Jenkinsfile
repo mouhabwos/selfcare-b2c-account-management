@@ -328,7 +328,7 @@ pipeline {
          script {
              def releaseVersion = "$VERSION".split('-')[0]
              echo "release version is ${releaseVersion}"
-             build job: 'ocd-api-management-pprod/master',parameters: [[$class: 'StringParameterValue', name: 'msName', value: "$ARTIFACT_ID"], [$class: 'StringParameterValue', name: 'msVersion', value: "$releaseVersion"]]
+             build job: 'ocd-selfcare-b2c-pprod/master',parameters: [[$class: 'StringParameterValue', name: 'msName', value: "$ARTIFACT_ID"], [$class: 'StringParameterValue', name: 'msVersion', value: "$releaseVersion"]]
          }
      }
  }
