@@ -334,14 +334,15 @@ pipeline {
  }
     
 // Continious Testing
- /*stage('Run NR Tests on Preproduction Namespace') {
+ stage('Run NR Tests on Preproduction Namespace') {
      when { anyOf { branch 'release' } }
      steps {
          script {
              build job: 'APIManagement/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "API-MANAGEMENT-APIGEE-PREPROD"], [$class: 'StringParameterValue', name: 'CONFIG_ENVIRONMENT', value: "API_APIGEE_PREPROD_ENV"],  [$class: 'StringParameterValue', name: 'SERVICES', value: "api-accountmanagement"]]
          }
      }
- }}*//
+ }
+  }
 
 
       
