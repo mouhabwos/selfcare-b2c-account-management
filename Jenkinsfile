@@ -12,7 +12,6 @@ pipeline {
   environment {
     
     	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'  
-      	VERSION = readMavenPom().getVersion()
     	PROFILE = getProfileFromBranch(env.BRANCH_NAME)
     	DEST_ENV = getEnvFromBranch(env.BRANCH_NAME)
     	AGENT = getAgentFromBranch(env.BRANCH_NAME)
