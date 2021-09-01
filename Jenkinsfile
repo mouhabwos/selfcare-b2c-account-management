@@ -356,7 +356,7 @@ pipeline {
    }
     always {
       echo "[ALWAYS] Clean directory !!!"
-      cleanWs()
+     // cleanWs()
       }
 
   }
