@@ -10,13 +10,21 @@ pipeline {
 //Utiliser Pipeline Utility Steps plugin pour lire des informations depuis pom.xml dans env variables
 
   environment {
-      IMAGE = 'registry.tools.orange-sonatel.com/dif/selfcareb2c-accountmanagement'
-      VERSION = readMavenPom().getVersion()
-      NAME = readMavenPom().getArtifactId()
-      PORT=8715
-      ENV_REC = 'dsiselfcarebcorangeetmoi-rec'
-      ENV_DEV = 'dsiselfcarebc-dev'
-      SERVICE_NAME = "${ARTIFACT_ID}-db"
+    
+    	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'  
+      	VERSION = readMavenPom().getVersion()
+    	PROFILE = getProfileFromBranch(env.BRANCH_NAME)
+    	DEST_ENV = getEnvFromBranch(env.BRANCH_NAME)
+    	AGENT = getAgentFromBranch(env.BRANCH_NAME)
+    	IMAGE = "registry.tools.orange-sonatel.com/dif/${ARTIFACT_ID}"
+      	VERSION = readMavenPom().getVersion()
+      	NAME = readMavenPom().getArtifactId()
+      	ARTIFACT_ID = readMavenPom().getArtifactId()
+      	PORT=8715
+      	ENV_REC = 'dsiselfcarebcorangeetmoi-rec'
+      	ENV_DEV = 'dsiselfcarebc-dev'
+      	SERVICE_NAME = "${ARTIFACT_ID}-db"
+ 
 
   }
 
@@ -261,73 +269,6 @@ pipeline {
 
 
 
-/*
-    stage('Launch Qualys Scan') {
-      steps {
-        sh 'mvn qualys:scan'
-      }
-  }
-
-    stage('Check Qualys Scan') {
-      steps {
-          script{
-            timeout(time:90, unit: 'MINUTES'){
-              waitUntil {
-                sleep time: 7, unit: 'MINUTES'
-                try{
-                  sh 'mvn qualys:check'
-                  def result = manager.logContains(".*SCAN-FINISHED*.")
-
-                  if(result)
-                    return true
-                }catch(exc){
-                  echo 'Une exception a été rencontrée... Retry en cours'
-                }
-                return false
-              }
-            }
-          }
-      }
-  }
-
-  stage('Analyse Qualys Report') {
-      steps {
-       script{
-         try{
-            sh 'mvn qualys:analyse-prepare'
-          }catch(exc){
-            echo 'Une exception a été rencontrée pendant qualys:analyse-prepare'
-          }
-         sleep time: 1, unit: 'MINUTES'
-          try{
-            sh 'mvn qualys:analyse-perform'
-          }catch(exc){
-            echo 'Une exception a été rencontrée pendant qualys:analyse-perform'
-          }
-          }
-       }
-   }
-
-    stage('Qualys Download Report') {
-       steps {
-           sh 'mvn qualys:report'
-           sleep time: 1, unit: 'MINUTES'
-           sh 'mvn qualys:download'
-       }
-       post{
-        success {
-          archiveArtifacts artifacts: 'target/qualys/*.pdf'
-		  emailext attachmentsPattern: 'target/qualys/*.pdf',
-			body: 'Rapport Qualys joint au mail.',
-			subject: '[QUALYS] Rapport Vulnerabilité',
-			to: 'mouhamadoubambambacke.sow@orange-sonatel.com'
-        }
-       }
-    }
-
- */
-
-
       stage('Release On Nexus') {
           when { anyOf { branch 'master' } }
           steps {
@@ -375,6 +316,32 @@ pipeline {
                         }
                 }
       }
+    
+    
+    
+    // Continious Deployement
+ stage('Deploy New Release on Preproduction Namespace') {
+     when { anyOf { branch 'master' } }
+     agent  { label 'malaw4-prod' }
+     options { skipDefaultCheckout() }
+     steps {
+         script {
+             def releaseVersion = "$VERSION".split('-')[0]
+             echo "release version is ${releaseVersion}"
+             build job: 'ocd-api-management-pprod/master',parameters: [[$class: 'StringParameterValue', name: 'msName', value: "$ARTIFACT_ID"], [$class: 'StringParameterValue', name: 'msVersion', value: "$releaseVersion"]]
+         }
+     }
+ }
+    
+// Continious Testing
+ /*stage('Run NR Tests on Preproduction Namespace') {
+     when { anyOf { branch 'release' } }
+     steps {
+         script {
+             build job: 'APIManagement/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "API-MANAGEMENT-APIGEE-PREPROD"], [$class: 'StringParameterValue', name: 'CONFIG_ENVIRONMENT', value: "API_APIGEE_PREPROD_ENV"],  [$class: 'StringParameterValue', name: 'SERVICES', value: "api-accountmanagement"]]
+         }
+     }
+ }*//
 
 
       }
@@ -382,10 +349,10 @@ pipeline {
   post {
 
      changed {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'Team.selfcare-b2c@orange-sonatel.com'
+      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: '${EMAIL_RECIPIENTS}'
    }
     failure {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'Team.selfcare-b2c@orange-sonatel.com'
+      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: '${EMAIL_RECIPIENTS}'
    }
     always {
       echo "[ALWAYS] Clean directory !!!"
