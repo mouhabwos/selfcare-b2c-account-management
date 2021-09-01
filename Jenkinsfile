@@ -269,7 +269,7 @@ pipeline {
 
 
       stage('Release On Nexus') {
-          when { anyOf { branch 'release' } }
+          when { anyOf { branch 'master' } }
           steps {
               echo 'Perform master'
               sh 'git checkout master'
@@ -292,7 +292,7 @@ pipeline {
       }
 
       stage('Push Docker image') {
-          when { anyOf { branch 'release' } }
+          when { anyOf { branch 'master' } }
           agent  { label 'docker-builder-dev' }
           options { skipDefaultCheckout() }
           steps {
@@ -320,7 +320,7 @@ pipeline {
     
     // Continious Deployement
  stage('Deploy New Release on Preproduction Namespace') {
-     when { anyOf { branch 'release' } }
+     when { anyOf { branch 'master' } }
      agent  { label 'malaw4-prod' }
      options { skipDefaultCheckout() }
      steps {
