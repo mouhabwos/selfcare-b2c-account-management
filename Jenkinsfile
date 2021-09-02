@@ -10,8 +10,8 @@ pipeline {
 //Utiliser Pipeline Utility Steps plugin pour lire des informations depuis pom.xml dans env variables
 
   environment {
-    
-    	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com' 
+
+    	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'
     	IMAGE = "registry.tools.orange-sonatel.com/dif/${ARTIFACT_ID}"
       	VERSION = readMavenPom().getVersion()
       	NAME = readMavenPom().getArtifactId()
@@ -20,8 +20,6 @@ pipeline {
       	ENV_REC = 'dsiselfcarebcorangeetmoi-rec'
       	ENV_DEV = 'dsiselfcarebc-dev'
       	SERVICE_NAME = "${ARTIFACT_ID}-db"
- 
-
   }
 
   tools {
@@ -100,7 +98,7 @@ pipeline {
             }
         }*/
 
-    
+
             /*  ================ Mysql service DEV-REC ================================= */
     stage('Malaw DEV - Mysql service') {
             agent {label 'malaw-dev'}
@@ -312,9 +310,9 @@ pipeline {
                         }
                 }
       }
-    
-    
-    
+
+
+
     // Continious Deployement
  stage('Deploy New Release on Preproduction Namespace') {
      when { anyOf { branch 'master' } }
@@ -328,12 +326,9 @@ pipeline {
          }
      }
  }
-    
- 
+
+
   }
-
-
-      
 
   post {
 
@@ -355,5 +350,3 @@ pipeline {
 def notifyTeam() {
     emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: "$EMAIL_RECIPIENTS"
 }
-
-
