@@ -11,10 +11,7 @@ pipeline {
 
   environment {
     
-    	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'  
-    	//PROFILE = getProfileFromBranch(env.BRANCH_NAME)
-    	//DEST_ENV = getEnvFromBranch(env.BRANCH_NAME)
-    	//AGENT = getAgentFromBranch(env.BRANCH_NAME)
+    	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com' 
     	IMAGE = "registry.tools.orange-sonatel.com/dif/${ARTIFACT_ID}"
       	VERSION = readMavenPom().getVersion()
       	NAME = readMavenPom().getArtifactId()
@@ -341,10 +338,10 @@ pipeline {
   post {
 
      changed {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: '${EMAIL_RECIPIENTS}'
+      notifyTeam()
    }
     failure {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: '${EMAIL_RECIPIENTS}'
+      notifyTeam()
    }
     always {
       echo "[ALWAYS] Clean directory !!!"
@@ -359,26 +356,4 @@ def notifyTeam() {
     emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: "$EMAIL_RECIPIENTS"
 }
 
-def static getProfileFromBranch(branch) {
-    if (branch == 'staging') {
-        return 'rec'
-    } else {
-        return 'dev'
-    }
-}
 
-def static getEnvFromBranch(branch) {
-    if (branch == 'staging') {
-        return 'dsiapimanagement-rec'
-    } else {
-        return 'dacdifdsapimanagement-dev'
-    }
-}
-
-def static getAgentFromBranch(branch) {
-    if (branch == 'staging') {
-        return 'malaw-prod'
-    } else {
-        return 'malaw-dev'
-    }
-}
