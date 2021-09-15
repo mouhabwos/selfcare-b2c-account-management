@@ -313,6 +313,16 @@ pipeline {
 
 
 
+        // Continious Testing
+ stage('Run NR Tests on Preproduction Namespace') {
+     when { anyOf { branch 'master' } }
+     steps {
+         script {
+             build job: 'selfcare-api/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "Selfcare-API-PREPROD"],   [$class: 'StringParameterValue', name: 'SERVICES', value: "selfcareb2c-accountmanagement"]]
+         }
+     }
+ }
+
     // Continious Deployement
  stage('Deploy New Release on Preproduction Namespace') {
      when { anyOf { branch 'master' } }
@@ -327,15 +337,6 @@ pipeline {
      }
  }
     
-    // Continious Testing
- stage('Run NR Tests on Preproduction Namespace') {
-     when { anyOf { branch 'master' } }
-     steps {
-         script {
-             build job: 'selfcare-api/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "Selfcare-API-PREPROD"],   [$class: 'StringParameterValue', name: 'SERVICES', value: "selfcareb2c-accountmanagement"]]
-         }
-     }
- }
 
 
   }
