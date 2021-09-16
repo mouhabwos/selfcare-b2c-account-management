@@ -318,7 +318,7 @@ pipeline {
      when { anyOf { branch 'master' } }
      steps {
          script {
-             build job: 'selfcare-api/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "Selfcare-API-PREPROD"],   [$class: 'StringParameterValue', name: 'SERVICES', value: "selfcareb2c-accountmanagement"]]
+             build job: 'api-selfcare/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "Selfcare-API-PREPROD"],   [$class: 'StringParameterValue', name: 'SERVICES', value: "selfcareb2c-accountmanagement"]]
          }
      }
  }
