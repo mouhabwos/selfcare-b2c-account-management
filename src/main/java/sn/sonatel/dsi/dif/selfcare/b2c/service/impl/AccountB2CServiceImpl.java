@@ -212,12 +212,14 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     @Override
     public boolean checkNumberV2(String msisdn) {
 
+        log.debug ( "Service check Number : {}", msisdn);
+
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
 
-            log.debug ( "Service check Number : {}", msisdn);
-          return accountB2C.isPresent();
+          return accountB2C.isPresent() || ligne.isPresent() ;
     }
 
 
