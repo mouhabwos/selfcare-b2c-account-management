@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,12 +14,14 @@ import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
@@ -27,6 +30,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -349,6 +353,63 @@ public class AccountB2CServiceImplTest {
 
         boolean checkNumberV2 = accountB2CServiceImplUnderTest.checkNumberV2(accountB2C.getNumero()) ;
         assertTrue(checkNumberV2);
+
+    }
+
+    @Test(expected= NoSuchElementException.class)
+    public void testCheckNumberV3AccountShoudThrowException(){
+
+        CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
+        checkNumberRequest.setMsisdn("775266364");
+        checkNumberRequest.setUuid("UUID");
+        checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
+
+         accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+
+    }
+
+    @Test
+    public void testCheckNumberV3AccountShoudReturnAbonneStatusDTO(){
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("lastname");
+        accountB2C.setFirstName("firstname");
+        accountB2C.setNumero("778525265");
+        accountB2C.setAccountStatus(AccountStatus.FULL);
+         mockAccountB2CRepository.save(accountB2C);
+
+        CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
+        checkNumberRequest.setMsisdn("778525265");
+        checkNumberRequest.setUuid("UUID");
+        checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
+
+        AbonneStatusDTO abonneStatusDTO = accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+
+        Assertions.assertThat(abonneStatusDTO.getAccountStatus()).isEqualTo(AccountStatus.FULL);
+    }
+
+    @Test(expected = LigneAlreadyRattachedException.class)
+    public void testCheckNumberV3AccountShoudThrowExceptionWhenLingneRattache(){
+
+        AccountB2C accountB2C = new AccountB2C();
+        accountB2C.setLastName("lastname");
+        accountB2C.setFirstName("firstname");
+        accountB2C.setNumero("778525265");
+        accountB2C.setAccountStatus(AccountStatus.FULL);
+         mockAccountB2CRepository.save(accountB2C);
+
+        RattachementLigne  ligne = new RattachementLigne();
+        ligne.setNumero("774232024");
+        ligne.setAccountB2C(accountB2C);
+        ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
+        mockRattachementLigneRepository.save(ligne);
+
+        CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
+        checkNumberRequest.setMsisdn("774232024");
+        checkNumberRequest.setUuid("UUID");
+        checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
+
+       accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
 
     }
 

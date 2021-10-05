@@ -667,6 +667,25 @@ public class AccountB2CResourceIntTest {
     }
 
     @Test
+    public void checkNumberV3() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
+        checkNumberRequest.setMsisdn(MSISDN);
+        checkNumberRequest.setHmac(HMAC);
+        //checkNumberRequest.setUuid(UUID);
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/v3/check_number")
+            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
+            .header("X-UUID", UUID)
+            .content ( TestUtil.convertObjectToJsonBytes ( checkNumberRequest )))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @Transactional
     public void registerAccountB2CV2() throws Exception {
 
