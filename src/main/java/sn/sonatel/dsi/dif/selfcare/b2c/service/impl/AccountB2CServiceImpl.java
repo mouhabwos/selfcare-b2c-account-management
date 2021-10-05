@@ -208,7 +208,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest) {
+    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest) throws LigneAlreadyRattachedException,NoSuchElementException{
 
         log.debug("Service for check number version 3 for : {}", checkNumberRequest);
         checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
@@ -219,19 +219,25 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
 
-         rattachementLigneRepository.findByNumero(checkNumberRequest.getMsisdn()).orElseThrow(() -> {
-            log.debug("Error this login is already rattached  : {}", checkNumberRequest.getMsisdn());
+        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(checkNumberRequest.getMsisdn());
+        rattachementLigne.ifPresent(rattachementLigne1 -> {
+            log.debug("Error this login is already rattached  : {}", rattachementLigne1.getNumero());
             throw new LigneAlreadyRattachedException();
         });
 
-        AccountB2C accountB2C = accountB2CRepository.findOneByNumero(checkNumberRequest.getMsisdn()).orElseThrow(() -> {
-            log.debug("Error this login does not have any account : {}", checkNumberRequest.getMsisdn());
-            throw new NoSuchElementException("Le numero n'a pas de compte associe");
-        });
 
-        return AbonneStatusDTO.builder()
-            .accountStatus(accountB2C.getAccountStatus())
-            .build();
+        Optional<AccountB2C> optionalAccountB2C = accountB2CRepository.findOneByNumero(checkNumberRequest.getMsisdn());
+
+        if (optionalAccountB2C.isPresent()){
+            AccountB2C accountB2C=optionalAccountB2C.get();
+            return AbonneStatusDTO.builder()
+                .accountStatus(accountB2C.getAccountStatus())
+                .build();
+        }
+
+        log.debug("Error this login does not have any account : {}", checkNumberRequest.getMsisdn());
+        throw new NoSuchElementException("Le numero n'a pas de compte associe");
+
     }
 
     @Override
