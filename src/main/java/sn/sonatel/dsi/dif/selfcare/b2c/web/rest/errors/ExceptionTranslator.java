@@ -13,6 +13,7 @@ import org.zalando.problem.ProblemBuilder;
 import org.zalando.problem.Status;
 import org.zalando.problem.spring.web.advice.ProblemHandling;
 import org.zalando.problem.violations.ConstraintViolationProblem;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 
 import javax.annotation.Nonnull;
@@ -89,6 +90,15 @@ public class ExceptionTranslator implements ProblemHandling {
         Problem problem = Problem.builder().withDetail("")
             .withStatus(Status.NOT_FOUND)
             .with(MESSAGE, ErrorConstants.ENTITY_NOT_FOUND_TYPE)
+            .build();
+        return create(ex, problem, request);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Problem> handleInvalidHmacException(ValidationHmacService.InvalidHmacException ex, NativeWebRequest request) {
+        Problem problem = Problem.builder().withDetail(ex.getMessage())
+            .withStatus(Status.BAD_REQUEST)
+            .with(MESSAGE, ErrorConstants.PROBLEM_BASE_URL)
             .build();
         return create(ex, problem, request);
     }
