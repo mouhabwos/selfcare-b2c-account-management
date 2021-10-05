@@ -35,6 +35,21 @@ public class ValidationHmacService {
 
     }
 
+    /**
+     * evol: 04/12/2019
+     * validates HMAC from @link RegistrationRequest params
+     * @param msisdn
+     * @return true if valid else throw {@link InvalidHmacException}
+     * @author: Bouya
+     */
+    public boolean checkHmac(String hmac, String msisdn, String uuid) {
+        log.trace("Validating HMAC : {} and uuid : {} for number : {}  ",hmac,uuid, msisdn);
+        if (this.compareHmac(hmac, msisdn, uuid)) {
+            return true;
+        }
+        throw new InvalidHmacException("Hmac non valide");
+    }
+
         /**
      * compare and return the result between given hmac and computed one
      * @param hmac: the hmac to validate
@@ -46,5 +61,11 @@ public class ValidationHmacService {
     public boolean compareHmac(String hmac, String msisdn, String uuid) {
         String computedHmac = SHA256Handler.encryptSHA256(String.format("%s%s%s%s", INDICATIF+msisdn, uuid, new SimpleDateFormat("dd/MM/yyyy").format(new Date()), applicationProperties.getHmacSecret()));
         return computedHmac.equals(hmac);
+    }
+
+    public static class InvalidHmacException extends RuntimeException {
+        public InvalidHmacException(String msg) {
+            super(msg);
+        }
     }
 }

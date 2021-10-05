@@ -208,16 +208,12 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest) throws LigneAlreadyRattachedException,NoSuchElementException{
+    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest){
 
         log.debug("Service for check number version 3 for : {}", checkNumberRequest);
         checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
 
-        boolean validateHmac = validationHmacService.validateHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
-
-        if(!validateHmac){
-            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
-        }
+        validationHmacService.checkHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
 
         Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(checkNumberRequest.getMsisdn());
         rattachementLigne.ifPresent(rattachementLigne1 -> {
