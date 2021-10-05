@@ -47,4 +47,12 @@ public class ValidationHmacServiceTest {
         // Verify the results
         assertFalse(result);
     }
+
+    @Test(expected = ValidationHmacService.InvalidHmacException.class)
+    public void testCheckHmacFalse() {
+
+        // Run the test
+        validationHmacServiceUnderTest.checkHmac(HMAC, MSISDN, "UUID");
+
+    }
 }
