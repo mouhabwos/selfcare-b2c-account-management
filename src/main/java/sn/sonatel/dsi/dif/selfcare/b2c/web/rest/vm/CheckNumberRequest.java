@@ -46,4 +46,13 @@ public class CheckNumberRequest {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
+    @Override
+    public String toString() {
+        return "CheckNumberRequest{" +
+            "msisdn:'" + msisdn + '\'' +
+            ", hmac:'" + hmac + '\'' +
+            ", uuid:'" + uuid + '\'' +
+            '}';
+    }
 }
