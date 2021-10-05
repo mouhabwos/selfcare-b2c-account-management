@@ -173,6 +173,8 @@ public class AccountB2CServiceImplTest {
     @Test(expected = LigneAlreadyRattachedException.class)
     public void testRegisterAccountB2CNumberAlreadyRattached() {
 
+        mockRattachementLigneRepository.deleteAll();
+        mockAccountB2CRepository.deleteAll();
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
@@ -371,6 +373,8 @@ public class AccountB2CServiceImplTest {
     @Test
     public void testCheckNumberV3AccountShoudReturnAbonneStatusDTO(){
 
+        mockRattachementLigneRepository.deleteAll();
+        mockAccountB2CRepository.deleteAll();
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
@@ -391,6 +395,8 @@ public class AccountB2CServiceImplTest {
     @Test(expected = LigneAlreadyRattachedException.class)
     public void testCheckNumberV3AccountShoudThrowExceptionWhenLingneRattache(){
 
+        mockRattachementLigneRepository.deleteAll();
+        mockAccountB2CRepository.deleteAll();
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
