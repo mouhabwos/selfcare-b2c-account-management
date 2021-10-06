@@ -8,9 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.AccountB2CSecurityService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -41,16 +43,18 @@ public class AccountB2CResource {
 
 
     private final AccountB2CService accountB2CService;
+    private final AccountB2CSecurityService accountB2cSecurityService;
 
     private final SelfcareOTPService otpService;
 
     private static final String IDNULL = "idnull";
 
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService) {
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, AccountB2CSecurityService accountB2cSecurityService) {
 
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
 
+        this.accountB2cSecurityService = accountB2cSecurityService;
     }
 
 
@@ -98,6 +102,19 @@ public class AccountB2CResource {
         AccountB2C result = accountB2CService.registerAccountB2CV2(managedUserVM);
 
         return ResponseEntity.ok(result);
+    }
+
+    @Auditable(description = Message.Account.ADD)
+    @PostMapping("/v3/register")
+    public ResponseEntity<OAuth2AccessToken> registerAccountB2CV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+        log.debug("REST request to save AccountB2C version 3 : {}", managedUserVM);
+
+        if (managedUserVM.getId() != null) {
+            throw new BadRequestAlertException("Id should be null", ENTITY_NAME, IDNULL);
+        }
+        managedUserVM.setUuid(uuid);
+
+        return ResponseEntity.ok(accountB2cSecurityService.registerAccountB2CV3(managedUserVM));
     }
 
 

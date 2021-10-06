@@ -96,7 +96,7 @@ pipeline {
             }
         }
 
-    
+
             /*  ================ Mysql service DEV-REC ================================= */
     stage('Malaw DEV - Mysql service') {
             agent {label 'malaw-dev'}
@@ -182,7 +182,7 @@ pipeline {
     /* ======================================  DEBUT Deploy DEV-REC  ======================================== */
                 stage('Malaw DEV - Deploy') {
                     agent {label 'malaw-dev'}
-                  when { branch 'develop'}
+                  when { branch 'SELFB2C-3734-deploy-dev'}
                       steps {
                         //Generate maven-resource-plugin param files"
                         sh 'mvn validate'

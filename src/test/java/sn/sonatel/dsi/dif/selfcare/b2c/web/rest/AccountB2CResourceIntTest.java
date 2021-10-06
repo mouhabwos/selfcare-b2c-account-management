@@ -14,10 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -28,6 +26,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.AccountB2CSecurityService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -37,7 +36,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -121,14 +119,15 @@ public class AccountB2CResourceIntTest {
 
     @Mock
     private SelfcareOTPService otpService;
-
+    @Mock
+    private AccountB2CSecurityService accountB2cSecurityService;
 
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService, accountB2cSecurityService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -527,7 +526,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService, accountB2cSecurityService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -715,7 +714,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService, accountB2cSecurityService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

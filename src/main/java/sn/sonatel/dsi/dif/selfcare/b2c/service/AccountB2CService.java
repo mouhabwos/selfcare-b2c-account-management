@@ -39,4 +39,7 @@ public interface AccountB2CService {
     AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM);
 
     boolean checkNumberV2(String msisdn);
-}
+
+    AccountB2C register(ManagedUserVM managedUserVM);
+
+    }
