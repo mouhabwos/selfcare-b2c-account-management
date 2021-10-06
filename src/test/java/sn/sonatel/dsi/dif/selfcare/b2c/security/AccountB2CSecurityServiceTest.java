@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -28,13 +29,15 @@ public class AccountB2CSecurityServiceTest {
     private  RestTemplate restTemplate;
     @Mock
     private  AccountB2CService accountB2CService;
+    @Mock
+    private ValidationHmacService validationHmacService;
 
     @Before
     public void setUp() {
         initMocks(this);
         jHipsterProperties= new JHipsterProperties();
         jHipsterProperties.getSecurity().getClientAuthorization().setAccessTokenUri("http://selfcare-uaa/oauth/token");
-        accountB2cSecurityService = new AccountB2CSecurityService(jHipsterProperties,restTemplate,accountB2CService);
+        accountB2cSecurityService = new AccountB2CSecurityService(jHipsterProperties,restTemplate,accountB2CService, validationHmacService);
     }
 
     @Test
