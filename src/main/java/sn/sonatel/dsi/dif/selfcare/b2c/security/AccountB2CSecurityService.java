@@ -40,7 +40,7 @@ public class AccountB2CSecurityService {
 
     public OAuth2AccessToken registerAccountB2CV3(ManagedUserVM managedUserVM) {
         log.debug("Register account {}",managedUserVM);
-        validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
+        //validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
         managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
         AccountB2C accountB2C = accountB2CService.register(managedUserVM);
         log.debug("Registered account {}",accountB2C);
