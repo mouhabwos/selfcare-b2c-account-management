@@ -16,10 +16,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
@@ -27,6 +24,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -207,6 +205,35 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
         checkExistingAccountForNumber(checkNumberRequest.getMsisdn());
+    }
+
+    @Override
+    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest){
+
+        log.debug("Service for check number version 3 for : {}", checkNumberRequest);
+        checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
+
+        validationHmacService.checkHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
+
+        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(checkNumberRequest.getMsisdn());
+        rattachementLigne.ifPresent(rattachementLigne1 -> {
+            log.debug("Error this login is already rattached  : {}", rattachementLigne1.getNumero());
+            throw new LigneAlreadyRattachedException();
+        });
+
+
+        Optional<AccountB2C> optionalAccountB2C = accountB2CRepository.findOneByNumero(checkNumberRequest.getMsisdn());
+
+        if (optionalAccountB2C.isPresent()){
+            AccountB2C accountB2C=optionalAccountB2C.get();
+            return AbonneStatusDTO.builder()
+                .accountStatus(accountB2C.getAccountStatus())
+                .build();
+        }
+
+        log.debug("Error this login does not have any account : {}", checkNumberRequest.getMsisdn());
+        throw new NoSuchElementException("Le numero n'a pas de compte associe");
+
     }
 
     @Override

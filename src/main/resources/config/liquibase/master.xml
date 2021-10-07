@@ -82,4 +82,7 @@ update varchar code_formule to NotificationInformation table
     <!--  liquibase changelogs : for creation tables file_information -->
     <include file="config/liquibase/changelog/20210331135812_changelog.xml" relativeToChangelogFile="false"/>
 
+    <!--  liquibase changelogs : add status in table account_b2c -->
+    <include file="config/liquibase/changelog/20211005094556_changelog.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
@@ -147,6 +148,14 @@ public class AccountB2CResource {
         checkNumberRequest.setUuid(uuid);
         accountB2CService.checkNumberV2(checkNumberRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @Auditable(description = Message.Account.CHECK_Numero)
+    @PostMapping("/v3/check_number")
+    public ResponseEntity<AbonneStatusDTO> checkNumberV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+        log.debug("REST request to check AccountB2C  existence: {}", checkNumberRequest);
+        checkNumberRequest.setUuid(uuid);
+        return ResponseEntity.ok(accountB2CService.checkNumberV3(checkNumberRequest));
     }
 
     @Auditable(description = Message.Account.CHECK_Email)
