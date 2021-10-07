@@ -31,7 +31,7 @@ public class AccountB2CSecurityService {
     private final ValidationHmacService validationHmacService;
 
 
-    public AccountB2CSecurityService(JHipsterProperties jHipsterProperties, @Qualifier("vanillaRestTemplate") RestTemplate restTemplate, AccountB2CService accountB2CService, ValidationHmacService validationHmacService) {
+    public AccountB2CSecurityService(JHipsterProperties jHipsterProperties, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CService accountB2CService, ValidationHmacService validationHmacService) {
         this.jHipsterProperties = jHipsterProperties;
         this.restTemplate = restTemplate;
         this.accountB2CService = accountB2CService;
