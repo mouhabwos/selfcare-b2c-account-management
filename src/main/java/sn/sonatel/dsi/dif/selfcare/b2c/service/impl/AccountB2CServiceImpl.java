@@ -13,6 +13,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
@@ -87,7 +88,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
         log.debug("Service for register AccountB2C : {}", managedUserVM);
-        return register(managedUserVM);
+        return register(managedUserVM, true);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
 
-        return register(managedUserVM);
+        return register(managedUserVM, true);
     }
 
 
@@ -286,7 +287,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
     }
 
-    public AccountB2C register(ManagedUserVM managedUserVM){
+    public AccountB2C register(ManagedUserVM managedUserVM, boolean isFull){
 
         checkExistingAccountForNumber(managedUserVM.getLogin());
 
@@ -312,6 +313,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setHashMsisdn(SHA256Handler.encryptSHA256(managedUserVM.getLogin()));
                 result.setEmail(managedUserVM.getEmail());
                 result.setClientId(managedUserVM.getClientId());
+                result.setAccountStatus(isFull? AccountStatus.FULL:AccountStatus.LITE);
                 result = accountB2CRepository.save(result);
 
                 this.boosterManager.applyWelcomeBooster(result.getNumero());

@@ -40,6 +40,6 @@ public interface AccountB2CService {
 
     boolean checkNumberV2(String msisdn);
 
-    AccountB2C register(ManagedUserVM managedUserVM);
+    AccountB2C register(ManagedUserVM managedUserVM, boolean isFull);
 
     }

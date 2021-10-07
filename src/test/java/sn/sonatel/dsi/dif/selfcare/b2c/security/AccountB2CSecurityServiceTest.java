@@ -49,7 +49,7 @@ public class AccountB2CSecurityServiceTest {
         managedUserVM.setPassword("password10");
         managedUserVM.setLogin("782900000");
 
-        Mockito.when(accountB2CService.register(Mockito.any())).thenReturn(new AccountB2C());
+        Mockito.when(accountB2CService.register(Mockito.any(), true)).thenReturn(new AccountB2C());
         Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(ResponseEntity.ok(new DefaultOAuth2AccessToken("token")));
 
         OAuth2AccessToken oAuth2AccessToken = accountB2cSecurityService.registerAccountB2CV3(managedUserVM);
@@ -63,7 +63,7 @@ public class AccountB2CSecurityServiceTest {
         managedUserVM.setPassword("password10");
         managedUserVM.setLogin("782900000");
 
-        Mockito.when(accountB2CService.register(Mockito.any())).thenReturn(new AccountB2C());
+        Mockito.when(accountB2CService.register(Mockito.any(), true)).thenReturn(new AccountB2C());
         Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(ResponseEntity.notFound().build());
 
          accountB2cSecurityService.registerAccountB2CV3(managedUserVM);
@@ -78,7 +78,7 @@ public class AccountB2CSecurityServiceTest {
         managedUserVM.setPassword("password10");
         managedUserVM.setLogin("782900000");
 
-        Mockito.when(accountB2CService.register(Mockito.any())).thenReturn(new AccountB2C());
+        Mockito.when(accountB2CService.register(Mockito.any(), true)).thenReturn(new AccountB2C());
         Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(ResponseEntity.notFound().build());
 
          accountB2cSecurityService.registerAccountB2CV3(managedUserVM);

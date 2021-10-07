@@ -5,13 +5,8 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.*;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2TokenEndpointClient;
@@ -47,8 +42,8 @@ public class AccountB2CSecurityService {
         managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin()));
         validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
         managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
-        AccountB2C accountB2C = accountB2CService.register(managedUserVM);
-        log.debug("Registered account {}",accountB2C);
+        AccountB2C accountB2C = accountB2CService.register(managedUserVM, false);
+        log.debug("Registered account {} with status {}",accountB2C,accountB2C.getAccountStatus());
        return this.authorizationClient.sendPasswordGrant(managedUserVM.getLogin(), managedUserVM.getPassword());
         //return this.sendPasswordGrant(managedUserVM.getLogin(), managedUserVM.getPassword());
     }
