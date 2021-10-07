@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidClientExcept
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2TokenEndpointClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
@@ -31,13 +32,15 @@ public class AccountB2CSecurityServiceTest {
     private  AccountB2CService accountB2CService;
     @Mock
     private ValidationHmacService validationHmacService;
+    @Mock
+    private OAuth2TokenEndpointClient authorizationClient;
 
     @Before
     public void setUp() {
         initMocks(this);
         jHipsterProperties= new JHipsterProperties();
         jHipsterProperties.getSecurity().getClientAuthorization().setAccessTokenUri("http://selfcare-uaa/oauth/token");
-        accountB2cSecurityService = new AccountB2CSecurityService(jHipsterProperties,restTemplate,accountB2CService, validationHmacService);
+        accountB2cSecurityService = new AccountB2CSecurityService(jHipsterProperties,restTemplate,accountB2CService, validationHmacService, authorizationClient);
     }
 
     @Test
