@@ -286,7 +286,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
     }
 
-    private AccountB2C register(ManagedUserVM managedUserVM){
+    public AccountB2C register(ManagedUserVM managedUserVM){
 
         checkExistingAccountForNumber(managedUserVM.getLogin());
 

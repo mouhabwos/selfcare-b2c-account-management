@@ -264,6 +264,9 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     }
 
     public AccountStatus getAccountStatus() {
+        if (this.accountStatus == null) {
+            return AccountStatus.FULL;
+        }
         return accountStatus;
     }
 
