@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 @Service
@@ -40,7 +41,8 @@ public class AccountB2CSecurityService {
 
     public OAuth2AccessToken registerAccountB2CV3(ManagedUserVM managedUserVM) {
         log.debug("Register account {}",managedUserVM);
-        //validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
+        managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin()));
+        validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
         managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
         AccountB2C accountB2C = accountB2CService.register(managedUserVM);
         log.debug("Registered account {}",accountB2C);
