@@ -47,9 +47,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://localhost/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password: adminroot
+        password: digitalfactory
         hikari:
             auto-commit: false
             data-source-properties:
@@ -91,7 +91,7 @@ spring:
             enabled: false
 
 server:
-    port: 8720 #@server.port.docker.expose@
+    port: @server.port.docker.expose@
 
 # ===================================================================
 # JHipster specific properties
