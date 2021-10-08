@@ -1,16 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.security;
 
-import io.github.jhipster.config.JHipsterProperties;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2TokenEndpointClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
@@ -27,17 +24,13 @@ public class AccountB2CSecurityService {
     private static final int PASSWORD_MAX_LENGTH = 19;
 
 
-    protected final JHipsterProperties jHipsterProperties;
-    protected final RestTemplate restTemplate;
     private final AccountB2CService accountB2CService;
     private final ValidationHmacService validationHmacService;
     private final SelfcareUAAService uaaService;
     private final OAuth2TokenEndpointClient authorizationClient;
 
 
-    public AccountB2CSecurityService(JHipsterProperties jHipsterProperties, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CService accountB2CService, ValidationHmacService validationHmacService, OAuth2TokenEndpointClient authorizationClient, SelfcareUAAService uaaService) {
-        this.jHipsterProperties = jHipsterProperties;
-        this.restTemplate = restTemplate;
+    public AccountB2CSecurityService(AccountB2CService accountB2CService, ValidationHmacService validationHmacService, OAuth2TokenEndpointClient authorizationClient, SelfcareUAAService uaaService) {
         this.accountB2CService = accountB2CService;
         this.validationHmacService = validationHmacService;
         this.uaaService = uaaService;
