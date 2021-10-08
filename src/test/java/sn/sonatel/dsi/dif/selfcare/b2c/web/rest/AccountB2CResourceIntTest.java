@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,6 +37,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -747,6 +749,29 @@ public class AccountB2CResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(content().string("false"));
+
+    }
+
+    @Test
+    @Transactional
+    public void resetPassword() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        when(accountB2cSecurityService.resetPassword(Mockito.anyString(), Mockito.any())).thenReturn(new DefaultOAuth2AccessToken("access-token"));
+
+        ResetPasswordVM passwordVM = new ResetPasswordVM();
+        passwordVM.setLogin(MSISDN);
+        passwordVM.setHmac(HMAC);
+
+        restAccountB2CMockMvc.perform(put("/api/account-management/v1/lite/reset-password")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .header("X-Selfcare-Uuid", UUID)
+            .content(TestUtil.convertObjectToJsonBytes(passwordVM)))
+            .andExpect(status().isOk());
+
 
     }
 }

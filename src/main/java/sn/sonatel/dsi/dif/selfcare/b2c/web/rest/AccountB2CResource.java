@@ -25,6 +25,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -231,6 +232,13 @@ public class AccountB2CResource {
     public Boolean checkNumberV2(@PathVariable  String  msisdn) {
         log.debug("REST request to check number : {}", msisdn);
         return accountB2CService.checkNumberV2(msisdn);
+    }
+
+    @Auditable(description = Message.Account.RESET_PASSWORD)
+    @PutMapping(path = "/v1/lite/reset-password")
+    public ResponseEntity<OAuth2AccessToken> resetPasswordLiteMode(@RequestHeader("X-Selfcare-Uuid") String uuid, @RequestBody ResetPasswordVM resetPasswordVM) {
+        log.debug("Request to reset password B2C client Lite Mode ");
+        return ResponseEntity.ok(accountB2cSecurityService.resetPassword(uuid, resetPasswordVM));
     }
 
 

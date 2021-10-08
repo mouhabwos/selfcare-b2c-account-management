@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.validation.Valid;
 
@@ -31,6 +32,11 @@ public class ServiceUAAFallBack implements ServiceUAA {
     @Override
     public ResponseEntity updateUser(@Valid UserDTOExploitant userDTO) {
 
+        return this.handleError();
+    }
+
+    @Override
+    public ResponseEntity resetPasswordB2C(String uuid, ResetPasswordVM resetPasswordVM) {
         return this.handleError();
     }
 
