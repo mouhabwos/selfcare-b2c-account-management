@@ -103,7 +103,7 @@ pipeline {
             }
         }
 
-    
+
             /*  ================ Mysql service DEV-REC ================================= */
     stage('Malaw DEV - Mysql service') {
             agent {label 'malaw-dev'}
