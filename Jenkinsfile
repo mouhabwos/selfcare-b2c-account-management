@@ -29,36 +29,12 @@ pipeline {
 
      stage('Clean Package') {
         steps {
-           sh 'mvn clean package'
+           sh 'mvn clean package -Dmaven.test.skip=true'
            stash includes: 'target/*', name: 'target'
         }
      }
 
 
-
-    stage('Units Tests') {
-      steps {
-        sh 'mvn clean test -Dmaven.test.skip=false'
-      }
-      post {
-        success {
-          junit 'target/surefire-reports/**/*.xml'
-        }
-
-      }
-
-    }
-
-
-     stage('SonarQube Scan') {
-       steps{
-         script{
-             withSonarQubeEnv('SonarQubeServer') {
-             sh 'mvn sonar:sonar -X'
-            }
-        }
-      }
- 	 }
 
 
     stage('Build & Push Docker image') {
@@ -81,20 +57,6 @@ pipeline {
 
 
 
-         stage("SonarQube Quality Gate") {
-          steps{
-              script{
-                timeout(time: 10, unit: 'MINUTES') {
-                   sleep 5
-                   def qg = waitForQualityGate()
-                   if (qg.status != 'OK') {
-                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                   }
-                }
-
-              }
-            }
-        }
 
 
             /*  ================ Mysql service DEV-REC ================================= */
@@ -182,7 +144,7 @@ pipeline {
     /* ======================================  DEBUT Deploy DEV-REC  ======================================== */
                 stage('Malaw DEV - Deploy') {
                     agent {label 'malaw-dev'}
-                  when { branch 'develop'}
+                  when { branch 'SELFB2C-3734-deploy-dev'}
                       steps {
                         //Generate maven-resource-plugin param files"
                         sh 'mvn validate'

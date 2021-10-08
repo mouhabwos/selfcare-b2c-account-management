@@ -31,7 +31,7 @@ public class NotificationInformation implements Serializable {
     protected Long id;
 
     @ManyToOne
-    @JsonIgnoreProperties("notificationInformations")
+    @JsonIgnoreProperties({"notificationInformations","users"})
     private AccountB2C accountB2C;
 
     public NotificationInformation() {
@@ -72,6 +72,10 @@ public class NotificationInformation implements Serializable {
 
     @Override
     public String toString() {
-        return LogUtil.convertObjectToJsonResponse(this);
+        return "NotificationInformation{" +
+            "codeFormule:'" + codeFormule + '\'' +
+            ", firebaseId:'" + firebaseId + '\'' +
+            ", id:" + id +
+            '}';
     }
 }
