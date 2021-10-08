@@ -234,6 +234,7 @@ public class AccountB2CResource {
         return accountB2CService.checkNumberV2(msisdn);
     }
 
+    @Auditable(description = Message.Account.RESET_PASSWORD)
     @PutMapping(path = "/v1/lite/reset-password")
     public ResponseEntity<OAuth2AccessToken> resetPasswordLiteMode(@RequestHeader("X-Selfcare-Uuid") String uuid, @RequestBody ResetPasswordVM resetPasswordVM) {
         log.debug("Request to reset password B2C client Lite Mode ");
