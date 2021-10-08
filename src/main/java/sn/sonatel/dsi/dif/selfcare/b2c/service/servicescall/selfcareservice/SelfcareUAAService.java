@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServiceUAA;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.validation.Valid;
 
@@ -22,6 +23,10 @@ public class SelfcareUAAService {
     public  ResponseEntity regiserAccount(ManagedUserVM managedUserVM) {
 
         return serviceUAA.register(managedUserVM);
+    }
+
+    public ResponseEntity resetPassword(ResetPasswordVM resetPasswordVM, String uuid){
+        return serviceUAA.resetPasswordB2C(uuid, resetPasswordVM);
     }
 
     public void updateUser(@Valid @RequestBody UserDTOExploitant userDTO) {

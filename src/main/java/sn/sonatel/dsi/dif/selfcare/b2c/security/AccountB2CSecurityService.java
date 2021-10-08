@@ -16,7 +16,10 @@ import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 @Service
 public class AccountB2CSecurityService {
@@ -29,13 +32,15 @@ public class AccountB2CSecurityService {
     protected final RestTemplate restTemplate;
     private final AccountB2CService accountB2CService;
     private final ValidationHmacService validationHmacService;
+    private final SelfcareUAAService uaaService;
 
 
-    public AccountB2CSecurityService(JHipsterProperties jHipsterProperties, @Qualifier("vanillaRestTemplate") RestTemplate restTemplate, AccountB2CService accountB2CService, ValidationHmacService validationHmacService) {
+    public AccountB2CSecurityService(JHipsterProperties jHipsterProperties, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CService accountB2CService, ValidationHmacService validationHmacService, SelfcareUAAService uaaService) {
         this.jHipsterProperties = jHipsterProperties;
         this.restTemplate = restTemplate;
         this.accountB2CService = accountB2CService;
         this.validationHmacService = validationHmacService;
+        this.uaaService = uaaService;
     }
 
     public OAuth2AccessToken registerAccountB2CV3(ManagedUserVM managedUserVM) {
@@ -45,6 +50,16 @@ public class AccountB2CSecurityService {
         AccountB2C accountB2C = accountB2CService.register(managedUserVM);
         log.debug("Registered account {}",accountB2C);
         return this.sendPasswordGrant(managedUserVM.getLogin(), managedUserVM.getPassword());
+    }
+    public OAuth2AccessToken resetPassword(String uuid, ResetPasswordVM resetPasswordVM){
+        log.debug("Service to reset password for account {}",resetPasswordVM);
+        resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
+        resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(resetPasswordVM.getLogin()));
+        ResponseEntity responseEntity = uaaService.resetPassword(resetPasswordVM, uuid);
+        if(responseEntity.getStatusCode().equals(HttpStatus.OK)){
+            return this.sendPasswordGrant(resetPasswordVM.getLogin(), resetPasswordVM.getNewPassword());
+        }
+        throw new HttpClientErrorException(responseEntity.getStatusCode());
     }
 
     private OAuth2AccessToken sendPasswordGrant(String username, String password) {
