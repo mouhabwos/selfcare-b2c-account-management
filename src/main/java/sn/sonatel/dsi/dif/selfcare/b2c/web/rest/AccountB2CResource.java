@@ -8,10 +8,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.AccountB2CSecurityService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.EmailExistDTO;
@@ -22,6 +25,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -40,16 +44,18 @@ public class AccountB2CResource {
 
 
     private final AccountB2CService accountB2CService;
+    private final AccountB2CSecurityService accountB2cSecurityService;
 
     private final SelfcareOTPService otpService;
 
     private static final String IDNULL = "idnull";
 
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService) {
+    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, AccountB2CSecurityService accountB2cSecurityService) {
 
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
 
+        this.accountB2cSecurityService = accountB2cSecurityService;
     }
 
 
@@ -97,6 +103,19 @@ public class AccountB2CResource {
         AccountB2C result = accountB2CService.registerAccountB2CV2(managedUserVM);
 
         return ResponseEntity.ok(result);
+    }
+
+    @Auditable(description = Message.Account.ADD)
+    @PostMapping("/v3/register")
+    public ResponseEntity<OAuth2AccessToken> registerAccountB2CV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+        log.debug("REST request to save AccountB2C version 3 : {}", managedUserVM);
+
+        if (managedUserVM.getId() != null) {
+            throw new BadRequestAlertException("Id should be null", ENTITY_NAME, IDNULL);
+        }
+        managedUserVM.setUuid(uuid);
+
+        return ResponseEntity.ok(accountB2cSecurityService.registerAccountB2CV3(managedUserVM));
     }
 
 
@@ -147,6 +166,14 @@ public class AccountB2CResource {
         checkNumberRequest.setUuid(uuid);
         accountB2CService.checkNumberV2(checkNumberRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @Auditable(description = Message.Account.CHECK_Numero)
+    @PostMapping("/v3/check_number")
+    public ResponseEntity<AbonneStatusDTO> checkNumberV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+        log.debug("REST request to check AccountB2C  existence: {}", checkNumberRequest);
+        checkNumberRequest.setUuid(uuid);
+        return ResponseEntity.ok(accountB2CService.checkNumberV3(checkNumberRequest));
     }
 
     @Auditable(description = Message.Account.CHECK_Email)
@@ -205,6 +232,13 @@ public class AccountB2CResource {
     public Boolean checkNumberV2(@PathVariable  String  msisdn) {
         log.debug("REST request to check number : {}", msisdn);
         return accountB2CService.checkNumberV2(msisdn);
+    }
+
+    @Auditable(description = Message.Account.RESET_PASSWORD)
+    @PutMapping(path = "/v1/lite/reset-password")
+    public ResponseEntity<OAuth2AccessToken> resetPasswordLiteMode(@RequestHeader("X-Selfcare-Uuid") String uuid, @RequestBody ResetPasswordVM resetPasswordVM) {
+        log.debug("Request to reset password B2C client Lite Mode ");
+        return ResponseEntity.ok(accountB2cSecurityService.resetPassword(uuid, resetPasswordVM));
     }
 
 

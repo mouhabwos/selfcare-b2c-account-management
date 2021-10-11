@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
@@ -33,7 +34,12 @@ public interface AccountB2CService {
 
     void checkNumberV2(CheckNumberRequest checkNumberRequest);
 
+    AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest);
+
     AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM);
 
     boolean checkNumberV2(String msisdn);
-}
+
+    AccountB2C register(ManagedUserVM managedUserVM, boolean isFull);
+
+    }
