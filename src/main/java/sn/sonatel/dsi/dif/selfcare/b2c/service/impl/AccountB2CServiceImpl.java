@@ -13,13 +13,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountDTOExploitant;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
@@ -27,6 +25,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -89,7 +88,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
         log.debug("Service for register AccountB2C : {}", managedUserVM);
-        return register(managedUserVM);
+        return register(managedUserVM, true);
     }
 
     @Override
@@ -105,7 +104,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
 
-        return register(managedUserVM);
+        return register(managedUserVM, true);
     }
 
 
@@ -210,14 +209,45 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
+    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest){
+
+        log.debug("Service for check number version 3 for : {}", checkNumberRequest);
+        checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
+
+        validationHmacService.checkHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
+
+        Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(checkNumberRequest.getMsisdn());
+        rattachementLigne.ifPresent(rattachementLigne1 -> {
+            log.debug("Error this login is already rattached  : {}", rattachementLigne1.getNumero());
+            throw new LigneAlreadyRattachedException();
+        });
+
+
+        Optional<AccountB2C> optionalAccountB2C = accountB2CRepository.findOneByNumero(checkNumberRequest.getMsisdn());
+
+        if (optionalAccountB2C.isPresent()){
+            AccountB2C accountB2C=optionalAccountB2C.get();
+            return AbonneStatusDTO.builder()
+                .accountStatus(accountB2C.getAccountStatus())
+                .build();
+        }
+
+        log.debug("Error this login does not have any account : {}", checkNumberRequest.getMsisdn());
+        throw new NoSuchElementException("Le numero n'a pas de compte associe");
+
+    }
+
+    @Override
     public boolean checkNumberV2(String msisdn) {
+
+        log.debug ( "Service check Number : {}", msisdn);
 
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
 
-            log.debug ( "Service check Number : {}", msisdn);
-          return accountB2C.isPresent();
+          return accountB2C.isPresent() || ligne.isPresent() ;
     }
 
 
@@ -257,7 +287,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
     }
 
-    private AccountB2C register(ManagedUserVM managedUserVM){
+    public AccountB2C register(ManagedUserVM managedUserVM, boolean isFull){
 
         checkExistingAccountForNumber(managedUserVM.getLogin());
 
@@ -283,6 +313,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setHashMsisdn(SHA256Handler.encryptSHA256(managedUserVM.getLogin()));
                 result.setEmail(managedUserVM.getEmail());
                 result.setClientId(managedUserVM.getClientId());
+                result.setAccountStatus(isFull? AccountStatus.FULL:AccountStatus.LITE);
                 result = accountB2CRepository.save(result);
 
                 this.boosterManager.applyWelcomeBooster(result.getNumero());

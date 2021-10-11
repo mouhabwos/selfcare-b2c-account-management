@@ -57,6 +57,7 @@ public final class Constants {
 
     public static final String REGISTER_ACCOUNT = "/api/register";
     public static final String UAA_UPDATE_USERS = "/api/extern/users";
+    public static final String UAA_RESET_PASSWORD = "/api/account/b2c/reset-password";
 
     public static final String URL_CHECK_CODE_OTP = "/api/code-otp-infos/check";
 

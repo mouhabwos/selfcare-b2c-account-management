@@ -5,8 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedDate;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -85,6 +85,10 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<NotificationInformation> notificationInformations = new HashSet<>();
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
 
     public ZonedDateTime getDerniereConnnexionDate() {
         return derniereConnnexionDate;
@@ -259,7 +263,17 @@ public class AccountB2C extends NumeroDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    public AccountStatus getAccountStatus() {
+        if (this.accountStatus == null) {
+            return AccountStatus.FULL;
+        }
+        return accountStatus;
+    }
+
+    public void setAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+// jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

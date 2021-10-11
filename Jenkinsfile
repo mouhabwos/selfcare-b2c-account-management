@@ -83,7 +83,7 @@ pipeline {
 
 
 
-         /*stage("SonarQube Quality Gate") {
+         stage("SonarQube Quality Gate") {
           steps{
               script{
                 timeout(time: 10, unit: 'MINUTES') {
@@ -96,7 +96,7 @@ pipeline {
 
               }
             }
-        }*/
+        }
 
 
             /*  ================ Mysql service DEV-REC ================================= */
@@ -326,8 +326,9 @@ pipeline {
          }
      }
  }
-    
 
+
+  }
 
         // Continious Testing
  stage('Run NR Tests on Preproduction Namespace') {

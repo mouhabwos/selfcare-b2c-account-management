@@ -14,10 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -28,6 +27,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.AccountB2CSecurityService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
@@ -37,7 +37,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.NumberRequest;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -121,14 +121,15 @@ public class AccountB2CResourceIntTest {
 
     @Mock
     private SelfcareOTPService otpService;
-
+    @Mock
+    private AccountB2CSecurityService accountB2cSecurityService;
 
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CService, otpService, accountB2cSecurityService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -527,7 +528,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService, accountB2cSecurityService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -667,6 +668,25 @@ public class AccountB2CResourceIntTest {
     }
 
     @Test
+    public void checkNumberV3() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
+        checkNumberRequest.setMsisdn(MSISDN);
+        checkNumberRequest.setHmac(HMAC);
+        //checkNumberRequest.setUuid(UUID);
+
+        restAccountB2CMockMvc.perform(post("/api/account-management/v3/check_number")
+            .contentType ( TestUtil.APPLICATION_JSON_UTF8 )
+            .header("X-UUID", UUID)
+            .content ( TestUtil.convertObjectToJsonBytes ( checkNumberRequest )))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @Transactional
     public void registerAccountB2CV2() throws Exception {
 
@@ -696,7 +716,7 @@ public class AccountB2CResourceIntTest {
 
         AccountB2CService accountB2CServices = mock(AccountB2CService.class);
 
-        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService);
+        final AccountB2CResource accountB2CResource = new AccountB2CResource(accountB2CServices, otpService, accountB2cSecurityService);
 
         this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(accountB2CResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -729,6 +749,29 @@ public class AccountB2CResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json;charset=UTF-8"))
             .andExpect(content().string("false"));
+
+    }
+
+    @Test
+    @Transactional
+    public void resetPassword() throws Exception {
+
+        String MSISDN = "771326617";
+        String HMAC = "5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75";
+        String UUID = "7899";
+
+        when(accountB2cSecurityService.resetPassword(Mockito.anyString(), Mockito.any())).thenReturn(new DefaultOAuth2AccessToken("access-token"));
+
+        ResetPasswordVM passwordVM = new ResetPasswordVM();
+        passwordVM.setLogin(MSISDN);
+        passwordVM.setHmac(HMAC);
+
+        restAccountB2CMockMvc.perform(put("/api/account-management/v1/lite/reset-password")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .header("X-Selfcare-Uuid", UUID)
+            .content(TestUtil.convertObjectToJsonBytes(passwordVM)))
+            .andExpect(status().isOk());
+
 
     }
 }
