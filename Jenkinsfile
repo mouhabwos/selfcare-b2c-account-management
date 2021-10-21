@@ -10,14 +10,14 @@ pipeline {
 //Utiliser Pipeline Utility Steps plugin pour lire des informations depuis pom.xml dans env variables
 
   environment {
-        	EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'
+        EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'
     	IMAGE = "registry.tools.orange-sonatel.com/dif/${ARTIFACT_ID}"
       	VERSION = readMavenPom().getVersion()
       	NAME = readMavenPom().getArtifactId()
       	ARTIFACT_ID = readMavenPom().getArtifactId()
       	PORT=8716
-      	ENV_REC = 'dsiselfcarebcorangeetmoi-rec'
-      	ENV_DEV = 'dsiselfcarebc-dev'
+      	ENV_REC = 'dsidacdifdsorangeetmoi-rec'
+      	ENV_DEV = 'dsidacdifdsorangeetmoi-dev'
       	SERVICE_NAME = "${ARTIFACT_ID}-db"
   }
 
@@ -94,12 +94,12 @@ pipeline {
         }
 
 
-   /*  ================ Mysql DEV && Deploy Dev =================================
+   //  ================ Mysql DEV && Deploy Dev =================================
      stage('Malaw DEV - Mysql service') {
-             agent {label 'malaw-dev'}
+             agent {label 'malaw4-rec'}
                when {
                  allOf {
-      		        branch 'SELFB2C-2810'
+      		        branch 'develop'
                     expression {
                    openshift.withCluster() {
                      openshift.withProject("${ENV_DEV}") {
@@ -134,10 +134,10 @@ pipeline {
                    }
                  }
                }
-             }*/
+             }
 
         stage('Malaw DEV - Deploy') {
-                             agent {label 'malaw-dev'}
+                             agent {label 'malaw4-rec'}
                            when { branch 'develop'}
                                steps {
                                  //Generate maven-resource-plugin param files"
@@ -169,13 +169,13 @@ pipeline {
 
      /* ======================================  Fin Deploy DEV  ======================================== */
 
-     /* ======================================  DEBUT DEploy REC  ========================================
+     // ======================================  DEBUT DEploy REC  ========================================
 
             stage('Malaw REC - Mysql service') {
-                             agent {label 'malaw-prod'}
+                             agent {label 'malaw4-rec'}
                                when {
                                  allOf {
-                  		        branch 'master'
+                  		        branch 'release'
                                  expression {
                                    openshift.withCluster() {
                                      openshift.withProject("${ENV_REC}") {
@@ -207,10 +207,10 @@ pipeline {
                                      }
                                     }
                                   }
-                         }*/
+                         }
 
              stage('Malaw REC - Deploy') {
-                     agent {label 'malaw-prod'}
+                     agent {label 'malaw4-rec'}
                      when { branch 'release'}
 
                        steps {
@@ -255,15 +255,6 @@ pipeline {
         )
       }
     }
-
-    stage('Deploy PréPROD') {
-    when { branch 'release' }
-      steps {
-        echo 'deployer sur environnement de préproduction'
-      }
-    }
-
- 
 
    stage('Release On Nexus') {
           when { anyOf { branch 'master' } }
