@@ -1,7 +1,7 @@
 pipeline {
 
   agent  {
-      label 'sdd'
+      label 'gateway'
   }
   options {
       timeout(time: 120, unit: 'MINUTES')
@@ -10,14 +10,15 @@ pipeline {
 //Utiliser Pipeline Utility Steps plugin pour lire des informations depuis pom.xml dans env variables
 
   environment {
-      IMAGE = 'registry.tools.orange-sonatel.com/dif/selfcareb2c-accountmanagement'
-      VERSION = readMavenPom().getVersion()
-      NAME = readMavenPom().getArtifactId()
-      PORT=8715
-      ENV_REC = 'dsiselfcarebcorangeetmoi-rec'
-      ENV_DEV = 'dsiselfcarebc-dev'
-      SERVICE_NAME = "${ARTIFACT_ID}-db"
-
+        EMAIL_RECIPIENTS = 'Team.selfcare-b2c@orange-sonatel.com;cheikhahmettidjane.sankare@orange-sonatel.com'
+    	IMAGE = "registry.tools.orange-sonatel.com/dif/${ARTIFACT_ID}"
+      	VERSION = readMavenPom().getVersion()
+      	NAME = readMavenPom().getArtifactId()
+      	ARTIFACT_ID = readMavenPom().getArtifactId()
+      	PORT=8716
+      	ENV_REC = 'dsidacdifdsorangeetmoi-rec'
+      	ENV_DEV = 'dsidacdifdsorangeetmoi-dev'
+      	SERVICE_NAME = "${ARTIFACT_ID}-db"
   }
 
   tools {
@@ -29,16 +30,14 @@ pipeline {
 
      stage('Clean Package') {
         steps {
-           sh 'mvn clean package'
+           sh 'mvn clean package -Dio.swagger.parser.util.RemoteUrl.trustAll=true -DskipTests -Prec'
            stash includes: 'target/*', name: 'target'
         }
      }
 
-
-
     stage('Units Tests') {
       steps {
-        sh 'mvn clean test -Dmaven.test.skip=false'
+        sh 'mvn clean test -Dmaven.test.skip=false -Dio.swagger.parser.util.RemoteUrl.trustAll=true'
       }
       post {
         success {
@@ -50,36 +49,34 @@ pipeline {
     }
 
 
-     stage('SonarQube Scan') {
-       steps{
-         script{
-             withSonarQubeEnv('SonarQubeServer') {
-             sh 'mvn sonar:sonar -X'
-            }
-        }
-      }
- 	 }
+    stage('SonarQube Scan') {
+      steps{
+        script{
+            withSonarQubeEnv('SonarQubeServer') {
+            sh 'mvn sonar:sonar -X -Dio.swagger.parser.util.RemoteUrl.trustAll=true'
+           }
+       }
+     }
+	 }
 
 
-    stage('Build & Push Docker image') {
-        agent  { label 'docker-builder' }
-        options { skipDefaultCheckout() }
-      steps {
+ stage('Build & Push Docker image') {
+         agent  { label 'docker-builder' }
+         options { skipDefaultCheckout() }
+       steps {
 
-          sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
-          sh 'docker images -f reference=${IMAGE} -qa | xargs --no-run-if-empty docker rmi'
-          sh 'rm -rf target/'
+           sh 'docker ps -qa -f name=${NAME} | xargs --no-run-if-empty docker rm -f'
+           sh 'docker images -f reference=${IMAGE} -qa | xargs --no-run-if-empty docker rmi'
+           sh 'rm -rf target/'
 
-          unstash 'target'
-          dir('target') {
-            sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
-            /* sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}' */
-            sh 'docker push ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
-          }
-      }
-    }
-
-
+           unstash 'target'
+           dir('target') {
+             sh 'docker build -t ${IMAGE}:${VERSION}.b${BUILD_NUMBER} .'
+             /* sh 'docker run --name=${NAME} -d --restart=always -e JAVA_OPTS="-Dspring.profiles.active=dev" --memory-reservation=256M --memory=512M -p ${PORT}:${PORT} ${IMAGE}:${VERSION}.b${BUILD_NUMBER}' */
+             sh 'docker push ${IMAGE}:${VERSION}.b${BUILD_NUMBER}'
+           }
+       }
+     }
 
          stage("SonarQube Quality Gate") {
           steps{
@@ -97,148 +94,150 @@ pipeline {
         }
 
 
-            /*  ================ Mysql service DEV-REC ================================= */
-    stage('Malaw DEV - Mysql service') {
-            agent {label 'malaw-dev'}
-              when {
-                allOf {
-     		        branch 'develop'
-                   expression {
-                  openshift.withCluster() {
-                    openshift.withProject("${ENV_DEV}") {
-                        return !openshift.selector("svc", "${SERVICE_NAME}").exists();
-                    }
-                  }
-                }
-
-                }
-
-              }
-              steps {
-                //Generate maven-resource-plugin param files"
-                sh 'mvn validate'
-                script {
-                  openshift.withCluster() {
-                    openshift.withProject("${ENV_DEV}") {
-                        //Process external-service-mysqld template for external mysql service
-                        def models =  openshift.process( "openshift//external-service","--param-file=target/openshift/mysql-dev.params")
-
-                        //Adding labels
-                        for ( o in models ) {
-                             o.metadata.labels[ "env" ] = "${ENV_DEV}"
-                             o.metadata.labels[ "type" ] = "mysql-endpoint"
-                             o.metadata.labels[ "app" ] = "${NAME}"
-                             o.metadata.labels[ "from" ] = "jenkins-pipeline"
-                        }
-
-                        //Create objects processed
-                         def created = openshift.apply( models )
-                     }
-                  }
-                }
-              }
-            }
-
-       stage('Malaw REC - Mysql service') {
-                agent {label 'malaw-prod'}
-                  when {
-                    allOf {
-     		        branch 'release'
+   //  ================ Mysql DEV && Deploy Dev =================================
+     stage('Malaw DEV - Mysql service') {
+             agent {label 'malaw4-rec'}
+               when {
+                 allOf {
+      		        branch 'develop'
                     expression {
-                      openshift.withCluster() {
-                        openshift.withProject("${ENV_REC}") {
-                            return !openshift.selector("svc", "${NAME}").exists();
-                        }
-                      }
-                    }
-                    }
-                  }
-           steps {
-                  //Generate maven-resource-plugin param files"
-                  sh 'mvn validate'
-                  script {
-                    openshift.withCluster() {
-                      openshift.withProject("${ENV_REC}") {
-                          //Process external-service-mysqld template for external mysql service
-                          def models =  openshift.process( "openshift//external-service","--param-file=target/openshift/mysql-rec.params")
-
-                          //Adding labels
-                          for ( o in models ) {
-                               o.metadata.labels[ "env" ] = "${ENV_REC}"
-                               o.metadata.labels[ "type" ] = "mysql-endpoint"
-                               o.metadata.labels[ "app" ] = "${NAME}"
-                               o.metadata.labels[ "from" ] = "jenkins-pipeline"
-                          }
-                          //Create objects processed
-                          def created = openshift.apply( models )
-                          }
-                        }
-                       }
+                   openshift.withCluster() {
+                     openshift.withProject("${ENV_DEV}") {
+                         return !openshift.selector("svc", "${SERVICE_NAME}").exists();
                      }
-            }
+                   }
+                 }
 
-    /* ======================================  Fin Mysql service DEV-REC  ======================================== */
+                 }
 
-    /* ======================================  DEBUT Deploy DEV-REC  ======================================== */
-                stage('Malaw DEV - Deploy') {
-                    agent {label 'malaw-dev'}
-                  when { branch 'develop'}
-                      steps {
-                        //Generate maven-resource-plugin param files"
-                        sh 'mvn validate'
-                        sh 'cat target/openshift/app-dev.params'
-                        script {
-                          openshift.withCluster() {
-                            openshift.withProject("${ENV_DEV}") {
-                                //Process spring-boot-image-docker-mysqldb template for app deployment
-                                def models =  openshift.process( "openshift//spring-boot-docker-image-database","--param-file=target/openshift/app-dev.params")
+               }
+               steps {
+                 //Generate maven-resource-plugin param files"
+                 sh 'mvn validate'
+                 script {
+                   openshift.withCluster() {
+                     openshift.withProject("${ENV_DEV}") {
+                         //Process external-service-mysqld template for external mysql service
+                         def models =  openshift.process( "openshift//external-service","--param-file=target/openshift/mysql-dev.params")
 
-                                //Adding labels
-                                for ( o in models ) {
-                                     o.metadata.labels[ "env" ] = "${ENV_DEV}"
-                                     o.metadata.labels[ "type" ] = "spring-boot-app"
-                                     o.metadata.labels[ "app" ] = "${NAME}"
-                                     o.metadata.labels[ "from" ] = "jenkins-pipeline"
-                                     o.metadata.labels[ "version" ] = "${VERSION}.b${BUILD_NUMBER}"
-                                }
+                         //Adding labels
+                         for ( o in models ) {
+                              o.metadata.labels[ "env" ] = "${ENV_DEV}"
+                              o.metadata.labels[ "type" ] = "mysql-endpoint"
+                              o.metadata.labels[ "app" ] = "${NAME}"
+                              o.metadata.labels[ "from" ] = "jenkins-pipeline"
+                         }
 
-                                //Create objects processed
-                                 def created = openshift.apply( models )
+                         //Create objects processed
+                          def created = openshift.apply( models )
+                      }
+                   }
+                 }
+               }
+             }
+
+        stage('Malaw DEV - Deploy') {
+                             agent {label 'malaw4-rec'}
+                           when { branch 'develop'}
+                               steps {
+                                 //Generate maven-resource-plugin param files"
+                                 sh 'mvn validate'
+                                 sh 'cat target/openshift/app-dev.params'
+                                 script {
+                                   openshift.withCluster() {
+                                     openshift.withProject("${ENV_DEV}") {
+                                         //Process spring-boot-image-docker-mysqldb template for app deployment
+                                         def models =  openshift.process( "openshift//spring-boot-docker-image-database","--param-file=target/openshift/app-dev.params")
+
+                                         //Adding labels
+                                         for ( o in models ) {
+                                              o.metadata.labels[ "env" ] = "${ENV_DEV}"
+                                              o.metadata.labels[ "type" ] = "spring-boot-app"
+                                              o.metadata.labels[ "app" ] = "${NAME}"
+                                              o.metadata.labels[ "from" ] = "jenkins-pipeline"
+                                              o.metadata.labels[ "version" ] = "${VERSION}.b${BUILD_NUMBER}"
+                                         }
+
+                                         //Create objects processed
+                                          def created = openshift.apply( models )
+                                      }
+                                   }
+                                 }
+                               }
+                         }
+
+
+     /* ======================================  Fin Deploy DEV  ======================================== */
+
+     // ======================================  DEBUT DEploy REC  ========================================
+
+            stage('Malaw REC - Mysql service') {
+                             agent {label 'malaw4-rec'}
+                               when {
+                                 allOf {
+                  		        branch 'release'
+                                 expression {
+                                   openshift.withCluster() {
+                                     openshift.withProject("${ENV_REC}") {
+                                         return !openshift.selector("svc", "${NAME}").exists();
+                                     }
+                                   }
+                                 }
+                                 }
+                               }
+                        steps {
+                               //Generate maven-resource-plugin param files"
+                               sh 'mvn validate'
+                               script {
+                                 openshift.withCluster() {
+                                   openshift.withProject("${ENV_REC}") {
+                                       //Process external-service-mysqld template for external mysql service
+                                       def models =  openshift.process( "openshift//external-service","--param-file=target/openshift/mysql-rec.params")
+
+                                       //Adding labels
+                                       for ( o in models ) {
+                                            o.metadata.labels[ "env" ] = "${ENV_REC}"
+                                            o.metadata.labels[ "type" ] = "mysql-endpoint"
+                                            o.metadata.labels[ "app" ] = "${NAME}"
+                                            o.metadata.labels[ "from" ] = "jenkins-pipeline"
+                                       }
+                                       //Create objects processed
+                                       def created = openshift.apply( models )
+                                       }
+                                     }
+                                    }
+                                  }
+                         }
+
+             stage('Malaw REC - Deploy') {
+                     agent {label 'malaw4-rec'}
+                     when { branch 'release'}
+
+                       steps {
+                         //Generate maven-resource-plugin param files"
+                         sh 'mvn validate'
+                         script {
+                           openshift.withCluster() {
+                             openshift.withProject("${ENV_REC}") {
+                                 //Process spring-boot-image-docker-mysqldb template for app deployment
+                                 def models =  openshift.process( "openshift//spring-boot-docker-image-database","--param-file=target/openshift/app-rec.params")
+
+                                 //Adding labels
+                                 for ( o in models ) {
+                                      o.metadata.labels[ "env" ] = "${ENV_REC}"
+                                      o.metadata.labels[ "type" ] = "spring-boot-app"
+                                      o.metadata.labels[ "app" ] = "${NAME}"
+                                      o.metadata.labels[ "from" ] = "jenkins-pipeline"
+                                 }
+                                 //Create objects processed
+                                   def created = openshift.apply( models )
+                                 }
                              }
                           }
                         }
                       }
-                }
 
-            stage('Malaw REC - Deploy') {
-                    agent {label 'malaw-prod'}
-                    when { branch 'release'}
-
-                      steps {
-                        //Generate maven-resource-plugin param files"
-                        sh 'mvn validate'
-                        script {
-                          openshift.withCluster() {
-                            openshift.withProject("${ENV_REC}") {
-                                //Process spring-boot-image-docker-mysqldb template for app deployment
-                                def models =  openshift.process( "openshift//spring-boot-docker-image-database","--param-file=target/openshift/app-rec.params")
-
-                                //Adding labels
-                                for ( o in models ) {
-                                     o.metadata.labels[ "env" ] = "${ENV_REC}"
-                                     o.metadata.labels[ "type" ] = "spring-boot-app"
-                                     o.metadata.labels[ "app" ] = "${NAME}"
-                                     o.metadata.labels[ "from" ] = "jenkins-pipeline"
-                                }
-                                //Create objects processed
-                                  def created = openshift.apply( models )
-                                }
-                            }
-                         }
-                       }
-                     }
-
-    /* ======================================  FIN Deploy DEV-REC  ======================================== */
+     /* ======================================  FIN Deploy REC  ======================================== */
 
 
 
@@ -257,78 +256,7 @@ pipeline {
       }
     }
 
-
-
-
-
-/*
-    stage('Launch Qualys Scan') {
-      steps {
-        sh 'mvn qualys:scan'
-      }
-  }
-
-    stage('Check Qualys Scan') {
-      steps {
-          script{
-            timeout(time:90, unit: 'MINUTES'){
-              waitUntil {
-                sleep time: 7, unit: 'MINUTES'
-                try{
-                  sh 'mvn qualys:check'
-                  def result = manager.logContains(".*SCAN-FINISHED*.")
-
-                  if(result)
-                    return true
-                }catch(exc){
-                  echo 'Une exception a été rencontrée... Retry en cours'
-                }
-                return false
-              }
-            }
-          }
-      }
-  }
-
-  stage('Analyse Qualys Report') {
-      steps {
-       script{
-         try{
-            sh 'mvn qualys:analyse-prepare'
-          }catch(exc){
-            echo 'Une exception a été rencontrée pendant qualys:analyse-prepare'
-          }
-         sleep time: 1, unit: 'MINUTES'
-          try{
-            sh 'mvn qualys:analyse-perform'
-          }catch(exc){
-            echo 'Une exception a été rencontrée pendant qualys:analyse-perform'
-          }
-          }
-       }
-   }
-
-    stage('Qualys Download Report') {
-       steps {
-           sh 'mvn qualys:report'
-           sleep time: 1, unit: 'MINUTES'
-           sh 'mvn qualys:download'
-       }
-       post{
-        success {
-          archiveArtifacts artifacts: 'target/qualys/*.pdf'
-		  emailext attachmentsPattern: 'target/qualys/*.pdf',
-			body: 'Rapport Qualys joint au mail.',
-			subject: '[QUALYS] Rapport Vulnerabilité',
-			to: 'mouhamadoubambambacke.sow@orange-sonatel.com'
-        }
-       }
-    }
-
- */
-
-
-      stage('Release On Nexus') {
+   stage('Release On Nexus') {
           when { anyOf { branch 'master' } }
           steps {
               echo 'Perform master'
@@ -377,15 +305,43 @@ pipeline {
       }
 
 
-      }
+
+    // Continious Deployement
+ stage('Deploy New Release on Preproduction Namespace') {
+     when { anyOf { branch 'master' } }
+     agent  { label 'malaw4-prod' }
+     options { skipDefaultCheckout() }
+     steps {
+         script {
+             def releaseVersion = "$VERSION".split('-')[0]
+             echo "release version is ${releaseVersion}"
+             build job: 'ocd-selfcare-b2c-pprod/master',parameters: [[$class: 'StringParameterValue', name: 'msName', value: "$ARTIFACT_ID"], [$class: 'StringParameterValue', name: 'msVersion', value: "$releaseVersion"]]
+         }
+     }
+ }
+    
+    
+
+        // Continious Testing
+ stage('Run NR Tests on Preproduction Namespace') {
+     when { anyOf { branch 'master' } }
+     steps {
+         script {
+             build job: 'api-selfcare/master',parameters: [[$class: 'StringParameterValue', name: 'COLLECTION', value: "Selfcare-API-PREPROD"],   [$class: 'StringParameterValue', name: 'SERVICES', value: "${ARTIFACT_ID}"]]
+         }
+     }
+ }
+
+
+  }
 
   post {
 
      changed {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'Team.selfcare-b2c@orange-sonatel.com'
+      notifyTeam()
    }
     failure {
-      emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: 'Team.selfcare-b2c@orange-sonatel.com'
+      notifyTeam()
    }
     always {
       echo "[ALWAYS] Clean directory !!!"
@@ -393,4 +349,9 @@ pipeline {
       }
 
   }
+}
+
+
+def notifyTeam() {
+    emailext attachLog: true, body: '$DEFAULT_CONTENT', subject: '$DEFAULT_SUBJECT',  to: "$EMAIL_RECIPIENTS"
 }
