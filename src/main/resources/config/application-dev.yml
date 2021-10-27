@@ -47,9 +47,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: root
-        password: digitalfactory
+        url: jdbc:mysql://10.137.16.118:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: selfcareb2c
+        password: Selfc@reB2C
         hikari:
             auto-commit: false
             data-source-properties:
