@@ -24,7 +24,7 @@ eureka:
         #prefer-ip-address: true
         #ip-address: @eureka.instance.dev.hostname@
         #hostname: @eureka.instance.dev.hostname@
-        hostname: selfcareb2c-accountmanagement-http-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
+        hostname: selfcareb2c-accountmanagement-http-dsidacdifdsorangeetmoi-dev.apps.malaaw-rec.orange-sonatel.com
         nonSecurePort: 80
     client:
         service-url:
