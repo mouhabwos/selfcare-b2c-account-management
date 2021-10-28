@@ -153,8 +153,7 @@ jhipster:
 logging:
     file: target/selfcare-b2c-account-management.log
 
-application:
-    env-is-paas: false
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

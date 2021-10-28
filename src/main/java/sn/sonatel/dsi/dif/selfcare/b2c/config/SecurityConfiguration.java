@@ -1,10 +1,11 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
+import io.github.jhipster.config.JHipsterConstants;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -28,8 +29,7 @@ import java.util.Collections;
 @Configuration
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@EnableConfigurationProperties({ ApplicationProperties.class})
-public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
+ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
     private final OAuth2Properties oAuth2Properties;
 
     public SecurityConfiguration(OAuth2Properties oAuth2Properties) {
@@ -78,18 +78,27 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
         return new OAuth2JwtAccessTokenConverter(oAuth2Properties, signatureVerifierClient);
     }
 
-    @Bean
+    @Bean(value = {"customLoadBalancedRestTemplate","loadBalancedRestTemplate"})
+    @Profile("!"+JHipsterConstants.SPRING_PROFILE_K8S)
     @Qualifier("loadBalancedRestTemplate")
-    public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer, ApplicationProperties applicationProperties) {
+    public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer) {
+        RestTemplate restTemplate =  getAuthenticatedRestTemplate();
+        customizer.customize(restTemplate);
+        return restTemplate;
+    }
+
+    @Bean
+    @Profile(JHipsterConstants.SPRING_PROFILE_K8S)
+    @Qualifier("loadBalancedRestTemplate")
+    public RestTemplate loadBalancedRestTemplateK8s() {
+        return getAuthenticatedRestTemplate();
+    }
+
+    private RestTemplate getAuthenticatedRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
         restTemplate.setRequestFactory(factory);
         restTemplate.setInterceptors( Collections.singletonList(new RestTemplateAddTokenInterceptor()) );
-
-        if (!applicationProperties.isEnvIsPaas())
-        {
-            customizer.customize(restTemplate);
-        }
         return restTemplate;
     }
 
