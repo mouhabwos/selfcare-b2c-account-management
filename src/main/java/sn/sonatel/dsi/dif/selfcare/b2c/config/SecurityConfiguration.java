@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import java.util.Collections;
 @Configuration
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableConfigurationProperties({ ApplicationProperties.class})
 public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
     private final OAuth2Properties oAuth2Properties;
 
@@ -78,12 +80,16 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
 
     @Bean
     @Qualifier("loadBalancedRestTemplate")
-    public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer) {
+    public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer, ApplicationProperties applicationProperties) {
         RestTemplate restTemplate = new RestTemplate();
         ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
         restTemplate.setRequestFactory(factory);
         restTemplate.setInterceptors( Collections.singletonList(new RestTemplateAddTokenInterceptor()) );
-        customizer.customize(restTemplate);
+
+        if (!applicationProperties.isEnvIsPaas())
+        {
+            customizer.customize(restTemplate);
+        }
         return restTemplate;
     }
 

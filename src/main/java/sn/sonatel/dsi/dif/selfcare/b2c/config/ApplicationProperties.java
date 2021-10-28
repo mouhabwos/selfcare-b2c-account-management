@@ -20,6 +20,10 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = true)
 public class ApplicationProperties {
 
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private boolean envIsPaas;
+
     private String authenticationAuthorisationUserServerHost;
     private String baseUrlAdmin;
     private String emailAdmin;

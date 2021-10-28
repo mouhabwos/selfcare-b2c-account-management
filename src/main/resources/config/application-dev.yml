@@ -159,6 +159,7 @@ oauth2:
 
 # application:
 application:
+    env-is-paas: false
     max-attempts: 3
     authentication-authorisation-user-server-host: http://selfcare-b2c-uaa
     url-otp: http://selfcare-otp

@@ -36,9 +36,7 @@ public class TestResource {
     public String loadBalancedRestTemplate() {
         String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/test/uaa";
 
-         ResponseEntity responseEntity=null ;
-
-         responseEntity=loadBalancedRestTemplate.getForEntity(url, String.class);
+        ResponseEntity  responseEntity=loadBalancedRestTemplate.getForEntity(url, String.class);
 
         return (responseEntity!=null && responseEntity.getBody()!=null)? responseEntity.getBody().toString(): "failed";
     }
@@ -49,9 +47,7 @@ public class TestResource {
     public String vanillaRestTemplate() {
         String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/test/uaa";
 
-        ResponseEntity responseEntity = null;
-
-        responseEntity=vanillaRestTemplate.getForEntity(url, String.class);
+        ResponseEntity responseEntity=vanillaRestTemplate.getForEntity(url, String.class);
 
         return (responseEntity!=null && responseEntity.getBody()!=null)? responseEntity.getBody().toString(): "failed";
     }
