@@ -11,7 +11,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
 import java.util.List;
 
-@AuthorizedFeignClient( name = Constants.SELFCARE_BOOSTER_SERVICE, fallbackFactory = BoosterClientFallbackFactory.class)
+@AuthorizedFeignClient( name = "${application.selfcare-b2c-booster-management}", fallbackFactory = BoosterClientFallbackFactory.class)
 public interface BoosterClient {
 
     @PutMapping("/api/boosters/booster/{msisdn}")

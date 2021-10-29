@@ -102,7 +102,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
             requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/api/disable?login="+username;
+            String url = applicationProperties.getSelfcareB2cUaa() + "/api/disable?login="+username;
             restTemplate.getForEntity(url, Object.class);
                MessageVM messageVM = new MessageVM();
                messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());

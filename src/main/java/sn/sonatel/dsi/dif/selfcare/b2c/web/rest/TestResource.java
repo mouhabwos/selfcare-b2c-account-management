@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.TestVM;
 
 /**
  * Controller for view and managing Log Level at runtime.
@@ -34,7 +33,7 @@ public class TestResource {
     @GetMapping("/loadBalancedRestTemplate")
     @Timed
     public String loadBalancedRestTemplate() {
-        String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/test/uaa";
+        String url = applicationProperties.getSelfcareB2cUaa() + "/test/uaa";
 
         ResponseEntity  responseEntity=loadBalancedRestTemplate.getForEntity(url, String.class);
 
@@ -45,7 +44,7 @@ public class TestResource {
     @GetMapping("/vanillaRestTemplate")
     @Timed
     public String vanillaRestTemplate() {
-        String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/test/uaa";
+        String url = applicationProperties.getSelfcareB2cUaa() + "/test/uaa";
 
         ResponseEntity responseEntity=vanillaRestTemplate.getForEntity(url, String.class);
 

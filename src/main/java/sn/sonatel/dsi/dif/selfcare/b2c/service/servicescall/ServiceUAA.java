@@ -15,7 +15,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.validation.Valid;
 
-@AuthorizedFeignClient(name = Constants.SELFCARE_UAA_SERVICE, fallbackFactory = ServiceUAAFallBackFactory.class)
+@AuthorizedFeignClient(name = "${application.selfcare-b2c-uaa}", fallbackFactory = ServiceUAAFallBackFactory.class)
 public interface ServiceUAA {
 
     @PostMapping(Constants.REGISTER_ACCOUNT)

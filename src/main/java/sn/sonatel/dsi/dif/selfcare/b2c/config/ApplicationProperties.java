@@ -22,11 +22,26 @@ public class ApplicationProperties {
 
 
 
-    private String authenticationAuthorisationUserServerHost;
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String selfcareB2cUaa;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String selfcareOtp;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String selfcareB2cBoosterManagement;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    private String selfcareB2cFileManager;
+
+
     private String baseUrlAdmin;
     private String emailAdmin;
     private Integer maxAttempts;
-    private String urlOtp;
     private String messageBlockUser;
     private String serviceClientOrange;
     private String emailServiceClientOrange;
@@ -61,10 +76,6 @@ public class ApplicationProperties {
     @Setter(AccessLevel.PUBLIC)
     private final ServeurFtp serveurFtp = new ServeurFtp();
 
-    @Getter(AccessLevel.PUBLIC)
-    @Setter(AccessLevel.PUBLIC)
-    private final FileManager fileManager = new FileManager();
-
     public String getHmacSecret() {
         return hmacSecret;
     }
@@ -75,14 +86,6 @@ public class ApplicationProperties {
 
     public SelfcareMail getSelfcareMail() {
         return selfcareMail;
-    }
-
-    public String getAuthenticationAuthorisationUserServerHost() {
-        return authenticationAuthorisationUserServerHost;
-    }
-
-    public void setAuthenticationAuthorisationUserServerHost(String authenticationAuthorisationUserServerHost) {
-        this.authenticationAuthorisationUserServerHost = authenticationAuthorisationUserServerHost;
     }
 
     public Integer getMaxAttempts() {
@@ -109,13 +112,6 @@ public class ApplicationProperties {
         this.emailAdmin = emailAdmin;
     }
 
-    public String getUrlOtp() {
-        return urlOtp;
-    }
-
-    public void setUrlOtp(String urlOtp) {
-        this.urlOtp = urlOtp;
-    }
 
     public String getMessageBlockUser() {
         return messageBlockUser;
@@ -400,9 +396,5 @@ public class ApplicationProperties {
         private String directory;
     }
 
-    @Data
-    public static class FileManager{
-        private String baseName;
-        private String apiUpload;
-    }
+
 }
