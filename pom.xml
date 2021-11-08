@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.16.1-SNAPSHOT</version>
+    <version>1.18.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Selfcare B2C Account Management</name>
 
@@ -55,7 +55,7 @@
         <eureka.instance.prod.hostname>*****</eureka.instance.prod.hostname>
               <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 
-        <juf.version>2.5.5</juf.version>
+        <juf.version>2.7.0</juf.version>
 
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
@@ -675,7 +675,7 @@
                         <requireJavaVersion>
                             <!-- Until JHipster supports JDK 9 -->
                             <message>You are running an incompatible version of Java. JHipster requires JDK ${java.version}</message>
-                            <version>[1.8,1.9)</version>
+                            <version>[1.8,12)</version>
                         </requireJavaVersion>
                     </rules>
                 </configuration>
