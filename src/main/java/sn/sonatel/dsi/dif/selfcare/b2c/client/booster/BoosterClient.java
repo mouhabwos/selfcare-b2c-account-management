@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
 import java.util.List;
 
