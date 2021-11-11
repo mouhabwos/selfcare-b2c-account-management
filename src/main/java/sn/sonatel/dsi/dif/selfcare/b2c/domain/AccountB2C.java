@@ -73,6 +73,7 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     private Set<Sponsee> sponsees = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
+    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
     private Set<DeviceInfos> deviceInfos = new HashSet<>();
 
@@ -85,6 +86,7 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Column(name = "email_activated")
     private boolean emailActivated = false;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<NotificationInformation> notificationInformations = new HashSet<>();
