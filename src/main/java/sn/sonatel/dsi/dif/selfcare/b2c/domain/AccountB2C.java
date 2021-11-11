@@ -68,6 +68,7 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
     private Set<Sponsee> sponsees = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
