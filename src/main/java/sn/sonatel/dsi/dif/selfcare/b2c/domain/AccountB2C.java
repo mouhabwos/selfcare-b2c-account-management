@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
 import io.swagger.annotations.ApiModelProperty;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedDate;
@@ -62,6 +63,7 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     //@JsonIgnore
     private Instant createdDate = Instant.now();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
