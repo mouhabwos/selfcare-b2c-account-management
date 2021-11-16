@@ -128,9 +128,11 @@ jhipster:
 
 # application:
 application:
-    file-manager:
-        base-name: http://selfcare-b2c-file-manager
-        api-upload: /api/upload
+
+    selfcare-b2c-uaa: http://selfcare-b2c-uaa
+    selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
+    selfcare-otp: http://selfcare-otp
+    selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
     tmp-path: src/test/resources/files/
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange

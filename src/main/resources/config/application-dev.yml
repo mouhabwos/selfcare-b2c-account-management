@@ -47,9 +47,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: root
-        password: digitalfactory
+        url: jdbc:mysql://10.137.16.118:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: selfcareb2c
+        password: Selfc@reB2C
         hikari:
             auto-commit: false
             data-source-properties:
@@ -160,14 +160,12 @@ oauth2:
 # application:
 application:
     max-attempts: 3
-    authentication-authorisation-user-server-host: http://selfcare-b2c-uaa
-    url-otp: http://selfcare-otp
+    selfcare-b2c-uaa: http://selfcare-b2c-uaa
+    selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
+    selfcare-otp: http://selfcare-otp
+    selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: Bouya.KANDE@orange-sonatel.com
-
-    file-manager:
-        base-name: http://selfcare-b2c-file-manager
-        api-upload: /api/upload
     api-management:
         oauth2:
             client-token-uri: http://selfcare-b2c-uaa/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
