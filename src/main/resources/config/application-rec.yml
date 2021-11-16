@@ -168,14 +168,14 @@ oauth2:
 
 # application:
 application:
+
+    selfcare-b2c-uaa: http://selfcare-b2c-uaa
+    selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
+    selfcare-otp: http://selfcare-otp
+    selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
     max-attempts: 3
-    authentication-authorisation-user-server-host: http://selfcare-b2c-uaa
-    url-otp: http://selfcare-otp
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: fatou.diaw@orange-sonatel.com
-    file-manager:
-        base-name: http://selfcare-b2c-file-manager
-        api-upload: /api/upload
     api-management:
         oauth2:
             client-token-uri: http://selfcare-b2c-uaa/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}

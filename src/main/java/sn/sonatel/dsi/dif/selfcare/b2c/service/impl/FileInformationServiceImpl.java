@@ -114,7 +114,7 @@ public class FileInformationServiceImpl implements FileInformationService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
-        String urlApiUpload = applicationProperties.getFileManager().getBaseName()+applicationProperties.getFileManager().getApiUpload();
+        String urlApiUpload = applicationProperties.getSelfcareB2cFileManager()+"/api/upload";
         return restTemplate.exchange(urlApiUpload,
             HttpMethod.POST, requestEntity, String.class);
     }
