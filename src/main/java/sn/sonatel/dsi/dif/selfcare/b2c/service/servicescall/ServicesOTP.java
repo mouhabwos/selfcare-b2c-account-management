@@ -14,7 +14,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import javax.validation.Valid;
 import java.util.Map;
 
-@AuthorizedUserFeignClient(name = Constants.SELFCARE_SERVICE_OTP, fallbackFactory = ServiceOTPFallBackFactory.class)
+@AuthorizedUserFeignClient(name = "${application.selfcare-otp}", fallbackFactory = ServiceOTPFallBackFactory.class)
 public interface ServicesOTP {
 
     @PostMapping(Constants.URL_CHECK_CODE_OTP)

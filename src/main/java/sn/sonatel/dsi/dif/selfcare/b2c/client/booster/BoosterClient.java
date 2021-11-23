@@ -5,13 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedFeignClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 
 import java.util.List;
 
-@AuthorizedFeignClient( name = Constants.SELFCARE_BOOSTER_SERVICE, fallbackFactory = BoosterClientFallbackFactory.class)
+@AuthorizedUserFeignClient( name = "${application.selfcare-b2c-booster-management}", fallbackFactory = BoosterClientFallbackFactory.class)
 public interface BoosterClient {
 
     @PutMapping("/api/boosters/booster/{msisdn}")

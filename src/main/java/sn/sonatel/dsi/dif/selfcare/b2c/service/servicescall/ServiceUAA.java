@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedFeignClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTOExploitant;
@@ -15,7 +16,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 import javax.validation.Valid;
 
-@AuthorizedFeignClient(name = Constants.SELFCARE_UAA_SERVICE, fallbackFactory = ServiceUAAFallBackFactory.class)
+@AuthorizedUserFeignClient(name = "${application.selfcare-b2c-uaa}", fallbackFactory = ServiceUAAFallBackFactory.class)
 public interface ServiceUAA {
 
     @PostMapping(Constants.REGISTER_ACCOUNT)
