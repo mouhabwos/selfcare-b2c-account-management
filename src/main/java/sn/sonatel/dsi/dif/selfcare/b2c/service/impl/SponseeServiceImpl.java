@@ -9,6 +9,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.BoosterManagerService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
@@ -22,8 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.ServicesOTP;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
+ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
@@ -54,7 +54,7 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final ApplicationProperties applicationProperties;
 
-    private final ServicesOTP servicesOTP;
+    private final SMSNotificationService smsNotificationService;
 
     private final AccountB2CRepository accountB2CRepository;
 
@@ -62,11 +62,11 @@ public class SponseeServiceImpl implements SponseeService {
 
     private final BoosterManagerService boosterManagerService;
 
-    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, ServicesOTP servicesOTP, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, BoosterManagerService boosterManagerService) {
+    public SponseeServiceImpl(SponseeRepository sponseeRepository, SponseeMapper sponseeMapper, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, BoosterManagerService boosterManagerService) {
         this.sponseeRepository = sponseeRepository;
         this.sponseeMapper = sponseeMapper;
         this.applicationProperties = applicationProperties;
-        this.servicesOTP = servicesOTP;
+        this.smsNotificationService = smsNotificationService;
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.boosterManagerService = boosterManagerService;
@@ -146,7 +146,7 @@ public class SponseeServiceImpl implements SponseeService {
         }else messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),""));
 
 
-        boolean generateMessage = servicesOTP.generateMessage(messageVM);
+        boolean generateMessage = smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
         if(!generateMessage){
             log.debug("Error Request Service sms not be sent to Sponsee : {}", msisdnDest);
             throw new BadRequestAlertException(ErrorMessages.SMS_NOT_BE_SEND,ENTITY_NAME,"smsNotSend");
@@ -241,7 +241,7 @@ public class SponseeServiceImpl implements SponseeService {
             messageVM.setMsisdn(sponsee.get().getAccountB2C().getNumero());
             messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsor(),saveSponsee.getMsisdn()));
 
-            servicesOTP.generateMessage(messageVM);
+            smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
             return saveSponsee;
         }
        return new Sponsee();
