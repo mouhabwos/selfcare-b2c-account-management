@@ -25,11 +25,10 @@ public class SMSNotificationService {
 
 
     @Async
-    public boolean sendSMSPP(String msisdn, String message,String sourceAddress) {
+    public void sendSMSPP(String msisdn, String message,String sourceAddress) {
 
         log.trace("send smspp {} {}", msisdn, message);
 
-        boolean status = false;
 
         try {
 
@@ -55,8 +54,7 @@ public class SMSNotificationService {
 
             session.unbindAndClose();
 
-            status=true;
-            log.info("SMS sent successfully!");
+             log.info("SMS sent successfully!");
         }
 
         catch (Exception ex){
@@ -65,7 +63,6 @@ public class SMSNotificationService {
 
         }
 
-        return status;
 
     }
 

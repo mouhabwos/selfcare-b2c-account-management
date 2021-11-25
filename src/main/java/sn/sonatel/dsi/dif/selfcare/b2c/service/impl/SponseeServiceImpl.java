@@ -146,11 +146,8 @@ public class SponseeServiceImpl implements SponseeService {
         }else messageVM.setMessage(String.format(applicationProperties.getSendSms().getSponsorship().getSmsSponsee(),""));
 
 
-        boolean generateMessage = smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
-        if(!generateMessage){
-            log.debug("Error Request Service sms not be sent to Sponsee : {}", msisdnDest);
-            throw new BadRequestAlertException(ErrorMessages.SMS_NOT_BE_SEND,ENTITY_NAME,"smsNotSend");
-        }
+        smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
+
 
     }
 
