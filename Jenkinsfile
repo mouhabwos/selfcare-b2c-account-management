@@ -6,6 +6,7 @@ teamOrangeEtMoiJenkinsfile(
   		skipTests : false,
   		skipSonar : false,
   		deployOnPreprod : true,
-  		runTnr :true
+  		runTnr :true,
+  		agent: "maven"
 )
 
