@@ -26,7 +26,7 @@ eureka:
         #hostname: @eureka.instance.rec.hostname@
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-rec.k8s-test.orange-sonatel.com/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@registry-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/eureka/
 
 spring:
     profiles:
