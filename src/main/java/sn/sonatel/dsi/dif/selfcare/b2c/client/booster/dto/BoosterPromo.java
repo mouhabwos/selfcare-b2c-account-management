@@ -2,6 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto;
 
 import lombok.Data;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.BoosterTrigger;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;

@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.codehaus.jackson.map.ObjectMapper;
 
 
 public final class LogUtil {

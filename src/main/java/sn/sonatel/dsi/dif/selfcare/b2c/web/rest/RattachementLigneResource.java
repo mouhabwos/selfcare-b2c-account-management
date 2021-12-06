@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
@@ -17,8 +17,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -91,7 +92,7 @@ public class RattachementLigneResource {
     public ResponseEntity<List<RattachementLigne>> getAllRattachementLignes(Pageable pageable) {
         log.debug ( "REST request to get a page of RattachementLignes" );
         Page<RattachementLigne> page = rattachementLigneService.getAllRattachementLignes ( pageable );
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders ( page, "/api/rattachement-lignes" );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders (ServletUriComponentsBuilder.fromCurrentRequest(), page );
         return ResponseEntity.ok ().headers ( headers ).body ( page.getContent () );
     }
 

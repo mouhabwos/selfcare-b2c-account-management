@@ -1,9 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
-import org.springframework.data.jpa.repository.*;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;

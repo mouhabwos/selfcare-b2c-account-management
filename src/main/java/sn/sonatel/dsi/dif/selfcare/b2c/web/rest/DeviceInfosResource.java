@@ -1,10 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.DeviceInfosRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,17 +7,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.DeviceInfosRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
- * REST controller for managing {@link sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos}.
+ * REST controller for managing {@link DeviceInfos}.
  */
 @RestController
 @RequestMapping("/api")
@@ -90,7 +89,7 @@ public class DeviceInfosResource {
     public ResponseEntity<List<DeviceInfos>> getAllDeviceInfos(Pageable pageable) {
         log.debug("REST request to get a page of DeviceInfos");
         Page<DeviceInfos> page = deviceInfosRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/device-infos");
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

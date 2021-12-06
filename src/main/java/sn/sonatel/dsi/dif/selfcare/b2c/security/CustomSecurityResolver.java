@@ -43,6 +43,6 @@ public class CustomSecurityResolver {
     }
 
     private String login(){
-        return SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM_ACCOUNT);
+        return SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM);
     }
 }

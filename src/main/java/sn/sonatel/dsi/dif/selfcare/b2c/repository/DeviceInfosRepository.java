@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.repository;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos;
 
 
 /**

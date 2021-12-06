@@ -1,6 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
-import com.jcraft.jsch.ChannelSftp.*;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

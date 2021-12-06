@@ -1,6 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import io.github.jhipster.config.JHipsterProperties;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
-
+import tech.jhipster.config.JHipsterProperties;
 
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;

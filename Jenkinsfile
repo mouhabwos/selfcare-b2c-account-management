@@ -6,6 +6,8 @@ teamOrangeEtMoiJenkinsfile(
   		skipTests : false,
   		skipSonar : false,
   		deployOnPreprod : true,
-  		runTnr :true
+  		runTnr :true,
+  		deployBranch: "migrationJh7",
+        sonarUrl: "http://sonar.v8.tools.orange-sonatel.com"
 )
 
