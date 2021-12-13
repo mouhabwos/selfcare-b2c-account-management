@@ -12,9 +12,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.LoginAttemptServiceImpl;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
@@ -25,14 +26,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
+@IntegrationTest
 public class AuthResourceTest {
 
     private static final String DEFAULT_USERNAME = "781326060";
 
 
     @Autowired
-    private LoginAttemptServiceImpl loginAttemptService;
+    private LoginAttemptService loginAttemptService;
 
     private MockMvc restAccountB2CMockMvc;
 

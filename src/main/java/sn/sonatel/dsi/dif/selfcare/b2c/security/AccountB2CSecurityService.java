@@ -5,11 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
+//import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
-import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2TokenEndpointClient;
+//import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuth2TokenEndpointClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AccountB2CService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
@@ -20,7 +20,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 @Service
 public class AccountB2CSecurityService {
 
-    private final Logger log = LoggerFactory.getLogger(AccountB2CSecurityService.class);
+   /* private final Logger log = LoggerFactory.getLogger(AccountB2CSecurityService.class);
     private static final int PASSWORD_MAX_LENGTH = 19;
 
 
@@ -56,6 +56,6 @@ public class AccountB2CSecurityService {
             return this.authorizationClient.sendPasswordGrant(resetPasswordVM.getLogin(), resetPasswordVM.getNewPassword());
         }
         throw new HttpClientErrorException(responseEntity.getStatusCode());
-    }
+    }*/
 
 }

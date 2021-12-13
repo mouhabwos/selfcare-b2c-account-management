@@ -1,10 +1,9 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import org.springframework.web.multipart.MultipartFile;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 

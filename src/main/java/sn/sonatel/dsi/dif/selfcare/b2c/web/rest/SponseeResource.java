@@ -1,32 +1,31 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
-
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
- * REST controller for managing {@link sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee}.
+ * REST controller for managing {@link Sponsee}.
  */
 @RestController
 @RequestMapping("/api")
@@ -97,7 +96,7 @@ public class SponseeResource {
     public ResponseEntity<List<SponseeDTO>> getAllSponsees(Pageable pageable) {
         log.debug("REST request to get a page of Sponsees");
         Page<SponseeDTO> page = sponseeService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/sponsees");
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page );
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

@@ -1,9 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.mapper;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.*;
+import org.mapstruct.Mapper;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
-
-import org.mapstruct.*;
 
 /**
  * Mapper for the entity {@link Sponsee} and its DTO {@link SponseeDTO}.

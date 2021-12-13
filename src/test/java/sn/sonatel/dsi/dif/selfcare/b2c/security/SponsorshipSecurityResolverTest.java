@@ -5,10 +5,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;

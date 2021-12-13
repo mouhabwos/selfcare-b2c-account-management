@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.client.AuthorizedUserFeignClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UserDTO;

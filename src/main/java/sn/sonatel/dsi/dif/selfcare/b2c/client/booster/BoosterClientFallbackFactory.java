@@ -1,6 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.client.booster;
 
-import feign.hystrix.FallbackFactory;
+import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -72,7 +72,7 @@ public class TroubleTicketClientFallBackTest {
             .headers(headers)
             .build();
 
-        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.EMPTY_LIST);
+        ResponseEntity expectedResult = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
 
         troubleTicketClientFallBack = new TroubleTicketClientFallBack(FeignException.errorStatus("api", response));
 

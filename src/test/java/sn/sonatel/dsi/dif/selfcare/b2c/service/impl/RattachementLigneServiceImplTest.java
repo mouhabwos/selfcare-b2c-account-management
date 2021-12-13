@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -26,15 +27,18 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.InvalidOrangeNumberException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneCNIVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 
-import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +56,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SelfcareB2CApp.class})
+@IntegrationTest
 public class RattachementLigneServiceImplTest {
 
     private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
