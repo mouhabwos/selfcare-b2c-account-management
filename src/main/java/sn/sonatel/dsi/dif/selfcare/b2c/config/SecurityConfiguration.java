@@ -47,7 +47,7 @@ import java.util.Collections;
             .disable()
             .headers()
             .frameOptions()
-            .disable()
+            .sameOrigin()
         .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
