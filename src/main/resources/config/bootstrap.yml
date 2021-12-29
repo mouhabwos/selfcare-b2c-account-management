@@ -18,7 +18,7 @@ spring:
   cloud:
     config:
       fail-fast: false # if not in "prod" profile, do not force to use Spring Cloud Config
-      uri: http://admin:${jhipster.registry.password}@registry-dev.k8s-test.orange-sonatel.com/config
+      uri: http://admin:${jhipster.registry.password}@registry-dev-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/config
       # name of the config server's property source (file.yml) that we want to use
       name: selfcare-b2c-account-management
       profile: dev # profile(s) of the property source

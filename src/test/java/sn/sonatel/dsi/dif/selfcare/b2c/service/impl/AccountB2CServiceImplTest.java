@@ -6,12 +6,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
-import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
@@ -21,10 +19,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneStatusDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
@@ -50,7 +48,7 @@ public class AccountB2CServiceImplTest {
     @Autowired
     private RattachementLigneRepository mockRattachementLigneRepository;
     @Mock
-    private SelfcareUAAService mockSelfcareUAAService;
+    private KeycloakServices keycloakServices;
 
     @Mock
     private BoosterManager boosterManager;
@@ -75,7 +73,7 @@ public class AccountB2CServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService, notificationInformationService, abonneServiceMock);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, keycloakServices,sponseeService,boosterManager, validationHmacService, notificationInformationService, abonneServiceMock);
     }
 
     private Optional<Sponsee> getSponsee(){
@@ -96,7 +94,7 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setFirstName("firstname");
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
-        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
 
         // Run the test
@@ -124,7 +122,7 @@ public class AccountB2CServiceImplTest {
 
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
-        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
 
         // Run the test
         AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
@@ -146,7 +144,7 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setFirstName("firstname");
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
-        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
         // Run the test
         accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
 
@@ -311,7 +309,7 @@ public class AccountB2CServiceImplTest {
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
         when(abonneServiceMock.getInformationAbonne(anyString())).thenReturn(abonneDTO);
-        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
         when(validationHmacService.validateHmac(anyString(),anyString(),anyString())).thenReturn(true);
 
@@ -335,7 +333,7 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setFirstName("firstname");
         ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
 
-        when(mockSelfcareUAAService.regiserAccount(managedUserVM)).thenReturn(response);
+        when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
 
         // Run the test

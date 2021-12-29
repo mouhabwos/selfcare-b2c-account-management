@@ -146,6 +146,13 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>16.1.0</version>
+        </dependency>
+
         <!-- add dependency juf -->
         <dependency>
             <groupId>sn.sonatel.dsi.dac.dif.ds.juf</groupId>

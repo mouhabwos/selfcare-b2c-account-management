@@ -162,7 +162,7 @@ spring:
       client:
         provider:
           oidc:
-            issuer-uri: http://10.137.18.212:9080/auth/realms/jhipster
+            issuer-uri: http://keycloak-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/auth/realms/jhipster
         registration:
           oidc:
             client-id: internal
