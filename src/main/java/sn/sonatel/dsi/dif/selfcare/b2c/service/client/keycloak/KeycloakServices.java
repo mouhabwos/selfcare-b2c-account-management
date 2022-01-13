@@ -13,4 +13,8 @@ public interface KeycloakServices {
     ResponseEntity<AccessTokenResponse> getToken(UserCredentialDTO userCredential);
 
     ResponseEntity resetPassword(ResetPasswordVM resetPasswordVM, String uuid);
+
+    ResponseEntity activateAccountUserInKeycloack(String username);
+
+    ResponseEntity deactivateAccountUserInKeycloack(String username);
 }

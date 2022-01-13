@@ -6,16 +6,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
-import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 
 import java.time.ZonedDateTime;
@@ -31,9 +30,6 @@ public class LoginAttemptServiceImplTest {
 
     private LoginAttemptServiceImpl loginAttemptService;
 
-    @Mock
-    private RestTemplate restTemplate;
-
     @Autowired
     private AccountB2CRepository b2CRepository;
 
@@ -45,6 +41,10 @@ public class LoginAttemptServiceImplTest {
 
     @Mock
     private NotificationInformationService notificationInformationService;
+
+    @Mock
+    private KeycloakServices keycloakServices;
+
 
     private void createEntity4() {
         AccountB2C accountB2C = new AccountB2C();
@@ -87,7 +87,7 @@ public class LoginAttemptServiceImplTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        loginAttemptService = new LoginAttemptServiceImpl(restTemplate, b2CRepository, applicationProperties, serviceOTP, notificationInformationService);
+        loginAttemptService = new LoginAttemptServiceImpl(b2CRepository, applicationProperties, serviceOTP, notificationInformationService, keycloakServices);
 
     }
 
