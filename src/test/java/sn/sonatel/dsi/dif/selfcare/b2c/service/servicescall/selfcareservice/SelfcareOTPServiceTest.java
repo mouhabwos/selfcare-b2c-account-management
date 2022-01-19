@@ -31,16 +31,7 @@ public class SelfcareOTPServiceTest {
         selfcareOTPServiceUnderTest = new SelfcareOTPService(mockServicesOTP);
     }
 
-    @Test
-    public void testGenerateMessage() {
-        // Setup
-        final MessageVM messageVM = null;
 
-        // Run the test
-        selfcareOTPServiceUnderTest.generateMessage(messageVM);
-
-        // Verify the results
-    }
 
     @Test
     public void testCheckOPT() {
