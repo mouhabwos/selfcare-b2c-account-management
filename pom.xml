@@ -7,10 +7,9 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.18.1-SNAPSHOT</version>
+    <version>1.18.17-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Selfcare B2C Account Management</name>
-    <description>Description for selfcare-b2c-account-management</description>
 
     <repositories>
         <repository>
@@ -20,6 +19,7 @@
         </repository>
     </repositories>
 
+    <!-- jhipster-needle-distribution-management -->
     <distributionManagement>
         <!-- Publish versioned releases here -->
         <repository>
@@ -66,6 +66,7 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -135,6 +136,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- jhipster-needle-maven-add-dependency-management -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -146,6 +148,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jsmpp</groupId>
+            <artifactId>jsmpp</artifactId>
+            <version>2.3.6</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client -->
         <dependency>
             <groupId>org.keycloak</groupId>

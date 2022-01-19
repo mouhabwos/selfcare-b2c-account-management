@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.HttpClientErrorException;
@@ -45,24 +44,18 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final SponseeService sponseeService;
 
-    private final BoosterManager boosterManager;
+    private final AsyncService asyncService;
 
     private final ValidationHmacService validationHmacService;
 
-    private final NotificationInformationService notificationInformationService;
 
-    private final AbonneService abonneService;
-
-
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, KeycloakServices keycloakServices, SponseeService sponseeService, BoosterManager boosterManager, ValidationHmacService validationHmacService, NotificationInformationService notificationInformationService, AbonneService abonneService) {
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, KeycloakServices keycloakServices, SponseeService sponseeService, AsyncService asyncService, ValidationHmacService validationHmacService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.keycloakServices = keycloakServices;
         this.sponseeService = sponseeService;
-        this.boosterManager=boosterManager;
+        this.asyncService=asyncService;
         this.validationHmacService = validationHmacService;
-        this.notificationInformationService = notificationInformationService;
-        this.abonneService = abonneService;
     }
 
     @Override
@@ -316,12 +309,12 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setAccountStatus(isFull? AccountStatus.FULL:AccountStatus.LITE);
                 result = accountB2CRepository.save(result);
 
-                this.boosterManager.applyWelcomeBooster(result.getNumero());
+                this.asyncService.applyWelcomeBooster(result.getNumero());
                 if(result.getFirstName().equals("") || result.getLastName().equals("")){
-                    updateFirstnameAndLasname(result);
+                    this.asyncService.updateFirstnameAndLasname(result);
                 }
                 sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
-                addCodeFormuleInformationNotification(result.getNumero());
+                this.asyncService.addCodeFormuleInformationNotification(result.getNumero());
                 return result;
             }
 
@@ -331,27 +324,5 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
 
         throw new UserNoCreatedException();
-    }
-
-    @Async
-    void addCodeFormuleInformationNotification(String msisdn){
-        notificationInformationService.addCodeFormuleCustomerOffer(msisdn);
-    }
-
-    @Async
-    void updateFirstnameAndLasname(AccountB2C account){
-        log.debug(" Update user information for Account : {}", account);
-        if(account.getFirstName().equals("") && account.getLastName().equals("")){
-            AbonneDTO informationAbonne = abonneService.getInformationAbonne(account.getNumero());
-
-            if(!informationAbonne.getNomAbonne().equals("")){
-                account.setLastName(informationAbonne.getNomAbonne());
-                account = accountB2CRepository.save(account);
-            }
-            if(!informationAbonne.getPrenomAbonne().equals("")){
-                account.setFirstName(informationAbonne.getPrenomAbonne());
-                accountB2CRepository.save(account);
-            }
-        }
     }
 }

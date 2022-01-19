@@ -15,6 +15,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
@@ -35,16 +37,16 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final ApplicationProperties applicationProperties;
 
-    private final SelfcareOTPService serviceOTP;
+    private final SMSNotificationService smsNotificationService;
 
     private final NotificationInformationService notificationInformationService;
 
     private final KeycloakServices keycloakServices;
 
-    public LoginAttemptServiceImpl( AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SelfcareOTPService serviceOTP, NotificationInformationService notificationInformationService, KeycloakServices keycloakServices) {
+    public LoginAttemptServiceImpl(KeycloakServices keycloakServices, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, NotificationInformationService notificationInformationService) {
         this.b2CRepository = b2CRepository;
         this.applicationProperties = applicationProperties;
-        this.serviceOTP = serviceOTP;
+        this.smsNotificationService = smsNotificationService;
         this.notificationInformationService = notificationInformationService;
         this.keycloakServices = keycloakServices;
     }
@@ -108,11 +110,11 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                MessageVM messageVM = new MessageVM();
                messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
                messageVM.setMsisdn(username);
-               serviceOTP.generateMessage(messageVM);
+               smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
            }
 
            return 0;
-        }
+       }
         return attemps;
     }
 

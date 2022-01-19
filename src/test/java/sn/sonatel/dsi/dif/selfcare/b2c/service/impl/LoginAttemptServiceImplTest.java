@@ -15,6 +15,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 
 import java.time.ZonedDateTime;
@@ -30,6 +31,9 @@ public class LoginAttemptServiceImplTest {
 
     private LoginAttemptServiceImpl loginAttemptService;
 
+    @Mock
+    private RestTemplate restTemplate;
+
     @Autowired
     private AccountB2CRepository b2CRepository;
 
@@ -37,7 +41,7 @@ public class LoginAttemptServiceImplTest {
     private ApplicationProperties applicationProperties;
 
     @Mock
-    private SelfcareOTPService serviceOTP;
+    private SMSNotificationService smsNotificationService;
 
     @Mock
     private NotificationInformationService notificationInformationService;
@@ -87,7 +91,7 @@ public class LoginAttemptServiceImplTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        loginAttemptService = new LoginAttemptServiceImpl(b2CRepository, applicationProperties, serviceOTP, notificationInformationService, keycloakServices);
+        loginAttemptService = new LoginAttemptServiceImpl(keycloakServices, b2CRepository, applicationProperties, smsNotificationService, notificationInformationService);
 
     }
 

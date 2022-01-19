@@ -25,6 +25,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.BoosterManagerService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
@@ -57,6 +58,9 @@ public class SponseeServiceImplTest {
     @Mock
     private ServicesOTP mockServicesOTP;
 
+    @Mock private   SMSNotificationService mockSmsNotificationService;
+
+
     private SponseeServiceImpl sponseeServiceImplUnderTest;
 
     @Autowired
@@ -85,12 +89,12 @@ public class SponseeServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
     }
 
     public void forMockService() {
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
     }
     private AccountB2C getAccount(){
         AccountB2C accountB2C = new AccountB2C();
@@ -183,7 +187,7 @@ public class SponseeServiceImplTest {
 
         when(mockSponseeRepository.findOneByMsisdn(anyString())).thenReturn(optionalSponsee);
 
-        when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+      //  when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
         List<BoosterPromo> listPromoBooster = getListPromoBooster();
         when(boosterManagerService.getActiveWelcomeBoosterValue(any(), anyString())).thenReturn(listPromoBooster);
 
@@ -215,7 +219,7 @@ public class SponseeServiceImplTest {
         sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testSendSmsToSponseeWithSmsNotSend() {
         // Setup
         final String msisdnSource = "770000005";
@@ -235,7 +239,7 @@ public class SponseeServiceImplTest {
         Optional<Sponsee> optionalSponsee = Optional.of(getSponsee());
         when(mockSponseeRepository.findOneByMsisdn(anyString())).thenReturn(optionalSponsee);
 
-        when(mockServicesOTP.generateMessage(any())).thenReturn(false);
+        //when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(false);
 
         // Run the test
         sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
@@ -246,7 +250,7 @@ public class SponseeServiceImplTest {
     public void testFindAllSponseeByMsisdn() {
         mockSponseeRepository = mock(SponseeRepository.class);
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository,rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository,rattachementLigneRepository, boosterManagerService);
         Sponsee sponsee = new Sponsee();
         sponsee.setId(78L);
         sponsee.setMsisdn("778520000");
@@ -283,7 +287,7 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithNumAlreadyUsed(){
 
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
 
        AccountB2C accountB2C = getAccount();
@@ -305,7 +309,7 @@ public class SponseeServiceImplTest {
     @Test(expected = BadRequestAlertException.class)
     public void testRegisterSponseeAlreadyRattachedException(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
 
         // -------- save sponsor
@@ -335,7 +339,7 @@ public class SponseeServiceImplTest {
     @Test
     public void testUpdateSponsee(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         //save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -369,7 +373,7 @@ public class SponseeServiceImplTest {
     @Test
     public void testGetSponseeById(){
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -403,7 +407,7 @@ public class SponseeServiceImplTest {
     public void testRegisterSponseeWithExceptionAlreadyRattached(){
 
         rattachementLigneRepository = mock(RattachementLigneRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
 
         // -------- save sponsor
@@ -431,7 +435,7 @@ public class SponseeServiceImplTest {
 
         boosterClient = mock(BoosterClient.class);
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         sponseeRepository.deleteAll();
         List<BoosterPromo> statuses = new ArrayList<>();
@@ -439,7 +443,7 @@ public class SponseeServiceImplTest {
         ResponseEntity<List<BoosterPromo>> listResponseEntity = ResponseEntity.ok().body(statuses);
 
         when(boosterClient.getActiveWelcomeBoosterValue(anyString(), anyString(), anyString())).thenReturn(listResponseEntity);
-        when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+        //when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
 
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("0012707812");
@@ -485,14 +489,14 @@ public class SponseeServiceImplTest {
 
         boosterClient = mock(BoosterClient.class);
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockServicesOTP, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
 
         sponseeRepository.deleteAll();
 
         ResponseEntity<List<BoosterPromo>> listResponseEntity = ResponseEntity.ok().body(null);
 
         when(boosterClient.getActiveWelcomeBoosterValue(anyString(),anyString(),anyString())).thenReturn(listResponseEntity);
-        when(mockServicesOTP.generateMessage(any())).thenReturn(true);
+       // when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
 
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("0012707812");

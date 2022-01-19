@@ -20,10 +20,6 @@ public class SelfcareOTPService {
     }
 
 
-    public void generateMessage(MessageVM messageVM){
-        servicesOTP.generateMessage( messageVM);
-    }
-
     public CodeOTPCheckDTO checkOPT(String msisdn, String code) {
 
         CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
