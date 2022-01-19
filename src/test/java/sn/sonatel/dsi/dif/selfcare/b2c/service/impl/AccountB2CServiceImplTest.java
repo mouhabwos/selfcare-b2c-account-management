@@ -36,6 +36,7 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -53,7 +54,7 @@ public class AccountB2CServiceImplTest {
     private SelfcareUAAService mockSelfcareUAAService;
 
     @Mock
-    private BoosterManager boosterManager;
+    private AsyncService asyncService;
 
     private AccountB2CServiceImpl accountB2CServiceImplUnderTest;
 
@@ -75,7 +76,7 @@ public class AccountB2CServiceImplTest {
     @Before
     public void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,boosterManager, validationHmacService, notificationInformationService, abonneServiceMock);
+        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, mockSelfcareUAAService,sponseeService,asyncService, validationHmacService);
     }
 
     private Optional<Sponsee> getSponsee(){
@@ -132,7 +133,7 @@ public class AccountB2CServiceImplTest {
         // Verify the results
         assertNotNull(result);
         assertTrue(abonneDTO.getPrenomAbonne().equals(""));
-        assertEquals(abonneDTO.getNomAbonne(),result.getLastName());
+        verify(asyncService).updateFirstnameAndLasname(any());
     }
 
     @Test
@@ -320,7 +321,7 @@ public class AccountB2CServiceImplTest {
 
         // Verify the results
         assertNotNull(result);
-        assertEquals(abonneDTO.getNomAbonne(),result.getLastName());
+        verify(asyncService).updateFirstnameAndLasname(any());
     }
 
     @Test(expected = BadRequestAlertException.class)
