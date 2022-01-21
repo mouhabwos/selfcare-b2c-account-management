@@ -11,7 +11,6 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,39 +139,6 @@ import java.util.List;
         return ResponseEntity.internalServerError().build();
     }
 
-    @Override
-    public ResponseEntity activateAccountUserInKeycloack(String username) {
-        try{
-            updateStatusAccountUser(username, true);
-        }catch (NotAuthorizedException exception){
-            log.error("Error when activate user account", exception);
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
-    public ResponseEntity deactivateAccountUserInKeycloack(String username) {
-        try{
-            updateStatusAccountUser(username, false);
-        }catch (NotAuthorizedException exception){
-            log.error("Error when desactivate user account", exception);
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    private UserResource getUserResource(Keycloak keycloak, String userId){
-        // Get realm
-        RealmResource realmResource = keycloak.realm(realmName);
-        UsersResource usersResource = realmResource.users();
-        return usersResource.get(userId);
-    }
-
-    private UserRepresentation getUserRepresentation(Keycloak keycloak, String username){
-        return keycloak.realm(realmName).users().search(username).get(0);
-    }
-
     private Keycloak getIntanceKeycloak(){
         return KeycloakBuilder.builder()
             .serverUrl(serverUrl)
@@ -182,14 +148,4 @@ import java.util.List;
             .clientSecret(clientSecret)
             .build();
     }
-
-    private void updateStatusAccountUser(String username, boolean enabled){
-
-            Keycloak keycloak = getIntanceKeycloak();
-            UserRepresentation userRepresentation = getUserRepresentation(keycloak, username);
-            UserResource userResource = getUserResource(keycloak, userRepresentation.getId());
-            userRepresentation.setEnabled(enabled);
-            userResource.update(userRepresentation);
-    }
-
 }

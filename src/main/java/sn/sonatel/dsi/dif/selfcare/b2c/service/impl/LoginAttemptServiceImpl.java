@@ -3,10 +3,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
@@ -16,14 +12,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Qualifier(value = "LoginAttemptServiceImpl")
@@ -41,14 +33,11 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final NotificationInformationService notificationInformationService;
 
-    private final KeycloakServices keycloakServices;
-
-    public LoginAttemptServiceImpl(KeycloakServices keycloakServices, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, NotificationInformationService notificationInformationService) {
+    public LoginAttemptServiceImpl(AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, NotificationInformationService notificationInformationService) {
         this.b2CRepository = b2CRepository;
         this.applicationProperties = applicationProperties;
         this.smsNotificationService = smsNotificationService;
         this.notificationInformationService = notificationInformationService;
-        this.keycloakServices = keycloakServices;
     }
 
     @Override
@@ -102,17 +91,10 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
         }
        if (isBlocked(username) ){
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-            requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-           ResponseEntity responseFromKeycloack = keycloakServices.deactivateAccountUserInKeycloack(username);
-           if(responseFromKeycloack.getStatusCode().equals(HttpStatus.OK)){
-               MessageVM messageVM = new MessageVM();
-               messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
-               messageVM.setMsisdn(username);
-               smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
-           }
-
+            MessageVM messageVM = new MessageVM();
+            messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
+            messageVM.setMsisdn(username);
+            smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
            return 0;
        }
         return attemps;
