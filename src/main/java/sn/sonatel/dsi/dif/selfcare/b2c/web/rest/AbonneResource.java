@@ -156,7 +156,7 @@ public class AbonneResource {
         notes = RedocMessages.Abonne.DESCRIPTION_GET_CONTACT_NUMBERS)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "")})
     @Auditable(description = Message.Abonne.CONTACT_NUMBERS)
-    @PreAuthorize("#msisdn==authentication.name")
+    @PreAuthorize("#msisdn == @customSecurityResolver.login")
     @GetMapping("/v1/contact-numbers/{msisdn}")
     @Timed
     public ResponseEntity<Set<String>> getMyContactNumbers(@PathVariable(name =  "msisdn", required = true) String msisdn) {

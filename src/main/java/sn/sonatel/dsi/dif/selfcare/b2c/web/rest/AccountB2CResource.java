@@ -123,7 +123,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
-    @PreAuthorize("#accountB2C.numero == authentication.name")
+    @PreAuthorize("#accountB2C.numero == @customSecurityResolver.login")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
@@ -190,7 +190,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.GET_ACCOUNT)
     @GetMapping("/account/{login}")
     @Timed
-  //  @PreAuthorize("#login == authentication.name")
+    @PreAuthorize("#login == @customSecurityResolver.login")
     public AccountB2C getAccount(@PathVariable String login) {
         log.debug("REST request to get AccountB2C : {}", login);
         return accountB2CService.getAccount(login);
