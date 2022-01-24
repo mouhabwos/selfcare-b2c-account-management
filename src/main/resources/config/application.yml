@@ -39,13 +39,24 @@ eureka:
       git-branch: ${git.branch:}
       context-path: ${server.servlet.context-path:}
 feign:
-  circuitbreaker:
+  hystrix:
     enabled: true
-  # client:
-  #   config:
-  #     default:
-  #       connectTimeout: 5000
-  #       readTimeout: 5000
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 150000
+
+# See https://github.com/Netflix/Hystrix/wiki/Configuration
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 150000
+  shareSecurityContext: true
 management:
   endpoints:
     web:
