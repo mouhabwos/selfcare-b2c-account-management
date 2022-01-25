@@ -77,6 +77,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/api/account-management/v1/lite/reset-password").permitAll()
             .antMatchers("/api/account-management/v2/check_number/**").permitAll()
+            .antMatchers("/api/auth/login-succeeded/**").permitAll()
+            .antMatchers("/api/auth/login-failed/**").permitAll()
             .antMatchers("/api/account-management/register").permitAll()
             .antMatchers("/api/account-management/v2/register").permitAll()
             .antMatchers("/api/account-management/v3/register").permitAll()
