@@ -1,4 +1,4 @@
-package sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto;
+package sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto;
 
 import lombok.Data;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.BoosterTrigger;

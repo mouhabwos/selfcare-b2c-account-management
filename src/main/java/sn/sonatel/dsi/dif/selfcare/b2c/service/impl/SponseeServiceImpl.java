@@ -2,7 +2,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.springframework.data.domain.PageImpl;
 import org.springframework.scheduling.annotation.Async;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;

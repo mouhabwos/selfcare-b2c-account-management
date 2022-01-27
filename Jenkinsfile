@@ -5,7 +5,7 @@ teamOrangeEtMoiJenkinsfile(
  		devEnv : "dsidacdifdsorangeetmoi-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
   		skipTests : false,
-  		skipSonar : false,
+  		skipSonar : true,
   		deployOnPreprod : true,
   		runTnr :true,
   		deployBranch: "migration-jhipster-7",

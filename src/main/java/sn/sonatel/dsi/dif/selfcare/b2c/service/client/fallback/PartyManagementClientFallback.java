@@ -1,4 +1,4 @@
-package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.fallback;
+package sn.sonatel.dsi.dif.selfcare.b2c.service.client.fallback;
 
 import com.netflix.hystrix.exception.HystrixTimeoutException;
 import feign.FeignException;
@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 
@@ -15,29 +14,21 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
  * @since 1.1.4
  *
  */
-public class PartyManagementClientFallback implements PartyManagementApiClient {
+public interface PartyManagementClientFallback{
 
-    private final Logger log = LoggerFactory.getLogger(PartyManagementClientFallback.class);
+    Logger log = LoggerFactory.getLogger(PartyManagementClientFallback.class);
 
-    private final Throwable throwable;
-
-    public PartyManagementClientFallback(Throwable throwable) {
-        this.throwable = throwable;
-    }
-
-    @Override
-    public ResponseEntity<IndividualInformation> getIndividualInformation(String msisdn) {
+    default ResponseEntity<IndividualInformation> getIndividualInformation(String msisdn,Throwable throwable) {
         log.debug("get individual information fallback for customer {} with following error : {} ",msisdn,throwable);
-        return responseBuilder();
+        return responseBuilder(throwable);
     }
 
-    @Override
-    public ResponseEntity<OrganizationInformation> getOrganizationInformation(String msisdn) {
+    default ResponseEntity<OrganizationInformation> getOrganizationInformation(String msisdn, Throwable throwable) {
         log.debug("get Organization information fallback for customer {} with following error : {} ",msisdn,throwable);
-        return responseBuilder();
+        return responseBuilder(throwable);
     }
 
-    private ResponseEntity responseBuilder(){
+    default ResponseEntity responseBuilder(Throwable throwable){
 
         if(throwable.getClass() == HystrixTimeoutException.class){
 
