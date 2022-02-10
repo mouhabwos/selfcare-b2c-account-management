@@ -174,7 +174,7 @@ keycloak-configutation:
 # application:
 application:
 
-    selfcare-b2c-uaa: http://selfcare-b2c-uaa
+    selfcare-b2c-uaa: http://selfcare-b2c-tiers
     selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
     selfcare-otp: http://selfcare-otp
     selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
