@@ -35,8 +35,7 @@ import java.util.Collections;
 
     public SecurityConfiguration(OAuth2Properties oAuth2Properties) {
 
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
-        this.oAuth2Properties = oAuth2Properties;
+         this.oAuth2Properties = oAuth2Properties;
     }
 
     @Override
