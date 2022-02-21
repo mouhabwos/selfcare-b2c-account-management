@@ -183,7 +183,7 @@ application:
     email-service-client-orange: fatou.diaw@orange-sonatel.com
     api-management:
         oauth2:
-            client-token-uri: http://selfcare-b2c-uaa/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
+            client-token-uri: http://selfcare-b2c-tiers/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
             client-id: selfcare-b2c
             client-secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
             grant-type: client_credentials
