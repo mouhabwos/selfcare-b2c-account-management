@@ -113,7 +113,6 @@ public class AbonneResource {
     public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable(name =  "msisdn",required = true) String msisdn){
         log.debug ( "REST V2 request to get CustomerOffer : {}", msisdn );
         CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
-        customerOffer.setClientCode("");
         return ResponseEntity.ok(customerOffer);
 
     }
