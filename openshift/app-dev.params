@@ -1,9 +1,9 @@
 APPLICATION_NAME=${project.artifactId}
 IMAGE_DOCKER_NAME=registry.tools.orange-sonatel.com/dif/${project.artifactId}
 PORT_APPLICATION_NUMBER=${server.port.docker.expose}
-DB_SERVICE_NAME=selfcare-mysql
 DB_NAME=selfcare_b2c_account_management
 DB_TYPE=mysql
+DB_SERVICE_NAME=mysql-dev.dsitoolchainsharedservices.svc.cluster.local
 DB_USER=dbuser
 DB_PASSWORD=digitalfactory
 DB_PORT=3306

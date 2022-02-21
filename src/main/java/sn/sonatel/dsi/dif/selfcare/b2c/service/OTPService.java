@@ -47,7 +47,7 @@ public class OTPService {
        codeOTPCheckDTO.setMsisdn(msisdn);
        codeOTPCheckDTO.setCode(code);
         HttpEntity<CodeOTPCheckDTO> request = new HttpEntity<>(codeOTPCheckDTO);
-       codeOTPCheckDTO = restTemplate.postForObject(applicationProperties.getUrlOtp()+"/api/code-otp-infos/check", request, CodeOTPCheckDTO.class);
+       codeOTPCheckDTO = restTemplate.postForObject(applicationProperties.getSelfcareOtp()+"/api/code-otp-infos/check", request, CodeOTPCheckDTO.class);
 
         return  codeOTPCheckDTO;
 
@@ -60,7 +60,7 @@ public class OTPService {
     public boolean checkRegisterValidity(String msisdn) {
         log.debug("check validity for register request for {}", msisdn);
 
-        Map<String,Object> response = restTemplate.getForObject(applicationProperties.getUrlOtp() + "/api/code-otp-infos/check-valid-request/" + msisdn, Map.class);
+        Map<String,Object> response = restTemplate.getForObject(applicationProperties.getSelfcareOtp() + "/api/code-otp-infos/check-valid-request/" + msisdn, Map.class);
 
         return (Boolean) response.get("valid");
 

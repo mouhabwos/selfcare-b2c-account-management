@@ -14,14 +14,13 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 import javax.validation.Valid;
 import java.util.Map;
 
-@AuthorizedUserFeignClient(name = Constants.SELFCARE_SERVICE_OTP, fallbackFactory = ServiceOTPFallBackFactory.class)
+@AuthorizedUserFeignClient(name = "${application.selfcare-otp}", fallbackFactory = ServiceOTPFallBackFactory.class)
 public interface ServicesOTP {
 
     @PostMapping(Constants.URL_CHECK_CODE_OTP)
     ResponseEntity<CodeOTPCheckDTO> checkOTP(@Valid @RequestBody CodeOTPCheckDTO checkVM);
 
-    @PostMapping( Constants.URL_SEND_MESSAGE)
-    boolean generateMessage(@Valid @RequestBody MessageVM messageVM);
+
 
     @GetMapping(Constants.URL_CHECK_VALID_REQUEST_OTP)
     ResponseEntity<Map<String, Boolean>> registerCheckValidRequest(@PathVariable("msisdn") String msisdn);

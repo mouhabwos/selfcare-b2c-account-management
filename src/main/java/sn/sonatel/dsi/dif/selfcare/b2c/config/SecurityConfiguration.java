@@ -1,15 +1,18 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
+import io.github.jhipster.config.JHipsterConstants;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -27,11 +30,12 @@ import java.util.Collections;
 @Configuration
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
+ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
     private final OAuth2Properties oAuth2Properties;
 
     public SecurityConfiguration(OAuth2Properties oAuth2Properties) {
-        this.oAuth2Properties = oAuth2Properties;
+
+         this.oAuth2Properties = oAuth2Properties;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .disable()
             .headers()
             .frameOptions()
-            .disable()
+            .sameOrigin()
         .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -62,6 +66,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()
             .antMatchers("/api/**").authenticated()
+            .antMatchers("/test/**").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
     }
 
@@ -75,14 +80,27 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
         return new OAuth2JwtAccessTokenConverter(oAuth2Properties, signatureVerifierClient);
     }
 
-    @Bean
+    @Bean(value = {"customLoadBalancedRestTemplate","loadBalancedRestTemplate"})
+    @Profile("!"+JHipsterConstants.SPRING_PROFILE_K8S)
     @Qualifier("loadBalancedRestTemplate")
     public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer) {
+        RestTemplate restTemplate =  getAuthenticatedRestTemplate();
+        customizer.customize(restTemplate);
+        return restTemplate;
+    }
+
+    @Bean
+    @Profile(JHipsterConstants.SPRING_PROFILE_K8S)
+    @Qualifier("loadBalancedRestTemplate")
+    public RestTemplate loadBalancedRestTemplateK8s() {
+        return getAuthenticatedRestTemplate();
+    }
+
+    private RestTemplate getAuthenticatedRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
         restTemplate.setRequestFactory(factory);
         restTemplate.setInterceptors( Collections.singletonList(new RestTemplateAddTokenInterceptor()) );
-        customizer.customize(restTemplate);
         return restTemplate;
     }
 

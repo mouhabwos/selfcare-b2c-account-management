@@ -15,6 +15,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
@@ -36,15 +37,15 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final ApplicationProperties applicationProperties;
 
-    private final SelfcareOTPService serviceOTP;
+    private final SMSNotificationService smsNotificationService;
 
     private final NotificationInformationService notificationInformationService;
 
-    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SelfcareOTPService serviceOTP, NotificationInformationService notificationInformationService) {
+    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, NotificationInformationService notificationInformationService) {
         this.restTemplate = restTemplate;
         this.b2CRepository = b2CRepository;
         this.applicationProperties = applicationProperties;
-        this.serviceOTP = serviceOTP;
+        this.smsNotificationService = smsNotificationService;
         this.notificationInformationService = notificationInformationService;
     }
 
@@ -102,12 +103,12 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
             requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            String url = applicationProperties.getAuthenticationAuthorisationUserServerHost() + "/api/disable?login="+username;
+            String url = applicationProperties.getSelfcareB2cUaa() + "/api/disable?login="+username;
             restTemplate.getForEntity(url, Object.class);
                MessageVM messageVM = new MessageVM();
                messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
                messageVM.setMsisdn(username);
-               serviceOTP.generateMessage(messageVM);
+               smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
            return 0;
         }
         return attemps;

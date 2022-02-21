@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -51,7 +49,7 @@ public class AccountB2CSecurityServiceTest {
         initMocks(this);
         jHipsterProperties= new JHipsterProperties();
         jHipsterProperties.getSecurity().getClientAuthorization().setAccessTokenUri("http://selfcare-uaa/oauth/token");
-        accountB2cSecurityService = new AccountB2CSecurityService(jHipsterProperties,restTemplate,accountB2CService, validationHmacService, authorizationClient, uaaService);
+        accountB2cSecurityService = new AccountB2CSecurityService(accountB2CService, validationHmacService, authorizationClient, uaaService);
     }
 
     @Test

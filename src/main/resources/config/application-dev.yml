@@ -24,11 +24,11 @@ eureka:
         #prefer-ip-address: true
         #ip-address: @eureka.instance.dev.hostname@
         #hostname: @eureka.instance.dev.hostname@
-        hostname: selfcareb2c-accountmanagement-http-dsiselfcarebc-dev.k8s-test.orange-sonatel.com
+        hostname: selfcareb2c-accountmanagement-http-dsidacdifdsorangeetmoi-dev.apps.malaaw-rec.orange-sonatel.com
         nonSecurePort: 80
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s-test.orange-sonatel.com/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@registry-dev-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/eureka/
 
 spring:
     profiles:
@@ -47,9 +47,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: root
-        password: digitalfactory
+        url: jdbc:mysql://10.137.16.118:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: selfcareb2c
+        password: Selfc@reB2C
         hikari:
             auto-commit: false
             data-source-properties:
@@ -160,14 +160,12 @@ oauth2:
 # application:
 application:
     max-attempts: 3
-    authentication-authorisation-user-server-host: http://selfcare-b2c-uaa
-    url-otp: http://selfcare-otp
+    selfcare-b2c-uaa: http://selfcare-b2c-uaa
+    selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
+    selfcare-otp: http://selfcare-otp
+    selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
     lien-ibou: #https://m.me/165622776799685
     email-service-client-orange: Bouya.KANDE@orange-sonatel.com
-
-    file-manager:
-        base-name: http://selfcare-b2c-file-manager
-        api-upload: /api/upload
     api-management:
         oauth2:
             client-token-uri: http://selfcare-b2c-uaa/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
@@ -238,6 +236,13 @@ application:
             sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. %s FI rek la http://bit.ly/2NHn5aS ou sur www.orangeetmoi.sn
             sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
             sms-promo: Fais le aujourd hui et gagne %s %s.
+        server:
+            sms-host: 10.157.162.193
+            sms-port: 3339
+            sms-system-id: WebApp
+            sms-system-type: cp
+            sms-password: PD121&2
+
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
         cron-update-firstname-lastname: "00 00 00 * * ?"
