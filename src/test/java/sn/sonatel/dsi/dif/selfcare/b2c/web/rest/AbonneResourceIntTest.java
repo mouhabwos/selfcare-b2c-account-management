@@ -154,7 +154,7 @@ public class AbonneResourceIntTest {
         restAbonneMockMvc.perform(get("/api/abonne/v2/customerOffer/{msisdn}", DEFAULT_NUMERO))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.clientCode").isEmpty())
+            .andExpect(jsonPath("$.clientCode").value(customerOffer.getClientCode()))
             .andExpect(jsonPath("$.offerName").value(customerOffer.getOfferName()))
             .andExpect(jsonPath("$.offerId").value(customerOffer.getOfferId()));
     }
