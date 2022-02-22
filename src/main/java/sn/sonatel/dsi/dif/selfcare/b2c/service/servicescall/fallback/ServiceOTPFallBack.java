@@ -28,10 +28,7 @@ public class ServiceOTPFallBack implements ServicesOTP {
         return ResponseEntity.ok().build();
     }
 
-    @Override
-    public boolean generateMessage(@Valid MessageVM messageVM) {
-        return false;
-    }
+
 
     @Override
     public ResponseEntity<Map<String, Boolean>> registerCheckValidRequest(String msisdn) {
