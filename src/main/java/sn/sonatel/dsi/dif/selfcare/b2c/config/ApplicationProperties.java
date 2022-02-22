@@ -332,6 +332,39 @@ public class ApplicationProperties {
         @Getter(AccessLevel.PUBLIC)
         private Sponsorship sponsorship;
 
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
+        private Server server;
+
+        public static class Server{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsHost;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private int smsPort;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsSystemId;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsSystemType;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsPassword;
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsDefaultSourceAddress;
+
+
+        }
+
         public static class Sponsorship{
 
             @Setter(AccessLevel.PUBLIC)

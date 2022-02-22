@@ -4,7 +4,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.18.13-SNAPSHOT</version>
+    <version>1.18.18-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Selfcare B2C Account Management</name>
 
@@ -34,10 +34,10 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</connection>
+        <connection>scm:git:http://git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</connection>
         <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</developerConnection>
         <tag>v1.14.0</tag>
-        <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</url>
+        <url>scm:git:http://git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</url>
     </scm>
 
     <issueManagement>
@@ -600,6 +600,11 @@
             <artifactId>opencsv</artifactId>
             <version>4.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.jsmpp</groupId>
+            <artifactId>jsmpp</artifactId>
+            <version>2.3.6</version>
+        </dependency>
 
     </dependencies>
 
@@ -680,62 +685,7 @@
                     </rules>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>default-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/classes</outputDirectory>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
-                            <delimiters>
-                                <delimiter>@</delimiter>
-                            </delimiters>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>config/*.yml</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>config/*.yml</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>docker-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/docker/</directory>
-                                    <filtering>true</filtering>
-                                    <excludes>
-                                        <exclude>**/*.yml</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
