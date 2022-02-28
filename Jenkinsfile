@@ -7,7 +7,6 @@ teamOrangeEtMoiJenkinsfile(
   		skipSonar : false,
   		deployOnPreprod : true,
   		runTnr :true,
-  		agent: "maven",
-  		releaseBranch: "release"
+  		agent: "maven"
 )
 
