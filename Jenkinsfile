@@ -3,7 +3,7 @@ library 'jenkins-shared-library@master'
 teamOrangeEtMoiJenkinsfile(
  		devEnv : "dsidacdifdsorangeetmoi-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
-  		skipTests : true,
+  		skipTests : false,
   		skipSonar : false,
   		deployOnPreprod : true,
   		runTnr :true,
