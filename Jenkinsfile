@@ -1,13 +1,13 @@
 library 'jenkins-shared-library@master'
 
 teamOrangeEtMoiJenkinsfile(
-  		//agent : "gateway" ,
  		devEnv : "dsidacdifdsorangeetmoi-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
-  		skipTests : false,
+  		skipTests : true,
   		skipSonar : false,
   		deployOnPreprod : true,
   		runTnr :true,
-  		agent :  "maven"
+  		agent: "maven",
+  		releaseBranch: "release"
 )
 

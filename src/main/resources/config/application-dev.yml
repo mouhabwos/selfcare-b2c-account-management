@@ -28,7 +28,7 @@ eureka:
         nonSecurePort: 80
     client:
         service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-dev.k8s-test.orange-sonatel.com/eureka/
+            defaultZone: http://admin:${jhipster.registry.password}@registry-dev-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/eureka/
 
 spring:
     profiles:
