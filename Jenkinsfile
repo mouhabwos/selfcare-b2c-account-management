@@ -2,7 +2,7 @@ library 'jenkins-shared-library@master'
 
 teamOrangeEtMoiJenkinsfile(
   		agent: "openjdk11",
- 		devEnv : "dsidacdifdsorangeetmoi-dev",
+ 		devEnv : "dsiprojetpenthagone-isoprod",
         recEnv : "dsidacdifdsorangeetmoi-rec",
   		skipTests : false,
   		skipSonar : true,
