@@ -8,7 +8,8 @@ teamOrangeEtMoiJenkinsfile(
   		skipSonar : true,
   		deployOnPreprod : true,
   		runTnr :true,
-  		deployBranch: "migration-jhipster-7",
-        sonarUrl: "http://sonar.v8.tools.orange-sonatel.com"
+  		deployBranch : "migration-jhipster-7",
+        sonarUrl : "http://sonar.v8.tools.orange-sonatel.com",
+  		deployAgent : "malaw4-prod"
 )
 
