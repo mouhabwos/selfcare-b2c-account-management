@@ -7,7 +7,7 @@
 
     <groupId>sn.sonatel.dsi.dif.selfcare.b2c</groupId>
     <artifactId>selfcareb2c-accountmanagement</artifactId>
-    <version>1.18.17-SNAPSHOT</version>
+    <version>1.20.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Selfcare B2C Account Management</name>
 
@@ -175,6 +175,15 @@
             <groupId>tech.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -204,6 +213,10 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-afterburner</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
@@ -220,9 +233,14 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-bean-validators</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -245,6 +263,11 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
@@ -1234,6 +1257,10 @@
                 <profile.tls>,tls</profile.tls>
             </properties>
         </profile>
+
+        <profile>
+            <id>chron</id>
+        </profile>
         <profile>
             <id>dev</id>
             <activation>
@@ -1406,6 +1433,19 @@
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+        <profile>
+            <!--
+                Profile for tracing requests with apm.
+            -->
+            <id>apm</id>
+            <dependencies>
+                <dependency>
+                    <groupId>co.elastic.apm</groupId>
+                    <artifactId>apm-agent-attach</artifactId>
+                    <version>1.12.0</version>
+                </dependency>
+            </dependencies>
         </profile>
         <!-- jhipster-needle-maven-add-profile -->
     </profiles>
