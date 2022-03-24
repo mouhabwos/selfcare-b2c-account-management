@@ -4,7 +4,7 @@ teamOrangeEtMoiJenkinsfile(
  		devEnv : "dsidacdifdsorangeetmoi-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
   		skipTests : true,
-  		skipSonar : false,
+  		skipSonar : true,
   		deployOnPreprod : true,
   		runTnr :true,
   		agent: "maven",
