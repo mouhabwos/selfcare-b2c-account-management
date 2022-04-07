@@ -194,6 +194,7 @@ audit:
         xss:
             excluded-urls:
                 - /api/v1/mail/ouverture-compte
+                - /api/export/v1/file-campaign-flow
     enable: true
     enable-error-logs: true
     log-type:  "AUDIT"
