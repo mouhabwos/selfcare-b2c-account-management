@@ -1,12 +1,14 @@
 library 'jenkins-shared-library@master'
 
 teamOrangeEtMoiJenkinsfile(
- 		devEnv : "dsidacdifdsorangeetmoi-dev",
+  		agent: "openjdk11",
+ 		devEnv : "dsiprojetpenthagone-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
   		skipTests : false,
-  		skipSonar : false,
+  		skipSonar : true,
   		deployOnPreprod : true,
   		runTnr :true,
-  		agent: "maven"
-)
+  		deployBranch : "migration-jhipster-7",
+        sonarUrl : "http://sonar.v8.tools.orange-sonatel.com"
+ )
 

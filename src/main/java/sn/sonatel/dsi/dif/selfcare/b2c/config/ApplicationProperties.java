@@ -12,15 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Properties specific to Selfcare B 2 C.
+ * Properties specific to Microkeycloakjh 7.
  * <p>
- * Properties are configured in the application.yml file.
- * See {@link io.github.jhipster.config.JHipsterProperties} for a good example.
+ * Properties are configured in the {@code application.yml} file.
+ * See {@link tech.jhipster.config.JHipsterProperties} for a good example.
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = true)
 public class ApplicationProperties {
-
-
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
@@ -189,37 +187,11 @@ public class ApplicationProperties {
      * @author BOUYA KANDE
      * @since 1.1.4
      */
+    @Data
     public static class SelfcareMail {
-
         private String senderAddress;
-
         private String senderName;
-
         private String mailSubject;
-
-        public String getMailSubject() {
-            return mailSubject;
-        }
-
-        public void setMailSubject(String mailSubject) {
-            this.mailSubject = mailSubject;
-        }
-
-        public String getSenderAddress() {
-            return senderAddress;
-        }
-
-        public void setSenderAddress(String senderAddress) {
-            this.senderAddress = senderAddress;
-        }
-
-        public String getSenderName() {
-            return senderName;
-        }
-
-        public void setSenderName(String senderName) {
-            this.senderName = senderName;
-        }
 
     }
 
@@ -406,6 +378,7 @@ public class ApplicationProperties {
 
     }
 
+
     public static class ServeurFtp{
 
         @Setter(AccessLevel.PUBLIC)
@@ -428,6 +401,5 @@ public class ApplicationProperties {
         @Getter(AccessLevel.PUBLIC)
         private String directory;
     }
-
 
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.notification.conf.batch.dto.AccountMsisdn;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 import java.util.Optional;
 

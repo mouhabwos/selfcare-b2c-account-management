@@ -42,7 +42,7 @@ public class CustomSecurityResolver {
         return list;
     }
 
-    private String login(){
-        return SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM_ACCOUNT);
+    public String login(){
+        return SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM);
     }
 }

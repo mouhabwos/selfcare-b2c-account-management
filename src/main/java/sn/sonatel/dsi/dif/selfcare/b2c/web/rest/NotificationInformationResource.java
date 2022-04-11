@@ -36,7 +36,7 @@ public class NotificationInformationResource {
 
     @Auditable(description = Message.NotificationInformation.UPDATE_CODE_FORMULE_BY_MSISDN)
     @PutMapping
-    @PreAuthorize("#informationDTO.msisdn == authentication.name")
+    @PreAuthorize("#informationDTO.msisdn == @customSecurityResolver.login")
     public ResponseEntity updateCodeFormuleByMsisdn(@RequestBody NotificationInformationDTO informationDTO) {
         log.debug ( "REST request to update for msisdn {}", informationDTO );
         notificationInformationService.updateCodeFormuleByMsisdn(informationDTO);
@@ -55,7 +55,7 @@ public class NotificationInformationResource {
     @Auditable(description = Message.NotificationInformation.REGISTER)
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("#informationDTO.msisdn == authentication.name")
+    @PreAuthorize("#informationDTO.msisdn == @customSecurityResolver.login")
     public void register(@RequestBody NotificationInformationDTO informationDTO) {
         log.debug ( "REST request to register {}", informationDTO );
         notificationInformationService.register(informationDTO);

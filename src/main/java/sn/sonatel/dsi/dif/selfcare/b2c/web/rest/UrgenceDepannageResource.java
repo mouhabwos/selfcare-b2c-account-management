@@ -11,7 +11,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.MailSendService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
-
 import java.io.IOException;
 
 /**

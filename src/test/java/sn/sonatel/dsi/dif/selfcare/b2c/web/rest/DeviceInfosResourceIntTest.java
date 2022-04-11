@@ -3,38 +3,37 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
-import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos;
-import sn.sonatel.dsi.dif.selfcare.b2c.repository.DeviceInfosRepository;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
-
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
+import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.DeviceInfos;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.DeviceInfosRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
 /**
  * Integration tests for the {@link DeviceInfosResource} REST controller.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
+@IntegrationTest
 public class DeviceInfosResourceIntTest {
 
     private static final String DEFAULT_DEVICE_ID = "AAAAAAAAAA";
@@ -149,11 +148,11 @@ public class DeviceInfosResourceIntTest {
         // Get all the deviceInfosList
         restDeviceInfosMockMvc.perform(get("/api/device-infos?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(deviceInfos.getId().intValue())))
             .andExpect(jsonPath("$.[*].deviceId").value(hasItem(DEFAULT_DEVICE_ID.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getDeviceInfos() throws Exception {
@@ -163,7 +162,7 @@ public class DeviceInfosResourceIntTest {
         // Get the deviceInfos
         restDeviceInfosMockMvc.perform(get("/api/device-infos/{id}", deviceInfos.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(deviceInfos.getId().intValue()))
             .andExpect(jsonPath("$.deviceId").value(DEFAULT_DEVICE_ID.toString()));
     }

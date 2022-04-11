@@ -1,6 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 
 import java.io.IOException;

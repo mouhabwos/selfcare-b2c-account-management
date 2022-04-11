@@ -1,19 +1,19 @@
-FROM registry.tools.orange-sonatel.com/openjdk:8-jre-alpine
+FROM registry.tools.orange-sonatel.com/coe/adoptopenjdk:11-jdk-hotspot
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
     JAVA_OPTS=""
 
 # Add a jhipster user to run our application so that it doesn't need to run as root
-RUN adduser -D -s /bin/sh jhipster
+RUN adduser --disabled-password --shell /bin/sh jhipster
 WORKDIR /home/jhipster
 
 ADD entrypoint.sh entrypoint.sh
 RUN chmod 755 entrypoint.sh && chown jhipster:jhipster entrypoint.sh
 USER jhipster
 
-ADD ${project.artifactId}-${project.version}.${project.packaging} ${project.artifactId}.${project.packaging}
-
 ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE ${server.port.docker.expose}
+
+ADD ${project.artifactId}-${project.version}.${project.packaging} ${project.artifactId}.${project.packaging}

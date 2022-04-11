@@ -1,12 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,16 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.FileInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.SearchFilterItem;
@@ -37,7 +28,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.export.ExportService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
 import javax.persistence.EntityManager;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.security.Principal;
@@ -48,12 +38,10 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.sameInstant;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
+@IntegrationTest
 public class ExportResourceIntTest {
 
     @Autowired
@@ -198,7 +186,7 @@ public class ExportResourceIntTest {
          restMockMvc.perform(get("/api/export/v1/uploaded-file-information")
             .param("searchFilterItem", SearchFilterItem.ALL.name()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].fileName").value(hasItem("Information_Account_1617287722027.csv")))
             .andExpect(jsonPath("$.[*].createdByUser").value(hasItem("system")))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem("2021-04-01T20:36:01Z")))
@@ -216,7 +204,7 @@ public class ExportResourceIntTest {
             .param("searchFilterItem", SearchFilterItem.BY_USER.name())
             .param("user", "system"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].fileName").value(hasItem("Information_Account_1617287722028.csv")))
             .andExpect(jsonPath("$.[*].createdByUser").value(hasItem("system")))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem("2021-04-01T14:36:13Z")))

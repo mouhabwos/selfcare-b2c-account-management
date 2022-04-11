@@ -1,45 +1,42 @@
 {
   "generator-jhipster": {
-    "promptValues": {
-      "packageName": "sn.sonatel.dsi.dif.selfcare.b2c",
-      "nativeLanguage": "fr"
-    },
-    "jhipsterVersion": "5.3.4",
+    "applicationType": "microservice",
     "baseName": "selfcare-b2c-account-management",
+    "jhipsterVersion": "7.3.1",
+    "skipClient": true,
+    "withAdminUi": false,
+    "skipUserManagement": true,
+    "skipServer": false,
+    "skipCheckLengthOfIdentifier": false,
+    "skipFakeData": false,
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "testFrameworks": [],
+    "blueprints": [],
+    "otherModules": [],
+    "pages": [],
+    "creationTimestamp": 1635240671950,
+    "serviceDiscoveryType": "eureka",
+    "reactive": false,
+    "authenticationType": "oauth2",
     "packageName": "sn.sonatel.dsi.dif.selfcare.b2c",
-    "packageFolder": "sn/sonatel/dsi/dif/selfcare/b2c",
     "serverPort": "8715",
-    "authenticationType": "uaa",
-    "uaaBaseName": "selfcare-uaa",
-    "hibernateCache": "ehcache",
-    "clusteredHttpSession": false,
-    "websocket": false,
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
     "databaseType": "sql",
     "devDatabaseType": "mysql",
     "prodDatabaseType": "mysql",
-    "searchEngine": "false",
-    "messageBroker": false,
-    "serviceDiscoveryType": "eureka",
     "buildTool": "maven",
-    "enableSocialSignIn": false,
-    "jwtSecretKey": "5fad32ef556def85aa6835719db5f6b73fa2c31a",
-    "enableTranslation": true,
-    "applicationType": "microservice",
-    "testFrameworks": [
-      "gatling",
-      "cucumber"
-    ],
-    "jhiPrefix": "jhi",
-    "skipClient": true,
-    "skipUserManagement": true,
-    "nativeLanguage": "fr",
-    "languages": [
-      "fr",
-      "en"
-    ],
-    "clientPackageManager": "yarn"
-  },
-  "generator-jhipster-entity-audit": {
-    "auditFramework": "custom"
+    "serverSideOptions": ["enableSwaggerCodegen:true"],
+    "websocket": false,
+    "searchEngine": false,
+    "messageBroker": false,
+    "enableSwaggerCodegen": true,
+    "enableTranslation": false,
+    "nativeLanguage": "en",
+    "jwtSecretKey": "M2EyM2ZlYzY1ZmM5ZTAxYTRjMmM3YTVjMDMxOTRmOGMxODZlNmYyYTJjMWEwZDBkNjNhOTFhYTFlMmZlNDk4MjJiYTY5ZWExMmFmMTQ1OWNiMTBmMzdiZGUyZDAwYzM5NWU1ZTE2YzJiZmZiZWUwNzZiZDZkMzEwZDEzMmM3Njc=",
+    "enableGradleEnterprise": false,
+    "languages": ["en", "fr"]
   }
 }

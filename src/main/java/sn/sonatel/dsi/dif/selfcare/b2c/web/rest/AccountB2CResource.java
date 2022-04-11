@@ -1,6 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
+import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -8,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.security.AccountB2CSecurityService;
@@ -22,10 +23,11 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
+import tech.jhipster.web.util.PaginationUtil;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -107,7 +109,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/v3/register")
-    public ResponseEntity<OAuth2AccessToken> registerAccountB2CV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+    public ResponseEntity<AccessTokenResponse> registerAccountB2CV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C version 3 : {}", managedUserVM);
 
         if (managedUserVM.getId() != null) {
@@ -121,7 +123,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
-    @PreAuthorize("#accountB2C.numero == authentication.name")
+    @PreAuthorize("#accountB2C.numero == @customSecurityResolver.login")
     public ResponseEntity<AccountB2C> updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("REST request to update AccountB2C : {}", accountB2C);
         if (accountB2C.getId() == null) {
@@ -155,7 +157,7 @@ public class AccountB2CResource {
     public ResponseEntity<List<AccountB2C>> getAllAccountB2CS(Pageable pageable) {
         log.debug("REST request to get a page of AccountB2CS");
         Page<AccountB2C> page = accountB2CService.getAllAccountB2C(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/account-b-2-cs");
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -188,7 +190,7 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.GET_ACCOUNT)
     @GetMapping("/account/{login}")
     @Timed
-    @PreAuthorize("#login == authentication.name")
+    @PreAuthorize("#login == @customSecurityResolver.login")
     public AccountB2C getAccount(@PathVariable String login) {
         log.debug("REST request to get AccountB2C : {}", login);
         return accountB2CService.getAccount(login);
@@ -236,7 +238,7 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.RESET_PASSWORD)
     @PutMapping(path = "/v1/lite/reset-password")
-    public ResponseEntity<OAuth2AccessToken> resetPasswordLiteMode(@RequestHeader("X-Selfcare-Uuid") String uuid, @RequestBody ResetPasswordVM resetPasswordVM) {
+    public ResponseEntity<AccessTokenResponse> resetPasswordLiteMode(@RequestHeader("X-Selfcare-Uuid") String uuid, @RequestBody ResetPasswordVM resetPasswordVM) {
         log.debug("Request to reset password B2C client Lite Mode ");
         return ResponseEntity.ok(accountB2cSecurityService.resetPassword(uuid, resetPasswordVM));
     }

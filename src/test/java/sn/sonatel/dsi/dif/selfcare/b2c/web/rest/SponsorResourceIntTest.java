@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.config.SecurityBeanOverrideConfiguration;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
@@ -42,7 +42,7 @@ import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormatting
  * @see SponsorResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, SelfcareB2CApp.class})
+@IntegrationTest
 public class SponsorResourceIntTest {
 
     private static final String DEFAULT_MSISDN = "AAAAAAAAAA";
@@ -178,7 +178,7 @@ public class SponsorResourceIntTest {
         // Get all the sponsorList
         restSponsorMockMvc.perform(get("/api/sponsors?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(sponsor.getId().intValue())))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(DEFAULT_MSISDN.toString())))
             .andExpect(jsonPath("$.[*].matricule").value(hasItem(DEFAULT_MATRICULE.toString())))
@@ -195,7 +195,7 @@ public class SponsorResourceIntTest {
         // Get the sponsor
         restSponsorMockMvc.perform(get("/api/sponsors/{id}", sponsor.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(sponsor.getId().intValue()))
             .andExpect(jsonPath("$.msisdn").value(DEFAULT_MSISDN.toString()))
             .andExpect(jsonPath("$.matricule").value(DEFAULT_MATRICULE.toString()))

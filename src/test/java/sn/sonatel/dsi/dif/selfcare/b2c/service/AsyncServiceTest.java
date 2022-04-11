@@ -6,18 +6,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.BoosterTrigger;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
