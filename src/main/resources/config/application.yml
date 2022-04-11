@@ -244,35 +244,36 @@ jhipster:
 # application:
 
 audit:
-  security:
-    xss:
-      excluded-urls:
-        - /api/v1/mail/ouverture-compte
-  enable: true
-  enable-error-logs: true
-  log-type:  "AUDIT"
-  log-file-name: "audit"
-  use-json-format: ${jhipster.logging.use-json-format:false}
-  fields-separator: "|"
-  app-name: ${spring.application.name:APP_NAME}
-  scrubbed-value: "********"
-  blacklisted-parameters:
-    - idClient
-    - clientCode
-  http-headers:      #if you would like to log http headers
-    - X-Selfcare-Platform
-    - X-Selfcare-Isvirtual
-    - X-Selfcare-Uuid
-    - X-Selfcare-Serial
-    - X-Selfcare-Model
-    - X-Selfcare-Manufacturer
-    - X-Selfcare-Cordova
-    - X-Selfcare-Os-Version
-    - X-Selfcare-Source
-    - X-Selfcare-App-Version
-    - X-Selfcare-Source
-    - X-Selfcare-Device-Type
-    - X-Selfcare-Device-Imei
+    security:
+        xss:
+            excluded-urls:
+                - /api/v1/mail/ouverture-compte
+                - /api/export/v1/file-campaign-flow
+    enable: true
+    enable-error-logs: true
+    log-type:  "AUDIT"
+    log-file-name: "audit"
+    use-json-format: ${jhipster.logging.use-json-format:false}
+    fields-separator: "|"
+    app-name: ${spring.application.name:APP_NAME}
+    scrubbed-value: "********"
+    blacklisted-parameters:
+        - idClient
+        - clientCode
+    http-headers:      #if you would like to log http headers
+        - X-Selfcare-Platform
+        - X-Selfcare-Isvirtual
+        - X-Selfcare-Uuid
+        - X-Selfcare-Serial
+        - X-Selfcare-Model
+        - X-Selfcare-Manufacturer
+        - X-Selfcare-Cordova
+        - X-Selfcare-Os-Version
+        - X-Selfcare-Source
+        - X-Selfcare-App-Version
+        - X-Selfcare-Source
+        - X-Selfcare-Device-Type
+        - X-Selfcare-Device-Imei
 
 # APM related configuration
 elastic:
