@@ -2,8 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 

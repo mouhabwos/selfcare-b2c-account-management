@@ -3,7 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
 public class WelcomeBoosterStatus {
 
-    private Status status=Status.FAILURE;
+    private Status status= Status.FAILURE;
     private BoosterType type;
     private BoosterValue value;
 

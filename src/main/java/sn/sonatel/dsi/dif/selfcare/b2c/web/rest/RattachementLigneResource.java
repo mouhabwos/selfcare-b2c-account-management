@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
@@ -17,8 +17,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -49,7 +50,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.ADD)
     @PostMapping("/rattachement-lignes")
-    @PreAuthorize("#rattachementLigne.login == authentication.name")
+    @PreAuthorize("#rattachementLigne.login == @customSecurityResolver.login")
     public ResponseEntity<RattachementLigne> createRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) throws URISyntaxException {
         log.debug ( "REST request to save RattachementLigne : {}", rattachementLigne );
 
@@ -69,7 +70,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.UPDATE)
     @PutMapping("/rattachement-lignes")
-    @PreAuthorize("#rattachementLigne.login == authentication.name")
+    @PreAuthorize("#rattachementLigne.login == @customSecurityResolver.login")
     public ResponseEntity<RattachementLigne> updateRattachementLigne(@Valid @RequestBody RattachementLigneDTO rattachementLigne) {
         log.debug ( "REST request to update RattachementLigne : {}", rattachementLigne );
         if (rattachementLigne.getId() == null) {
@@ -87,11 +88,11 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.LIST)
     @GetMapping("/rattachement-lignes")
-    @PreAuthorize("#rattachementLigne.login == authentication.name")
+    @PreAuthorize("#rattachementLigne.login == @customSecurityResolver.login")
     public ResponseEntity<List<RattachementLigne>> getAllRattachementLignes(Pageable pageable) {
         log.debug ( "REST request to get a page of RattachementLignes" );
         Page<RattachementLigne> page = rattachementLigneService.getAllRattachementLignes ( pageable );
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders ( page, "/api/rattachement-lignes" );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders (ServletUriComponentsBuilder.fromCurrentRequest(), page );
         return ResponseEntity.ok ().headers ( headers ).body ( page.getContent () );
     }
 
@@ -120,7 +121,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.SAVE)
     @PostMapping("/rattachement-lignes/register")
-    @PreAuthorize("#ligneVM.login==authentication.name")
+    @PreAuthorize("#ligneVM.login == @customSecurityResolver.login")
     public ResponseEntity<RattachementLigne> addRattachementLigne(
         @Valid @RequestBody RattachementLigneVM ligneVM) throws URISyntaxException {
 
@@ -136,7 +137,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.List_By_MSISDN)
     @GetMapping("/rattachement-lignes/get-all-number/{msisdn}")
     @Timed
-    @PreAuthorize("#msisdn == authentication.name")
+    @PreAuthorize("#msisdn == @customSecurityResolver.login")
     public ResponseEntity<List<InfoNumberVM>> getRattachementLignes(
         @PathVariable String msisdn, @RequestParam(required = false, defaultValue = "true") boolean withCustomerOffer) {
         log.debug ( "REST request to get RattachementLigne : {}, {}", msisdn, withCustomerOffer );
@@ -151,7 +152,7 @@ public class RattachementLigneResource {
     @Auditable(description = Message.Rattachement.DELETE_ALL)
     @PostMapping("/rattachement-lignes/delete-multiple")
     @Timed
-    @PreAuthorize("#deleteListe.login == authentication.name")
+    @PreAuthorize("#deleteListe.login == @customSecurityResolver.login")
     public ResponseEntity<RattachementLignesDeleteMultipleVM> deleteMultipleRattachementLigne(
         @Valid @RequestBody RattachementLignesDeleteMultipleVM deleteListe) {
 
@@ -162,7 +163,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.ADD_LIGNE_FIXE)
     @PostMapping("/rattachement-lignes/fixe-register")
-    @PreAuthorize("#ligneVM.login==authentication.name")
+    @PreAuthorize("#ligneVM.login == @customSecurityResolver.login")
     public ResponseEntity<RattachementLigne> addRattachementLigneFixe(
         @Valid @RequestBody RattachementLigneFixeVM ligneVM) throws URISyntaxException {
 
@@ -174,7 +175,7 @@ public class RattachementLigneResource {
 
     @Auditable(description = Message.Rattachement.SAVE_RATTACHEMENT_LIGNE_BY_CNI)
     @PostMapping("/v2/rattachement-lignes/register/by-cni")
-    @PreAuthorize("#rattachementLigneCNIVM.login==authentication.name")
+    @PreAuthorize("#rattachementLigneCNIVM.login == @customSecurityResolver.login")
     public ResponseEntity<RattachementLigne> rattachementLigneByCni(
         @Valid @RequestBody RattachementLigneCNIVM rattachementLigneCNIVM) throws URISyntaxException {
         log.debug ( "REST request to add RattachementLigne by cni : {}", rattachementLigneCNIVM );

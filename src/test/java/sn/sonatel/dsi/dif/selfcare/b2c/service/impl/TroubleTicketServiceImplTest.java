@@ -414,7 +414,7 @@ public class TroubleTicketServiceImplTest {
             thenReturn(ResponseEntity.ok(troubleTicketList));
 
         Mockito.when(troubleTicketApiClient.getTroubleTicketByMsisdn(REQUEST_MSISDN,TroubleTicket.TicketTypeEnum.INCIDENT)).
-            thenReturn(ResponseEntity.ok(Collections.EMPTY_LIST));
+            thenReturn(ResponseEntity.ok(Collections.emptyList()));
 
         ResponseEntity<List<RequestStatusDTO>> responseEntity = troubleTicketService.getRequestStatusByMisisdn(REQUEST_MSISDN);
 

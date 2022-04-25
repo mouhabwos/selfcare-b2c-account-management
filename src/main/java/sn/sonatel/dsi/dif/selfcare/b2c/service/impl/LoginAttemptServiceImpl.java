@@ -3,25 +3,19 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
-import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.vm.MessageVM;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Qualifier(value = "LoginAttemptServiceImpl")
@@ -30,8 +24,6 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final Logger log = LoggerFactory.getLogger(LoginAttemptServiceImpl.class);
 
-    @Qualifier("loadBalancedRestTemplate")
-    private final RestTemplate restTemplate;
 
     private final AccountB2CRepository b2CRepository;
 
@@ -41,8 +33,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final NotificationInformationService notificationInformationService;
 
-    public LoginAttemptServiceImpl(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, NotificationInformationService notificationInformationService) {
-        this.restTemplate = restTemplate;
+    public LoginAttemptServiceImpl(AccountB2CRepository b2CRepository, ApplicationProperties applicationProperties, SMSNotificationService smsNotificationService, NotificationInformationService notificationInformationService) {
         this.b2CRepository = b2CRepository;
         this.applicationProperties = applicationProperties;
         this.smsNotificationService = smsNotificationService;
@@ -50,9 +41,9 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     }
 
     @Override
-    public void loginSucceeded(String username) throws AccountB2CException {
+    public void loginSucceeded(String username){
 
-        log.debug("######################## Authentication Success ######################### " );
+        log.debug("Service Request Authentication Success " );
         Optional<AccountB2C> accountB2C= b2CRepository.findOneByNumero(username);
 
         if (accountB2C.isPresent()){
@@ -64,9 +55,9 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     }
 
     @Override
-    public int loginFailed(String username) throws AccountB2CException {
+    public int loginFailed(String username) {
 
-        log.debug("@@@@@@@@@@@@@@@@@@@@@@@@@ Authentication Failure @@@@@@@@@@@@@@@@@@@@@@@@@ " );
+        log.debug("Service Request Authentication Failure" );
         Optional<AccountB2C> accountB2C= b2CRepository.findOneByNumero(username);
         int attemps = 2;
 
@@ -100,17 +91,12 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
         }
        if (isBlocked(username) ){
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-            requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            String url = applicationProperties.getSelfcareB2cUaa() + "/api/disable?login="+username;
-            restTemplate.getForEntity(url, Object.class);
-               MessageVM messageVM = new MessageVM();
-               messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
-               messageVM.setMsisdn(username);
-               smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
+            MessageVM messageVM = new MessageVM();
+            messageVM.setMessage(applicationProperties.getMessageBlockUser()+applicationProperties.getServiceClientOrange()+applicationProperties.getLienIbou());
+            messageVM.setMsisdn(username);
+            smsNotificationService.sendSMSPP(messageVM.getMsisdn(),messageVM.getMessage(),messageVM.getSourceAddress());
            return 0;
-        }
+       }
         return attemps;
     }
 

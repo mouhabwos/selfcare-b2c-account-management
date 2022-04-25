@@ -1,8 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
+
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.LogUtil;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee} entity.

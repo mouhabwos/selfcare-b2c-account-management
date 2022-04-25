@@ -1,16 +1,15 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Service Interface for managing {@link sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee}.
+ * Service Interface for managing {@link Sponsee}.
  */
 public interface SponseeService {
 

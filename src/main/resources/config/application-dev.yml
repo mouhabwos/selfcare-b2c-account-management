@@ -14,78 +14,73 @@
 # ===================================================================
 
 logging:
-    level:
-        ROOT: DEBUG
-        io.github.jhipster: DEBUG
-        sn.sonatel.dsi.dif.selfcare.b2c: DEBUG
+  level:
+    ROOT: DEBUG
+    tech.jhipster: DEBUG
+    org.hibernate.SQL: DEBUG
+    sn.sonatel.dsi.dif.selfcare.b2c: DEBUG
 
 eureka:
-    instance:
-        #prefer-ip-address: true
-        #ip-address: @eureka.instance.dev.hostname@
-        #hostname: @eureka.instance.dev.hostname@
-        hostname: selfcareb2c-accountmanagement-http-dsidacdifdsorangeetmoi-dev.apps.malaaw-rec.orange-sonatel.com
-        nonSecurePort: 80
-    client:
-        service-url:
-            defaultZone: http://admin:${jhipster.registry.password}@registry-dev-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/eureka/
+  instance:
+    hostname: selfcareb2c-accountmanagement-http-dsidacdifdsorangeetmoi-dev.apps.malaaw-rec.orange-sonatel.com
+    nonSecurePort: 80
+  client:
+    service-url:
+      defaultZone: http://admin:${jhipster.registry.password}@registry-dev-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/eureka/
 
 spring:
-    profiles:
-        active: dev
-        include:
-        - swagger
-        - chron
-        # Uncomment to activate TLS for the dev profile
-        #- tls
-    devtools:
-        restart:
-            enabled: true
-        livereload:
-            enabled: false # we use Webpack dev server + BrowserSync for livereload
-    jackson:
-        serialization.indent_output: true
-    datasource:
-        type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://10.137.16.118:3306/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false
-        username: selfcareb2c
-        password: Selfc@reB2C
-        hikari:
-            auto-commit: false
-            data-source-properties:
-                cachePrepStmts: true
-                prepStmtCacheSize: 250
-                prepStmtCacheSqlLimit: 2048
-                useServerPrepStmts: true
-    jpa:
-        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-        database: MYSQL
-        show-sql: true
-        properties:
-            hibernate.id.new_generator_mappings: true
-            hibernate.connection.provider_disables_autocommit: true
-            hibernate.cache.use_second_level_cache: true
-            hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: true
-            hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory
-
-    liquibase:
-        contexts: dev
-    mail:
-        host: 10.100.56.56
-        port: 25
-        username:
-        password:
-    messages:
-        cache-duration: PT1S # 1 second, see the ISO 8601 standard
-    thymeleaf:
-        cache: false
-    zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
-        base-url: http://localhost:9411
-        enabled: false
-        locator:
-            discovery:
-                enabled: true
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**
+    livereload:
+      enabled: false # we use Webpack dev server + BrowserSync for livereload
+  jackson:
+    serialization:
+      indent-output: true
+  cloud:
+    config:
+      uri: http://admin:${jhipster.registry.password}@localhost:8761/config
+      # name of the config server's property source (file.yml) that we want to use
+      name: selfcare-b2c-account-management
+      profile: dev
+      label: main # toggle to switch to a different version of the configuration as stored in git
+      # it can be set to any label, branch or commit of the configuration source Git repository
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://10.137.52.11:3305/selfcare_b2c_account_management?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: digitalfactory
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+  jpa:
+  mail:
+    host: 10.100.56.56
+    port: 25
+    username:
+    password:
+  liquibase:
+    # Remove 'faker' if you do not want the sample data to be loaded automatically
+    contexts: dev, faker
+  messages:
+    cache-duration: PT1S # 1 second, see the ISO 8601 standard
+  thymeleaf:
+    cache: false
+  sleuth:
+    sampler:
+      probability: 1 # report 100% of traces
+  zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
+    base-url: http://localhost:9411
+    enabled: false
+    locator:
+      discovery:
+        enabled: true
     batch:
         job:
             enabled: false
@@ -100,54 +95,28 @@ server:
 # ===================================================================
 
 jhipster:
-    http:
-        version: V_1_1 # To use HTTP/2 you will need to activate TLS (see application-tls.yml)
-    cache: # Cache configuration
-        ehcache: # Ehcache configuration
-            time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
-            max-entries: 100 # Number of objects in each cache entry
-        # CORS is disabled by default on microservices, as you should access them through a gateway.
-        # If you want to enable it, please uncomment the configuration below.
-        # cors:
-        # allowed-origins: "*"
-        # allowed-methods: "*"
-        # allowed-headers: "*"
-        # exposed-headers: "Authorization,Link,X-Total-Count"
-        # allow-credentials: true
-        # max-age: 1800
-    security:
-        client-authorization:
-            access-token-uri: http://selfcare-b2c-uaa/oauth/token
-            token-service-id: selfcare-b2c-uaa
-            client-id: internal
-            client-secret: internal
-    mail: # specific JHipster mail property, for standard properties see MailProperties
-        from: selfcare-b2c-account-management@localhost
-        base-url: http://127.0.0.1:8707
-    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-        jmx:
-            enabled: true
-        logs: # Reports Dropwizard metrics in the logs
-            enabled: false
-            report-frequency: 60 # in seconds
-    logging:
-        logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
-            enabled: false
-            host: localhost
-            port: 5000
-            queue-size: 512
-oauth2:
-    signature-verification:
-        public-key-endpoint-uri: http://selfcare-b2c-uaa/oauth/token_key
-        #ttl for public keys to verify JWT tokens (in ms)
-        ttl: 3600000
-        #max. rate at which public keys will be fetched (in ms)
-        public-key-refresh-rate-limit: 10000
-    web-client-configuration:
-        #keep in sync with UAA configuration
-        client-id: web_app
-        secret: changeit
-
+  cache: # Cache configuration
+    ehcache: # Ehcache configuration
+      time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
+      max-entries: 100 # Number of objects in each cache entry
+  registry:
+    password: admin
+  # CORS is disabled by default on microservices, as you should access them through a gateway.
+  # If you want to enable it, please uncomment the configuration below.
+  # cors:
+  #   allowed-origins: "http://localhost:9000,https://localhost:9000"
+  #   allowed-methods: "*"
+  #   allowed-headers: "*"
+  #   exposed-headers: "Authorization,Link,X-Total-Count"
+  #   allow-credentials: true
+  #   max-age: 1800
+  logging:
+    use-json-format: false # By default, logs are not in Json format
+    logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
+      enabled: false
+      host: localhost
+      port: 5000
+      queue-size: 512
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
@@ -157,91 +126,97 @@ oauth2:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+keycloak-configutation:
+  serverUrl: http://keycloak-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/auth
+  realm: jhipster
+  client-id: internal
+  client-secret: internal
+
 # application:
 application:
-    max-attempts: 3
-    selfcare-b2c-uaa: http://selfcare-b2c-uaa
-    selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
-    selfcare-otp: http://selfcare-otp
-    selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
-    lien-ibou: #https://m.me/165622776799685
-    email-service-client-orange: Bouya.KANDE@orange-sonatel.com
-    api-management:
-        oauth2:
-            client-token-uri: http://selfcare-b2c-uaa/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
-            client-id: selfcare-b2c
-            client-secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
-            grant-type: client_credentials
-        url-api:
-            base-name: api-accountmanagement
-            base-url: https://api.orange-sonatel.com
-            url-account-management: /api-accountmanagement
-        party-management:
-            name: api-partymanagement
-            url-individual-information: /api/partyManagement/v1/individual/{msisdn}
-            url-organization-information: /api/partyManagement/v1/organization/{msisdn}
+  max-attempts: 3
+  selfcare-b2c-uaa: http://selfcare-b2c-tiers
+  selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
+  selfcare-otp: http://selfcare-otp
+  selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
+  lien-ibou: #https://m.me/165622776799685
+  email-service-client-orange: Bouya.KANDE@orange-sonatel.com
+  api-management:
+    oauth2:
+      client-token-uri: http://selfcare-b2c-tiers/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
+      client-id: selfcare-b2c
+      client-secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
+      grant-type: client_credentials
+    url-api:
+      base-name: api-accountmanagement
+      base-url: https://api.orange-sonatel.com
+      url-account-management: /api-accountmanagement
+    party-management:
+      name: api-partymanagement
+      url-individual-information: /api/partyManagement/v1/individual/{msisdn}
+      url-organization-information: /api/partyManagement/v1/organization/{msisdn}
 
-    message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
-    service-client-orange: . Service Client Orange
+  send-sms:
+    sponsorship:
+      sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. %s FI rek la http://bit.ly/2NHn5aS ou sur www.orangeetmoi.sn
+      sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
+      sms-promo: Fais le aujourd hui et gagne %s %s.
+    server:
+      sms-host: 10.157.162.193
+      sms-port: 3339
+      sms-system-id: WebApp
+      sms-system-type: cp
+      sms-password: PD121&2
 
-    order:
-        first: 1
-        second: 2
-        third: 3
-    historic:
-        positive: true
-        negative: false
-    request-title-map:
-        rejected-title: Rejetée
-        cancelled-title: Annulée
-        acknowledged-request-title: Validée
-        held-request-title:  Réalisable
-        in-progress-title: En Cours
-        held-incident-title: Signalée
-        pending-title: ABSENTAVIS
-        acknowledged-incident-title: Orienté
-    request-description-map:
-        rejected-request-description : Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client
-        cancelled-description: Votre demande a été annulée pour non faisabilité technique ou sur demande du client
-        acknowledged-request-description: Votre demande a été validée, vous serez contacté prochainement par nos équipes
-        held-request-description: Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais
-        in-progress-request-description: Votre demande est en cours de traitement, vous serez contacter par nos équipes.
-        held-incident-description:  Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.
-        pending-description : Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau
-        in-progress-incident-description: Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.
-        acknowledged-incident-description: Votre dérangement a été envoyée aux équipes techniques
-        rejected-incident-description: Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client
+  message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
+  service-client-orange: . Service Client Orange
+
+  order:
+    first: 1
+    second: 2
+    third: 3
+  historic:
+    positive: true
+    negative: false
+  request-title-map:
+    rejected-title: Rejetée
+    cancelled-title: Annulée
+    acknowledged-request-title: Validée
+    held-request-title:  Réalisable
+    in-progress-title: En Cours
+    held-incident-title: Signalée
+    pending-title: ABSENTAVIS
+    acknowledged-incident-title: Orienté
+  request-description-map:
+    rejected-request-description : Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client
+    cancelled-description: Votre demande a été annulée pour non faisabilité technique ou sur demande du client
+    acknowledged-request-description: Votre demande a été validée, vous serez contacté prochainement par nos équipes
+    held-request-description: Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais
+    in-progress-request-description: Votre demande est en cours de traitement, vous serez contacter par nos équipes.
+    held-incident-description:  Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.
+    pending-description : Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau
+    in-progress-incident-description: Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.
+    acknowledged-incident-description: Votre dérangement a été envoyée aux équipes techniques
+    rejected-incident-description: Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client
 
 
 
 
-    selfcare-mail:
-        sender-address: mailer.orangeetmoi@orange-sonatel.com
-        sender-name: Orange et Moi
-        mail-subject: Orange et Moi
-    urgence-depannage:
-        operation:
-            -
-                code: operation-100
-                title: Deplafonnement de compte Orange Money
-            -
-                code: operation-200
-                title: Ouverture de compte Orange Money
-            -
-                code: operation-300
-                title: Erreur transaction Orange Money
-
-    send-sms:
-        sponsorship:
-            sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. %s FI rek la http://bit.ly/2NHn5aS ou sur www.orangeetmoi.sn
-            sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
-            sms-promo: Fais le aujourd hui et gagne %s %s.
-        server:
-            sms-host: 10.157.162.193
-            sms-port: 3339
-            sms-system-id: WebApp
-            sms-system-type: cp
-            sms-password: PD121&2
+  selfcare-mail:
+    sender-address: mailer.orangeetmoi@orange-sonatel.com
+    sender-name: Orange et Moi
+    mail-subject: Orange et Moi
+  urgence-depannage:
+    operation:
+      -
+        code: operation-100
+        title: Deplafonnement de compte Orange Money
+      -
+        code: operation-200
+        title: Ouverture de compte Orange Money
+      -
+        code: operation-300
+        title: Erreur transaction Orange Money
 
     scheduler:
         cron-disabled-sponsee: 0 00 00 * * ?
@@ -249,20 +224,17 @@ application:
         cron-update-firstname-lastname-activated: true
         number-of-rows-to-return: 1000
 
-    hmac-secret: secretToShareWithGatewayOM
+  hmac-secret: secretToShareWithGatewayOM
 
-    serveur-ftp:
-        port: 22
-        user: portailomsftp
-        password: Port@ilomsftp0279
-        ip-serveur: 10.137.56.3
-        directory: /directory/
+  serveur-ftp:
+    port: 22
+    user: portailomsftp
+    password: Port@ilomsftp0279
+    ip-serveur: 10.137.56.3
+    directory: /directory/
 
-    tmp-path: /var/tmp/
+  tmp-path: /var/tmp/
 
 log-manager:
-    microservice-name: Account Management
-    app-name: Selfcare B2C
-
-
-
+  microservice-name: Account Management
+  app-name: Selfcare B2C
