@@ -7,12 +7,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.dto.BoosterPromo;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -45,7 +44,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SelfcareB2CApp.class})
+@IntegrationTest
 public class SponseeServiceImplTest {
 
     @Mock

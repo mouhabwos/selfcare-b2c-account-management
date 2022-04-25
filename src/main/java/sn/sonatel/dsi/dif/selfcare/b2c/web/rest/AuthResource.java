@@ -1,13 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
-import sn.sonatel.dsi.dif.selfcare.b2c.exception.AccountB2CException;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.LoginAttemptServiceImpl;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
 
@@ -17,9 +16,9 @@ public class AuthResource {
 
     private final Logger log = LoggerFactory.getLogger(AuthResource.class);
 
-    private final LoginAttemptServiceImpl loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
-    public AuthResource(LoginAttemptServiceImpl loginAttemptService) {
+    public AuthResource(LoginAttemptService loginAttemptService) {
 
         this.loginAttemptService = loginAttemptService;
 
@@ -28,12 +27,11 @@ public class AuthResource {
     /**
      *  GET : to init the number of attempts login
      * @param username
-     * @throws AccountB2CException
      */
     @Auditable(description = Message.Authentification.CONN_SUCC)
     @GetMapping(value = "/login-succeeded/{username}")
     @Timed
-    public ResponseEntity<String> loginSuccess(@PathVariable String username) throws AccountB2CException {
+    public ResponseEntity<String> loginSuccess(@PathVariable String username) {
         log.info("logging loginSucceeded {}", username);
         loginAttemptService.loginSucceeded(username);
         return ResponseEntity.ok().build();
@@ -43,12 +41,11 @@ public class AuthResource {
     /**
      * GET : to increment the number of attempts login
      * @param username
-     * @throws AccountB2CException
      */
     @Auditable(description = Message.Authentification.CONN_ERR)
     @GetMapping(value = "/login-failed/{username}")
     @Timed
-    public ResponseEntity loginFailed(@PathVariable String username) throws AccountB2CException {
+    public ResponseEntity loginFailed(@PathVariable String username){
         log.info("logging loginFailed {}", username);
         int attemps = loginAttemptService.loginFailed(username);
         return ResponseEntity.ok().body(attemps+"");

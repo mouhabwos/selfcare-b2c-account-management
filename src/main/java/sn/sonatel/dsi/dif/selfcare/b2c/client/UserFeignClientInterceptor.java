@@ -5,7 +5,7 @@ import feign.RequestTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import sn.sonatel.dsi.dif.selfcare.b2c.security.oauth2.OAuthIdpTokenResponseDTO;
 
 public class UserFeignClientInterceptor implements RequestInterceptor {
 
@@ -19,10 +19,10 @@ public class UserFeignClientInterceptor implements RequestInterceptor {
         SecurityContext securityContext = SecurityContextHolder.getContext ();
         Authentication authentication = securityContext.getAuthentication ();
 
-        if (authentication != null && authentication.getDetails () instanceof OAuth2AuthenticationDetails) {
+        if (authentication != null && authentication.getDetails () instanceof OAuthIdpTokenResponseDTO) {
 
-            OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails ();
-            template.header ( AUTHORIZATION_HEADER, String.format ( "%s %s", BEARER_TOKEN_TYPE, details.getTokenValue () ) );
+            OAuthIdpTokenResponseDTO details = (OAuthIdpTokenResponseDTO) authentication.getDetails ();
+            template.header ( AUTHORIZATION_HEADER, String.format ( "%s %s", BEARER_TOKEN_TYPE, details.getAccessToken () ) );
         }
     }
 }

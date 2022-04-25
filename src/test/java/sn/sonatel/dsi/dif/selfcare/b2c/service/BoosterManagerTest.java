@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringRunner;
-import sn.sonatel.dsi.dif.selfcare.b2c.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
 
 @RunWith(SpringRunner.class)
 public class BoosterManagerTest {

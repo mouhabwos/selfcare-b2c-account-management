@@ -10,14 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.FileInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.SearchFilterItem;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.FileInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.export.ExportService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.PaginationUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.RedocMessages;
+import tech.jhipster.web.util.PaginationUtil;
 
 import java.security.Principal;
 import java.time.ZonedDateTime;
@@ -71,7 +72,7 @@ public class ExportResource {
     public ResponseEntity<List<FileInformation>> getListInformationFileUploaded(@RequestParam SearchFilterItem searchFilterItem, Pageable pageable, @RequestParam(required = false) ZonedDateTime startDate, @RequestParam(required = false) ZonedDateTime endDate, @RequestParam(required = false) String user){
         log.debug("Rest request to get information of file uploaded : {}, {}, {}, {}", searchFilterItem, startDate, endDate, user);
         Page<FileInformation> page = fileInformationService.getInformationFileUploaded(searchFilterItem, pageable, startDate, endDate, user);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/export/v1/uploaded-file-information");
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 

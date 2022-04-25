@@ -2,7 +2,6 @@ package sn.sonatel.dsi.dif.selfcare.b2c.domain;
 
 
 import io.swagger.annotations.ApiModelProperty;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +9,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NumeroDTO;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -63,17 +64,14 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     //@JsonIgnore
     private Instant createdDate = Instant.now();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RattachementLigne> users = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
     private Set<Sponsee> sponsees = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
-    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C", cascade = CascadeType.ALL)
     private Set<DeviceInfos> deviceInfos = new HashSet<>();
 
@@ -86,7 +84,6 @@ public class AccountB2C extends NumeroDTO implements Serializable {
     @Column(name = "email_activated")
     private boolean emailActivated = false;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "accountB2C")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<NotificationInformation> notificationInformations = new HashSet<>();

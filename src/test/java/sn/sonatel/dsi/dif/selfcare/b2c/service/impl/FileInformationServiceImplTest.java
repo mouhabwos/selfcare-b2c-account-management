@@ -7,35 +7,27 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.FileInformation;
-import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.SearchFilterItem;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.FileInformationRepository;
 
 import javax.batch.runtime.BatchStatus;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.List;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SelfcareB2CApp.class})
+@IntegrationTest
 public class FileInformationServiceImplTest {
 
     @Autowired

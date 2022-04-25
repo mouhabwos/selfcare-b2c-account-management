@@ -16,8 +16,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.*;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.*;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareUAAService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
@@ -40,7 +40,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
-    private final SelfcareUAAService selfcareUAAService;
+    private final KeycloakServices keycloakServices;
 
     private final SponseeService sponseeService;
 
@@ -49,10 +49,10 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     private final ValidationHmacService validationHmacService;
 
 
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, SelfcareUAAService selfcareUAAService, SponseeService sponseeService, AsyncService asyncService, ValidationHmacService validationHmacService) {
+    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, KeycloakServices keycloakServices, SponseeService sponseeService, AsyncService asyncService, ValidationHmacService validationHmacService) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
-        this.selfcareUAAService = selfcareUAAService;
+        this.keycloakServices = keycloakServices;
         this.sponseeService = sponseeService;
         this.asyncService=asyncService;
         this.validationHmacService = validationHmacService;
@@ -126,7 +126,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         dtoExploitant.setLogin(msisdn);
         dtoExploitant.setFirstName(accountB2C.getFirstName());
         dtoExploitant.setLastName(accountB2C.getLastName());
-        this.selfcareUAAService.updateUser(dtoExploitant);
+     //   this.selfcareUAAService.updateUser(dtoExploitant);
         return accountForExploitantResult;
     }
 
@@ -291,7 +291,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         }
 
         try {
-            ResponseEntity response = selfcareUAAService.regiserAccount(managedUserVM);
+            ResponseEntity response = keycloakServices.registerUserInKeycloack(managedUserVM);
 
             if (response.getStatusCode() == HttpStatus.CREATED) {
 

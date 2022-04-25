@@ -166,10 +166,15 @@ oauth2:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+keycloak-configutation:
+  serverUrl: http://keycloak-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/auth
+  realm: jhipster
+  client-id: internal
+  client-secret: internal
 # application:
 application:
 
-    selfcare-b2c-uaa: http://selfcare-b2c-uaa
+    selfcare-b2c-uaa: http://selfcare-b2c-tiers
     selfcare-b2c-booster-management: http://selfcare-b2c-booster-management
     selfcare-otp: http://selfcare-otp
     selfcare-b2c-file-manager: http://selfcare-b2c-file-manager
@@ -178,7 +183,7 @@ application:
     email-service-client-orange: fatou.diaw@orange-sonatel.com
     api-management:
         oauth2:
-            client-token-uri: http://selfcare-b2c-uaa/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
+            client-token-uri: http://selfcare-b2c-tiers/api/api-management/oauth/token?grantType={grantType}&clientId={clientId}&clientSecret={clientSecret}
             client-id: selfcare-b2c
             client-secret: a041ac00-e18b-4a3a-aeb7-a53a0856c5fd
             grant-type: client_credentials
@@ -190,6 +195,7 @@ application:
             name: api-partymanagement
             url-individual-information: /api/partyManagement/v1/individual/{msisdn}
             url-organization-information: /api/partyManagement/v1/organization/{msisdn}
+
 
     message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
     service-client-orange: . Service Client Orange
