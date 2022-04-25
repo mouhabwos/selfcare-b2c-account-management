@@ -1,13 +1,13 @@
 library 'jenkins-shared-library@master'
 
 teamOrangeEtMoiJenkinsfile(
+  		agent: "openjdk11",
  		devEnv : "dsidacdifdsorangeetmoi-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
-  		skipTests : true,
+  		skipTests : false,
   		skipSonar : true,
   		deployOnPreprod : true,
   		runTnr :true,
-  		agent: "maven",
-  		releaseBranch: "release"
-)
+        sonarUrl : "http://sonar.v8.tools.orange-sonatel.com"
+ )
 
