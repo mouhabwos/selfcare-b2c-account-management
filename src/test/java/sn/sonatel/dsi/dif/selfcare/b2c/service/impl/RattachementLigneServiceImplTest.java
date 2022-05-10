@@ -4,11 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -23,6 +29,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
@@ -40,9 +47,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -52,9 +65,17 @@ import static org.mockito.MockitoAnnotations.initMocks;
  */
 
 
+@ContextConfiguration(classes = {RattachementLigneServiceImpl.class})
+@ExtendWith(SpringExtension.class)
 @RunWith(SpringRunner.class)
 @IntegrationTest
 public class RattachementLigneServiceImplTest {
+
+    @MockBean
+    private AccountB2CRepository accountB2CRepository;
+
+    @MockBean
+    private RattachementLigneRepository rattachementLigneRepository;
 
     private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
 
@@ -158,7 +179,7 @@ public class RattachementLigneServiceImplTest {
     @Mock
     private SelfcareOTPService selfcareOTPService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService, selfcareOTPService);
@@ -645,6 +666,81 @@ public class RattachementLigneServiceImplTest {
         assertEquals("782363572", result.get(0).getMsisdn());
         assertEquals("", result.get(0).getProfil());
         assertEquals("", result.get(0).getFormule());
+    }
+
+    /**
+     * Method under test: {@link RattachementLigneServiceImpl#rattachementLigneByOtp(RattachementLigneCNIVM)}
+     */
+    @org.junit.jupiter.api.Test
+    void testRattachementLigneByOtpShouldThrowInvalidOrangeNumberException() {
+
+        CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
+        codeOTPCheckDTO.setCode("Code");
+        codeOTPCheckDTO.setMsisdn("Msisdn");
+        codeOTPCheckDTO.setValid(true);
+        when(this.selfcareOTPService.checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any()))
+            .thenReturn(codeOTPCheckDTO);
+        RattachementLigneCNIVM rattachementLigneCNIVM = mock(RattachementLigneCNIVM.class);
+        when(rattachementLigneCNIVM.getLogin()).thenReturn("Login");
+        when(rattachementLigneCNIVM.getIdentificationId()).thenReturn("42");
+        doNothing().when(rattachementLigneCNIVM).setNumero((String) org.mockito.Mockito.any());
+        when(rattachementLigneCNIVM.getNumero()).thenReturn("00221779999999");
+        assertThrows(InvalidOrangeNumberException.class,
+            () -> this.rattachementLigneServiceImpl.rattachementLigneByOtp(rattachementLigneCNIVM));
+    }
+
+    /**
+     * Method under test: {@link RattachementLigneServiceImpl#rattachementLigneByOtp(RattachementLigneCNIVM)}
+     */
+    @org.junit.jupiter.api.Test
+    void testRattachementLigneByOtpShouldThrowNotFoundNumberException() {
+        CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
+        codeOTPCheckDTO.setCode("Code");
+        codeOTPCheckDTO.setMsisdn("Msisdn");
+        codeOTPCheckDTO.setValid(true);
+        when(this.selfcareOTPService.checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any()))
+            .thenReturn(codeOTPCheckDTO);
+        RattachementLigneCNIVM rattachementLigneCNIVM = mock(RattachementLigneCNIVM.class);
+        when(rattachementLigneCNIVM.getLogin()).thenThrow(new NotFoundNumberException("00221779999999"));
+        when(rattachementLigneCNIVM.getIdentificationId()).thenThrow(new NotFoundNumberException("00221779999999"));
+        doThrow(new NotFoundNumberException("00221779999999")).when(rattachementLigneCNIVM)
+            .setNumero((String) org.mockito.Mockito.any());
+        when(rattachementLigneCNIVM.getNumero()).thenReturn("00221779999999");
+        assertThrows(NotFoundNumberException.class,
+            () -> this.rattachementLigneServiceImpl.rattachementLigneByOtp(rattachementLigneCNIVM));
+        verify(rattachementLigneCNIVM).getNumero();
+        verify(rattachementLigneCNIVM).getIdentificationId();
+    }
+
+    /**
+     * Method under test: {@link RattachementLigneServiceImpl#rattachementLigneByOtp(RattachementLigneCNIVM)}
+     */
+    @org.junit.jupiter.api.Test
+    void testRattachementLigneByOtp() {
+        CodeOTPCheckDTO codeOTPCheckDTO = mock(CodeOTPCheckDTO.class);
+        when(codeOTPCheckDTO.isValid()).thenReturn(false);
+        doNothing().when(codeOTPCheckDTO).setCode((String) org.mockito.Mockito.any());
+        doNothing().when(codeOTPCheckDTO).setMsisdn((String) org.mockito.Mockito.any());
+        doNothing().when(codeOTPCheckDTO).setValid(anyBoolean());
+        codeOTPCheckDTO.setCode("Code");
+        codeOTPCheckDTO.setMsisdn("Msisdn");
+        codeOTPCheckDTO.setValid(true);
+        when(this.selfcareOTPService.checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any()))
+            .thenReturn(codeOTPCheckDTO);
+        RattachementLigneCNIVM rattachementLigneCNIVM = mock(RattachementLigneCNIVM.class);
+        when(rattachementLigneCNIVM.getLogin()).thenReturn("Login");
+        when(rattachementLigneCNIVM.getIdentificationId()).thenReturn("42");
+        doNothing().when(rattachementLigneCNIVM).setNumero((String) org.mockito.Mockito.any());
+        when(rattachementLigneCNIVM.getNumero()).thenReturn("00221779999999");
+        assertThrows(BadRequestAlertException.class,
+            () -> this.rattachementLigneServiceImpl.rattachementLigneByOtp(rattachementLigneCNIVM));
+        verify(this.selfcareOTPService).checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any());
+        verify(codeOTPCheckDTO).isValid();
+        verify(codeOTPCheckDTO).setCode((String) org.mockito.Mockito.any());
+        verify(codeOTPCheckDTO).setMsisdn((String) org.mockito.Mockito.any());
+        verify(codeOTPCheckDTO).setValid(anyBoolean());
+        verify(rattachementLigneCNIVM, atLeast(1)).getNumero();
+        verify(rattachementLigneCNIVM, atLeast(1)).getIdentificationId();
     }
 
     @Test(expected = BadRequestAlertException.class)
