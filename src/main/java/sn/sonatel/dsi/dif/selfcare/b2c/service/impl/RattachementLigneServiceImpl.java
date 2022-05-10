@@ -16,9 +16,11 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Constants;
@@ -48,13 +50,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final AbonneService abonneService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService, AbonneService abonneService) {
+    private final SelfcareOTPService selfcareOTPService;
+
+    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService, AbonneService abonneService, SelfcareOTPService selfcareOTPService) {
 
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.customerOfferApiClient = customerOfferApiClient;
         this.sponseeService = sponseeService;
         this.abonneService = abonneService;
+        this.selfcareOTPService = selfcareOTPService;
     }
 
     @Override
@@ -265,6 +270,43 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         return rattachement;
     }
+
+    @Override
+    public RattachementLigne rattachementLigneByOtp(RattachementLigneCNIVM rattachementLigneCNIVM) {
+        log.debug("Service to add rattachementLigne by otp code  : {}", rattachementLigneCNIVM);
+
+        String msisdn= FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getNumero());
+
+        CodeOTPCheckDTO checkOPT = selfcareOTPService.checkOPT(msisdn, rattachementLigneCNIVM.getIdentificationId());
+        if (!checkOPT.isValid()) {
+            log.debug("Service Error : This number {} otp code not valid: {}", rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId());
+            throw new BadRequestAlertException("Le code otp n'est pas valide, veuillez essayer à nouveau ","RattachementLigne","notValidCode");
+        }
+
+        rattachementLigneCNIVM.setNumero(msisdn);
+
+        rattachementLigneCNIVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getLogin()));
+
+        RattachementLigne rattachement = new RattachementLigne();
+        if (rattachementLigneCNIVM.getNumero().matches(Constants.VALIDE_NUMBER_ORANGE_FIXE_MOBILE)) {
+            checkNumberIfUsed(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getLogin());
+
+            Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
+
+            if (accountB2C.isEmpty()) {
+                log.debug ( "Error login not found : {}", rattachementLigneCNIVM.getLogin() );
+                throw new LigneNotFoundException();
+            }
+
+            rattachement.setNumero(rattachementLigneCNIVM.getNumero());
+            rattachement.setTypeNumero(rattachementLigneCNIVM.getTypeNumero());
+
+            rattachement.setAccountB2C(accountB2C.get());
+            rattachement = rattachementLigneRepository.save(rattachement);
+            sponseeService.updateEffectiveInscriptionOfSponsee(rattachement.getNumero());
+        }
+
+        return rattachement;    }
 
     private void checkNumberIfUsed(String number, String login) {
 
