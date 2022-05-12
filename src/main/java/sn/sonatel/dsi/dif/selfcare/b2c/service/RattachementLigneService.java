@@ -32,4 +32,6 @@ public interface RattachementLigneService {
 
     RattachementLigne rattachementLigneByCni(RattachementLigneCNIVM rattachementLigneCNIVM);
 
+    RattachementLigne rattachementLigneByOtp(RattachementLigneCNIVM rattachementLigneCNIVM);
+
 }

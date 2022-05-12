@@ -39,6 +39,10 @@ public interface AccountB2CService {
 
     boolean checkNumberV2(String msisdn);
 
+    boolean isPrincipalAccount(String msisdn);
+
+    boolean isLinkedAccount(String msisdn);
+
     AccountB2C register(ManagedUserVM managedUserVM, boolean isFull);
 
     }
