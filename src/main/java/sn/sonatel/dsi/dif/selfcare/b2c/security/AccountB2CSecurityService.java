@@ -56,9 +56,9 @@ public class AccountB2CSecurityService {
         validationHmacService.checkHmac(resetPasswordVM.getHmac(),resetPasswordVM.getLogin(), uuid);
         resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
         resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(resetPasswordVM.getLogin()));
-        ResponseEntity responseEntity = keycloakServices.resetPassword(resetPasswordVM, uuid);
+        ResponseEntity responseEntity = keycloakServices.resetPassword(resetPasswordVM);
 
-        if(responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)){
+        if(responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED) || responseEntity.getStatusCode().equals(HttpStatus.CREATED)){
             UserCredentialDTO userCredential = new UserCredentialDTO();
             userCredential.setUsername(resetPasswordVM.getLogin());
             userCredential.setPassword(resetPasswordVM.getNewPassword());
