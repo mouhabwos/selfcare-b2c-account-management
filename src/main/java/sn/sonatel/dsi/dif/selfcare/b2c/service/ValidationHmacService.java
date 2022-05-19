@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -59,7 +60,7 @@ public class ValidationHmacService {
      * @author: bouya
      */
     public boolean compareHmac(String hmac, String msisdn, String uuid) {
-        String computedHmac = SHA256Handler.encryptSHA256(String.format("%s%s%s%s", INDICATIF+msisdn, uuid, new SimpleDateFormat("dd/MM/yyyy").format(new Date()), applicationProperties.getHmacSecret()));
+        String computedHmac = SHA256Handler.encryptSHA256(String.format("%s%s%s%s", INDICATIF+ FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn), uuid, new SimpleDateFormat("dd/MM/yyyy").format(new Date()), applicationProperties.getHmacSecret()));
         return computedHmac.equals(hmac);
     }
 
