@@ -95,7 +95,7 @@ public class AccountB2CSecurityService {
     private AccessTokenResponse resetPasswordWithGeneratedValueAndRetrieveToken(String login) {
         var resetPasswordVM = new ResetPasswordVM();
         resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH, true, true));
-        resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(resetPasswordVM.getLogin()));
+        resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(login));
         ResponseEntity responseEntity = keycloakServices.resetPassword(resetPasswordVM);
 
         if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)

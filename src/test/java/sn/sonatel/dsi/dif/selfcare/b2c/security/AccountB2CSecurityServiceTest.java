@@ -116,7 +116,7 @@ class AccountB2CSecurityServiceTest {
 
         CodeOTPCheckDTO codeOTPCheckDTO = mock(CodeOTPCheckDTO.class);
         when(codeOTPCheckDTO.isValid()).thenReturn(true);
-        when(keycloakServices.resetPassword(any(), any())).thenReturn(ResponseEntity.accepted().build());
+        when(keycloakServices.resetPassword(any())).thenReturn(ResponseEntity.accepted().build());
         when(keycloakServices.getToken(any())).thenReturn(ResponseEntity.ok(new AccessTokenResponse()));
         doNothing().when(codeOTPCheckDTO).setCode((String) any());
         doNothing().when(codeOTPCheckDTO).setMsisdn((String) any());
