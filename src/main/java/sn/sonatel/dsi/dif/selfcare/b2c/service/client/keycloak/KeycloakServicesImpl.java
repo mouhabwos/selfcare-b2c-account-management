@@ -111,16 +111,21 @@ import java.util.List;
     }
 
     @Override
-    public ResponseEntity resetPassword(ResetPasswordVM resetPassword, String uuid) {
+    public ResponseEntity resetPassword(ResetPasswordVM resetPassword) {
 
+            if (!isRegistered(resetPassword.getLogin())){
+                ManagedUserVM userVM= new ManagedUserVM();
+                userVM.setLogin(resetPassword.getLogin());
+                userVM.setPassword(resetPassword.getNewPassword());
+                return registerUserInKeycloack(userVM);
+            }
 
-        try {
             Keycloak keycloak = getIntanceKeycloak();
             // Get realm
             RealmResource realmResource = keycloak.realm(realmName);
             UsersResource usersRessource = realmResource.users();
 
-            UserRepresentation userRepresentations = keycloak.realm(realmName).users().search(resetPassword.getLogin()).get(0);
+            UserRepresentation userRepresentations = usersRessource.search(resetPassword.getLogin()).get(0);
 
             // Define password credential
             CredentialRepresentation passwordCred = new CredentialRepresentation();
@@ -133,10 +138,18 @@ import java.util.List;
             userResource.resetPassword(passwordCred);
 
             return ResponseEntity.accepted().build();
-        }catch (Exception ex){
 
-        }
-        return ResponseEntity.internalServerError().build();
+    }
+
+     private Boolean isRegistered(String login) {
+
+            Keycloak keycloak = getIntanceKeycloak();
+            // Get realm
+            RealmResource realmResource = keycloak.realm(realmName);
+            UsersResource usersRessource = realmResource.users();
+
+            return !usersRessource.search(login).isEmpty();
+
     }
 
     private Keycloak getIntanceKeycloak(){
