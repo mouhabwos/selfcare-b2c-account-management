@@ -31,8 +31,8 @@ public class AccountB2CSecurityService {
     private final KeycloakServices keycloakServices;
     private final SelfcareOTPService selfcareOTPService;
 
-
-    public AccountB2CSecurityService(AccountB2CService accountB2CService, ValidationHmacService validationHmacService, KeycloakServices keycloakServices, SelfcareOTPService selfcareOTPService) {
+    public AccountB2CSecurityService(AccountB2CService accountB2CService, ValidationHmacService validationHmacService,
+            KeycloakServices keycloakServices, SelfcareOTPService selfcareOTPService) {
         this.accountB2CService = accountB2CService;
         this.validationHmacService = validationHmacService;
         this.keycloakServices = keycloakServices;
@@ -40,31 +40,32 @@ public class AccountB2CSecurityService {
     }
 
     public AccessTokenResponse registerAccountB2CV3(ManagedUserVM managedUserVM) {
-        log.debug("Register account {}",managedUserVM);
+        log.debug("Register account {}", managedUserVM);
         String login = FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin());
-        validationHmacService.checkHmac(managedUserVM.getHmac(),login, managedUserVM.getUuid());
+        validationHmacService.checkHmac(managedUserVM.getHmac(), login, managedUserVM.getUuid());
         return registerUserWithGeneratedPasswprd(login);
     }
 
-    public AccessTokenResponse resetPassword(String uuid, ResetPasswordVM resetPasswordVM){
-        log.debug("Service to reset password for account {}",resetPasswordVM);
-        validationHmacService.checkHmac(resetPasswordVM.getHmac(),resetPasswordVM.getLogin(), uuid);
+    public AccessTokenResponse resetPassword(String uuid, ResetPasswordVM resetPasswordVM) {
+        log.debug("Service to reset password for account {}", resetPasswordVM);
+        validationHmacService.checkHmac(resetPasswordVM.getHmac(), resetPasswordVM.getLogin(), uuid);
         return resetPasswordWithGeneratedValueAndRetrieveToken(resetPasswordVM.getLogin());
     }
 
     public AccessTokenResponse loginWithOtpCode(String login, String password) {
-        log.debug("Login account {} with otp {}",login,password);
+        log.debug("Login account {} with otp {}", login, password);
 
-        if (!selfcareOTPService.checkOPT(login,password).isValid()){
-            throw new BadRequestAlertException("Le code otp n'est pas valide, veuillez essayer à nouveau ","RattachementLigne","notValidCode");
+        if (!selfcareOTPService.checkOPT(login, password).isValid()) {
+            throw new BadRequestAlertException("Le code otp n'est pas valide, veuillez essayer à nouveau ",
+                    "RattachementLigne", "notValidCode");
         }
 
-        if ( accountB2CService.isLinkedAccount(login)) {
-            log.debug("Login account {} is a linked account unable to process",login);
+        if (accountB2CService.isLinkedAccount(login)) {
+            log.debug("Login account {} is a linked account unable to process", login);
             throw new LigneAlreadyRattachedException();
         }
         if (accountB2CService.isPrincipalAccount(login)) {
-            log.debug("Login account {} is a principal account processing with login",login);
+            log.debug("Login account {} is a principal account processing with login", login);
             return resetPasswordWithGeneratedValueAndRetrieveToken(login);
         }
 
@@ -77,32 +78,33 @@ public class AccountB2CSecurityService {
 
         var managedUserVM = new ManagedUserVM();
         managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(login));
-        managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
+        managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH, true, true));
         AccountB2C accountB2C = accountB2CService.register(managedUserVM, false);
-        log.debug("Registered account {} ",accountB2C);
+        log.debug("Registered account {} ", accountB2C);
 
         var userCredential = new UserCredentialDTO();
         userCredential.setUsername(managedUserVM.getLogin());
         userCredential.setPassword(managedUserVM.getPassword());
         ResponseEntity<AccessTokenResponse> responseEntity = keycloakServices.getToken(userCredential);
-        if(responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody()!=null){
+        if (responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody() != null) {
             return responseEntity.getBody();
         }
         throw new HttpClientErrorException(responseEntity.getStatusCode());
     }
 
     private AccessTokenResponse resetPasswordWithGeneratedValueAndRetrieveToken(String login) {
-        var resetPasswordVM= new ResetPasswordVM();
-        resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
-        resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(login));
-        var responseEntity = keycloakServices.resetPassword(resetPasswordVM, null);
+        var resetPasswordVM = new ResetPasswordVM();
+        resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH, true, true));
+        resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(resetPasswordVM.getLogin()));
+        ResponseEntity responseEntity = keycloakServices.resetPassword(resetPasswordVM);
 
-        if(responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)){
-            var userCredential = new UserCredentialDTO();
+        if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)
+                || responseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
+            UserCredentialDTO userCredential = new UserCredentialDTO();
             userCredential.setUsername(resetPasswordVM.getLogin());
             userCredential.setPassword(resetPasswordVM.getNewPassword());
             ResponseEntity<AccessTokenResponse> keycloakResponse = keycloakServices.getToken(userCredential);
-            if(keycloakResponse.getStatusCode().equals(HttpStatus.OK) && keycloakResponse.getBody()!=null){
+            if (keycloakResponse.getStatusCode().equals(HttpStatus.OK) && keycloakResponse.getBody() != null) {
                 return keycloakResponse.getBody();
             }
             throw new HttpClientErrorException(keycloakResponse.getStatusCode());
