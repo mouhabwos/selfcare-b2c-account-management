@@ -243,6 +243,28 @@ public class AccountB2CServiceImpl implements AccountB2CService {
           return accountB2C.isPresent() || ligne.isPresent() ;
     }
 
+    @Override
+    public boolean isPrincipalAccount(String msisdn) {
+        log.debug ( "Service check Number isPrincipalAccount : {}", msisdn);
+
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
+
+        return accountB2C.isPresent();
+    }
+
+    @Override
+    public boolean isLinkedAccount(String msisdn) {
+        log.debug ( "Service check Number  isLinkedAccount: {}", msisdn);
+
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
+
+        return  ligne.isPresent() ;
+    }
+
 
     @Override
     public void updateTutorialView(String msisdn) {

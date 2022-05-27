@@ -185,4 +185,18 @@ public class RattachementLigneResource {
             .body ( rattachement );
     }
 
+
+    @Auditable(description = Message.Rattachement.SAVE_RATTACHEMENT_LIGNE_BY_OTP)
+    @PostMapping("/v1/rattachement-lignes/register/by-otp")
+    @PreAuthorize("#rattachementLigneCNIVM.login == @customSecurityResolver.login")
+    public ResponseEntity<RattachementLigne> rattachementLigneByOtp(
+        @Valid @RequestBody RattachementLigneCNIVM rattachementLigneCNIVM) throws URISyntaxException {
+        log.debug ( "REST request to add RattachementLigne by otp : {}", rattachementLigneCNIVM );
+        RattachementLigne rattachement = rattachementLigneService.rattachementLigneByOtp(rattachementLigneCNIVM);
+        return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
+            .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
+            .body ( rattachement );
+    }
+
+
 }
