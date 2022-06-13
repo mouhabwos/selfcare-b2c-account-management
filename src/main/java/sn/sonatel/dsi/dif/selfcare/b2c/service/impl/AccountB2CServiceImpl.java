@@ -309,7 +309,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setAccountStatus(isFull? AccountStatus.FULL:AccountStatus.LITE);
                 result = accountB2CRepository.save(result);
 
-                this.asyncService.applyWelcomeBooster(result.getNumero());
+               // this.asyncService.applyWelcomeBooster(result.getNumero());
                 /*if(result.getFirstName().equals("") || result.getLastName().equals("")){
                     this.asyncService.updateFirstnameAndLasname(result);
                 }*/
