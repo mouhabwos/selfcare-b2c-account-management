@@ -310,11 +310,11 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result = accountB2CRepository.save(result);
 
                 this.asyncService.applyWelcomeBooster(result.getNumero());
-                if(result.getFirstName().equals("") || result.getLastName().equals("")){
+                /*if(result.getFirstName().equals("") || result.getLastName().equals("")){
                     this.asyncService.updateFirstnameAndLasname(result);
-                }
+                }*/
                 sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
-                this.asyncService.addCodeFormuleInformationNotification(result.getNumero());
+               // this.asyncService.addCodeFormuleInformationNotification(result.getNumero());
                 return result;
             }
 
