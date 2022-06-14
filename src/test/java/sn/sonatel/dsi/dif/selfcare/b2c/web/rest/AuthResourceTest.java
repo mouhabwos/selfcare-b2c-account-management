@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public class AuthResourceTest {
         return accountB2C;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
@@ -79,7 +79,7 @@ public class AuthResourceTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         accountB2C = createEntity(em);
     }

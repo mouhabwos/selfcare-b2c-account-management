@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.security;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
@@ -21,7 +21,7 @@ public class SponsorshipSecurityResolverTest {
 
     private SponsorshipSecurityResolver sponsorshipSecurityResolverUnderTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         sponsorshipSecurityResolverUnderTest = new SponsorshipSecurityResolver(mockSponsorRepository);

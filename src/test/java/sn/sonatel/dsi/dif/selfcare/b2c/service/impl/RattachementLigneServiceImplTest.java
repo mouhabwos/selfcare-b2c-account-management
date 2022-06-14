@@ -2,10 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -33,9 +31,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.InvalidOrangeNumberException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneCNIVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
@@ -65,19 +61,11 @@ import static org.mockito.MockitoAnnotations.initMocks;
  */
 
 
-@ContextConfiguration(classes = {RattachementLigneServiceImpl.class})
-@ExtendWith(SpringExtension.class)
 @RunWith(SpringRunner.class)
 @IntegrationTest
 public class RattachementLigneServiceImplTest {
 
-    @MockBean
-    private AccountB2CRepository accountB2CRepository;
 
-    @MockBean
-    private RattachementLigneRepository rattachementLigneRepository;
-
-    private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
 
     private static final TypeNumero TYPE_NUMERO_FIX = TypeNumero.FIXE;
 
@@ -159,6 +147,7 @@ public class RattachementLigneServiceImplTest {
 
     @Autowired
     private RattachementLigneRepository mockRattachementLigneRepository;
+
     @Autowired
     private AccountB2CRepository mockAccountB2CRepository;
 
@@ -449,7 +438,7 @@ public class RattachementLigneServiceImplTest {
         return customerOffer;
     }
 
-    @Test(expected = InvalidOrangeNumberException.class)
+    @Test()
     public void testAddRattachementLigneFixeNoValid() {
         //creation account
         AccountB2C accountB2C = new AccountB2C();
@@ -466,7 +455,13 @@ public class RattachementLigneServiceImplTest {
         RattachementLigneVM ligneVM = new RattachementLigneVM();
         ligneVM.setLogin(accountB2C.getNumero());
         ligneVM.setNumero("77123202000");
-        rattachementLigneServiceImpl.addRattachementLigne(ligneVM);
+
+
+        InvalidOrangeNumberException thrown = org.junit.jupiter.api.Assertions.assertThrows(InvalidOrangeNumberException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigne(ligneVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro doit être un numéro orange valide", thrown.getTitle());
 
 
     }
@@ -493,7 +488,7 @@ public class RattachementLigneServiceImplTest {
         accountB2C.setNumero(login);
         accountB2C.setFirstName("hello");
         accountB2C.setLastName("hello");
-        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+        AccountB2C saveAccount = mockAccountB2CRepository.saveAndFlush(accountB2C);
 
         //Mock response api get CustomerOffer
         CustomerOffer customerOffer = getCustomer();
@@ -523,7 +518,7 @@ public class RattachementLigneServiceImplTest {
     }
 
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testRegisterRattachementLigneFixeBadIdClient() {
 
         String codeClient = "3272889966666";
@@ -556,11 +551,16 @@ public class RattachementLigneServiceImplTest {
         fixeVM.setNumero(numFixe);
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
-        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+        }, "LigneAlreadyRattachedException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
     }
 
 
-    @Test(expected = NotFoundNumberException.class)
+    @Test()
     public void testRegisterRattachementLigneFixeOfferNotFound() {
         mockAccountB2CRepository.flush();
         mockRattachementLigneRepository.flush();
@@ -586,11 +586,17 @@ public class RattachementLigneServiceImplTest {
         fixeVM.setNumero(numFixe);
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
-        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+
+        NotFoundNumberException thrown = org.junit.jupiter.api.Assertions.assertThrows(NotFoundNumberException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+        }, "NotFoundNumberException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Offer not found", thrown.getTitle());
     }
 
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testRegisterRattachementLigneFixeWithOrganizationNumber() {
 
         String codeClient = "32722731";
@@ -622,7 +628,13 @@ public class RattachementLigneServiceImplTest {
         fixeVM.setNumero(numFixe);
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
-        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
 
 
     }
@@ -743,7 +755,7 @@ public class RattachementLigneServiceImplTest {
         verify(rattachementLigneCNIVM, atLeast(1)).getIdentificationId();
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testRattachementLignesByCNIWithBadRequest() throws IOException {
 
         RattachementLigneCNIVM ligneCNIVM = getRattachementLigneCNIVM();
@@ -754,7 +766,12 @@ public class RattachementLigneServiceImplTest {
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
         when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
 
-        rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'est pas identifié avec cette pièce d’identité, veuillez vérifier à nouveau ", thrown.getTitle());
     }
 
     @Test

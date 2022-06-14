@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -16,7 +16,7 @@ public class BoosterManagerTest {
     @Mock
     BoosterClient boosterClient;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         boosterManager = new BoosterManager(boosterClient);

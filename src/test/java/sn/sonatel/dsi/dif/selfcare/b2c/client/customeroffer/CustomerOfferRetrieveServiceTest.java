@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.client.customeroffer;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class CustomerOfferRetrieveServiceTest {
     private CustomerOfferRetrieveService customerOfferRetrieveService;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         customerOfferRetrieveService = new CustomerOfferRetrieveService(mockCustomerOfferApiClient);

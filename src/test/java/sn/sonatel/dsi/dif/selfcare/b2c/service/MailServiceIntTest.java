@@ -2,8 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class MailServiceIntTest {
 
          private OperationDTO userInfoWithResources;
 
-        @Before
+        @BeforeEach
         public void setup() throws Exception {
             MockitoAnnotations.initMocks(this);
             doNothing().when(javaMailSender).send(any(MimeMessage.class));

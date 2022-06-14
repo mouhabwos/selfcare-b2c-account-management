@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -42,7 +42,7 @@ public class SchedulerServiceTest {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         schedulerServiceUnderTest = new SchedulerService(mockSponseeRepository, accountB2CRepository, abonneService, applicationProperties);

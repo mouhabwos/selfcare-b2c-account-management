@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class TroubleTicketServiceImplTest {
     static Map<String, String> historicMap = new HashMap<>();
     static Map<String, Integer> orderMap = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         troubleTicketService = new TroubletIcketServiceImpl(troubleTicketApiClient, applicationProperties);

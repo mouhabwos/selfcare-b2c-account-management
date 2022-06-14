@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -84,7 +84,7 @@ public class SponseeServiceImplTest {
     private CustomerOfferService customerOfferService;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
@@ -194,7 +194,7 @@ public class SponseeServiceImplTest {
 
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test()
     public void testSendSmsToSponseeAlreadySponsored() {
         // Setup
         final String msisdnSource = "770000008";
@@ -204,17 +204,29 @@ public class SponseeServiceImplTest {
         when(mockSponseeRepository.findOneByMsisdn(anyString())).thenReturn(optionalSponsee);
 
         // Run the test
-        sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+
+
+        ForbiddenException thrown = org.junit.jupiter.api.Assertions.assertThrows(ForbiddenException.class, () -> {
+            sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+        }, "ForbiddenException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Vous n'êtes pas autorisé à accéder à cette ressource", thrown.getTitle());
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testSendSmsToSponseeWithNumberNoSponsored() {
         // Setup
         final String msisdnSource = "770000008";
         final String msisdnDest = "770000006";
 
         // Run the test
-        sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numero a deja ete selectionne. Choisis un autre numero et essaie encore, bul xaadi, day baax !", thrown.getTitle());
     }
 
     @Test()
@@ -268,7 +280,7 @@ public class SponseeServiceImplTest {
 
     }
 
-     @Test(expected = BadRequestAlertException.class)
+     @Test()
     public void testRegisterSponseeWithSponsorNoAccount(){
         AccountB2C accountB2C = getAccount();
         accountB2C.setId(null);
@@ -277,11 +289,17 @@ public class SponseeServiceImplTest {
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdnSponsor("770100000");
 
-        sponseeServiceImplUnderTest.register(sponseeDTO);
+
+
+         BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+             sponseeServiceImplUnderTest.register(sponseeDTO);
+         }, "BadRequestAlertException was expected");
+
+         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'a pas de compte", thrown.getTitle());
 
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testRegisterSponseeWithNumAlreadyUsed(){
 
         accountB2CRepository = mock(AccountB2CRepository.class);
@@ -300,11 +318,15 @@ public class SponseeServiceImplTest {
         sponseeDTO.setMsisdn("770000006");
         sponseeDTO.setMsisdnSponsor(accountB2C.getNumero());
 
-        sponseeServiceImplUnderTest.register(sponseeDTO);
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            sponseeServiceImplUnderTest.register(sponseeDTO);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro a deja un compte", thrown.getTitle());
 
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testRegisterSponseeAlreadyRattachedException(){
 
         sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
@@ -327,8 +349,12 @@ public class SponseeServiceImplTest {
         sponseeDTO.setMsisdnSponsor(ligne.getNumero());
         sponseeDTO.setMsisdn(ligne.getNumero());
 
-        sponseeServiceImplUnderTest.register(sponseeDTO);
 
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            sponseeServiceImplUnderTest.register(sponseeDTO);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'a pas de compte", thrown.getTitle());
 
     }
 
@@ -401,7 +427,7 @@ public class SponseeServiceImplTest {
 
     }
 
-    @Test(expected = LigneAlreadyRattachedException.class)
+    @Test()
     public void testRegisterSponseeWithExceptionAlreadyRattached(){
 
         rattachementLigneRepository = mock(RattachementLigneRepository.class);
@@ -424,7 +450,13 @@ public class SponseeServiceImplTest {
         sponseeDTO.setMsisdnSponsor(rattachementLigne.getNumero());
         sponseeDTO.setMsisdn(rattachementLigne.getNumero());
 
-        sponseeServiceImplUnderTest.register(sponseeDTO);
+
+
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
+            sponseeServiceImplUnderTest.register(sponseeDTO);
+        }, "LigneAlreadyRattachedException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
 
     }
 

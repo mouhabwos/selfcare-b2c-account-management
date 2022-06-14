@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -12,6 +12,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.UploadResponse;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.MsisdnAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorMessageErrors.MSISDN_ALREADY_USED;
 
 /**
  *
@@ -62,13 +64,13 @@ public class SponsorServiceImplTest {
         listSponsors.add(sponsor2);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         sponsorService = new SponsorServiceImpl(sponsorRepository);
     }
 
-    @Test(expected = SponsorException.class)
+    @Test()
     public void testAlreadyPresentSaveNumber() throws SponsorException {
 
         Sponsor sponsor = new Sponsor();
@@ -76,11 +78,19 @@ public class SponsorServiceImplTest {
         sponsor.setMsisdn(TEST_MSISDN);
         Mockito.when(sponsorRepository.getSponsorByMsisdn(sponsor.getMsisdn())).thenReturn(Optional.of(listSponsors.get(0)));
 
-        sponsorService.save(sponsor);
+        SponsorException thrown = org.junit.jupiter.api.Assertions.assertThrows(SponsorException.class, () -> {
+            sponsorService.save(sponsor);
+        }, "SponsorException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals(MSISDN_ALREADY_USED, thrown.getMessage());
+
+
+
+
 
     }
 
-    @Test(expected = MsisdnAlreadyUsedException.class)
+    @Test()
     public void testUpdateNumberPresent(){
 
         Sponsor sponsor = new Sponsor();
@@ -89,7 +99,12 @@ public class SponsorServiceImplTest {
         Mockito.when(sponsorRepository.getSponsorByMsisdn(sponsor.getMsisdn())).thenReturn(Optional.of(listSponsors.get(0)));
         Mockito.when(sponsorRepository.findById(sponsor.getId())).thenReturn(Optional.of(listSponsors.get(1)));
 
-        sponsorService.update(sponsor);
+
+        MsisdnAlreadyUsedException thrown = org.junit.jupiter.api.Assertions.assertThrows(MsisdnAlreadyUsedException.class, () -> {
+            sponsorService.update(sponsor);
+        }, "MsisdnAlreadyUsedException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est deja  utilisé", thrown.getTitle());
 
     }
 

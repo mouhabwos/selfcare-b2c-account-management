@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class SelfcareOTPServiceTest {
 
     private SelfcareOTPService selfcareOTPServiceUnderTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         selfcareOTPServiceUnderTest = new SelfcareOTPService(mockServicesOTP);
