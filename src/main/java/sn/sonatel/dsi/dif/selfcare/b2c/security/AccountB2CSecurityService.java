@@ -37,7 +37,7 @@ public class AccountB2CSecurityService {
     public AccessTokenResponse registerAccountB2CV3(ManagedUserVM managedUserVM) {
         log.debug("Register account {}",managedUserVM);
         managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin()));
-        //validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
+        validationHmacService.checkHmac(managedUserVM.getHmac(),managedUserVM.getLogin(), managedUserVM.getUuid());
         managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
         AccountB2C accountB2C = accountB2CService.register(managedUserVM, false);
         log.debug("Registered account {} ",accountB2C);
@@ -53,7 +53,7 @@ public class AccountB2CSecurityService {
 
     public AccessTokenResponse resetPassword(String uuid, ResetPasswordVM resetPasswordVM){
         log.debug("Service to reset password for account {}",resetPasswordVM);
-       // validationHmacService.checkHmac(resetPasswordVM.getHmac(),resetPasswordVM.getLogin(), uuid);
+        validationHmacService.checkHmac(resetPasswordVM.getHmac(),resetPasswordVM.getLogin(), uuid);
         resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH,true,true));
         resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(resetPasswordVM.getLogin()));
         ResponseEntity responseEntity = keycloakServices.resetPassword(resetPasswordVM);

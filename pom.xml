@@ -36,7 +36,7 @@
     <scm>
         <connection>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</connection>
         <developerConnection>scm:git:http://jenkins:jenkins@git.tools.orange-sonatel.com/scm/sb2c/selfcare-b2c-account-management.git</developerConnection>
-        <tag>v1.14.0</tag>
+        <tag>selfcareb2c-accountmanagement-2.0.0.8</tag>
         <url>scm:git:http://${scm.git.url}/scm/sb2c/selfcare-b2c-account-management.git</url>
     </scm>
 
