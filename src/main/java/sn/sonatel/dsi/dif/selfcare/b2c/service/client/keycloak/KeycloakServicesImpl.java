@@ -32,16 +32,16 @@ import java.util.List;
 
     private final Logger log = LoggerFactory.getLogger(KeycloakServicesImpl.class);
 
-    @Value("${keycloak-configutation.serverUrl}")
+    @Value("${keycloak-configuration.serverUrl}")
     private String serverUrl;
 
-    @Value("${keycloak-configutation.realm}")
+    @Value("${keycloak-configuration.realm}")
     private String realmName;
 
-    @Value("${keycloak-configutation.client-id}")
+    @Value("${keycloak-configuration.client-id}")
     private String clientId;
 
-    @Value("${keycloak-configutation.client-secret}")
+    @Value("${keycloak-configuration.client-secret}")
     private String clientSecret;
 
     @Override
