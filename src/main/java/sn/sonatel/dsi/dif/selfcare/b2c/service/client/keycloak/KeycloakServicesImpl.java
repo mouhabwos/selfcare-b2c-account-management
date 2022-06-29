@@ -32,22 +32,31 @@ import java.util.List;
 
     private final Logger log = LoggerFactory.getLogger(KeycloakServicesImpl.class);
 
-    @Value("${keycloak-configutation.serverUrl}")
+    @Value("${keycloak-configuration.serverUrl}")
     private String serverUrl;
 
-    @Value("${keycloak-configutation.realm}")
+    @Value("${keycloak-configuration.realm}")
     private String realmName;
 
-    @Value("${keycloak-configutation.client-id}")
+    @Value("${keycloak-configuration.client-id}")
     private String clientId;
 
-    @Value("${keycloak-configutation.client-secret}")
+    @Value("${keycloak-configuration.client-secret}")
     private String clientSecret;
 
     @Override
     public ResponseEntity registerUserInKeycloack( ManagedUserVM userVM){
 
         Keycloak keycloak = getIntanceKeycloak();
+        return registerUserInKeycloack(userVM,keycloak);
+
+    }
+
+
+
+    private ResponseEntity registerUserInKeycloack( ManagedUserVM userVM,Keycloak instance){
+
+        Keycloak keycloak = instance;
 
         // Define user
         UserRepresentation user = new UserRepresentation();
@@ -62,8 +71,8 @@ import java.util.List;
         user.setAttributes(Collections.emptyMap());
 
         // Get realm
-        RealmResource realmResource = keycloak.realm(realmName);
-        UsersResource usersRessource = realmResource.users();
+         UsersResource usersRessource = keycloak.realm(realmName).users();
+
         Response response = usersRessource.create(user);
         if(response.getStatus()== HttpStatus.SC_CREATED){
 
@@ -113,26 +122,26 @@ import java.util.List;
     @Override
     public ResponseEntity resetPassword(ResetPasswordVM resetPassword) {
 
-            if (!isRegistered(resetPassword.getLogin())){
+        Keycloak keycloak = getIntanceKeycloak();
+
+        UserRepresentation userRepresentation = getUserRepresentation(resetPassword.getLogin(),keycloak);
+        if (userRepresentation==null)
+        {
                 ManagedUserVM userVM= new ManagedUserVM();
                 userVM.setLogin(resetPassword.getLogin());
                 userVM.setPassword(resetPassword.getNewPassword());
-                return registerUserInKeycloack(userVM);
-            }
+                return registerUserInKeycloack(userVM,keycloak);
+        }
 
-            Keycloak keycloak = getIntanceKeycloak();
-            // Get realm
-            RealmResource realmResource = keycloak.realm(realmName);
-            UsersResource usersRessource = realmResource.users();
-
-            UserRepresentation userRepresentations = usersRessource.search(resetPassword.getLogin()).get(0);
 
             // Define password credential
             CredentialRepresentation passwordCred = new CredentialRepresentation();
             passwordCred.setTemporary(false);
             passwordCred.setType(CredentialRepresentation.PASSWORD);
             passwordCred.setValue(resetPassword.getNewPassword());
-            UserResource userResource = usersRessource.get(userRepresentations.getId());
+
+            //Get UserResource
+            UserResource userResource = keycloak.realm(realmName).users().get(userRepresentation.getId());
 
             // Set password credential
             userResource.resetPassword(passwordCred);
@@ -141,14 +150,14 @@ import java.util.List;
 
     }
 
-     private Boolean isRegistered(String login) {
+     private UserRepresentation getUserRepresentation(String login,Keycloak keycloak ) {
 
-            Keycloak keycloak = getIntanceKeycloak();
-            // Get realm
+
             RealmResource realmResource = keycloak.realm(realmName);
             UsersResource usersRessource = realmResource.users();
+            List<UserRepresentation> userRepresentationList=usersRessource.search(login);
 
-            return !usersRessource.search(login).isEmpty();
+            return (!userRepresentationList.isEmpty())? userRepresentationList.get(0):null;
 
     }
 

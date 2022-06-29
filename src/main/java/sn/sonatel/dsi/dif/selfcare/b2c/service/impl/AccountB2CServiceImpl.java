@@ -81,7 +81,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
 
         log.debug("Service for register AccountB2C : {}", managedUserVM);
-        return register(managedUserVM, true);
+        return register(managedUserVM, false);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
         }
 
-        return register(managedUserVM, true);
+        return register(managedUserVM, false);
     }
 
 
