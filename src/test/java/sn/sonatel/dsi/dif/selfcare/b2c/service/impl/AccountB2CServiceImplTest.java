@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AccountB2CDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ServiceUnavailableException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
@@ -72,7 +73,7 @@ public class AccountB2CServiceImplTest {
     @Mock
     private AbonneService abonneServiceMock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, keycloakServices,sponseeService,asyncService, validationHmacService);
@@ -153,7 +154,7 @@ public class AccountB2CServiceImplTest {
     }
 
 
-    @Test(expected = LoginAlreadyUsedException.class)
+    @Test
     public void testRegisterAccountB2CNumberAlreadyUsed() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
@@ -166,11 +167,18 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setLogin("778525255");
         managedUserVM.setLastName("lastname");
         managedUserVM.setFirstName("firstname");
-        accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+
+
+
+        LoginAlreadyUsedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LoginAlreadyUsedException.class, () -> {
+            accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+            }, "LoginAlreadyUsedException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro a deja un compte", thrown.getTitle());
 
     }
 
-    @Test(expected = LigneAlreadyRattachedException.class)
+    @Test()
     public void testRegisterAccountB2CNumberAlreadyRattached() {
 
         mockRattachementLigneRepository.deleteAll();
@@ -192,7 +200,12 @@ public class AccountB2CServiceImplTest {
         managedUserVM.setLogin(ligne.getNumero());
         managedUserVM.setLastName("lastname");
         managedUserVM.setFirstName("firstname");
-        accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
+            accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+        }, "ServiceUnavailableException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
     }
 
     @Test
@@ -283,14 +296,18 @@ public class AccountB2CServiceImplTest {
 
     }
 */
-    @Test(expected = BadRequestAlertException.class)
+    @Test
     public void testCheckNumberV2(){
         CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
         checkNumberRequest.setUuid("789");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
         checkNumberRequest.setMsisdn("771326617");
 
-        accountB2CServiceImplUnderTest.checkNumberV2(checkNumberRequest);
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            accountB2CServiceImplUnderTest.checkNumberV2(checkNumberRequest);
+        }, "BadRequestAlertException was expected");
+
+        assertEquals("Hmac non valide", thrown.getTitle());
     }
 
     @Test
@@ -323,7 +340,7 @@ public class AccountB2CServiceImplTest {
         verify(asyncService).updateFirstnameAndLasname(any());
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test
     public void testRegisterAccountB2CV2HmacNonValid() {
         // Setup
         ManagedUserVM managedUserVM =  new ManagedUserVM();
@@ -339,10 +356,15 @@ public class AccountB2CServiceImplTest {
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
 
         // Run the test
-        AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
+         BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Hmac non valide", thrown.getTitle());
+
 
         // Verify the results
-        assertNotNull(result);
+       // assertNotNull(result);
     }
     @Test
     public void testCheckNumberV2Account(){
@@ -358,7 +380,7 @@ public class AccountB2CServiceImplTest {
 
     }
 
-    @Test(expected= NoSuchElementException.class)
+    @Test()
     public void testCheckNumberV3AccountShoudThrowException(){
 
         CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
@@ -366,7 +388,11 @@ public class AccountB2CServiceImplTest {
         checkNumberRequest.setUuid("UUID");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
 
-         accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+
+        NoSuchElementException thrown = org.junit.jupiter.api.Assertions.assertThrows(NoSuchElementException.class, () -> {
+            accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+        }, "BadRequestAlertException was expected");
+
 
     }
 
@@ -392,7 +418,7 @@ public class AccountB2CServiceImplTest {
         Assertions.assertThat(abonneStatusDTO.getAccountStatus()).isEqualTo(AccountStatus.FULL);
     }
 
-    @Test(expected = LigneAlreadyRattachedException.class)
+    @Test()
     public void testCheckNumberV3AccountShoudThrowExceptionWhenLingneRattache(){
 
         mockRattachementLigneRepository.deleteAll();
@@ -415,7 +441,13 @@ public class AccountB2CServiceImplTest {
         checkNumberRequest.setUuid("UUID");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
 
-       accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+
+        // Run the test
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
+            accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+        }, "LigneAlreadyRattachedException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
 
     }
 

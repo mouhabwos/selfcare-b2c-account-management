@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
@@ -18,6 +19,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SFTPClientService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SelfcareB2CApp.class})
+@IntegrationTest
 public class UrgenceDepannageServiceImplTest {
 
     private static final String stringOperationDTO = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
@@ -54,7 +56,7 @@ public class UrgenceDepannageServiceImplTest {
     @Mock
     private SFTPClientService ftpService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         urgenceDepannageService = new UrgenceDepannageServiceImpl(applicationProperties, ftpService, mailService);
@@ -205,7 +207,7 @@ public class UrgenceDepannageServiceImplTest {
     }
 
     //
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testOuvertureCompteThrowsBadRequestAlertException() throws Exception {
 
         Mail mail = getMailEntity();
@@ -215,32 +217,44 @@ public class UrgenceDepannageServiceImplTest {
         // Run the test
         OperationDTO dto = operationDTO();
         dto.setOperationCode("operation-test");
-        urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, dto.getFormulaire(), dto.getRectoID(), dto.getVerso(),CANAL);
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, dto.getFormulaire(), dto.getRectoID(), dto.getVerso(),CANAL);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Le code de l operation est introuvable", thrown.getTitle());
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testOuvertureCompteNotValideImage() throws Exception {
 
         Mail mail = getMailEntity();
 
         when(mailSendRepository.save(any())).thenReturn(mail);
 
-        urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
 
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Le ficher doit etre soit un document (.pdf, .doc, .docx) ou une image (.png, .jpg, .jpeg)", thrown.getTitle());
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testOuvertureCompteNotValideMsisdn() throws Exception {
 
         Mail mail = getMailEntity();
 
         when(mailSendRepository.save(any())).thenReturn(mail);
 
-        urgenceDepannageService.ouvertureCompte(stringOperationDTONoValideMsisdn, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            urgenceDepannageService.ouvertureCompte(stringOperationDTONoValideMsisdn, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
+        }, "BadRequestAlertException was expected");
 
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro doit être un numéro orange valide", thrown.getTitle());
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    @Test()
     public void testOuvertureCompteWithFixeNumber() throws Exception {
 
         // Setup
@@ -251,8 +265,15 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
-        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTOWithFixeNumber, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso(),CANAL);
-        assertEquals( mail.getIdRequest(),ouvertureCompte);
+
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTOWithFixeNumber, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso(),CANAL);
+            assertEquals( mail.getIdRequest(),ouvertureCompte);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Le numero doit etre un numéro mobile orange valide", thrown.getTitle());
+
     }
 
 }

@@ -120,6 +120,13 @@ public class AccountB2CResource {
         return ResponseEntity.ok(accountB2cSecurityService.registerAccountB2CV3(managedUserVM));
     }
 
+    @Auditable(description = Message.Account.LOGIN)
+    @PostMapping("/v1/login-otp")
+    public ResponseEntity<AccessTokenResponse> loginOtp(@RequestParam("login") String login, @RequestParam("otp") String otp) {
+        log.debug("REST request to login client {}", login);
+        return ResponseEntity.ok(accountB2cSecurityService.loginWithOtpCode(login,otp));
+    }
+
 
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")

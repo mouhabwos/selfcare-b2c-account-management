@@ -2,16 +2,18 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
-import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
@@ -25,11 +27,11 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.OfferBucket;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.CodeOTPCheckDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.InvalidOrangeNumberException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.NotFoundNumberException;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.InfoNumberVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneCNIVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
@@ -41,17 +43,21 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- *
  * @author Bouya Kande
  * @since 1.1.4
- *
  */
 
 
@@ -59,7 +65,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @IntegrationTest
 public class RattachementLigneServiceImplTest {
 
-    private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
+
 
     private static final TypeNumero TYPE_NUMERO_FIX = TypeNumero.FIXE;
 
@@ -141,6 +147,7 @@ public class RattachementLigneServiceImplTest {
 
     @Autowired
     private RattachementLigneRepository mockRattachementLigneRepository;
+
     @Autowired
     private AccountB2CRepository mockAccountB2CRepository;
 
@@ -158,11 +165,13 @@ public class RattachementLigneServiceImplTest {
 
     @Mock
     private AbonneService abonneService;
+    @Mock
+    private SelfcareOTPService selfcareOTPService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService, selfcareOTPService);
     }
 
 
@@ -319,10 +328,10 @@ public class RattachementLigneServiceImplTest {
     public void testGetRattachementLignes() {
 
         // Setup
-         String msisdn = "77000 00 00";
+        String msisdn = "77000 00 00";
         mockAccountB2CRepository = mock(AccountB2CRepository.class);
         mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService, selfcareOTPService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -330,7 +339,7 @@ public class RattachementLigneServiceImplTest {
         accountB2C.setNumero(msisdn);
         Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
         when(mockAccountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
-         List<RattachementLigne> rattachementLignes = new ArrayList<>();
+        List<RattachementLigne> rattachementLignes = new ArrayList<>();
         when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
         ResponseEntity<CustomerOffer> response = ResponseEntity.ok(getCustomer());
         when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(response);
@@ -350,7 +359,7 @@ public class RattachementLigneServiceImplTest {
         String msisdn = "77000 00 00";
         mockAccountB2CRepository = mock(AccountB2CRepository.class);
         mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService, selfcareOTPService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -378,7 +387,7 @@ public class RattachementLigneServiceImplTest {
 
         mockAccountB2CRepository = mock(AccountB2CRepository.class);
         mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService, selfcareOTPService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -409,7 +418,7 @@ public class RattachementLigneServiceImplTest {
         assertEquals("", result.get(0).getProfil());
     }
 
-    private CustomerOffer getCustomer(){
+    private CustomerOffer getCustomer() {
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("32722731");
         customerOffer.setCreateDate("2011-05-26T15:51:10");
@@ -426,12 +435,11 @@ public class RattachementLigneServiceImplTest {
         customerOffer.setData(offerBucket);
 
 
-
         return customerOffer;
     }
 
-    @Test(expected = InvalidOrangeNumberException.class)
-    public void testAddRattachementLigneFixeNoValid(){
+    @Test()
+    public void testAddRattachementLigneFixeNoValid() {
         //creation account
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setNumero("778965351");
@@ -447,13 +455,19 @@ public class RattachementLigneServiceImplTest {
         RattachementLigneVM ligneVM = new RattachementLigneVM();
         ligneVM.setLogin(accountB2C.getNumero());
         ligneVM.setNumero("77123202000");
-        rattachementLigneServiceImpl.addRattachementLigne(ligneVM);
+
+
+        InvalidOrangeNumberException thrown = org.junit.jupiter.api.Assertions.assertThrows(InvalidOrangeNumberException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigne(ligneVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro doit être un numéro orange valide", thrown.getTitle());
 
 
     }
 
     @Test
-    public void testEquals(){
+    public void testEquals() {
 
         IndividualInformation information = new IndividualInformation();
 
@@ -463,7 +477,7 @@ public class RattachementLigneServiceImplTest {
     }
 
     @Test
-    public void testRegisterRattachementLigneFixe(){
+    public void testRegisterRattachementLigneFixe() {
 
         String codeClient = "32722731";
         String numFixe = "338237244";
@@ -474,7 +488,7 @@ public class RattachementLigneServiceImplTest {
         accountB2C.setNumero(login);
         accountB2C.setFirstName("hello");
         accountB2C.setLastName("hello");
-        AccountB2C saveAccount = mockAccountB2CRepository.save(accountB2C);
+        AccountB2C saveAccount = mockAccountB2CRepository.saveAndFlush(accountB2C);
 
         //Mock response api get CustomerOffer
         CustomerOffer customerOffer = getCustomer();
@@ -488,7 +502,7 @@ public class RattachementLigneServiceImplTest {
         when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapper);
 
         //call register ligne fixe
-        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
         fixeVM.setIdClient(customerOffer.getClientCode());
         fixeVM.setLogin(login);
         fixeVM.setNumero(numFixe);
@@ -496,16 +510,16 @@ public class RattachementLigneServiceImplTest {
 
         RattachementLigne ligneResponse = rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
 
-        assertTrue(ligneResponse!=null);
+        assertTrue(ligneResponse != null);
 
-        Assert.assertEquals(fixeVM.getNumero(),ligneResponse.getNumero());
+        Assert.assertEquals(fixeVM.getNumero(), ligneResponse.getNumero());
 
 
     }
 
 
-    @Test(expected = BadRequestAlertException.class)
-    public void testRegisterRattachementLigneFixeBadIdClient(){
+    @Test()
+    public void testRegisterRattachementLigneFixeBadIdClient() {
 
         String codeClient = "3272889966666";
         String numFixe = "338237244";
@@ -531,18 +545,23 @@ public class RattachementLigneServiceImplTest {
 
 
         //call register ligne fixe
-        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
         fixeVM.setIdClient(codeClient);
         fixeVM.setLogin(login);
         fixeVM.setNumero(numFixe);
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
-       rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+        }, "LigneAlreadyRattachedException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
     }
 
 
-    @Test(expected = NotFoundNumberException.class)
-    public void testRegisterRattachementLigneFixeOfferNotFound(){
+    @Test()
+    public void testRegisterRattachementLigneFixeOfferNotFound() {
         mockAccountB2CRepository.flush();
         mockRattachementLigneRepository.flush();
         String codeClient = "966666";
@@ -561,18 +580,24 @@ public class RattachementLigneServiceImplTest {
         when(customerOfferApiClient.getCustomerOffer(anyString())).thenReturn(responseEntity);
 
         //call register ligne fixe
-        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
         fixeVM.setIdClient(codeClient);
         fixeVM.setLogin(login);
         fixeVM.setNumero(numFixe);
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
-        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+
+        NotFoundNumberException thrown = org.junit.jupiter.api.Assertions.assertThrows(NotFoundNumberException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+        }, "NotFoundNumberException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Offer not found", thrown.getTitle());
     }
 
 
-    @Test(expected = BadRequestAlertException.class)
-    public void testRegisterRattachementLigneFixeWithOrganizationNumber(){
+    @Test()
+    public void testRegisterRattachementLigneFixeWithOrganizationNumber() {
 
         String codeClient = "32722731";
         String numFixe = "338237244";
@@ -597,13 +622,19 @@ public class RattachementLigneServiceImplTest {
         when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapper);
 
         //call register ligne fixe
-        RattachementLigneFixeVM  fixeVM = new RattachementLigneFixeVM();
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
         fixeVM.setIdClient(customerOffer.getClientCode());
         fixeVM.setLogin(login);
         fixeVM.setNumero(numFixe);
         fixeVM.setTypeNumero(TypeNumero.FIXE);
 
-        rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            rattachementLigneServiceImpl.addRattachementLigneFixe(fixeVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
 
 
     }
@@ -616,7 +647,7 @@ public class RattachementLigneServiceImplTest {
         String msisdn = "77000 00 00";
         mockAccountB2CRepository = mock(AccountB2CRepository.class);
         mockRattachementLigneRepository = mock(RattachementLigneRepository.class);
-        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService);
+        rattachementLigneServiceImpl = new RattachementLigneServiceImpl(mockRattachementLigneRepository, mockAccountB2CRepository, customerOfferApiClient, sponseeService, abonneService, selfcareOTPService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setId(45L);
@@ -638,7 +669,6 @@ public class RattachementLigneServiceImplTest {
         when(mockRattachementLigneRepository.findAllByAccountB2C(any())).thenReturn(rattachementLignes);
 
 
-
         // Run the test
         final List<InfoNumberVM> result = rattachementLigneServiceImpl.getRattachementLignes(msisdn, false);
 
@@ -646,22 +676,102 @@ public class RattachementLigneServiceImplTest {
 
         // Verify the results
         assertEquals("782363572", result.get(0).getMsisdn());
-        assertEquals("",result.get(0).getProfil());
+        assertEquals("", result.get(0).getProfil());
         assertEquals("", result.get(0).getFormule());
     }
 
-    @Test(expected = BadRequestAlertException.class)
+    /**
+     * Method under test: {@link RattachementLigneServiceImpl#rattachementLigneByOtp(RattachementLigneCNIVM)}
+     */
+    @org.junit.jupiter.api.Test
+    void testRattachementLigneByOtpShouldThrowInvalidOrangeNumberException() {
+
+        CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
+        codeOTPCheckDTO.setCode("Code");
+        codeOTPCheckDTO.setMsisdn("Msisdn");
+        codeOTPCheckDTO.setValid(true);
+        when(this.selfcareOTPService.checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any()))
+            .thenReturn(codeOTPCheckDTO);
+        RattachementLigneCNIVM rattachementLigneCNIVM = mock(RattachementLigneCNIVM.class);
+        when(rattachementLigneCNIVM.getLogin()).thenReturn("Login");
+        when(rattachementLigneCNIVM.getIdentificationId()).thenReturn("42");
+        doNothing().when(rattachementLigneCNIVM).setNumero((String) org.mockito.Mockito.any());
+        when(rattachementLigneCNIVM.getNumero()).thenReturn("00221779999999");
+        assertThrows(InvalidOrangeNumberException.class,
+            () -> this.rattachementLigneServiceImpl.rattachementLigneByOtp(rattachementLigneCNIVM));
+    }
+
+    /**
+     * Method under test: {@link RattachementLigneServiceImpl#rattachementLigneByOtp(RattachementLigneCNIVM)}
+     */
+    @org.junit.jupiter.api.Test
+    void testRattachementLigneByOtpShouldThrowNotFoundNumberException() {
+        CodeOTPCheckDTO codeOTPCheckDTO = new CodeOTPCheckDTO();
+        codeOTPCheckDTO.setCode("Code");
+        codeOTPCheckDTO.setMsisdn("Msisdn");
+        codeOTPCheckDTO.setValid(true);
+        when(this.selfcareOTPService.checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any()))
+            .thenReturn(codeOTPCheckDTO);
+        RattachementLigneCNIVM rattachementLigneCNIVM = mock(RattachementLigneCNIVM.class);
+        when(rattachementLigneCNIVM.getLogin()).thenThrow(new NotFoundNumberException("00221779999999"));
+        when(rattachementLigneCNIVM.getIdentificationId()).thenThrow(new NotFoundNumberException("00221779999999"));
+        doThrow(new NotFoundNumberException("00221779999999")).when(rattachementLigneCNIVM)
+            .setNumero((String) org.mockito.Mockito.any());
+        when(rattachementLigneCNIVM.getNumero()).thenReturn("00221779999999");
+        assertThrows(NotFoundNumberException.class,
+            () -> this.rattachementLigneServiceImpl.rattachementLigneByOtp(rattachementLigneCNIVM));
+        verify(rattachementLigneCNIVM).getNumero();
+        verify(rattachementLigneCNIVM).getIdentificationId();
+    }
+
+    /**
+     * Method under test: {@link RattachementLigneServiceImpl#rattachementLigneByOtp(RattachementLigneCNIVM)}
+     */
+    @org.junit.jupiter.api.Test
+    void testRattachementLigneByOtp() {
+        CodeOTPCheckDTO codeOTPCheckDTO = mock(CodeOTPCheckDTO.class);
+        when(codeOTPCheckDTO.isValid()).thenReturn(false);
+        doNothing().when(codeOTPCheckDTO).setCode((String) org.mockito.Mockito.any());
+        doNothing().when(codeOTPCheckDTO).setMsisdn((String) org.mockito.Mockito.any());
+        doNothing().when(codeOTPCheckDTO).setValid(anyBoolean());
+        codeOTPCheckDTO.setCode("Code");
+        codeOTPCheckDTO.setMsisdn("Msisdn");
+        codeOTPCheckDTO.setValid(true);
+        when(this.selfcareOTPService.checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any()))
+            .thenReturn(codeOTPCheckDTO);
+        RattachementLigneCNIVM rattachementLigneCNIVM = mock(RattachementLigneCNIVM.class);
+        when(rattachementLigneCNIVM.getLogin()).thenReturn("Login");
+        when(rattachementLigneCNIVM.getIdentificationId()).thenReturn("42");
+        doNothing().when(rattachementLigneCNIVM).setNumero((String) org.mockito.Mockito.any());
+        when(rattachementLigneCNIVM.getNumero()).thenReturn("00221779999999");
+        assertThrows(BadRequestAlertException.class,
+            () -> this.rattachementLigneServiceImpl.rattachementLigneByOtp(rattachementLigneCNIVM));
+        verify(this.selfcareOTPService).checkOPT((String) org.mockito.Mockito.any(), (String) org.mockito.Mockito.any());
+        verify(codeOTPCheckDTO).isValid();
+        verify(codeOTPCheckDTO).setCode((String) org.mockito.Mockito.any());
+        verify(codeOTPCheckDTO).setMsisdn((String) org.mockito.Mockito.any());
+        verify(codeOTPCheckDTO).setValid(anyBoolean());
+        verify(rattachementLigneCNIVM, atLeast(1)).getNumero();
+        verify(rattachementLigneCNIVM, atLeast(1)).getIdentificationId();
+    }
+
+    @Test()
     public void testRattachementLignesByCNIWithBadRequest() throws IOException {
 
         RattachementLigneCNIVM ligneCNIVM = getRattachementLigneCNIVM();
         AccountB2C account = getAccount();
         account.setNumero(ligneCNIVM.getLogin());
-        account.setEmail(ligneCNIVM.getLogin()+"@orange.com");
+        account.setEmail(ligneCNIVM.getLogin() + "@orange.com");
         mockAccountB2CRepository.save(account);
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
         when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
 
-        rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            rattachementLigneServiceImpl.rattachementLigneByCni(ligneCNIVM);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'est pas identifié avec cette pièce d’identité, veuillez vérifier à nouveau ", thrown.getTitle());
     }
 
     @Test
@@ -673,7 +783,7 @@ public class RattachementLigneServiceImplTest {
         ligneCNIVM.setIdentificationId("000000060000");
         AccountB2C account = getAccount();
         account.setNumero(ligneCNIVM.getLogin());
-        account.setEmail(ligneCNIVM.getLogin()+"@orange.com");
+        account.setEmail(ligneCNIVM.getLogin() + "@orange.com");
         mockAccountB2CRepository.save(account);
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
         when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
@@ -695,7 +805,7 @@ public class RattachementLigneServiceImplTest {
         ligneCNIVM.setIdentificationId("SNDKR1999B1877");
         AccountB2C account = getAccount();
         account.setNumero(ligneCNIVM.getLogin());
-        account.setEmail(ligneCNIVM.getLogin()+"@orange.com");
+        account.setEmail(ligneCNIVM.getLogin() + "@orange.com");
         mockAccountB2CRepository.save(account);
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperOrganization();
         when(abonneService.getInformations(anyString())).thenReturn(infoClientWrapperIndividual);
@@ -708,7 +818,7 @@ public class RattachementLigneServiceImplTest {
 
     }
 
-    private RattachementLigneCNIVM getRattachementLigneCNIVM(){
+    private RattachementLigneCNIVM getRattachementLigneCNIVM() {
         RattachementLigneCNIVM ligneCNIVM = new RattachementLigneCNIVM();
         ligneCNIVM.setIdentificationId("CNI11111111111111");
         ligneCNIVM.setLogin("781210941");
@@ -717,7 +827,7 @@ public class RattachementLigneServiceImplTest {
         return ligneCNIVM;
     }
 
-    private AccountB2C getAccount(){
+    private AccountB2C getAccount() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setNumero("");
         accountB2C.setId(143L);
@@ -739,9 +849,6 @@ public class RattachementLigneServiceImplTest {
 
         return infoClientWrapper;
     }
-
-
-
 
 
 }

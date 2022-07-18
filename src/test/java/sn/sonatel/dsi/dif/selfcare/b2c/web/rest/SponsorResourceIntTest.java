@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class SponsorResourceIntTest {
     private static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
     private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final SponsorResource sponsorResource = new SponsorResource(sponsorService);
@@ -123,7 +123,7 @@ public class SponsorResourceIntTest {
         return sponsor;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         sponsor = createEntity(em);
     }

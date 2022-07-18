@@ -72,6 +72,7 @@ public final class Message {
         public static final String ADD_LIGNE_FIXE = "Rattachement de ligne fixe via l ID CLIENT";
 
         public static final String SAVE_RATTACHEMENT_LIGNE_BY_CNI = "Rattachement de ligne ";
+        public static final String SAVE_RATTACHEMENT_LIGNE_BY_OTP = "Rattachement de ligne  par code OTP";
 
 
         private Rattachement() {
@@ -109,6 +110,7 @@ public final class Message {
 
         public static final String STATUS_MAIL = "Verification de l envoie du mail";
         public static final String RESET_PASSWORD = "Reinitialisation du mot de passe en mode lite";
+        public static final String LOGIN = "Login du compte utilisateur en mode lite";
 
 
         private Account() {

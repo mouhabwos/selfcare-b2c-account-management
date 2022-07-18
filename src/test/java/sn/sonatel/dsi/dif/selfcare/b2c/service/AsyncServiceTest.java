@@ -1,12 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -16,7 +17,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SelfcareB2CApp.class})
+@IntegrationTest
 public class AsyncServiceTest {
 
     @Mock
@@ -34,7 +35,7 @@ public class AsyncServiceTest {
     private AsyncService asyncService;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         asyncService = new AsyncService(boosterClient, notificationInformationService, abonneService, accountB2CRepository);

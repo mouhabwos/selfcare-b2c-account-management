@@ -1,7 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+
+
+
+
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -126,7 +131,7 @@ public class AccountB2CResourceIntTest {
     private AccountB2CSecurityService accountB2cSecurityService;
 
 
-    @Before
+     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
@@ -156,7 +161,7 @@ public class AccountB2CResourceIntTest {
         return accountB2C;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         accountB2C = createEntity(em);
     }

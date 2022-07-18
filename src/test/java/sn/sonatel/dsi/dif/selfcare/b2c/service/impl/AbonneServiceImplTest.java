@@ -2,8 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -105,7 +105,7 @@ public class AbonneServiceImplTest {
 
     private AbonneServiceImpl abonneServiceImplUnderTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         abonneServiceImplUnderTest = new AbonneServiceImpl(mockPartyManagementApiClient);

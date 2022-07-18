@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ public class DeviceInfosResourceIntTest {
 
     private DeviceInfos deviceInfos;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final DeviceInfosResource deviceInfosResource = new DeviceInfosResource(deviceInfosRepository);
@@ -96,7 +96,7 @@ public class DeviceInfosResourceIntTest {
         return deviceInfos;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         deviceInfos = createEntity(em);
     }

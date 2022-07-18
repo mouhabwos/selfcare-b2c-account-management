@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -113,7 +113,7 @@ public class RattachementLigneResourceIntTest {
     @Mock
     private AbonneService abonneService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         rattachementLigneResource = new RattachementLigneResource(rattachementLigneService);
@@ -138,7 +138,7 @@ public class RattachementLigneResourceIntTest {
         return rattachementLigne;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         rattachementLigne = createEntity(em);
     }
