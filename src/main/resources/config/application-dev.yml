@@ -126,7 +126,7 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-keycloak-configutation:
+keycloak-configuration:
   serverUrl: http://keycloak-dsitoolchainsharedservices.apps.malaaw-rec.orange-sonatel.com/auth
   realm: jhipster
   client-id: internal

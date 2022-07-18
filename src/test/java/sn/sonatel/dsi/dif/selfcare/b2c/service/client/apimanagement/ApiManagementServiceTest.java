@@ -1,7 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class ApiManagementServiceTest {
     @Mock
     private CustomerOfferRetrieveService customerOfferRetrieveService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         customerOfferServiceUnderTest = new CustomerOfferService(customerOfferRetrieveService);
@@ -61,14 +62,19 @@ public class ApiManagementServiceTest {
     }
 
 
-    @Test(expected = ServiceUnavailableException.class)
+    @Test
     public void testGetCustomerOfferNotFoundException() {
 
         ResponseEntity<CustomerOffer> response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
         when(customerOfferRetrieveService.getCachedCustomerOffer(anyString())).thenReturn(response);
 
-        customerOfferServiceUnderTest.getCustomerOffer("test");
 
+
+        ServiceUnavailableException thrown = Assertions.assertThrows(ServiceUnavailableException.class, () -> {
+            customerOfferServiceUnderTest.getCustomerOffer("test");;
+        }, "ServiceUnavailableException was expected");
+
+        Assertions.assertEquals(HttpStatus.SERVICE_UNAVAILABLE.value(), thrown.getStatus().getStatusCode());
     }
 }

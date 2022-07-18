@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class BoosterManagerServiceTest {
     private BoosterManagerService boosterManagerService;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         boosterManagerService = new BoosterManagerService( boosterClient, customerOfferService);

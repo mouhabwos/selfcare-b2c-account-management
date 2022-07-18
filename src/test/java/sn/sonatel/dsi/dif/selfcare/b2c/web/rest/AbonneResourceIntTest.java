@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -58,7 +58,7 @@ public class AbonneResourceIntTest {
     @Autowired
     private AbonneService abonneServiceTest;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
@@ -154,7 +154,7 @@ public class AbonneResourceIntTest {
         restAbonneMockMvc.perform(get("/api/abonne/v2/customerOffer/{msisdn}", DEFAULT_NUMERO))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.clientCode").isEmpty())
+            .andExpect(jsonPath("$.clientCode").value(customerOffer.getClientCode()))
             .andExpect(jsonPath("$.offerName").value(customerOffer.getOfferName()))
             .andExpect(jsonPath("$.offerId").value(customerOffer.getOfferId()));
     }

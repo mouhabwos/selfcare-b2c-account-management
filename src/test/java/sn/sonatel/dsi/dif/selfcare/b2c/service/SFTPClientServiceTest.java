@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
@@ -35,7 +35,7 @@ public class SFTPClientServiceTest {
     private  SftpConfig.UploadGateways uploadGateway;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         sftpClientServiceUnderTest = new SFTPClientService(mockApplicationProperties, uploadGateway);

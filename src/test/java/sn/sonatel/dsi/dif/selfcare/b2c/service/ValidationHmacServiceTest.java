@@ -1,14 +1,16 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.SelfcareB2CApp;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,8 +21,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SelfcareB2CApp.class})
-@PrepareForTest({ ValidationHmacService.class })
+ @IntegrationTest
 public class ValidationHmacServiceTest {
 
     @Autowired
@@ -43,7 +44,7 @@ public class ValidationHmacServiceTest {
     private static final String UUID = "789";
     private final Date NOW = new Date();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         initMocks(this);
         validationHmacServiceUnderTest = new ValidationHmacService(mockApplicationProperties);
@@ -63,11 +64,18 @@ public class ValidationHmacServiceTest {
         assertFalse(result);
     }
 
-    @Test(expected = ValidationHmacService.InvalidHmacException.class)
+    @Test()
     public void testCheckHmacInvalid() {
 
-        // Run the test
-        validationHmacServiceUnderTest.checkHmac(HMAC, MSISDN, "UUID");
+
+        ValidationHmacService.InvalidHmacException thrown = org.junit.jupiter.api.Assertions.assertThrows(ValidationHmacService.InvalidHmacException.class, () -> {
+            validationHmacServiceUnderTest.checkHmac(HMAC, MSISDN, "UUID");
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("Hmac non valide", thrown.getMessage());
+
+
+
 
     }
 

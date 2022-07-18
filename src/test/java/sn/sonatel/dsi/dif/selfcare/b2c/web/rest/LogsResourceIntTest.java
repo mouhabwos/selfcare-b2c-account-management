@@ -2,8 +2,8 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +32,7 @@ public class LogsResourceIntTest {
 
     private MockMvc restLogsMockMvc;
 
-    @Before
+    @BeforeEach
     public void setup() {
         LogsResource logsResource = new LogsResource ();
         this.restLogsMockMvc = MockMvcBuilders

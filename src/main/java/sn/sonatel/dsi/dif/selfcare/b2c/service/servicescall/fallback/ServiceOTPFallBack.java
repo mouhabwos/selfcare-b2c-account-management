@@ -11,32 +11,25 @@ import javax.validation.Valid;
 import java.util.Map;
 
 
-public class ServiceOTPFallBack implements ServicesOTP {
-
-    private final Throwable throwable;
-
-    public ServiceOTPFallBack(Throwable throwable) {
-
-        this.throwable = throwable;
-    }
+public interface ServiceOTPFallBack   {
 
 
-    @Override
-    public ResponseEntity<CodeOTPCheckDTO> checkOTP(@Valid CodeOTPCheckDTO checkVM) {
-        response();
+
+
+     default ResponseEntity<CodeOTPCheckDTO> checkOTP(@Valid CodeOTPCheckDTO checkVM,Throwable throwable) {
+        response(throwable);
 
         return ResponseEntity.ok().build();
     }
 
 
 
-    @Override
-    public ResponseEntity<Map<String, Boolean>> registerCheckValidRequest(String msisdn) {
-        response();
+     default ResponseEntity<Map<String, Boolean>> registerCheckValidRequest(String msisdn,Throwable throwable) {
+        response(throwable);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity response(){
+     default ResponseEntity response(Throwable throwable){
         if (throwable instanceof FeignException && ((FeignException) throwable).status() == 400) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

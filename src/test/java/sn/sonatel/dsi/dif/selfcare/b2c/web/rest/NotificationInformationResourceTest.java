@@ -1,7 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +50,7 @@ public class NotificationInformationResourceTest {
     @Autowired
     private NotificationInformationRepository notificationInformationRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         notificationInformationResourceUnderTest = new NotificationInformationResource(mockNotificationInformationService);

@@ -1,8 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,7 +41,7 @@ public class FileInformationServiceImplTest {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         fileInformationServiceImpl = new FileInformationServiceImpl(fileInformationRepository, restTemplate, applicationProperties);

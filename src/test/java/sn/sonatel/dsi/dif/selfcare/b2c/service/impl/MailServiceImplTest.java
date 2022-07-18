@@ -1,12 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Mail;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.StatusMail;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.MailSendRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
 
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class MailServiceImplTest {
 
     private MailSendServiceImpl mailSendServiceImplUnderTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
         mailSendServiceImplUnderTest = new MailSendServiceImpl(mailSendRepository);
@@ -47,11 +48,16 @@ public class MailServiceImplTest {
         assertEquals(mail.getStatus()+"", result);
     }
 
-    @Test(expected =  BadRequestAlertException.class)
+    @Test()
     public void testGetStatusMailSendThrowsBadRequestAlertException() {
 
         final String idRequest = "mail_1234566";
 
-        mailSendServiceImplUnderTest.getStatusMailSend(idRequest);
+
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
+            mailSendServiceImplUnderTest.getStatusMailSend(idRequest);
+        }, "BadRequestAlertException was expected");
+
+        org.junit.jupiter.api.Assertions.assertEquals("idRequest non Trouve", thrown.getTitle());
     }
 }
