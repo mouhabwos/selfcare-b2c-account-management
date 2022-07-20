@@ -79,6 +79,8 @@ public class AccountB2CSecurityService {
         var managedUserVM = new ManagedUserVM();
         managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(login));
         managedUserVM.setPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH, true, true));
+        managedUserVM.setFirstName("");
+        managedUserVM.setLastName("");
         AccountB2C accountB2C = accountB2CService.register(managedUserVM, false);
         log.debug("Registered account {} ", accountB2C);
 
