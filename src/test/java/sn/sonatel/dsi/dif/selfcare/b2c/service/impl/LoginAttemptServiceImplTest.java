@@ -1,10 +1,15 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
@@ -15,20 +20,16 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
 
-import java.time.ZonedDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class LoginAttemptServiceImplTest {
+class LoginAttemptServiceImplTest {
 
     private static final String DEFAULT_USERNAME = "781320607";
     private static final String DEFAULT_USERNAME2 = "781300101";
 
     private LoginAttemptServiceImpl loginAttemptService;
 
-    @Autowired
+    @Spy
     private AccountB2CRepository b2CRepository;
 
     @Mock
@@ -40,7 +41,6 @@ public class LoginAttemptServiceImplTest {
     @Mock
     private NotificationInformationService notificationInformationService;
 
-
     private void createEntity4() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setNumero(DEFAULT_USERNAME);
@@ -49,7 +49,6 @@ public class LoginAttemptServiceImplTest {
         accountB2C.setEmail("test07@gmail.com");
         accountB2C.setImageProfil("image");
         b2CRepository.save(accountB2C);
-
     }
 
     private void createEntity2() {
@@ -62,7 +61,6 @@ public class LoginAttemptServiceImplTest {
         accountB2C.setDerniereConnnexionDate(ZonedDateTime.now());
         accountB2C.setAttempts(0);
         b2CRepository.save(accountB2C);
-
     }
 
     private void createEntity3() {
@@ -75,41 +73,36 @@ public class LoginAttemptServiceImplTest {
         accountB2C.setDerniereConnnexionDate(ZonedDateTime.now());
         accountB2C.setAttempts(0);
         b2CRepository.save(accountB2C);
-
     }
-
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        loginAttemptService = new LoginAttemptServiceImpl( b2CRepository, applicationProperties, smsNotificationService, notificationInformationService);
-
+        loginAttemptService =
+            new LoginAttemptServiceImpl(b2CRepository, applicationProperties, smsNotificationService, notificationInformationService);
     }
 
     @Test
-    public void loginSucceeded() {
-
+    void loginSucceeded() {
         createEntity2();
         loginAttemptService.loginSucceeded(DEFAULT_USERNAME2);
+        Mockito.verify(b2CRepository).save(Mockito.any(AccountB2C.class));
     }
 
     @Test
-    public void loginFailedIsBlocked() {
-    createEntity4();
-        for (int i=0; i<=3; i++){
-
+    void loginFailedIsBlocked() {
+        createEntity4();
+        for (int i = 0; i <= 3; i++) {
             loginAttemptService.loginFailed(DEFAULT_USERNAME);
-
+            Mockito.verify(b2CRepository).save(Mockito.any(AccountB2C.class));
         }
-
     }
 
     @Test
-    public void isBlocked() {
+    void isBlocked() {
         createEntity3();
-        boolean  check = loginAttemptService.isBlocked("789009090");
+        boolean check = loginAttemptService.isBlocked("789009090");
 
-        assertThat(check).isEqualTo(true);
-
+        assertThat(check).isFalse();
     }
 }

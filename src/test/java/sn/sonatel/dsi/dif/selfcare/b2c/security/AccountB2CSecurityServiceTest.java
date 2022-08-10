@@ -27,9 +27,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.Self
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 
-@ContextConfiguration(classes = {AccountB2CSecurityService.class})
+@ContextConfiguration(classes = { AccountB2CSecurityService.class })
 @ExtendWith(SpringExtension.class)
 class AccountB2CSecurityServiceTest {
+
     @Autowired
     private AccountB2CSecurityService accountB2CSecurityService;
 
@@ -54,13 +55,12 @@ class AccountB2CSecurityServiceTest {
         codeOTPCheckDTO.setCode("Code");
         codeOTPCheckDTO.setMsisdn("Msisdn");
         codeOTPCheckDTO.setValid(true);
-        when(this.selfcareOTPService.checkOPT((String) any(), (String) any())).thenReturn(codeOTPCheckDTO);
-        when(this.accountB2CService.isLinkedAccount((String) any())).thenReturn(true);
-        when(this.accountB2CService.isPrincipalAccount((String) any())).thenReturn(true);
-        assertThrows(LigneAlreadyRattachedException.class,
-            () -> this.accountB2CSecurityService.loginWithOtpCode("Login", "iloveyou"));
-        verify(this.selfcareOTPService).checkOPT((String) any(), (String) any());
-        verify(this.accountB2CService).isLinkedAccount((String) any());
+        when(this.selfcareOTPService.checkOPT(any(), any())).thenReturn(codeOTPCheckDTO);
+        when(this.accountB2CService.isLinkedAccount(any())).thenReturn(true);
+        when(this.accountB2CService.isPrincipalAccount(any())).thenReturn(true);
+        assertThrows(LigneAlreadyRattachedException.class, () -> this.accountB2CSecurityService.loginWithOtpCode("Login", "iloveyou"));
+        verify(this.selfcareOTPService).checkOPT(any(), any());
+        verify(this.accountB2CService).isLinkedAccount(any());
     }
 
     /**
@@ -72,15 +72,12 @@ class AccountB2CSecurityServiceTest {
         codeOTPCheckDTO.setCode("Code");
         codeOTPCheckDTO.setMsisdn("Msisdn");
         codeOTPCheckDTO.setValid(true);
-        when(this.selfcareOTPService.checkOPT((String) any(), (String) any())).thenReturn(codeOTPCheckDTO);
-        when(this.accountB2CService.isLinkedAccount((String) any()))
-            .thenThrow(new HttpClientErrorException(HttpStatus.CONTINUE));
-        when(this.accountB2CService.isPrincipalAccount((String) any()))
-            .thenThrow(new HttpClientErrorException(HttpStatus.CONTINUE));
-        assertThrows(HttpClientErrorException.class,
-            () -> this.accountB2CSecurityService.loginWithOtpCode("Login", "iloveyou"));
-        verify(this.selfcareOTPService).checkOPT((String) any(), (String) any());
-        verify(this.accountB2CService).isLinkedAccount((String) any());
+        when(this.selfcareOTPService.checkOPT(any(), any())).thenReturn(codeOTPCheckDTO);
+        when(this.accountB2CService.isLinkedAccount(any())).thenThrow(new HttpClientErrorException(HttpStatus.CONTINUE));
+        when(this.accountB2CService.isPrincipalAccount(any())).thenThrow(new HttpClientErrorException(HttpStatus.CONTINUE));
+        assertThrows(HttpClientErrorException.class, () -> this.accountB2CSecurityService.loginWithOtpCode("Login", "iloveyou"));
+        verify(this.selfcareOTPService).checkOPT(any(), any());
+        verify(this.accountB2CService).isLinkedAccount(any());
     }
 
     /**
@@ -99,8 +96,7 @@ class AccountB2CSecurityServiceTest {
         when(this.selfcareOTPService.checkOPT((String) any(), (String) any())).thenReturn(codeOTPCheckDTO);
         when(this.accountB2CService.isLinkedAccount((String) any())).thenReturn(true);
         when(this.accountB2CService.isPrincipalAccount((String) any())).thenReturn(true);
-        assertThrows(BadRequestAlertException.class,
-            () -> this.accountB2CSecurityService.loginWithOtpCode("Login", "iloveyou"));
+        assertThrows(BadRequestAlertException.class, () -> this.accountB2CSecurityService.loginWithOtpCode("Login", "iloveyou"));
         verify(this.selfcareOTPService).checkOPT((String) any(), (String) any());
         verify(codeOTPCheckDTO).isValid();
         verify(codeOTPCheckDTO).setCode((String) any());
@@ -113,7 +109,6 @@ class AccountB2CSecurityServiceTest {
      */
     @Test
     void testLoginWithOtpCodeWithPrincipalAccount() {
-
         CodeOTPCheckDTO codeOTPCheckDTO = mock(CodeOTPCheckDTO.class);
         when(codeOTPCheckDTO.isValid()).thenReturn(true);
         when(keycloakServices.resetPassword(any())).thenReturn(ResponseEntity.accepted().build());
@@ -129,6 +124,4 @@ class AccountB2CSecurityServiceTest {
         when(this.accountB2CService.isPrincipalAccount((String) any())).thenReturn(true);
         this.accountB2CSecurityService.loginWithOtpCode("777777777", "iloveyou");
     }
-
 }
-

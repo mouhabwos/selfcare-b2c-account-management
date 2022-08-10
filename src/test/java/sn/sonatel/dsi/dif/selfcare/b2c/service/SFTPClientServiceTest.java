@@ -1,5 +1,15 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,39 +21,27 @@ import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.SftpConfig;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-public class SFTPClientServiceTest {
+class SFTPClientServiceTest {
 
     @Mock
     private ApplicationProperties mockApplicationProperties;
+
     @Mock
     private SftpConfig mockSftpConfig;
 
     private SFTPClientService sftpClientServiceUnderTest;
 
     @Mock
-    private  SftpConfig.UploadGateways uploadGateway;
-
+    private SftpConfig.UploadGateways uploadGateway;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
         sftpClientServiceUnderTest = new SFTPClientService(mockApplicationProperties, uploadGateway);
     }
 
     private OperationDTO operationDTO() throws Exception {
         OperationDTO operationDTO = new OperationDTO();
-
 
         String filePdf = "fichierTest.pdf";
         String image = "imageTest.png";
@@ -57,9 +55,18 @@ public class SFTPClientServiceTest {
         FileInputStream inputVerso = new FileInputStream(filePdfM);
 
         MultipartFile multipartFilePDF = new MockMultipartFile("file", filePdfM.getName(), "text/plain", IOUtils.toByteArray(inputPDF));
-        MultipartFile multipartFileRecto = new MockMultipartFile("file", fileImageRectoM.getName(), "text/plain", IOUtils.toByteArray(inputRecto));
-        MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
-
+        MultipartFile multipartFileRecto = new MockMultipartFile(
+            "file",
+            fileImageRectoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputRecto)
+        );
+        MultipartFile multipartFileVerso = new MockMultipartFile(
+            "file",
+            fileImageVersoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputVerso)
+        );
 
         operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
@@ -74,8 +81,7 @@ public class SFTPClientServiceTest {
     }
 
     @Test
-    public void testSendFileToServerFtp() throws Exception {
-
+    void testSendFileToServerFtp() throws Exception {
         String fileName = "nameZip.zip";
         // Setup
         when(mockApplicationProperties.getTmpPath()).thenReturn("");
@@ -83,11 +89,10 @@ public class SFTPClientServiceTest {
         // Run the test
         sftpClientServiceUnderTest.sendFileToServerFtp(fileName);
         Mockito.verify(uploadGateway).upload(any());
-
     }
 
     @Test
-    public void testZipFiles() throws Exception {
+    void testZipFiles() throws Exception {
         // Setup
         final List<MultipartFile> multipartFiles = Arrays.asList();
         when(mockApplicationProperties.getTmpPath()).thenReturn("result");
@@ -100,10 +105,10 @@ public class SFTPClientServiceTest {
     }
 
     @Test
-    public void testZipFiless() throws Exception {
+    void testZipFiless() throws Exception {
         // Setup
         OperationDTO operationDTO = operationDTO();
-         List<MultipartFile> multipartFiles = new ArrayList<>();
+        List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(operationDTO.getVerso());
         multipartFiles.add(operationDTO.getFormulaire());
         multipartFiles.add(operationDTO.getRectoID());
