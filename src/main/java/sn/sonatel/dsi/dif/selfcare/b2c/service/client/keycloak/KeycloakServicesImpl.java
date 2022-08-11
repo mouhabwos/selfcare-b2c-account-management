@@ -63,9 +63,9 @@ class KeycloakServicesImpl implements KeycloakServices {
         user.setAttributes(Collections.emptyMap());
 
         // Get realm
-        UsersResource usersRessource = instance.realm(realmName).users();
+        UsersResource usersResource = instance.realm(realmName).users();
 
-        Response response = usersRessource.create(user);
+        Response response = usersResource.create(user);
         if (response.getStatus() == HttpStatus.SC_CREATED) {
             String userId = CreatedResponseUtil.getCreatedId(response);
             // Define password credential
@@ -73,7 +73,7 @@ class KeycloakServicesImpl implements KeycloakServices {
             passwordCred.setTemporary(false);
             passwordCred.setType(CredentialRepresentation.PASSWORD);
             passwordCred.setValue(userVM.getPassword());
-            UserResource userResource = usersRessource.get(userId);
+            UserResource userResource = usersResource.get(userId);
 
             // Set password credential
             userResource.resetPassword(passwordCred);
@@ -87,7 +87,7 @@ class KeycloakServicesImpl implements KeycloakServices {
     @Override
     public ResponseEntity<AccessTokenResponse> getToken(UserCredentialDTO userCredential) {
         try {
-            Keycloak keycloak = KeycloakBuilder
+            var keycloak = KeycloakBuilder
                 .builder()
                 .serverUrl(serverUrl)
                 .grantType(OAuth2Constants.PASSWORD)

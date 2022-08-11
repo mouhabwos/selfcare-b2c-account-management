@@ -50,6 +50,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneCNIVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
 
@@ -595,7 +596,7 @@ class RattachementLigneResourceIntTest {
     @Transactional
     @Disabled("Test not implemented")
     void addRattachementLigneFixe() throws Exception {
-        /*  RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
 
         AccountB2C u = new AccountB2C();
         u.setNumero("775167605");
@@ -616,11 +617,14 @@ class RattachementLigneResourceIntTest {
         ligneVM.setIdClient(customerOffer.getClientCode());
 
         // Create the RattachementLigne
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/fixe-register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
-            .andExpect(status().isBadRequest());
-*/
+        //TODO
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes/fixe-register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligneVM))
+            )
+            .andExpect(status().isNotFound());
     }
 
     @Test

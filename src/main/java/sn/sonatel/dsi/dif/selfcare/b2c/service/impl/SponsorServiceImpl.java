@@ -1,5 +1,11 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -19,13 +25,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.MsisdnAlreadyUsedExceptio
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorMessageErrors;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Sponsor}.
@@ -51,7 +50,7 @@ public class SponsorServiceImpl implements SponsorService {
     @Override
     public Sponsor save(Sponsor sponsor) throws SponsorException {
         log.debug("Request to save Sponsor : {}", sponsor);
-        if(isNumberPresent(sponsor.getMsisdn())){
+        if (Boolean.TRUE.equals(isNumberPresent(sponsor.getMsisdn()))) {
             throw new SponsorException(SponsorMessageErrors.MSISDN_ALREADY_USED);
         }
         return sponsorRepository.save(sponsor);
@@ -61,7 +60,10 @@ public class SponsorServiceImpl implements SponsorService {
     public Sponsor update(Sponsor sponsor) {
         log.debug("Request to update Sponsor : {}", sponsor);
         Optional<Sponsor> sponsorToUpdate = findOne(sponsor.getId());
-        if(sponsorToUpdate.isPresent() && isNumberPresent(sponsor.getMsisdn()) && getSponsorByMsisdn(sponsor.getMsisdn()).getId().compareTo(sponsorToUpdate.get().getId())!=0){
+        if (
+            Boolean.TRUE.equals(sponsorToUpdate.isPresent() && isNumberPresent(sponsor.getMsisdn())) &&
+            getSponsorByMsisdn(sponsor.getMsisdn()).getId().compareTo(sponsorToUpdate.get().getId()) != 0
+        ) {
             throw new MsisdnAlreadyUsedException();
         }
         return sponsorRepository.save(sponsor);
@@ -80,7 +82,6 @@ public class SponsorServiceImpl implements SponsorService {
         return sponsorRepository.findAll(pageable);
     }
 
-
     /**
      * Get one sponsor by id.
      *
@@ -96,15 +97,12 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public Boolean isNumberPresent(String msisdn) {
-
-        Optional<Sponsor> sponsor=sponsorRepository.getSponsorByMsisdn(msisdn);
+        Optional<Sponsor> sponsor = sponsorRepository.getSponsorByMsisdn(msisdn);
         return sponsor.isPresent();
-
     }
 
     @Override
     public Sponsor getSponsorByMsisdn(String msisdn) {
-
         Optional<Sponsor> sponsor = sponsorRepository.getSponsorByMsisdn(msisdn);
 
         return sponsor.orElse(null);
@@ -124,8 +122,9 @@ public class SponsorServiceImpl implements SponsorService {
     @Override
     public UploadResponse upload(MultipartFile multipartFile) throws SponsorException {
         List<SponsorUploadResponse> errorsList = new ArrayList<>();
-        File file = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") +
-            multipartFile.getOriginalFilename());
+        File file = new File(
+            System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + multipartFile.getOriginalFilename()
+        );
         try {
             multipartFile.transferTo(file);
         } catch (IOException e) {
@@ -138,7 +137,6 @@ public class SponsorServiceImpl implements SponsorService {
             // Getting the Sheet at index zero
             Sheet sheet = workbook.getSheetAt(0);
             rowIterator = sheet.rowIterator();
-
         } catch (IOException e) {
             throw new SponsorException(SponsorMessageErrors.FILE_ERROR);
         } catch (InvalidFormatException e) {
@@ -184,5 +182,4 @@ public class SponsorServiceImpl implements SponsorService {
         uploadResponse.setErrorList(sponsorUploadErrorResponseList);
         return uploadResponse;
     }
-
 }

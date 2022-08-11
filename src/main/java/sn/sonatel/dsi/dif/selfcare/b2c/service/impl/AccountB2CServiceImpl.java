@@ -1,5 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,10 +26,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
-import javax.validation.Valid;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 /**
  * Service class for managing users accountB2C.
  */
@@ -34,7 +33,6 @@ import java.util.Optional;
 public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final Logger log = LoggerFactory.getLogger(AccountB2CServiceImpl.class);
-
 
     private final AccountB2CRepository accountB2CRepository;
 
@@ -48,18 +46,24 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     private final ValidationHmacService validationHmacService;
 
-
-    public AccountB2CServiceImpl(AccountB2CRepository accountB2CRepository, RattachementLigneRepository rattachementLigneRepository, KeycloakServices keycloakServices, SponseeService sponseeService, AsyncService asyncService, ValidationHmacService validationHmacService) {
+    public AccountB2CServiceImpl(
+        AccountB2CRepository accountB2CRepository,
+        RattachementLigneRepository rattachementLigneRepository,
+        KeycloakServices keycloakServices,
+        SponseeService sponseeService,
+        AsyncService asyncService,
+        ValidationHmacService validationHmacService
+    ) {
         this.accountB2CRepository = accountB2CRepository;
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.keycloakServices = keycloakServices;
         this.sponseeService = sponseeService;
-        this.asyncService=asyncService;
+        this.asyncService = asyncService;
         this.validationHmacService = validationHmacService;
     }
 
     @Override
-    public AccountB2C createAccountB2C(AccountB2CDTO accountB2C){
+    public AccountB2C createAccountB2C(AccountB2CDTO accountB2C) {
         log.debug("Service for save AccountB2C : {}", accountB2C);
 
         AccountB2C b2C = new AccountB2C();
@@ -74,35 +78,34 @@ public class AccountB2CServiceImpl implements AccountB2CService {
         b2C.setAttempts(accountB2C.getAttempts());
         b2C.setDerniereConnnexionDate(accountB2C.getDerniereConnnexionDate());
         return accountB2CRepository.save(b2C);
-
     }
 
     @Override
-    public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM){
-
+    public AccountB2C registerAccountB2C(ManagedUserVM managedUserVM) {
         log.debug("Service for register AccountB2C : {}", managedUserVM);
         return register(managedUserVM, false);
     }
 
     @Override
-    public AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM){
-
+    public AccountB2C registerAccountB2CV2(ManagedUserVM managedUserVM) {
         managedUserVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(managedUserVM.getLogin()));
 
-
         log.debug("Service for register AccountB2C : {}", managedUserVM);
-        boolean validateHmac = validationHmacService.validateHmac(managedUserVM.getHmac(), managedUserVM.getLogin(), managedUserVM.getUuid());
+        boolean validateHmac = validationHmacService.validateHmac(
+            managedUserVM.getHmac(),
+            managedUserVM.getLogin(),
+            managedUserVM.getUuid()
+        );
 
-        if(!validateHmac){
-            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
+        if (!validateHmac) {
+            throw new BadRequestAlertException("Hmac non valide", "", "InvalidHmac");
         }
 
         return register(managedUserVM, false);
     }
 
-
     @Override
-    public AccountB2C updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C){
+    public AccountB2C updateAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2C) {
         log.debug("Service to update AccountB2C : {}", accountB2C);
 
         AccountB2C b2C = new AccountB2C();
@@ -118,15 +121,18 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     }
 
     @Override
-    public int updateAccountForExploitation(String msisdn,AccountDTOExploitant accountB2C) {
-        log.debug("Service to updateAccountForExploitation with msisdn {} adn data {}",msisdn,accountB2C);
+    public int updateAccountForExploitation(String msisdn, AccountDTOExploitant accountB2C) {
+        log.debug("Service to updateAccountForExploitation with msisdn {} adn data {}", msisdn, accountB2C);
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
-        int accountForExploitantResult = accountB2CRepository.updateAccountForExploitant(msisdn, accountB2C.getFirstName(), accountB2C.getLastName());
+        int accountForExploitantResult = accountB2CRepository.updateAccountForExploitant(
+            msisdn,
+            accountB2C.getFirstName(),
+            accountB2C.getLastName()
+        );
         UserDTOExploitant dtoExploitant = new UserDTOExploitant();
         dtoExploitant.setLogin(msisdn);
         dtoExploitant.setFirstName(accountB2C.getFirstName());
         dtoExploitant.setLastName(accountB2C.getLastName());
-     //   this.selfcareUAAService.updateUser(dtoExploitant);
         return accountForExploitantResult;
     }
 
@@ -134,80 +140,67 @@ public class AccountB2CServiceImpl implements AccountB2CService {
     public Page<AccountB2C> getAllAccountB2C(Pageable pageable) {
         log.debug("Service to get a page of AccountB2CS");
         return accountB2CRepository.findAll(pageable);
-
     }
 
     @Override
     public Optional<AccountB2C> getAccountB2C(Long id) {
         log.debug("Service to get AccountB2C : {}", id);
         return accountB2CRepository.findById(id);
-
     }
 
     @Override
     public boolean emailExistingVerify(String email) {
-
         log.debug("Service to verify the status of email : {}", email);
         if (email != null) {
-
             Optional<AccountB2C> user = accountB2CRepository.findOneByEmail(email);
 
-            if (user.isPresent()) {
-                return true;
-            }
+            return user.isPresent();
         }
         return false;
     }
 
-
     @Override
     public AccountB2C getAccount(String login) {
-
         log.debug("Service to get AccountB2C by MSISDN : {}", login);
-        if(login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)){
-
+        if (login.matches(Constants.LOGIN_REGEX_VALID_NUMBER)) {
             login = FormatNumberPhoneUtil.extractNumberWithoutSuffix(login);
 
             Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
-            if(account.isPresent()){
-
+            if (account.isPresent()) {
                 return account.get();
-
-            }else {
-
+            } else {
                 log.debug("Error number is already used  : {}", login);
                 throw new LigneNotFoundException();
             }
-
-        }else {
-
+        } else {
             log.debug("Error number is not valid   : {}", login);
             throw new LigneNotFoundException();
         }
-
     }
 
     @Override
     public void checkNumberV2(CheckNumberRequest checkNumberRequest) {
-
         log.debug("Service for check number version 2 for : {}", checkNumberRequest);
         checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
 
-        boolean validateHmac = validationHmacService.validateHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
+        boolean validateHmac = validationHmacService.validateHmac(
+            checkNumberRequest.getHmac(),
+            checkNumberRequest.getMsisdn(),
+            checkNumberRequest.getUuid()
+        );
 
-        if(!validateHmac){
-            throw new BadRequestAlertException("Hmac non valide","","InvalidHmac");
+        if (!validateHmac) {
+            throw new BadRequestAlertException("Hmac non valide", "", "InvalidHmac");
         }
         checkExistingAccountForNumber(checkNumberRequest.getMsisdn());
     }
 
     @Override
-    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest){
-
+    public AbonneStatusDTO checkNumberV3(CheckNumberRequest checkNumberRequest) {
         log.debug("Service for check number version 3 for : {}", checkNumberRequest);
         checkNumberRequest.setMsisdn(FormatNumberPhoneUtil.extractNumberWithoutSuffix(checkNumberRequest.getMsisdn()));
 
-        validationHmacService.checkHmac(checkNumberRequest.getHmac(),checkNumberRequest.getMsisdn(),checkNumberRequest.getUuid());
+        validationHmacService.checkHmac(checkNumberRequest.getHmac(), checkNumberRequest.getMsisdn(), checkNumberRequest.getUuid());
 
         Optional<RattachementLigne> rattachementLigne = rattachementLigneRepository.findByNumero(checkNumberRequest.getMsisdn());
         rattachementLigne.ifPresent(rattachementLigne1 -> {
@@ -215,37 +208,32 @@ public class AccountB2CServiceImpl implements AccountB2CService {
             throw new LigneAlreadyRattachedException();
         });
 
-
         Optional<AccountB2C> optionalAccountB2C = accountB2CRepository.findOneByNumero(checkNumberRequest.getMsisdn());
 
-        if (optionalAccountB2C.isPresent()){
-            AccountB2C accountB2C=optionalAccountB2C.get();
-            return AbonneStatusDTO.builder()
-                .accountStatus(accountB2C.getAccountStatus())
-                .build();
+        if (optionalAccountB2C.isPresent()) {
+            AccountB2C accountB2C = optionalAccountB2C.get();
+            return AbonneStatusDTO.builder().accountStatus(accountB2C.getAccountStatus()).build();
         }
 
         log.debug("Error this login does not have any account : {}", checkNumberRequest.getMsisdn());
         throw new NoSuchElementException("Le numero n'a pas de compte associe");
-
     }
 
     @Override
     public boolean checkNumberV2(String msisdn) {
-
-        log.debug ( "Service check Number : {}", msisdn);
+        log.debug("Service check Number : {}", msisdn);
 
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
         Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
 
-          return accountB2C.isPresent() || ligne.isPresent() ;
+        return accountB2C.isPresent() || ligne.isPresent();
     }
 
     @Override
     public boolean isPrincipalAccount(String msisdn) {
-        log.debug ( "Service check Number isPrincipalAccount : {}", msisdn);
+        log.debug("Service check Number isPrincipalAccount : {}", msisdn);
 
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
@@ -256,70 +244,61 @@ public class AccountB2CServiceImpl implements AccountB2CService {
 
     @Override
     public boolean isLinkedAccount(String msisdn) {
-        log.debug ( "Service check Number  isLinkedAccount: {}", msisdn);
+        log.debug("Service check Number  isLinkedAccount: {}", msisdn);
 
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
 
-        return  ligne.isPresent() ;
+        return ligne.isPresent();
     }
-
 
     @Override
     public void updateTutorialView(String msisdn) {
-
         log.debug("Service for update tutorialView in AccountB2C by : {}", msisdn);
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
 
-        if(accountB2C.isPresent()){
+        if (accountB2C.isPresent()) {
             accountB2C.get().setTutoViewed(true);
             accountB2CRepository.save(accountB2C.get());
-        }else {
+        } else {
             log.debug("Error number is not found in AccountB2C  : {}", msisdn);
-            throw  new LigneNotFoundException();
+            throw new LigneNotFoundException();
         }
-
     }
 
-
-    private void checkExistingAccountForNumber(String msisdn){
-
-         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
+    private void checkExistingAccountForNumber(String msisdn) {
+        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(msisdn);
 
         Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(msisdn);
 
-        if(accountB2C.isPresent()){
-            log.debug ( "Error this login is already used  : {}", msisdn);
+        if (accountB2C.isPresent()) {
+            log.debug("Error this login is already used  : {}", msisdn);
             throw new LoginAlreadyUsedException();
         }
 
-        if(ligne.isPresent()){
-            log.debug ( "Error this login is already rattached  : {}", msisdn );
+        if (ligne.isPresent()) {
+            log.debug("Error this login is already rattached  : {}", msisdn);
             throw new LigneAlreadyRattachedException();
         }
     }
 
-    public AccountB2C register(ManagedUserVM managedUserVM, boolean isFull){
-
+    public AccountB2C register(ManagedUserVM managedUserVM, boolean isFull) {
         checkExistingAccountForNumber(managedUserVM.getLogin());
 
-
-        if(managedUserVM.getEmail() == null){
-
-            managedUserVM.setEmail(Constants.EMAIL_PART1+managedUserVM.getLogin()+Constants.EMAIL_PART2);
+        if (managedUserVM.getEmail() == null) {
+            managedUserVM.setEmail(Constants.EMAIL_PART1 + managedUserVM.getLogin() + Constants.EMAIL_PART2);
         }
 
         try {
-            ResponseEntity response = keycloakServices.registerUserInKeycloack(managedUserVM);
+            ResponseEntity<String> response = keycloakServices.registerUserInKeycloack(managedUserVM);
 
             if (response.getStatusCode() == HttpStatus.CREATED) {
-
                 managedUserVM.setActivated(true);
 
-                AccountB2C result =  new AccountB2C();
+                AccountB2C result = new AccountB2C();
 
                 result.setNumero(managedUserVM.getLogin());
                 result.setFirstName(managedUserVM.getFirstName());
@@ -328,21 +307,19 @@ public class AccountB2CServiceImpl implements AccountB2CService {
                 result.setHashMsisdn(SHA256Handler.encryptSHA256(managedUserVM.getLogin()));
                 result.setEmail(managedUserVM.getEmail());
                 result.setClientId(managedUserVM.getClientId());
-                result.setAccountStatus(isFull? AccountStatus.FULL:AccountStatus.LITE);
+                result.setAccountStatus(isFull ? AccountStatus.FULL : AccountStatus.LITE);
                 result = accountB2CRepository.save(result);
 
                 this.asyncService.applyWelcomeBooster(result.getNumero());
-                if(result.getFirstName().equals("") || result.getLastName().equals("")){
+                if (result.getFirstName().equals("") || result.getLastName().equals("")) {
                     this.asyncService.updateFirstnameAndLasname(result);
                 }
                 sponseeService.updateEffectiveInscriptionOfSponsee(result.getNumero());
                 this.asyncService.addCodeFormuleInformationNotification(result.getNumero());
                 return result;
             }
-
-        }catch (HttpClientErrorException e){
-
-            log.debug(" exception for creation Account : {}", e);
+        } catch (HttpClientErrorException e) {
+            log.debug(" exception for creation Account : {0}", e);
         }
 
         throw new UserNoCreatedException();
