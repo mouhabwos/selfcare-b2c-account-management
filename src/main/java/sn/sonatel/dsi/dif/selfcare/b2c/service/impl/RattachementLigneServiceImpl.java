@@ -1,5 +1,9 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,16 +25,10 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.servicescall.selfcareservice.SelfcareOTPService;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.RattachementLigneResource;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Constants;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Service class for managing users RattachementLigne.
@@ -38,7 +36,7 @@ import java.util.Set;
 @Service
 public class RattachementLigneServiceImpl implements RattachementLigneService {
 
-    private final Logger log = LoggerFactory.getLogger(RattachementLigneResource.class);
+    private final Logger log = LoggerFactory.getLogger(RattachementLigneServiceImpl.class);
 
     private final RattachementLigneRepository rattachementLigneRepository;
 
@@ -52,8 +50,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     private final SelfcareOTPService selfcareOTPService;
 
-    public RattachementLigneServiceImpl(RattachementLigneRepository rattachementLigneRepository, AccountB2CRepository accountB2CRepository, CustomerOfferApiClient customerOfferApiClient, SponseeService sponseeService, AbonneService abonneService, SelfcareOTPService selfcareOTPService) {
+    private static final String RATTACHEMENT = "RattachementLigne";
 
+    public RattachementLigneServiceImpl(
+        RattachementLigneRepository rattachementLigneRepository,
+        AccountB2CRepository accountB2CRepository,
+        CustomerOfferApiClient customerOfferApiClient,
+        SponseeService sponseeService,
+        AbonneService abonneService,
+        SelfcareOTPService selfcareOTPService
+    ) {
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.customerOfferApiClient = customerOfferApiClient;
@@ -64,21 +70,18 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     @Override
     public RattachementLigne createRattachementLigne(RattachementLigneDTO rattachementLigne) {
-
-        log.debug ( "Service to save RattachementLigne : {}", rattachementLigne );
+        log.debug("Service to save RattachementLigne : {}", rattachementLigne);
         RattachementLigne ligne = new RattachementLigne();
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
         ligne.setNumero(rattachementLigne.getNumero());
 
         return rattachementLigneRepository.save(ligne);
-
     }
 
     @Override
     public RattachementLigne updateRattachementLigne(RattachementLigneDTO rattachementLigne) {
-
-        log.debug ( "Servvice to update RattachementLigne : {}", rattachementLigne );
+        log.debug("Servvice to update RattachementLigne : {}", rattachementLigne);
         RattachementLigne ligne = new RattachementLigne();
         ligne.setId(rattachementLigne.getId());
         ligne.setTypeNumero(rattachementLigne.getTypeNumero());
@@ -86,7 +89,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         ligne.setNumero(rattachementLigne.getNumero());
 
         return rattachementLigneRepository.save(ligne);
-
     }
 
     @Override
@@ -99,7 +101,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     public Optional<RattachementLigne> getRattachementLigne(Long id) {
         log.debug("Service to get RattachementLigne : {}", id);
         return rattachementLigneRepository.findById(id);
-
     }
 
     @Override
@@ -110,26 +111,24 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
     @Override
     public RattachementLigne addRattachementLigne(RattachementLigneVM ligneVM) {
-
-        log.debug ( "Service to save RattachementLigne register: {}", ligneVM );
+        log.debug("Service to save RattachementLigne register: {}", ligneVM);
         ligneVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getNumero()));
 
         ligneVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneVM.getLogin()));
         RattachementLigne rattachement = new RattachementLigne();
         if (ligneVM.getNumero().matches(Constants.VALIDE_NUMBER_ORANGE_FIXE_MOBILE)) {
-
             checkNumberIfUsed(ligneVM.getNumero(), ligneVM.getLogin());
 
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(ligneVM.getLogin());
 
-            if (!accountB2C.isPresent()) {
-                log.debug ( "Error login not found  : {}", ligneVM.getLogin() );
+            if (accountB2C.isEmpty()) {
+                log.debug("Error login not found  : {}", ligneVM.getLogin());
                 throw new LigneNotFoundException();
             }
 
-            if(!isInContactNumbers(ligneVM.getNumero(),ligneVM.getLogin())){
+            if (!isInContactNumbers(ligneVM.getNumero(), ligneVM.getLogin())) {
                 log.debug("Service Error forbiden: This number {} cannot be attached by user: {}", ligneVM.getNumero(), ligneVM.getLogin());
-                throw new BadRequestAlertException("Vous ne pouvez pas rattacher ce numero","RattachementLigne","notMyNumber");
+                throw new BadRequestAlertException("Vous ne pouvez pas rattacher ce numero", RATTACHEMENT, "notMyNumber");
             }
 
             rattachement.setNumero(ligneVM.getNumero());
@@ -158,8 +157,8 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
             for (RattachementLigne rattachementLigne : list) {
                 InfoNumberVM infoNumberVMS = new InfoNumberVM();
-                if(withCustomerOffer){
-                     infoNumberVMS = getInfoNumber(rattachementLigne.getNumero());
+                if (withCustomerOffer) {
+                    infoNumberVMS = getInfoNumber(rattachementLigne.getNumero());
                 }
 
                 infoNumberVMS.setMsisdn(rattachementLigne.getNumero());
@@ -170,59 +169,50 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         return infoNumberVMList;
     }
 
-
-
-    private InfoNumberVM getInfoNumber(String msisdn){
-
+    private InfoNumberVM getInfoNumber(String msisdn) {
         msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
 
         InfoNumberVM infoNumberVMS = new InfoNumberVM();
 
-            CustomerOffer  customerOffer = getSouscription(msisdn);
-            if (customerOffer != null) {
+        CustomerOffer customerOffer = getSouscription(msisdn);
+        if (customerOffer != null) {
+            String offerType = ((customerOffer.getOfferType() != null) ? customerOffer.getOfferType().toString() : "");
+            infoNumberVMS.setProfil(offerType);
 
-               String offerType = ((customerOffer.getOfferType() != null) ? customerOffer.getOfferType().toString() : "");
-                infoNumberVMS.setProfil(offerType);
-
-                String offerName = ((customerOffer.getOfferName() != null) ? customerOffer.getOfferName() : "");
-                infoNumberVMS.setFormule(offerName);
-
-            } else {
-                infoNumberVMS.setProfil("");
-                infoNumberVMS.setFormule("");
-
-            }
+            String offerName = ((customerOffer.getOfferName() != null) ? customerOffer.getOfferName() : "");
+            infoNumberVMS.setFormule(offerName);
+        } else {
+            infoNumberVMS.setProfil("");
+            infoNumberVMS.setFormule("");
+        }
 
         return infoNumberVMS;
     }
 
     @Override
-    public RattachementLignesDeleteMultipleVM deleteMultipleRattachementLigne( RattachementLignesDeleteMultipleVM deleteListe) {
-
-        log.debug ( "Service to delete RattachementLigne : {}", deleteListe );
+    public RattachementLignesDeleteMultipleVM deleteMultipleRattachementLigne(RattachementLignesDeleteMultipleVM deleteListe) {
+        log.debug("Service to delete RattachementLigne : {}", deleteListe);
         for (String numero : deleteListe.getListMsisdn()) {
-            Optional<RattachementLigne> ligne = rattachementLigneRepository
-                .findByNumero(numero);
+            Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(numero);
             if (ligne.isPresent()) {
                 rattachementLigneRepository.delete(ligne.get());
                 deleteListe.setDeleted(true);
             }
         }
         return deleteListe;
-
     }
 
     @Override
-    public RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneFixeVM){
-        log.debug ( "Service to save RattachementLigne Fixe: {}", ligneFixeVM );
+    public RattachementLigne addRattachementLigneFixe(RattachementLigneFixeVM ligneFixeVM) {
+        log.debug("Service to save RattachementLigne Fixe: {}", ligneFixeVM);
         ligneFixeVM.setNumero(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneFixeVM.getNumero()));
 
         ligneFixeVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(ligneFixeVM.getLogin()));
-        checkNumberIfUsed(ligneFixeVM.getNumero(),ligneFixeVM.getLogin());
-        if(checkIdClient(ligneFixeVM.getNumero(),ligneFixeVM.getIdClient())){
+        checkNumberIfUsed(ligneFixeVM.getNumero(), ligneFixeVM.getLogin());
+        if (checkIdClient(ligneFixeVM.getNumero(), ligneFixeVM.getIdClient())) {
             isAnOrganizationNumber(ligneFixeVM.getNumero());
             Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(ligneFixeVM.getLogin());
-            if(account.isPresent()){
+            if (account.isPresent()) {
                 RattachementLigne ligne = new RattachementLigne();
                 ligne.setNumero(ligneFixeVM.getNumero());
                 ligne.setAccountB2C(account.get());
@@ -230,11 +220,9 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
                 ligne.setIdClient(ligneFixeVM.getIdClient());
                 return rattachementLigneRepository.save(ligne);
             }
-
         }
 
-        throw new BadRequestAlertException("L’id client renseigné n’est pas conforme","","");
-
+        throw new BadRequestAlertException("L’id client renseigné n’est pas conforme", "", "");
     }
 
     @Override
@@ -250,14 +238,22 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
 
-            if (!accountB2C.isPresent()) {
-                log.debug ( "Error login not found : {}", rattachementLigneCNIVM.getLogin() );
+            if (accountB2C.isEmpty()) {
+                log.debug("Error login not found : {}", rattachementLigneCNIVM.getLogin());
                 throw new LigneNotFoundException();
             }
 
-            if(!isIdentifiedByThisCni(rattachementLigneCNIVM.getNumero(),rattachementLigneCNIVM.getIdentificationId())){
-                log.debug("Service Error : This number {} cannot be attached by user: {}", rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId());
-                throw new BadRequestAlertException("Ce numéro n'est pas identifié avec cette pièce d’identité, veuillez vérifier à nouveau ","RattachementLigne","notMyNumber");
+            if (!isIdentifiedByThisCni(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId())) {
+                log.debug(
+                    "Service Error : This number {} cannot be attached by user: {}",
+                    rattachementLigneCNIVM.getNumero(),
+                    rattachementLigneCNIVM.getIdentificationId()
+                );
+                throw new BadRequestAlertException(
+                    "Ce numéro n'est pas identifié avec cette pièce d’identité, veuillez vérifier à nouveau ",
+                    RATTACHEMENT,
+                    "notMyNumber"
+                );
             }
 
             rattachement.setNumero(rattachementLigneCNIVM.getNumero());
@@ -275,12 +271,16 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     public RattachementLigne rattachementLigneByOtp(RattachementLigneCNIVM rattachementLigneCNIVM) {
         log.debug("Service to add rattachementLigne by otp code  : {}", rattachementLigneCNIVM);
 
-        String msisdn= FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getNumero());
+        String msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getNumero());
 
         CodeOTPCheckDTO checkOPT = selfcareOTPService.checkOPT(msisdn, rattachementLigneCNIVM.getIdentificationId());
         if (!checkOPT.isValid()) {
-            log.debug("Service Error : This number {} otp code not valid: {}", rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId());
-            throw new BadRequestAlertException("Le code otp n'est pas valide, veuillez essayer à nouveau ","RattachementLigne","notValidCode");
+            log.debug(
+                "Service Error : This number {} otp code not valid: {}",
+                rattachementLigneCNIVM.getNumero(),
+                rattachementLigneCNIVM.getIdentificationId()
+            );
+            throw new BadRequestAlertException("Le code otp n'est pas valide, veuillez essayer à nouveau ", RATTACHEMENT, "notValidCode");
         }
 
         rattachementLigneCNIVM.setNumero(msisdn);
@@ -294,7 +294,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
 
             if (accountB2C.isEmpty()) {
-                log.debug ( "Error login not found : {}", rattachementLigneCNIVM.getLogin() );
+                log.debug("Error login not found : {}", rattachementLigneCNIVM.getLogin());
                 throw new LigneNotFoundException();
             }
 
@@ -306,103 +306,92 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             sponseeService.updateEffectiveInscriptionOfSponsee(rattachement.getNumero());
         }
 
-        return rattachement;    }
+        return rattachement;
+    }
 
     private void checkNumberIfUsed(String number, String login) {
-
-        log.debug ( "Service to check status number for rattached : {}", number );
-        log.debug ( "Service to check status login : {}", login );
+        log.debug("Service to check status number for rattached : {}", number);
+        log.debug("Service to check status login : {}", login);
         number = FormatNumberPhoneUtil.extractNumberWithoutSuffix(number);
-        Optional<RattachementLigne> ligne = rattachementLigneRepository
-            .findByNumero(number);
+        Optional<RattachementLigne> ligne = rattachementLigneRepository.findByNumero(number);
 
         if (ligne.isPresent()) {
-            log.debug ( "error ligne already rattached : {}", number );
+            log.debug("error ligne already rattached : {}", number);
             throw new LigneAlreadyRattachedException();
         }
 
         Optional<AccountB2C> account = accountB2CRepository.findOneByNumero(login);
 
         if (!account.isPresent()) {
-            log.debug ( "error login not found : {}", login );
+            log.debug("error login not found : {}", login);
             throw new LigneNotFoundException();
         }
 
         Optional<AccountB2C> rattachementLigne = accountB2CRepository.findOneByNumero(number);
         if (rattachementLigne.isPresent()) {
-            log.debug ( "error ligne already use in a other account : {}", number );
+            log.debug("error ligne already use in a other account : {}", number);
             throw new LoginAlreadyUsedException();
         }
-
     }
 
     private CustomerOffer getSouscription(String msisdn) {
-
         try {
-
             ResponseEntity<CustomerOffer> response = customerOfferApiClient.getCustomerOffer(msisdn);
-            if (response.getBody()!= null) {
+            if (response.getBody() != null) {
                 return response.getBody();
             } else {
                 return null;
             }
-
         } catch (Exception e) {
-
             log.debug("Exception get souscription abonne : {}", msisdn);
         }
 
         return null;
     }
 
-
-    private boolean isInContactNumbers(String msisdn, String login){
-
+    private boolean isInContactNumbers(String msisdn, String login) {
         InfoClientWrapper informations = abonneService.getInformations(login);
 
-        if(informations.getClientType() == ClientType.INDIVIDUAL){
+        if (informations.getClientType() == ClientType.INDIVIDUAL) {
             Set<String> contactNumbers = informations.getInformation().getContactNumbers();
 
-          return contactNumbers.contains(msisdn);
+            return contactNumbers.contains(msisdn);
         }
         return false;
     }
 
-    private boolean checkIdClient(String msisdn, String idClient){
+    private boolean checkIdClient(String msisdn, String idClient) {
         CustomerOffer customerOffer = getSouscription(msisdn);
-        if(customerOffer != null){
+        if (customerOffer != null) {
             String clientCode = customerOffer.getClientCode();
             return clientCode.equals(idClient);
-        }else throw new NotFoundNumberException("");
+        } else throw new NotFoundNumberException("");
     }
 
-    private void isAnOrganizationNumber(String msisdn){
+    private void isAnOrganizationNumber(String msisdn) {
         InfoClientWrapper informations = abonneService.getInformations(msisdn);
-        if(informations.getClientType()!= ClientType.INDIVIDUAL && informations.getClientType()==ClientType.ORGANIZATION){
-            throw new BadRequestAlertException("Vous ne pouvez pas rattacher un numero d entreprise","","");
+        if (informations.getClientType() != ClientType.INDIVIDUAL && informations.getClientType() == ClientType.ORGANIZATION) {
+            throw new BadRequestAlertException("Vous ne pouvez pas rattacher un numero d entreprise", "", "");
         }
     }
 
-    private boolean isIdentifiedByThisCni(String msisdn, String identificationId){
-
+    private boolean isIdentifiedByThisCni(String msisdn, String identificationId) {
         InfoClientWrapper informations = abonneService.getInformations(msisdn);
 
-        if(informations.getClientType().equals(ClientType.INDIVIDUAL)){
+        if (informations.getClientType().equals(ClientType.INDIVIDUAL)) {
             Set<OrganizationIdentification> identificationSet = informations.getInformation().getIndividualIdentification();
             return isTheSameIdentification(identificationSet, identificationId);
-        }else if(informations.getClientType().equals(ClientType.ORGANIZATION)){
+        } else if (informations.getClientType().equals(ClientType.ORGANIZATION)) {
             Set<OrganizationIdentification> organizationSet = informations.getOrganization().getOrganizationIdentification();
             return isTheSameIdentification(organizationSet, identificationId);
         }
         return false;
     }
-    private boolean isTheSameIdentification( Set<OrganizationIdentification> organizationIdentifications,String identificationId ){
-        for (OrganizationIdentification organizationIdentification:
-            organizationIdentifications) {
-            if(identificationId.equals(organizationIdentification.getIdentificationId()))
-                return true;
+
+    private boolean isTheSameIdentification(Set<OrganizationIdentification> organizationIdentifications, String identificationId) {
+        for (OrganizationIdentification organizationIdentification : organizationIdentifications) {
+            if (identificationId.equals(organizationIdentification.getIdentificationId())) return true;
         }
         return false;
     }
-
 }

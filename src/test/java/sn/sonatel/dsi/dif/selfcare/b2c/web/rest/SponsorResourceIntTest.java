@@ -1,5 +1,16 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +35,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponsorService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
-import javax.persistence.EntityManager;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
-
 /**
  * Test class for the LogsResource REST controller.
  *
@@ -43,7 +42,7 @@ import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormatting
  */
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class SponsorResourceIntTest {
+class SponsorResourceIntTest {
 
     private static final String DEFAULT_MSISDN = "AAAAAAAAAA";
     private static final String UPDATED_MSISDN = "BBBBBBBBBB";
@@ -58,15 +57,18 @@ public class SponsorResourceIntTest {
     private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
         final SponsorResource sponsorResource = new SponsorResource(sponsorService);
-        this.restSponsorMockMvc = MockMvcBuilders.standaloneSetup(sponsorResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
+        this.restSponsorMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(sponsorResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
     }
 
     @Autowired
@@ -100,7 +102,7 @@ public class SponsorResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Sponsor createEntity(EntityManager em) {
+    static Sponsor createEntity(EntityManager em) {
         Sponsor sponsor = new Sponsor()
             .msisdn(DEFAULT_MSISDN)
             .matricule(DEFAULT_MATRICULE)
@@ -108,13 +110,14 @@ public class SponsorResourceIntTest {
             .lastName(DEFAULT_LAST_NAME);
         return sponsor;
     }
+
     /**
      * Create an updated entity for this test.
      *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Sponsor createUpdatedEntity(EntityManager em) {
+    static Sponsor createUpdatedEntity(EntityManager em) {
         Sponsor sponsor = new Sponsor()
             .msisdn(UPDATED_MSISDN)
             .matricule(UPDATED_MATRICULE)
@@ -124,19 +127,18 @@ public class SponsorResourceIntTest {
     }
 
     @BeforeEach
-    public void initTest() {
+    void initTest() {
         sponsor = createEntity(em);
     }
 
     @Test
     @Transactional
-    public void createSponsor() throws Exception {
+    void createSponsor() throws Exception {
         int databaseSizeBeforeCreate = sponsorRepository.findAll().size();
 
         // Create the Sponsor
-        restSponsorMockMvc.perform(post("/api/sponsors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponsor)))
+        restSponsorMockMvc
+            .perform(post("/api/sponsors").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponsor)))
             .andExpect(status().isCreated());
 
         // Validate the Sponsor in the database
@@ -151,16 +153,15 @@ public class SponsorResourceIntTest {
 
     @Test
     @Transactional
-    public void createSponsorWithExistingId() throws Exception {
+    void createSponsorWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = sponsorRepository.findAll().size();
 
         // Create the Sponsor with an existing ID
         sponsor.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restSponsorMockMvc.perform(post("/api/sponsors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponsor)))
+        restSponsorMockMvc
+            .perform(post("/api/sponsors").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponsor)))
             .andExpect(status().isBadRequest());
 
         // Validate the Sponsor in the database
@@ -168,15 +169,15 @@ public class SponsorResourceIntTest {
         assertThat(sponsorList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void getAllSponsors() throws Exception {
+    void getAllSponsors() throws Exception {
         // Initialize the database
         sponsorRepository.saveAndFlush(sponsor);
 
         // Get all the sponsorList
-        restSponsorMockMvc.perform(get("/api/sponsors?sort=id,desc"))
+        restSponsorMockMvc
+            .perform(get("/api/sponsors?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(sponsor.getId().intValue())))
@@ -188,12 +189,13 @@ public class SponsorResourceIntTest {
 
     @Test
     @Transactional
-    public void getSponsor() throws Exception {
+    void getSponsor() throws Exception {
         // Initialize the database
         sponsorRepository.saveAndFlush(sponsor);
 
         // Get the sponsor
-        restSponsorMockMvc.perform(get("/api/sponsors/{id}", sponsor.getId()))
+        restSponsorMockMvc
+            .perform(get("/api/sponsors/{id}", sponsor.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(sponsor.getId().intValue()))
@@ -204,26 +206,23 @@ public class SponsorResourceIntTest {
     }
 
     @Test
-    public void getSponsorByMsisdn() throws Exception {
-
-        String msisdn ="776713165";
+    void getSponsorByMsisdn() throws Exception {
+        String msisdn = "776713165";
 
         // Get the sponsor
-        restSponsorMockMvc.perform(get("/api/sponsors/{msisdn}/check", msisdn))
-            .andExpect(status().isOk());
+        restSponsorMockMvc.perform(get("/api/sponsors/{msisdn}/check", msisdn)).andExpect(status().isOk());
     }
 
     @Test
     @Transactional
-    public void getNonExistingSponsor() throws Exception {
+    void getNonExistingSponsor() throws Exception {
         // Get the sponsor
-        restSponsorMockMvc.perform(get("/api/sponsors/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restSponsorMockMvc.perform(get("/api/sponsors/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateSponsor() throws Exception {
+    void updateSponsor() throws Exception {
         // Initialize the database
         sponsorService.save(sponsor);
 
@@ -233,15 +232,12 @@ public class SponsorResourceIntTest {
         Sponsor updatedSponsor = sponsorRepository.findById(sponsor.getId()).get();
         // Disconnect from session so that the updates on updatedSponsor are not directly saved in db
         em.detach(updatedSponsor);
-        updatedSponsor
-            .msisdn(UPDATED_MSISDN)
-            .matricule(UPDATED_MATRICULE)
-            .firstName(UPDATED_FIRST_NAME)
-            .lastName(UPDATED_LAST_NAME);
+        updatedSponsor.msisdn(UPDATED_MSISDN).matricule(UPDATED_MATRICULE).firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME);
 
-        restSponsorMockMvc.perform(put("/api/sponsors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(updatedSponsor)))
+        restSponsorMockMvc
+            .perform(
+                put("/api/sponsors").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(updatedSponsor))
+            )
             .andExpect(status().isOk());
 
         // Validate the Sponsor in the database
@@ -256,15 +252,14 @@ public class SponsorResourceIntTest {
 
     @Test
     @Transactional
-    public void updateNonExistingSponsor() throws Exception {
+    void updateNonExistingSponsor() throws Exception {
         int databaseSizeBeforeUpdate = sponsorRepository.findAll().size();
 
         // Create the Sponsor
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restSponsorMockMvc.perform(put("/api/sponsors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponsor)))
+        restSponsorMockMvc
+            .perform(put("/api/sponsors").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponsor)))
             .andExpect(status().isBadRequest());
 
         // Validate the Sponsor in the database
@@ -274,39 +269,35 @@ public class SponsorResourceIntTest {
 
     @Test
     @Transactional
-    public void uploadSponsor() throws Exception {
-
+    void uploadSponsor() throws Exception {
         int databaseSizeBeforeUpdate = sponsorRepository.findAll().size();
 
-//        Mock Multipart
+        //        Mock Multipart
         Path path = Paths.get("sponsors.xlsx");
         String name = "file";
         String originalFileName = "sponsors.xlsx";
         String contentType = "text/plain";
-        byte[] content =  Files.readAllBytes(path);
-        MockMultipartFile file = new MockMultipartFile(name,
-            originalFileName, contentType, content);
+        byte[] content = Files.readAllBytes(path);
+        MockMultipartFile file = new MockMultipartFile(name, originalFileName, contentType, content);
 
-        restSponsorMockMvc.perform(MockMvcRequestBuilders.multipart("/api/sponsors/upload")
-            .file(file))
-            .andExpect(status().isAccepted());
+        restSponsorMockMvc.perform(MockMvcRequestBuilders.multipart("/api/sponsors/upload").file(file)).andExpect(status().isAccepted());
 
         // Validate the sim in the database
         List<Sponsor> sponsorList = sponsorRepository.findAll();
-        Assert.assertEquals(databaseSizeBeforeUpdate+1,sponsorList.size());
+        Assert.assertEquals(databaseSizeBeforeUpdate + 1, sponsorList.size());
     }
 
     @Test
     @Transactional
-    public void deleteSponsor() throws Exception {
+    void deleteSponsor() throws Exception {
         // Initialize the database
         sponsorService.save(sponsor);
 
         int databaseSizeBeforeDelete = sponsorRepository.findAll().size();
 
         // Delete the sponsor
-        restSponsorMockMvc.perform(delete("/api/sponsors/{id}", sponsor.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+        restSponsorMockMvc
+            .perform(delete("/api/sponsors/{id}", sponsor.getId()).accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
@@ -316,7 +307,7 @@ public class SponsorResourceIntTest {
 
     @Test
     @Transactional
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Sponsor.class);
         Sponsor sponsor1 = new Sponsor();
         sponsor1.setId(1L);

@@ -1,5 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
+
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -16,24 +21,16 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
-import javax.persistence.EntityManager;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class AuthResourceTest {
+class AuthResourceTest {
 
     private static final String DEFAULT_USERNAME = "781326060";
-
 
     @Autowired
     private LoginAttemptService loginAttemptService;
 
     private MockMvc restAccountB2CMockMvc;
-
 
     @Autowired
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
@@ -52,7 +49,7 @@ public class AuthResourceTest {
 
     private AccountB2C accountB2C;
 
-    public static AccountB2C createEntity(EntityManager em) {
+    static AccountB2C createEntity(EntityManager em) {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setNumero(DEFAULT_USERNAME);
         accountB2C.setFirstName("test");
@@ -64,38 +61,34 @@ public class AuthResourceTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
-
+    void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        final AuthResource authResource = new AuthResource( loginAttemptService);
+        final AuthResource authResource = new AuthResource(loginAttemptService);
 
-        this.restAccountB2CMockMvc = MockMvcBuilders.standaloneSetup(authResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
-
+        this.restAccountB2CMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(authResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
     }
 
     @BeforeEach
-    public void initTest() {
+    void initTest() {
         accountB2C = createEntity(em);
     }
 
-
     @Test
-    public void loginSucceeded() throws Exception {
-
-        restAccountB2CMockMvc.perform(get("/api/auth/login-succeeded/{username}", accountB2C.getNumero()))
-            .andExpect(status().isOk());
-
+    void loginSucceeded() throws Exception {
+        restAccountB2CMockMvc.perform(get("/api/auth/login-succeeded/{username}", accountB2C.getNumero())).andExpect(status().isOk());
     }
 
     @Test
-    public void loginFailed() throws Exception {
-        restAccountB2CMockMvc.perform(get("/api/auth/login-failed/{username}", accountB2C.getNumero()))
-            .andExpect(status().isOk());
+    void loginFailed() throws Exception {
+        restAccountB2CMockMvc.perform(get("/api/auth/login-failed/{username}", accountB2C.getNumero())).andExpect(status().isOk());
     }
 }

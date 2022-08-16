@@ -1,5 +1,9 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -18,11 +22,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-
-import javax.validation.Valid;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing {@link Sponsee}.
@@ -78,9 +77,7 @@ public class SponseeResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         SponseeDTO result = sponseeService.update(sponseeDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, sponseeDTO.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, sponseeDTO.getId().toString())).body(result);
     }
 
     /**
@@ -96,7 +93,7 @@ public class SponseeResource {
     public ResponseEntity<List<SponseeDTO>> getAllSponsees(Pageable pageable) {
         log.debug("REST request to get a page of Sponsees");
         Page<SponseeDTO> page = sponseeService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -128,11 +125,9 @@ public class SponseeResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
-
     @Auditable(description = Message.Sponsee.SMS_TO_SPONSEE)
     @PostMapping("/sponsees/send-sms")
-    public ResponseEntity sendSmsToSponsee( @RequestParam String sMsisdn, @RequestParam String dMsisdn){
-
+    public ResponseEntity<Void> sendSmsToSponsee(@RequestParam String sMsisdn, @RequestParam String dMsisdn) {
         log.debug("REST request to send sms to Sponsoree : {}", dMsisdn);
         sponseeService.sendSmsToSponsee(sMsisdn, dMsisdn);
         return ResponseEntity.ok().build();
@@ -148,8 +143,8 @@ public class SponseeResource {
 
     @Auditable(description = Message.Sponsee.CHECK_SPONSEE)
     @GetMapping("/sponsees/check-number/{msisdn}")
-    public ResponseEntity checkNumberSponsee(@PathVariable String msisdn) {
-        log.debug("REST request to check number sponsee {} : ",msisdn);
+    public ResponseEntity<Void> checkNumberSponsee(@PathVariable String msisdn) {
+        log.debug("REST request to check number sponsee {} : ", msisdn);
         sponseeService.checkNumberIsSponsee(msisdn);
         return ResponseEntity.ok().build();
     }

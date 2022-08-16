@@ -7,17 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.SneakyThrows;
 
-
 public final class LogUtil {
-
-    private static ObjectMapper objectMapper = null;
 
     private LogUtil() {
         //private constructor
     }
 
-    public static synchronized ObjectMapper getObjectMapper(){
-        return  JsonMapper.builder()
+    public static synchronized ObjectMapper getObjectMapper() {
+        return JsonMapper
+            .builder()
             .addModule(new ParameterNamesModule())
             .addModule(new Jdk8Module())
             .addModule(new JavaTimeModule())
@@ -25,7 +23,7 @@ public final class LogUtil {
     }
 
     @SneakyThrows
-    public static String convertObjectToJsonResponse(Object o){
+    public static String convertObjectToJsonResponse(Object o) {
         return getObjectMapper().writeValueAsString(o);
     }
 }
