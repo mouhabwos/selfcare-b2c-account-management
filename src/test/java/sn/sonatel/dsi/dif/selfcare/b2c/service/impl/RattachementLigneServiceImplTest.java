@@ -22,14 +22,10 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
@@ -41,6 +37,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.DeleteAccountService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
@@ -165,6 +162,8 @@ class RattachementLigneServiceImplTest {
 
     @Mock
     private SelfcareOTPService selfcareOTPService;
+    @Mock
+    private DeleteAccountService deleteAccountService;
 
     @BeforeEach
     void setUp() {
@@ -176,8 +175,8 @@ class RattachementLigneServiceImplTest {
                 customerOfferApiClient,
                 sponseeService,
                 abonneService,
-                selfcareOTPService
-            );
+                selfcareOTPService,
+                    deleteAccountService);
     }
 
     /*@Test
@@ -342,8 +341,8 @@ class RattachementLigneServiceImplTest {
                 customerOfferApiClient,
                 sponseeService,
                 abonneService,
-                selfcareOTPService
-            );
+                selfcareOTPService,
+                    deleteAccountService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -377,8 +376,8 @@ class RattachementLigneServiceImplTest {
                 customerOfferApiClient,
                 sponseeService,
                 abonneService,
-                selfcareOTPService
-            );
+                selfcareOTPService,
+                    deleteAccountService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -412,8 +411,8 @@ class RattachementLigneServiceImplTest {
                 customerOfferApiClient,
                 sponseeService,
                 abonneService,
-                selfcareOTPService
-            );
+                selfcareOTPService,
+                    deleteAccountService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("");
@@ -673,8 +672,8 @@ class RattachementLigneServiceImplTest {
                 customerOfferApiClient,
                 sponseeService,
                 abonneService,
-                selfcareOTPService
-            );
+                selfcareOTPService,
+                    deleteAccountService);
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setId(45L);
