@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
+
 import org.apache.http.HttpStatus;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;
@@ -30,22 +31,17 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 class KeycloakServicesImpl implements KeycloakServices {
 
     private final Logger log = LoggerFactory.getLogger(KeycloakServicesImpl.class);
-
-    @Value("${keycloak-configuration.serverUrl}")
-    private String serverUrl;
-
     @Value("${keycloak-configuration.realm}")
     private String realmName;
+    private final KeycloakBuilder keycloakBuilder;
 
-    @Value("${keycloak-configuration.client-id}")
-    private String clientId;
-
-    @Value("${keycloak-configuration.client-secret}")
-    private String clientSecret;
+    KeycloakServicesImpl(KeycloakBuilder keycloakBuilder) {
+        this.keycloakBuilder = keycloakBuilder;
+    }
 
     @Override
     public ResponseEntity registerUserInKeycloack(ManagedUserVM userVM) {
-        Keycloak keycloak = getIntanceKeycloak();
+        Keycloak keycloak = keycloakBuilder.grantType(OAuth2Constants.CLIENT_CREDENTIALS).build();
         return registerUserInKeycloack(userVM, keycloak);
     }
 
@@ -87,13 +83,8 @@ class KeycloakServicesImpl implements KeycloakServices {
     @Override
     public ResponseEntity<AccessTokenResponse> getToken(UserCredentialDTO userCredential) {
         try {
-            var keycloak = KeycloakBuilder
-                .builder()
-                .serverUrl(serverUrl)
+            var keycloak = keycloakBuilder
                 .grantType(OAuth2Constants.PASSWORD)
-                .realm(realmName)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
                 .username(userCredential.getUsername())
                 .password(userCredential.getPassword())
                 .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
@@ -108,7 +99,7 @@ class KeycloakServicesImpl implements KeycloakServices {
 
     @Override
     public ResponseEntity resetPassword(ResetPasswordVM resetPassword) {
-        Keycloak keycloak = getIntanceKeycloak();
+        Keycloak keycloak = keycloakBuilder.grantType(OAuth2Constants.CLIENT_CREDENTIALS).build();
 
         UserRepresentation userRepresentation = getUserRepresentation(resetPassword.getLogin(), keycloak);
         if (userRepresentation == null) {
@@ -141,14 +132,4 @@ class KeycloakServicesImpl implements KeycloakServices {
         return (!userRepresentationList.isEmpty()) ? userRepresentationList.get(0) : null;
     }
 
-    private Keycloak getIntanceKeycloak() {
-        return KeycloakBuilder
-            .builder()
-            .serverUrl(serverUrl)
-            .realm(realmName)
-            .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-            .clientId(clientId)
-            .clientSecret(clientSecret)
-            .build();
-    }
 }
