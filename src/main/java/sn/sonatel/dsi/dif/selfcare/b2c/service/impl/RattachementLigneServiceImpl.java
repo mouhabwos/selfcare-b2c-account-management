@@ -16,6 +16,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.DeleteAccountService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.CustomerOfferApiClient;
@@ -49,6 +50,7 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
     private final AbonneService abonneService;
 
     private final SelfcareOTPService selfcareOTPService;
+    private final DeleteAccountService deleteAccountService;
 
     private static final String RATTACHEMENT = "RattachementLigne";
 
@@ -58,14 +60,15 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         CustomerOfferApiClient customerOfferApiClient,
         SponseeService sponseeService,
         AbonneService abonneService,
-        SelfcareOTPService selfcareOTPService
-    ) {
+        SelfcareOTPService selfcareOTPService,
+        DeleteAccountService deleteAccountService) {
         this.rattachementLigneRepository = rattachementLigneRepository;
         this.accountB2CRepository = accountB2CRepository;
         this.customerOfferApiClient = customerOfferApiClient;
         this.sponseeService = sponseeService;
         this.abonneService = abonneService;
         this.selfcareOTPService = selfcareOTPService;
+        this.deleteAccountService = deleteAccountService;
     }
 
     @Override
@@ -256,6 +259,8 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
                 );
             }
 
+            deleteAccountService.purgeNumberInfos(rattachementLigneCNIVM.getNumero());
+
             rattachement.setNumero(rattachementLigneCNIVM.getNumero());
             rattachement.setTypeNumero(rattachementLigneCNIVM.getTypeNumero());
 
@@ -297,6 +302,8 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
                 log.debug("Error login not found : {}", rattachementLigneCNIVM.getLogin());
                 throw new LigneNotFoundException();
             }
+
+            deleteAccountService.purgeNumberInfos(rattachementLigneCNIVM.getNumero());
 
             rattachement.setNumero(rattachementLigneCNIVM.getNumero());
             rattachement.setTypeNumero(rattachementLigneCNIVM.getTypeNumero());
