@@ -7,4 +7,8 @@ public class LoginAlreadyUsedException extends BadRequestAlertException {
     public LoginAlreadyUsedException() {
         super ( ErrorConstants.LOGIN_ALREADY_USED_TYPE, "Ce numéro a deja un compte", "userManagement", "userexists" );
     }
+
+    public LoginAlreadyUsedException(String message) {
+        super ( ErrorConstants.LOGIN_ALREADY_USED_TYPE, message, "userManagement", "userexists" );
+    }
 }

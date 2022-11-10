@@ -158,7 +158,7 @@ application:
 
   send-sms:
     account-deletion:
-      sms-content: 'Bonjour, le compte % a ete supprime sur Orange et Moi'
+      sms-content: 'Bonjour, le compte %S a ete supprime sur Orange et Moi'
     sponsorship:
       sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. %s FI rek la http://bit.ly/2NHn5aS ou sur www.orangeetmoi.sn
       sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.

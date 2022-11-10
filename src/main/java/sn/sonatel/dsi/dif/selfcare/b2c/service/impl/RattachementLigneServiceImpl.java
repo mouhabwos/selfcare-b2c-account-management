@@ -237,14 +237,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
         rattachementLigneCNIVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(rattachementLigneCNIVM.getLogin()));
         RattachementLigne rattachement = new RattachementLigne();
         if (rattachementLigneCNIVM.getNumero().matches(Constants.VALIDE_NUMBER_ORANGE_FIXE_MOBILE)) {
-            checkNumberIfUsed(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getLogin());
-
-            Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
-
-            if (accountB2C.isEmpty()) {
-                log.debug("Error login not found : {}", rattachementLigneCNIVM.getLogin());
-                throw new LigneNotFoundException();
-            }
 
             if (!isIdentifiedByThisCni(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getIdentificationId())) {
                 log.debug(
@@ -260,6 +252,17 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
             }
 
             deleteAccountService.purgeNumberInfos(rattachementLigneCNIVM.getNumero());
+
+            checkNumberIfUsed(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getLogin());
+
+            Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
+
+            if (accountB2C.isEmpty()) {
+                log.debug("Error login not found : {}", rattachementLigneCNIVM.getLogin());
+                throw new LigneNotFoundException();
+            }
+
+
 
             rattachement.setNumero(rattachementLigneCNIVM.getNumero());
             rattachement.setTypeNumero(rattachementLigneCNIVM.getTypeNumero());
@@ -294,6 +297,8 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
 
         RattachementLigne rattachement = new RattachementLigne();
         if (rattachementLigneCNIVM.getNumero().matches(Constants.VALIDE_NUMBER_ORANGE_FIXE_MOBILE)) {
+            deleteAccountService.purgeNumberInfos(rattachementLigneCNIVM.getNumero());
+
             checkNumberIfUsed(rattachementLigneCNIVM.getNumero(), rattachementLigneCNIVM.getLogin());
 
             Optional<AccountB2C> accountB2C = accountB2CRepository.findOneByNumero(rattachementLigneCNIVM.getLogin());
@@ -302,8 +307,6 @@ public class RattachementLigneServiceImpl implements RattachementLigneService {
                 log.debug("Error login not found : {}", rattachementLigneCNIVM.getLogin());
                 throw new LigneNotFoundException();
             }
-
-            deleteAccountService.purgeNumberInfos(rattachementLigneCNIVM.getNumero());
 
             rattachement.setNumero(rattachementLigneCNIVM.getNumero());
             rattachement.setTypeNumero(rattachementLigneCNIVM.getTypeNumero());

@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
 
@@ -101,7 +102,7 @@ class KeycloakServicesImpl implements KeycloakServices {
     public ResponseEntity resetPassword(ResetPasswordVM resetPassword) {
         Keycloak keycloak = keycloakBuilder.grantType(OAuth2Constants.CLIENT_CREDENTIALS).build();
 
-        UserRepresentation userRepresentation = getUserRepresentation(resetPassword.getLogin(), keycloak);
+        UserRepresentation userRepresentation = getUserRepresentation(resetPassword.getLogin(), keycloak).orElse(null);
         if (userRepresentation == null) {
             ManagedUserVM userVM = new ManagedUserVM();
             userVM.setLogin(resetPassword.getLogin());
@@ -124,12 +125,26 @@ class KeycloakServicesImpl implements KeycloakServices {
         return ResponseEntity.accepted().build();
     }
 
-    private UserRepresentation getUserRepresentation(String login, Keycloak keycloak) {
+    @Override
+    public ResponseEntity<Void> resetUser(String user) {
+        Keycloak keycloak = keycloakBuilder.grantType(OAuth2Constants.CLIENT_CREDENTIALS).build();
+
+        getUserRepresentation(user, keycloak)
+            .ifPresent(userRepresentation -> {
+                UserResource userResource = keycloak.realm(realmName).users().get(userRepresentation.getId());
+                userResource.remove();
+            });
+
+        return ResponseEntity.accepted().build();
+    }
+
+    private Optional<UserRepresentation> getUserRepresentation(String login, Keycloak keycloak) {
         RealmResource realmResource = keycloak.realm(realmName);
         UsersResource usersRessource = realmResource.users();
+
         List<UserRepresentation> userRepresentationList = usersRessource.search(login);
 
-        return (!userRepresentationList.isEmpty()) ? userRepresentationList.get(0) : null;
+        return (!userRepresentationList.isEmpty()) ? Optional.of(userRepresentationList.get(0)) : Optional.empty();
     }
 
 }
