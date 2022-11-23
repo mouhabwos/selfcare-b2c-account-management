@@ -1,5 +1,7 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.Assert;
@@ -35,6 +37,7 @@ class TroubleTicketServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        initMocks(this);
         troubleTicketService = new TroubletIcketServiceImpl(troubleTicketApiClient, applicationProperties);
     }
 
