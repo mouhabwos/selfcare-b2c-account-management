@@ -1,7 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import static org.mockito.MockitoAnnotations.initMocks;
-
+import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -36,7 +35,6 @@ class TroubleTicketServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
         troubleTicketService = new TroubletIcketServiceImpl(troubleTicketApiClient, applicationProperties);
     }
 
@@ -295,6 +293,7 @@ class TroubleTicketServiceImplTest {
         troubleTicket.setTicketType(TroubleTicket.TicketTypeEnum.INCIDENT);
         troubleTicket.setStatus(TroubleTicket.StatusEnum.HELD);
         troubleTicket.setId(REQUEST_ID);
+        troubleTicket.setCreationDate(LocalDateTime.now());
 
         Mockito.when(applicationProperties.getHistoric()).thenReturn(historicMap);
         Mockito.when(applicationProperties.getOrder()).thenReturn(orderMap);
