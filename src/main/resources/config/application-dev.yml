@@ -195,10 +195,10 @@ application:
     acknowledged-request-description: Votre demande a été validée, vous serez contacté prochainement par nos équipes
     held-request-description: Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais
     in-progress-request-description: Votre demande est en cours de traitement, vous serez contacter par nos équipes.
-    held-incident-description:  Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.
-    pending-description : Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau
+    held-incident-description: Votre ligne est bien signalé en dérangement ce %s sous la référence %s.
+    pending-description : Notre équipe n'a pas pu intervenir, plus de détails cliquer ici
     in-progress-incident-description: Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.
-    acknowledged-incident-description: Votre dérangement a été envoyée aux équipes techniques
+    acknowledged-incident-description: Votre derangement est affecté à une équipe d'intervention qui vous contactera pour la prise de rendez vous
     rejected-incident-description: Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client
 
 
