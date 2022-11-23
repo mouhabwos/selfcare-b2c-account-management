@@ -247,9 +247,8 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                 case "HELD":
                     requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
-                    String title = getTitle(troubleTicket);
-                    requestStatusDTO.setTitle(title);
-                    requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION));
+                    requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_HELD_INCIDENT_TITLE));
+                    requestStatusDTO.setDescription(getDescription(troubleTicket));
                     break;
                 case "PENDING":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_PENDING_TITLE));
@@ -290,9 +289,9 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
         return requestStatusDTO;
     }
 
-    private String getTitle(TroubleTicket troubleTicket) {
-        String title = applicationProperties.getRequestTitleMap().get(KEY_HELD_INCIDENT_TITLE);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy HH:mm:ss", Locale.FRENCH);
+    private String getDescription(TroubleTicket troubleTicket) {
+        String title = applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy à HH:mm", Locale.FRENCH);
         LocalDateTime creationDate = troubleTicket.getCreationDate();
         String formatDateTime = creationDate.format(formatter);
         title = String.format(title, formatDateTime, troubleTicket.getId());

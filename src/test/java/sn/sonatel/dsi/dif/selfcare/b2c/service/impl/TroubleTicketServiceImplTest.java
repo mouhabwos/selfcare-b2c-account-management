@@ -3,6 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -68,10 +69,7 @@ class TroubleTicketServiceImplTest {
             "in-progress-request-description",
             "Votre demande est en cours de traitement, vous serez contacter par nos équipes."
         );
-        descriptionMap.put(
-            "held-incident-description",
-            "Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes."
-        );
+        descriptionMap.put("held-incident-description", "Votre ligne est bien signalé en dérangement ce %s sous la référence %s.");
         descriptionMap.put(
             "pending-description",
             "Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau"
@@ -317,12 +315,19 @@ class TroubleTicketServiceImplTest {
         Assert.assertEquals(REQUEST_ID, responseEntity.getBody().get(2).getRequestId());
         Assert.assertEquals(TroubleTicket.TicketTypeEnum.INCIDENT, responseEntity.getBody().get(2).getType());
         Assert.assertEquals(
-            "Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.",
+            getDescription("Votre ligne est bien signalé en dérangement ce %s sous la référence %s.", troubleTicket),
             responseEntity.getBody().get(2).getDescription()
         );
         Assert.assertEquals("Signalée", responseEntity.getBody().get(2).getTitle());
         Assert.assertEquals(3, responseEntity.getBody().get(2).getOrder());
         Assert.assertEquals(true, responseEntity.getBody().get(2).getHistoric());
+    }
+
+    public String getDescription(String desc, TroubleTicket troubleTicket) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy à HH:mm", Locale.FRENCH);
+        LocalDateTime creationDate = troubleTicket.getCreationDate();
+        String formatDateTime = creationDate.format(formatter);
+        return String.format(desc, formatDateTime, troubleTicket.getId());
     }
 
     @Test
