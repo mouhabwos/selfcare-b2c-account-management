@@ -1,13 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.RedirectTo;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.TroubleTicketService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.TroubleTicketApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
@@ -248,13 +248,14 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
                     requestStatusDTO.setOrder(applicationProperties.getOrder().get(KEY_ORDER_THIRD));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_TRUE)));
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_HELD_INCIDENT_TITLE));
-                    requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION));
+                    requestStatusDTO.setDescription(getDescription(troubleTicket));
                     break;
                 case "PENDING":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_PENDING_TITLE));
                     requestStatusDTO.setDescription(applicationProperties.getRequestDescriptionMap().get(KEY_PENDING_DESCRIPTION));
                     requestStatusDTO.setHistoric(Boolean.parseBoolean(applicationProperties.getHistoric().get(KEY_HISTORIC_FALSE)));
                     requestStatusDTO.setCurrentState(true);
+                    requestStatusDTO.setRedirectTo(RedirectTo.IBOU);
                     break;
                 case "INPROGRESS":
                     requestStatusDTO.setTitle(applicationProperties.getRequestTitleMap().get(KEY_IN_PROGRESS_TITLE));
@@ -286,5 +287,14 @@ public class TroubletIcketServiceImpl implements TroubleTicketService {
             }
         }
         return requestStatusDTO;
+    }
+
+    private String getDescription(TroubleTicket troubleTicket) {
+        String title = applicationProperties.getRequestDescriptionMap().get(KEY_HELD_INCIDENT_DESCRIPTION);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy à HH:mm", Locale.FRENCH);
+        LocalDateTime creationDate = troubleTicket.getCreationDate();
+        String formatDateTime = creationDate.format(formatter);
+        title = String.format(title, formatDateTime, troubleTicket.getId());
+        return title;
     }
 }
