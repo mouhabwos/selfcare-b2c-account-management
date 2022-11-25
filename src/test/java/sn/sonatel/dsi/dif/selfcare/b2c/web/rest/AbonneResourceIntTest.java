@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOffe
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.TroubleSignalingDTO;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -173,5 +175,27 @@ class AbonneResourceIntTest {
         this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
 
         restAbonneMockMvc.perform(get("/api/abonne/v1/number/{msisdn}/status", "330000000")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testClientTrouble() throws Exception {
+        final AbonneResource abonneResource = new AbonneResource(customerOfferService, abonneServiceTest, troubleTicketService);
+        this.restAbonneMockMvc = MockMvcBuilders.standaloneSetup(abonneResource).build();
+
+        TroubleSignalingDTO troubleSignalingDTO = new TroubleSignalingDTO();
+        troubleSignalingDTO.setEmail("mail@mail");
+        troubleSignalingDTO.setMessage("message");
+        troubleSignalingDTO.setMotif("motif");
+        troubleSignalingDTO.setNumFix("num fix");
+        troubleSignalingDTO.setType(TroubleSignalingDTO.Type.RECLAMATION);
+        troubleSignalingDTO.setIdRequest("45677");
+
+        restAbonneMockMvc
+            .perform(
+                post("/api/abonne/client-trouble/{msisdn}", "778889900")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(troubleSignalingDTO))
+            )
+            .andExpect(status().isAccepted());
     }
 }

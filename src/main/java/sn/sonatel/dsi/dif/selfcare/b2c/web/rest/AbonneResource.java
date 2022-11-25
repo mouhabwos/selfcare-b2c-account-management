@@ -4,6 +4,9 @@ import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
+import java.util.Set;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,149 +20,149 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOffe
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.TroubleSignalingDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.RedocMessages;
-
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/abonne")
 public class AbonneResource {
 
-    private final Logger log = LoggerFactory.getLogger ( AbonneResource.class );
+    private final Logger log = LoggerFactory.getLogger(AbonneResource.class);
 
     private final CustomerOfferService customerOfferService;
     private final AbonneService abonneService;
     private final TroubleTicketService troubleTicketService;
 
-    public AbonneResource(CustomerOfferService customerOfferService, AbonneService abonneService, TroubleTicketService troubleTicketService) {
-
+    public AbonneResource(
+        CustomerOfferService customerOfferService,
+        AbonneService abonneService,
+        TroubleTicketService troubleTicketService
+    ) {
         this.customerOfferService = customerOfferService;
         this.abonneService = abonneService;
         this.troubleTicketService = troubleTicketService;
     }
 
-
-    @ApiOperation(value = Message.Abonne.IS_POSPAID,
-        notes = RedocMessages.Abonne.DESCRIPTION_IS_POSPAID_NUMBER,
-        response = Boolean.class)
+    @ApiOperation(value = Message.Abonne.IS_POSPAID, notes = RedocMessages.Abonne.DESCRIPTION_IS_POSPAID_NUMBER, response = Boolean.class)
     @Auditable(description = Message.Abonne.IS_POSPAID)
     @GetMapping("/is-postpaid/{msisdn}/{msisdn1}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     public ResponseEntity<Boolean> isPostpaid(
-        @PathVariable(name =  "msisdn", required = true) String msisdn,
-        @PathVariable(name =  "msisdn1", required = true) String msisdn1) {
-        log.debug ( "REST request to verify if  {} is pospaid ", msisdn1 );
-            return new ResponseEntity<>(customerOfferService.isPostpaid(msisdn1), HttpStatus.OK);
-
+        @PathVariable(name = "msisdn", required = true) String msisdn,
+        @PathVariable(name = "msisdn1", required = true) String msisdn1
+    ) {
+        log.debug("REST request to verify if  {} is pospaid ", msisdn1);
+        return new ResponseEntity<>(customerOfferService.isPostpaid(msisdn1), HttpStatus.OK);
     }
-
 
     /**
      * @author BOUYA KANDE
      * @since 1.1.4
      *
      */
-    @ApiOperation(value = Message.Abonne.CUSTOMEROFFER,
+    @ApiOperation(
+        value = Message.Abonne.CUSTOMEROFFER,
         notes = RedocMessages.Abonne.DESCRIPTION_CUSTOMEROFFER_NUMBER,
-        response = ResponseEntity.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Offer not found"), @ApiResponse(code = 200, message = "")})
+        response = ResponseEntity.class
+    )
+    @ApiResponses(value = { @ApiResponse(code = 404, message = "Offer not found"), @ApiResponse(code = 200, message = "") })
     @Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v1/customerOffer/{msisdn}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
-    public ResponseEntity<CustomerOffer> getCustomerOffer(
-        @PathVariable(name =  "msisdn", required = true) String msisdn){
-        log.debug ( "REST request to get CustomerOffer : {}", msisdn );
+    public ResponseEntity<CustomerOffer> getCustomerOffer(@PathVariable(name = "msisdn", required = true) String msisdn) {
+        log.debug("REST request to get CustomerOffer : {}", msisdn);
 
         return ResponseEntity.ok(customerOfferService.getCustomerOffer(msisdn));
-
     }
 
-    @ApiOperation(value = Message.Abonne.IS_ORANGE_NUMBER,
+    @ApiOperation(
+        value = Message.Abonne.IS_ORANGE_NUMBER,
         notes = RedocMessages.Abonne.DESCRIPTION_IS_ORANGE_NUMBER,
-        response = Boolean.class)
+        response = Boolean.class
+    )
     @Auditable(description = Message.Abonne.IS_ORANGE_NUMBER)
     @GetMapping("/v1/is-orange-number/{msisdn}")
     @Timed
-    public ResponseEntity<Boolean> isOrangeNumber(@PathVariable(name =  "msisdn", required = true) String msisdn) {
-        log.debug ( "REST request to get information  organization : {}", msisdn );
+    public ResponseEntity<Boolean> isOrangeNumber(@PathVariable(name = "msisdn", required = true) String msisdn) {
+        log.debug("REST request to get information  organization : {}", msisdn);
         return ResponseEntity.ok(abonneService.isOrangeNumber(msisdn));
-
     }
 
-    @ApiOperation(value = Message.Abonne.INFOS_CLIENT,
-        notes = RedocMessages.Abonne.INFOS_CLIENT,
-        response = ResponseEntity.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Ce numéro est rattaché a une entreprise"), @ApiResponse(code = 200, message = "")})
+    @ApiOperation(value = Message.Abonne.INFOS_CLIENT, notes = RedocMessages.Abonne.INFOS_CLIENT, response = ResponseEntity.class)
+    @ApiResponses(
+        value = { @ApiResponse(code = 400, message = "Ce numéro est rattaché a une entreprise"), @ApiResponse(code = 200, message = "") }
+    )
     @Auditable(description = Message.Abonne.INFOS_CLIENT)
     @GetMapping("/infos-client/{msisdn}")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
-    public ResponseEntity<IndividualInformation> individualInfos(@PathVariable(name =  "msisdn", required = true) String msisdn) {
-        log.debug ( "REST request to get birthDate : {}", msisdn );
+    public ResponseEntity<IndividualInformation> individualInfos(@PathVariable(name = "msisdn", required = true) String msisdn) {
+        log.debug("REST request to get birthDate : {}", msisdn);
         return ResponseEntity.ok(abonneService.getIndividualInformations(msisdn));
-
     }
 
-    @ApiOperation(value = Message.Abonne.CUSTOMEROFFER,
+    @ApiOperation(
+        value = Message.Abonne.CUSTOMEROFFER,
         notes = RedocMessages.Abonne.DESCRIPTION_CUSTOMEROFFER_V2_NUMBER,
-        response = ResponseEntity.class)
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Offer not found"), @ApiResponse(code = 200, message = "")})
+        response = ResponseEntity.class
+    )
+    @ApiResponses(value = { @ApiResponse(code = 400, message = "Offer not found"), @ApiResponse(code = 200, message = "") })
     @Auditable(description = Message.Abonne.CUSTOMEROFFER)
     @GetMapping("/v2/customerOffer/{msisdn}")
     @Timed
-    public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable(name =  "msisdn",required = true) String msisdn){
-        log.debug ( "REST V2 request to get CustomerOffer : {}", msisdn );
+    public ResponseEntity<CustomerOffer> getCustomerOfferWithoutClientCode(@PathVariable(name = "msisdn", required = true) String msisdn) {
+        log.debug("REST V2 request to get CustomerOffer : {}", msisdn);
         CustomerOffer customerOffer = customerOfferService.getCustomerOffer(msisdn);
         return ResponseEntity.ok(customerOffer);
-
     }
 
-    @ApiOperation(value = Message.Abonne.GET_REQUEST_STATUS_BY_ID,
+    @ApiOperation(
+        value = Message.Abonne.GET_REQUEST_STATUS_BY_ID,
         notes = Message.Abonne.GET_REQUEST_STATUS_BY_ID,
-        response = ResponseEntity.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "")})
+        response = ResponseEntity.class
+    )
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "") })
     @GetMapping("/request/{id}")
     @Auditable(description = Message.Abonne.GET_REQUEST_STATUS_BY_ID)
-    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusById(@PathVariable String id){
-
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusById(@PathVariable String id) {
         return troubleTicketService.getRequestStatusById(id);
     }
 
-    @ApiOperation(value = Message.Abonne.GET_REQUEST_STATUS_BY_MSISDN,
+    @ApiOperation(
+        value = Message.Abonne.GET_REQUEST_STATUS_BY_MSISDN,
         notes = Message.Abonne.GET_REQUEST_STATUS_BY_MSISDN,
-        response = ResponseEntity.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "")})
+        response = ResponseEntity.class
+    )
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "") })
     @GetMapping("/requests")
     @Auditable(description = Message.Abonne.GET_REQUEST_STATUS_BY_MSISDN)
-    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMsisdn(@RequestParam(name =  "msisdn", required = true) String msisdn){
-
+    public ResponseEntity<List<RequestStatusDTO>> getRequestStatusByMsisdn(@RequestParam(name = "msisdn", required = true) String msisdn) {
         return troubleTicketService.getRequestStatusByMisisdn(msisdn);
     }
 
-    @ApiOperation(value = Message.Abonne.IS_ORGANIZATION_NUMBER,
-                  notes = RedocMessages.Abonne.DESCRIPTION_IS_ORGANIZATION_NUMBER,
-                  response = Boolean.class)
+    @ApiOperation(
+        value = Message.Abonne.IS_ORGANIZATION_NUMBER,
+        notes = RedocMessages.Abonne.DESCRIPTION_IS_ORGANIZATION_NUMBER,
+        response = Boolean.class
+    )
     @Auditable(description = Message.Abonne.IS_ORGANIZATION_NUMBER)
     @GetMapping("/v1/is-coorporate-number/{msisdn}")
     @Timed
-    public ResponseEntity<Boolean> isCoorporateNumber(@PathVariable(name =  "msisdn",
-        required = true) String msisdn) {
-        log.debug ( "REST request to to find out if the number {} belongs to a organization", msisdn );
+    public ResponseEntity<Boolean> isCoorporateNumber(@PathVariable(name = "msisdn", required = true) String msisdn) {
+        log.debug("REST request to to find out if the number {} belongs to a organization", msisdn);
         return ResponseEntity.ok(abonneService.isCoorporateNumber(msisdn));
     }
 
-    @ApiOperation(value = Message.Abonne.CONTACT_NUMBERS,
-        notes = RedocMessages.Abonne.DESCRIPTION_GET_CONTACT_NUMBERS)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "")})
+    @ApiOperation(value = Message.Abonne.CONTACT_NUMBERS, notes = RedocMessages.Abonne.DESCRIPTION_GET_CONTACT_NUMBERS)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "") })
     @Auditable(description = Message.Abonne.CONTACT_NUMBERS)
     @PreAuthorize("#msisdn == @customSecurityResolver.login")
     @GetMapping("/v1/contact-numbers/{msisdn}")
     @Timed
-    public ResponseEntity<Set<String>> getMyContactNumbers(@PathVariable(name =  "msisdn", required = true) String msisdn) {
-        log.debug ( "REST request to get the contacts number for the user {}", msisdn );
+    public ResponseEntity<Set<String>> getMyContactNumbers(@PathVariable(name = "msisdn", required = true) String msisdn) {
+        log.debug("REST request to get the contacts number for the user {}", msisdn);
         return ResponseEntity.ok(abonneService.getMyContactNumbers(msisdn));
     }
 
@@ -167,9 +170,20 @@ public class AbonneResource {
     @GetMapping("/v1/number/{msisdn}/status")
     @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
     @Timed
-    public ResponseEntity<String> getNumberStatus(@PathVariable(name =  "msisdn") String msisdn) {
-        log.debug ( "REST request to get Status of : {}", msisdn );
+    public ResponseEntity<String> getNumberStatus(@PathVariable(name = "msisdn") String msisdn) {
+        log.debug("REST request to get Status of : {}", msisdn);
         return abonneService.getNumberStatus(msisdn);
     }
 
+    @Auditable(description = Message.Abonne.CLIENT_TROUBLE)
+    @PostMapping(value = "/client-trouble/{msisdn}")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
+    public ResponseEntity<Void> signalATrouble(
+        @PathVariable(name = "msisdn") String msisdn,
+        @Valid @RequestBody TroubleSignalingDTO troubleSignalingDTO
+    ) {
+        log.debug("REST request to send client trouble : {}", troubleSignalingDTO);
+        abonneService.sendToClientService(troubleSignalingDTO);
+        return ResponseEntity.accepted().build();
+    }
 }

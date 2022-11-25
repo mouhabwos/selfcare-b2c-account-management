@@ -16,8 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
@@ -107,10 +110,13 @@ class AbonneServiceImplTest {
 
     private AbonneServiceImpl abonneServiceImplUnderTest;
 
+    @MockBean
+    private MailService mailService;
+
     @BeforeEach
     void setUp() {
         initMocks(this);
-        abonneServiceImplUnderTest = new AbonneServiceImpl(mockPartyManagementApiClient);
+        abonneServiceImplUnderTest = new AbonneServiceImpl(mockPartyManagementApiClient, mailService);
     }
 
     private IndividualInformation getIndividualInformation(String msisdn) {

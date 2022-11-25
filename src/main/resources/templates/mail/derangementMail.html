@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <title th:text="#{email.opening.greeting}">JHipster activation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.derangement.greeting}">Bonjour,</p>
+    <p th:text="${opening}">Signalement</p>
+    <p th:text="#{email.derangement.info} "></p>
+
+    <p></p>
+    <ul>
+      <li th:text="#{email.derangement.msisdn (${troubleSignaling.getMsisdn()})}"></li>
+      <li th:text="#{email.derangement.email (${troubleSignaling.getEmail()})}"></li>
+      <li th:text="#{email.derangement.type (${troubleSignaling.getType()})}"></li>
+      <li th:text="#{email.derangement.motif (${troubleSignaling.getMotif()})}"></li>
+      <li th:text="#{email.derangement.message (${troubleSignaling.getMessage()})}"></li>
+    </ul>
+
+    <p>
+      <em th:text="#{email.derangement.signature}">Le service Client.</em>
+    </p>
+  </body>
+</html>
