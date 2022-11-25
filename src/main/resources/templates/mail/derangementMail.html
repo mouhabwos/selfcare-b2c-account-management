@@ -9,7 +9,7 @@
     <p th:text="${opening}">Signalement</p>
     <p th:text="#{email.derangement.info} "></p>
 
-    <p></p>
+    <p>
     <ul>
       <li th:text="#{email.derangement.msisdn (${troubleSignaling.getMsisdn()})}"></li>
       <li th:text="#{email.derangement.email (${troubleSignaling.getEmail()})}"></li>
@@ -17,6 +17,7 @@
       <li th:text="#{email.derangement.motif (${troubleSignaling.getMotif()})}"></li>
       <li th:text="#{email.derangement.message (${troubleSignaling.getMessage()})}"></li>
     </ul>
+    </p>
 
     <p>
       <em th:text="#{email.derangement.signature}">Le service Client.</em>
