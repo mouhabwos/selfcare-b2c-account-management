@@ -1,5 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import javax.mail.internet.MimeMessage;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,22 +20,17 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.TroubleSignalingDTO;
 import tech.jhipster.config.JHipsterProperties;
 
-import javax.mail.internet.MimeMessage;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-
 @Service
 public class MailService {
 
+    private final Logger log = LoggerFactory.getLogger(MailService.class);
     public static final String MAIL_DERANGEMENT_OPENING = "opening";
-    
-  	public static final String MAIL_DERANGEMENT_TEMPLATE = "mail/derangementMail";
-    
-  	public static final String MAIL_DERANGEMENT_TITLE = "email.derangement.title";
-  	
-  	private static final String TROUBLE_SIGNALING = "troubleSignaling";
-    
-  	private final Logger log = LoggerFactory.getLogger(MailService.class);
+
+    public static final String MAIL_DERANGEMENT_TEMPLATE = "mail/derangementMail";
+
+    public static final String MAIL_DERANGEMENT_TITLE = "email.derangement.title";
+
+    private static final String TROUBLE_SIGNALING = "troubleSignaling";
 
     private static final String USER = "user";
 
@@ -54,7 +52,13 @@ public class MailService {
 
     private final SpringTemplateEngine templateEngine;
 
-    public MailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender, MessageSource messageSource, SpringTemplateEngine templateEngine, ApplicationProperties applicationProperties) {
+    public MailService(
+        JHipsterProperties jHipsterProperties,
+        JavaMailSender javaMailSender,
+        MessageSource messageSource,
+        SpringTemplateEngine templateEngine,
+        ApplicationProperties applicationProperties
+    ) {
         this.applicationProperties = applicationProperties;
         this.jHipsterProperties = jHipsterProperties;
         this.javaMailSender = javaMailSender;
@@ -64,37 +68,55 @@ public class MailService {
 
     @Async
     public void sendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
-        log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
-            isMultipart, isHtml, to, subject, content);
+        log.debug(
+            "Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+            isMultipart,
+            isHtml,
+            to,
+            subject,
+            content
+        );
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
-            message.setFrom(jHipsterProperties.getMail().getFrom(),"Service Client Orange Business ");
+            message.setFrom(jHipsterProperties.getMail().getFrom(), "Service Client Orange Business ");
             message.setSubject(subject);
             message.setText(content, isHtml);
             javaMailSender.send(mimeMessage);
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
-
             log.warn("Email could not be sent to user '{}'", to, e);
-
         }
     }
 
     @Async
-    public void sendEmailWithAttachement(String to, String subject, String content, boolean isMultipart, boolean isHtml, OperationDTO operationDTO) {
-        log.debug("Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
-            isMultipart, isHtml, to, subject, content);
-
+    public void sendEmailWithAttachement(
+        String to,
+        String subject,
+        String content,
+        boolean isMultipart,
+        boolean isHtml,
+        OperationDTO operationDTO
+    ) {
+        log.debug(
+            "Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+            isMultipart,
+            isHtml,
+            to,
+            subject,
+            content
+        );
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
-            message.setFrom(applicationProperties.getSelfcareMail().getSenderAddress(),applicationProperties.getSelfcareMail().getSenderName());
+            message.setFrom(
+                applicationProperties.getSelfcareMail().getSenderAddress(),
+                applicationProperties.getSelfcareMail().getSenderName()
+            );
             message.setSubject(subject);
             message.setText(content, isHtml);
             FileSystemResource fileZip = getFileZip(operationDTO.getNameFile());
@@ -104,14 +126,12 @@ public class MailService {
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
             log.warn("Email could not be sent to user '{}'", to, e);
-
         }
     }
 
     @Async
     public void sendEmailFromTemplate(AccountB2C user, String templateName, String titleKey) {
-        Locale locale = Locale
-            .forLanguageTag("fr");
+        Locale locale = Locale.forLanguageTag("fr");
         Context context = new Context(locale);
         context.setVariable(USER, user);
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
@@ -164,8 +184,7 @@ public class MailService {
 
     @Async
     public void sendEmailToServiceClient(OperationDTO operationDTO, String templateName, String subject) {
-        Locale locale = Locale
-            .forLanguageTag("fr");
+        Locale locale = Locale.forLanguageTag("fr");
         Context context = new Context(locale);
         context.setVariable(USER, operationDTO);
 
@@ -185,15 +204,18 @@ public class MailService {
     @Async
     public void sendEmailToServiceClient(OperationDTO operationDTO, String titreOperation) {
         log.debug("Sending activation email to '{}'", "");
-        sendEmailToServiceClient(operationDTO, "mail/ouverturCompteEmail", "[Orange et Moi ]"+titreOperation+"- "+operationDTO.getNumero());
+        sendEmailToServiceClient(
+            operationDTO,
+            "mail/ouverturCompteEmail",
+            "[Orange et Moi ]" + titreOperation + "- " + operationDTO.getNumero()
+        );
     }
 
     @Async
-    public void sendEmailToAdmin(String recipient , String nameFile) {
+    public void sendEmailToAdmin(String recipient, String nameFile) {
         log.debug("Service Sending mail email to '{}'", recipient);
 
-        Locale locale = Locale
-            .forLanguageTag("fr");
+        Locale locale = Locale.forLanguageTag("fr");
         Context context = new Context(locale);
         String random = RandomStringUtils.randomAlphabetic(20);
         context.setVariable(RANDOM, random);
@@ -203,16 +225,23 @@ public class MailService {
 
     @Async
     public void sendEmailWithFile(String to, String subject, String content, boolean isMultipart, boolean isHtml, String nameFile) {
-        log.debug("Service to Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
-            isMultipart, isHtml, to, subject, content);
-
+        log.debug(
+            "Service to Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+            isMultipart,
+            isHtml,
+            to,
+            subject,
+            content
+        );
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
-            message.setFrom(applicationProperties.getSelfcareMail().getSenderAddress(),applicationProperties.getSelfcareMail().getSenderName());
+            message.setFrom(
+                applicationProperties.getSelfcareMail().getSenderAddress(),
+                applicationProperties.getSelfcareMail().getSenderName()
+            );
             message.setSubject(subject);
             message.setText(content, isHtml);
             FileSystemResource fileZip = new FileSystemResource(nameFile);
@@ -222,13 +251,11 @@ public class MailService {
             log.debug("Success Sent email to User '{}'", to);
         } catch (Exception e) {
             log.warn("Email could not to be sent  user '{}'", to, e);
-
         }
     }
 
-    private FileSystemResource getFileZip(String nameFile){
-        String tempFile = applicationProperties.getTmpPath()+nameFile;
+    private FileSystemResource getFileZip(String nameFile) {
+        String tempFile = applicationProperties.getTmpPath() + nameFile;
         return new FileSystemResource(tempFile);
     }
 }
-
