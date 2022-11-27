@@ -1,14 +1,15 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Properties specific to Microkeycloakjh 7.
@@ -39,6 +40,7 @@ public class ApplicationProperties {
     @Setter(AccessLevel.PUBLIC)
     private String selfcareB2cFileManager;
 
+
     private String baseUrlAdmin;
     private String emailAdmin;
     private Integer maxAttempts;
@@ -49,10 +51,10 @@ public class ApplicationProperties {
     private String hmacSecret;
     private String tmpPath;
 
-    private Map<String, String> requestTitleMap = new HashMap<>();
-    private Map<String, String> requestDescriptionMap = new HashMap<>();
+    private Map<String,String> requestTitleMap = new HashMap<>();
+    private Map<String,String> requestDescriptionMap = new HashMap<>();
     private Map<String, Integer> order = new HashMap<>();
-    private Map<String, String> historic = new HashMap<>();
+    private Map<String,String> historic = new HashMap<>();
 
     private final SelfcareMail selfcareMail = new SelfcareMail();
 
@@ -111,6 +113,7 @@ public class ApplicationProperties {
     public void setEmailAdmin(String emailAdmin) {
         this.emailAdmin = emailAdmin;
     }
+
 
     public String getMessageBlockUser() {
         return messageBlockUser;
@@ -190,23 +193,23 @@ public class ApplicationProperties {
      */
     @Data
     public static class SelfcareMail {
-
         private String senderAddress;
         private String senderName;
         private String mailSubject;
+
     }
 
     /**
      * @author BOUYA KANDE
      * @since 1.1.4
      */
-    public static class UrgenceDepannage {
+    public static class UrgenceDepannage{
 
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
         private List<Operation> operation = new ArrayList<>();
 
-        public static class Operation {
+        public static class Operation{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
@@ -215,14 +218,17 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String title;
+
         }
+
     }
+
 
     /**
      * @author BOUYA KANDE
      * @since 1.1.4
      */
-    public static class ApiManagement {
+    public static class ApiManagement{
 
         @Getter(AccessLevel.PUBLIC)
         @Setter(AccessLevel.PUBLIC)
@@ -236,7 +242,7 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         private final PartyManagement partyManagement = new PartyManagement();
 
-        public static class Oauth2 {
+        public static class Oauth2{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
@@ -253,9 +259,10 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String clientTokenUri;
+
         }
 
-        public static class UrlApi {
+        public static class UrlApi{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
@@ -268,9 +275,10 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String baseName;
+
         }
 
-        public static class PartyManagement {
+        public static class PartyManagement{
 
             @Getter(AccessLevel.PUBLIC)
             @Setter(AccessLevel.PUBLIC)
@@ -283,7 +291,10 @@ public class ApplicationProperties {
             @Getter(AccessLevel.PUBLIC)
             @Setter(AccessLevel.PUBLIC)
             private String urlOrganizationInformation;
+
         }
+
+
     }
 
     /**
@@ -291,7 +302,7 @@ public class ApplicationProperties {
      * @since 1.4.0
      */
 
-    public static class SendSms {
+    public static class SendSms{
 
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
@@ -305,7 +316,7 @@ public class ApplicationProperties {
         @Getter(AccessLevel.PUBLIC)
         private Server server;
 
-        public static class Server {
+        public static class Server{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
@@ -330,9 +341,11 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String smsDefaultSourceAddress;
+
+
         }
 
-        public static class Sponsorship {
+        public static class Sponsorship{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
@@ -345,13 +358,15 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String smsPromo;
+
         }
 
-        public static class AccountDeletion {
+        public static class AccountDeletion{
 
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String smsContent;
+
         }
     }
 
@@ -359,7 +374,7 @@ public class ApplicationProperties {
      * @author BOUYA KANDE
      * @since 1.4.0
      */
-    public static class Scheduler {
+    public static class Scheduler{
 
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
@@ -376,9 +391,11 @@ public class ApplicationProperties {
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
         private String numberOfRowsToReturn;
+
     }
 
-    public static class ServeurFtp {
+
+    public static class ServeurFtp{
 
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
@@ -400,4 +417,6 @@ public class ApplicationProperties {
         @Getter(AccessLevel.PUBLIC)
         private String directory;
     }
+
 }
+
