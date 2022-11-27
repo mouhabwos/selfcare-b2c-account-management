@@ -24,14 +24,17 @@ import java.util.Locale;
 @Service
 public class MailService {
 
-    public static final String MAIL_OPENING = "opening";
-    public static final String MAIL_DERANGEMENT_TEMPLATE = "mail/derangementMail";
-    public static final String EMAIL_DERANGEMENT_TITLE = "email.derangement.title";
-    private final Logger log = LoggerFactory.getLogger(MailService.class);
+    public static final String MAIL_DERANGEMENT_OPENING = "opening";
+    
+  	public static final String MAIL_DERANGEMENT_TEMPLATE = "mail/derangementMail";
+    
+  	public static final String MAIL_DERANGEMENT_TITLE = "email.derangement.title";
+  	
+  	private static final String TROUBLE_SIGNALING = "troubleSignaling";
+    
+  	private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
-
-    private static final String TROUBLE_SIGNALING = "troubleSignaling";
 
     private final ApplicationProperties applicationProperties;
 
@@ -126,10 +129,10 @@ public class MailService {
         String mailOpening = getMailOpening(troubleSignalingDTO.getType());
         Context context = new Context(locale);
         context.setVariable(TROUBLE_SIGNALING, troubleSignalingDTO);
-        context.setVariable(MAIL_OPENING, mailOpening);
+        context.setVariable(MAIL_DERANGEMENT_OPENING, mailOpening);
         String content = templateEngine.process(MAIL_DERANGEMENT_TEMPLATE, context);
         String[] list = getMailTitleElement(troubleSignalingDTO);
-        String subject = messageSource.getMessage(EMAIL_DERANGEMENT_TITLE, list, locale);
+        String subject = messageSource.getMessage(MAIL_DERANGEMENT_TITLE, list, locale);
         sendEmail(applicationProperties.getServiceClientMail(), subject, content, false, true);
     }
 
