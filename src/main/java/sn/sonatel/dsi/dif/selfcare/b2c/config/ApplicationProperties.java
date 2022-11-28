@@ -34,6 +34,10 @@ public class ApplicationProperties {
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
+    private String serviceClientMail;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
     private String selfcareB2cFileManager;
 
 
@@ -415,3 +419,4 @@ public class ApplicationProperties {
     }
 
 }
+

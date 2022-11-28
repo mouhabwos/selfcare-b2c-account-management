@@ -7,11 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.ClientType;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.*;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
@@ -23,9 +21,11 @@ public class AbonneServiceImpl implements AbonneService {
 
     private final Logger log = LoggerFactory.getLogger ( AbonneServiceImpl.class );
     private final PartyManagementApiClient partyManagementApiClient;
+    private final MailService mailService;
 
-    public AbonneServiceImpl(PartyManagementApiClient partyManagementApiClient) {
+    public AbonneServiceImpl(PartyManagementApiClient partyManagementApiClient, MailService mailService) {
         this.partyManagementApiClient = partyManagementApiClient;
+        this.mailService = mailService;
     }
 
     @Override
@@ -124,5 +124,14 @@ public class AbonneServiceImpl implements AbonneService {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * This method is for sending clent trouble to orange client service
+     * @param troubleSignalingDTO client trouble info
+     */
+    @Override
+    public void sendToClientService(TroubleSignalingDTO troubleSignalingDTO) {
+        log.debug("Service get send client trouble: {}", troubleSignalingDTO);
+        mailService.sendDerangementMailFromTemplate(troubleSignalingDTO);
+    }
 }
 
