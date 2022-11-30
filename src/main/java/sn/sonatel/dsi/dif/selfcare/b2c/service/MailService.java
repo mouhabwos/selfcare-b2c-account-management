@@ -19,6 +19,7 @@ import tech.jhipster.config.JHipsterProperties;
 
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Locale;
 
 @Service
@@ -171,7 +172,8 @@ public class MailService {
 
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         context.setVariable(EMAIL_ADMIN, applicationProperties.getEmailAdmin());
-        String random = RandomStringUtils.randomAlphabetic(20);
+        SecureRandom secureRandom = new SecureRandom();
+        String random = String.valueOf(secureRandom.nextFloat());
         context.setVariable(RANDOM, random);
         String content = templateEngine.process(templateName, context);
 
