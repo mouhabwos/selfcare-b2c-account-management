@@ -197,7 +197,8 @@ public class MailService {
         Locale locale = Locale
             .forLanguageTag("fr");
         Context context = new Context(locale);
-        String random = RandomStringUtils.randomAlphabetic(20);
+        SecureRandom secureRandom = new SecureRandom();
+        String random = String.valueOf(secureRandom.nextFloat());
         context.setVariable(RANDOM, random);
         String content = templateEngine.process("mail/exportUsersEmail", context);
         sendEmailWithFile(recipient, "[Orange et Moi ] Exportation des Utilisateurs", content, true, true, nameFile);
