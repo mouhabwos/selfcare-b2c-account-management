@@ -4,10 +4,11 @@ teamOrangeEtMoiJenkinsfile(
   		agent: "openjdk11",
  		devEnv : "dsidacdifdsorangeetmoi-dev",
         recEnv : "dsidacdifdsorangeetmoi-rec",
-  		skipTests : false,
-  		skipSonar : false,
+  		skipTests : true,
+  		skipSonar : true,
   		deployOnPreprod : true,
   		runTnr :true,
-        sonarUrl : "http://sonar.v8.tools.orange-sonatel.com"
+        sonarUrl : "http://sonar.v8.tools.orange-sonatel.com",
+  		deployBranch: "asy/MailServicejava-1669813500579"
  )
 
