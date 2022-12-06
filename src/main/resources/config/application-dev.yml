@@ -172,7 +172,7 @@ application:
 
   message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
   service-client-orange: . Service Client Orange
-  service-client-mail: serviceclient@orange-sonatel.com
+  service-client-mail: mohamedabdoulkarim.diop2@orange-sonatel.com
 
   order:
     first: 1
