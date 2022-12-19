@@ -1,5 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -22,19 +25,19 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOffe
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.NotificationInformationMapper;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class NotificationInformationServiceImplTest {
+class NotificationInformationServiceImplTest {
 
     @Autowired
     private NotificationInformationRepository notificationInformationRepository;
+
     @Autowired
     private NotificationInformationMapper mockNotificationInformationMapper;
+
     @Autowired
     private AccountB2CRepository accountB2CRepository;
+
     @Mock
     private CustomerOfferService mockCustomerOfferService;
 
@@ -47,15 +50,20 @@ public class NotificationInformationServiceImplTest {
     private NotificationInformationServiceImpl notificationInformationServiceImplUnderTest;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
-        notificationInformationServiceImplUnderTest = new NotificationInformationServiceImpl(notificationInformationRepository, mockNotificationInformationMapper, accountB2CRepository, customerOfferApiClient, customerOfferService);
+        notificationInformationServiceImplUnderTest =
+            new NotificationInformationServiceImpl(
+                notificationInformationRepository,
+                mockNotificationInformationMapper,
+                accountB2CRepository,
+                customerOfferApiClient,
+                customerOfferService
+            );
     }
 
-
-
     @Test
-    public void testAddCodeFormuleCustomerOffer() {
+    void testAddCodeFormuleCustomerOffer() {
         // Setup
 
         //save account
@@ -67,7 +75,7 @@ public class NotificationInformationServiceImplTest {
         accountB2C = accountB2CRepository.save(accountB2C);
 
         // Configure CustomerOfferService.getCustomerOffer(...).
-         CustomerOffer customerOffer = new CustomerOffer();
+        CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("clientCode");
         customerOffer.setCreateDate("createDate");
         customerOffer.setOfferType(OfferTypeEnum.HYBRIDE);
@@ -82,10 +90,8 @@ public class NotificationInformationServiceImplTest {
         Mockito.verify(customerOfferApiClient).getCustomerOffer(accountB2C.getNumero());
     }
 
-
-
     @Test
-    public void testUpdateCodeFormuleCustomerOffer() {
+    void testUpdateCodeFormuleCustomerOffer() {
         // Setup
 
         //save account
@@ -113,7 +119,7 @@ public class NotificationInformationServiceImplTest {
     }
 
     @Test
-    public void testAddCodeFormuleCustomerOfferNotFound() {
+    void testAddCodeFormuleCustomerOfferNotFound() {
         // Setup
 
         //save account
@@ -135,9 +141,8 @@ public class NotificationInformationServiceImplTest {
         Mockito.verify(customerOfferApiClient).getCustomerOffer(accountB2C.getNumero());
     }
 
-
     @Test
-    public void testUpdateCodeFormuleCustomer() {
+    void testUpdateCodeFormuleCustomer() {
         // Setup
 
         //save account

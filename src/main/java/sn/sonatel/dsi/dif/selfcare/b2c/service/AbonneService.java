@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.TroubleSignalingDTO;
 
 import java.util.Set;
 
@@ -22,4 +23,7 @@ public interface AbonneService {
     Set<String> getMyContactNumbers(String msisdn);
 
     ResponseEntity<String> getNumberStatus(String msisdn);
+
+    void sendToClientService(TroubleSignalingDTO troubleSignalingDTO);
 }
+

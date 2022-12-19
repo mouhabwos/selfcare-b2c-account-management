@@ -1,7 +1,19 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
+import java.util.*;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,21 +50,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneCNIVM;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneFixeVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLigneVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.RattachementLignesDeleteMultipleVM;
-
-import javax.persistence.EntityManager;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
 
 /**
  * Test class for the RattachementLigneResource REST controller.
@@ -61,7 +61,7 @@ import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormatting
  */
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class RattachementLigneResourceIntTest {
+class RattachementLigneResourceIntTest {
 
     private static final String DEFAULT_NUMERO = "778505050";
     private static final String UPDATED_NUMERO = "778505052";
@@ -71,7 +71,6 @@ public class RattachementLigneResourceIntTest {
 
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
-
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -114,15 +113,18 @@ public class RattachementLigneResourceIntTest {
     private AbonneService abonneService;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
         rattachementLigneResource = new RattachementLigneResource(rattachementLigneService);
-        this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
+        this.restRattachementLigneMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(rattachementLigneResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
     }
 
     /**
@@ -131,19 +133,18 @@ public class RattachementLigneResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static RattachementLigne createEntity(EntityManager em) {
-        RattachementLigne rattachementLigne = new RattachementLigne()
-            .typeNumero(DEFAULT_TYPE_NUMERO);
+    static RattachementLigne createEntity(EntityManager em) {
+        RattachementLigne rattachementLigne = new RattachementLigne().typeNumero(DEFAULT_TYPE_NUMERO);
         rattachementLigne.setNumero(UPDATED_NUMERO);
         return rattachementLigne;
     }
 
     @BeforeEach
-    public void initTest() {
+    void initTest() {
         rattachementLigne = createEntity(em);
     }
 
-    private Optional<Sponsee> getSponsee(){
+    private Optional<Sponsee> getSponsee() {
         Sponsee sponsee = new Sponsee();
         sponsee.setId(45L);
         sponsee.setMsisdn("");
@@ -153,7 +154,7 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void createRattachementLigne() throws Exception {
+    void createRattachementLigne() throws Exception {
         int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
         RattachementLigneDTO ligne = new RattachementLigneDTO();
@@ -161,12 +162,13 @@ public class RattachementLigneResourceIntTest {
         ligne.setAccountB2C(rattachementLigne.getAccountB2C());
         ligne.setNumero(rattachementLigne.getNumero());
 
-
-
         // Create the RattachementLigne
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligne)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligne))
+            )
             .andExpect(status().isCreated());
 
         // Validate the RattachementLigne in the database
@@ -175,11 +177,9 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo("778505052");
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(DEFAULT_TYPE_NUMERO);
-
     }
 
-    private Set<String> getNumbers(){
-
+    private Set<String> getNumbers() {
         Set<String> stringList = new HashSet<>();
         stringList.add("779635252");
         stringList.add("771326617");
@@ -188,36 +188,41 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void createRattachementLigneWithExistingId() throws Exception {
+    void createRattachementLigneWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
 
         // Create the RattachementLigne with an existing ID
         rattachementLigne.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigne)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(rattachementLigne))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the RattachementLigne in the database
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeCreate);
-
     }
 
     @Test
     @Transactional
-    public void checkNumeroIsRequired() throws Exception {
+    void checkNumeroIsRequired() throws Exception {
         int databaseSizeBeforeTest = rattachementLigneRepository.findAll().size();
         // set the field null
         rattachementLigne.setNumero(null);
 
         // Create the RattachementLigne, which fails.
 
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigne)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(rattachementLigne))
+            )
             .andExpect(status().isBadRequest());
 
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
@@ -226,16 +231,19 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void checkTypeNumeroIsRequired() throws Exception {
+    void checkTypeNumeroIsRequired() throws Exception {
         int databaseSizeBeforeTest = rattachementLigneRepository.findAll().size();
         // set the field null
         rattachementLigne.setTypeNumero(null);
 
         // Create the RattachementLigne, which fails.
 
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigne)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(rattachementLigne))
+            )
             .andExpect(status().isBadRequest());
 
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
@@ -244,12 +252,13 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void getAllRattachementLignes() throws Exception {
+    void getAllRattachementLignes() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
 
         // Get all the rattachementLigneList
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes?sort=id,desc"))
+        restRattachementLigneMockMvc
+            .perform(get("/api/rattachement-lignes?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rattachementLigne.getId().intValue())))
@@ -257,27 +266,28 @@ public class RattachementLigneResourceIntTest {
             .andExpect(jsonPath("$.[*].typeNumero").value(hasItem(DEFAULT_TYPE_NUMERO.toString())));
     }
 
-
     @Test
     @Transactional
-    public void getAllRattachementLignesByMsisdn() throws Exception {
+    void getAllRattachementLignesByMsisdn() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
         addRattachement();
 
         // Get all the rattachementLigneList
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
+        restRattachementLigneMockMvc
+            .perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
             .andExpect(status().isOk());
     }
 
     @Test
     @Transactional
-    public void getRattachementLigne() throws Exception {
+    void getRattachementLigne() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
 
         // Get the rattachementLigne
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/{id}", rattachementLigne.getId()))
+        restRattachementLigneMockMvc
+            .perform(get("/api/rattachement-lignes/{id}", rattachementLigne.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(rattachementLigne.getId().intValue()))
@@ -287,15 +297,14 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void getNonExistingRattachementLigne() throws Exception {
+    void getNonExistingRattachementLigne() throws Exception {
         // Get the rattachementLigne
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateRattachementLigne() throws Exception {
+    void updateRattachementLigne() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
 
@@ -305,13 +314,15 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne updatedRattachementLigne = rattachementLigneRepository.findById(rattachementLigne.getId()).get();
         // Disconnect from session so that the updates on updatedRattachementLigne are not directly saved in db
         em.detach(updatedRattachementLigne);
-        updatedRattachementLigne
-            .typeNumero(UPDATED_TYPE_NUMERO);
+        updatedRattachementLigne.typeNumero(UPDATED_TYPE_NUMERO);
         updatedRattachementLigne.setNumero(UPDATED_NUMERO);
 
-        restRattachementLigneMockMvc.perform(put("/api/rattachement-lignes")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(updatedRattachementLigne)))
+        restRattachementLigneMockMvc
+            .perform(
+                put("/api/rattachement-lignes")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedRattachementLigne))
+            )
             .andExpect(status().isOk());
 
         // Validate the RattachementLigne in the database
@@ -320,51 +331,50 @@ public class RattachementLigneResourceIntTest {
         RattachementLigne testRattachementLigne = rattachementLigneList.get(rattachementLigneList.size() - 1);
         assertThat(testRattachementLigne.getNumero()).isEqualTo(UPDATED_NUMERO);
         assertThat(testRattachementLigne.getTypeNumero()).isEqualTo(UPDATED_TYPE_NUMERO);
-
-
     }
 
     @Test
     @Transactional
-    public void updateNonExistingRattachementLigne() throws Exception {
+    void updateNonExistingRattachementLigne() throws Exception {
         int databaseSizeBeforeUpdate = rattachementLigneRepository.findAll().size();
 
         // Create the RattachementLigne
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restRattachementLigneMockMvc.perform(put("/api/rattachement-lignes")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigne)))
+        restRattachementLigneMockMvc
+            .perform(
+                put("/api/rattachement-lignes")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(rattachementLigne))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the RattachementLigne in the database
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeUpdate);
-
     }
 
     @Test
     @Transactional
-    public void deleteRattachementLigne() throws Exception {
+    void deleteRattachementLigne() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
 
         int databaseSizeBeforeDelete = rattachementLigneRepository.findAll().size();
 
         // Delete the rattachementLigne
-        restRattachementLigneMockMvc.perform(delete("/api/rattachement-lignes/{id}", rattachementLigne.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+        restRattachementLigneMockMvc
+            .perform(delete("/api/rattachement-lignes/{id}", rattachementLigne.getId()).accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
         // Validate the database is empty
         List<RattachementLigne> rattachementLigneList = rattachementLigneRepository.findAll();
         assertThat(rattachementLigneList).hasSize(databaseSizeBeforeDelete - 1);
-
     }
 
     @Test
     @Transactional
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(RattachementLigne.class);
         RattachementLigne rattachementLigne1 = new RattachementLigne();
         rattachementLigne1.setId(1L);
@@ -377,7 +387,7 @@ public class RattachementLigneResourceIntTest {
         assertThat(rattachementLigne1).isNotEqualTo(rattachementLigne2);
     }
 
-    public void addRattachement() {
+    void addRattachement() {
         AccountB2C u = new AccountB2C();
         u.setNumero("775167600");
         u.setFirstName("leyla");
@@ -398,12 +408,10 @@ public class RattachementLigneResourceIntTest {
         ligne1.setAccountB2C(u);
         ligne1.setTypeNumero(UPDATED_TYPE_NUMERO);
         rattachementLigneRepository.save(ligne1);
-
     }
 
     @Test
-    public void deleteMultipleRattachementLigne() throws Exception {
-
+    void deleteMultipleRattachementLigne() throws Exception {
         addRattachement();
         // Initialize the database
         rattachementLigneRepository.save(rattachementLigne);
@@ -416,45 +424,47 @@ public class RattachementLigneResourceIntTest {
         deleteVM.setLogin(DEFAULT_NUMERO);
 
         restRattachementLigneMockMvc
-            .perform(post("/api/rattachement-lignes/delete-multiple")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(deleteVM)))
+            .perform(
+                post("/api/rattachement-lignes/delete-multiple")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(deleteVM))
+            )
             .andExpect(status().isOk());
 
-        Optional<RattachementLigne> opLign1 = rattachementLigneRepository
-            .findByNumero("772502592");
+        Optional<RattachementLigne> opLign1 = rattachementLigneRepository.findByNumero("772502592");
         assertThat(opLign1).isEmpty();
     }
 
     @Test
     @Transactional
-    public void getRattachementLignesByMsisdn() throws Exception {
-
+    void getRattachementLignesByMsisdn() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
 
         // Get the rattachementLigne
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
+        restRattachementLigneMockMvc
+            .perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "775167600"))
             .andExpect(status().isOk());
     }
 
-
     @Test
     @Transactional
-    public void addRattachementLigne() throws Exception {
-
+    void addRattachementLigne() throws Exception {
         IndividualInformation information = new IndividualInformation();
         InfoClientWrapper infoClientWrapper = new InfoClientWrapper();
         infoClientWrapper.setClientType(ClientType.INDIVIDUAL);
 
-        RattachementLigneService  rattachementLigneServices = mock(RattachementLigneService.class);
+        RattachementLigneService rattachementLigneServices = mock(RattachementLigneService.class);
         rattachementLigneResource = new RattachementLigneResource(rattachementLigneServices);
-        this.restRattachementLigneMockMvc = MockMvcBuilders.standaloneSetup(rattachementLigneResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
+        this.restRattachementLigneMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(rattachementLigneResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
 
         AccountB2C u = new AccountB2C();
         u.setNumero("775167605");
@@ -462,7 +472,7 @@ public class RattachementLigneResourceIntTest {
         u.setLastName("diallo");
         u.setEmail("dia@gmail.com");
 
-        RattachementLigne ligne  = new RattachementLigne();
+        RattachementLigne ligne = new RattachementLigne();
         ligne.setAccountB2C(u);
         ligne.setTypeNumero(TypeNumero.MOBILE);
         ligne.setNumero("771326617");
@@ -477,9 +487,12 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
 
         // Create the RattachementLigne
-            restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligneVM))
+            )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").value(ligne.getId().intValue()))
             .andExpect(jsonPath("$.numero").value(ligne.getNumero()));
@@ -487,8 +500,7 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void addRattachementLigneLoginNotFound() throws Exception {
-
+    void addRattachementLigneLoginNotFound() throws Exception {
         int databaseSizeBeforeCreate = rattachementLigneRepository.findAll().size();
 
         RattachementLigneVM ligneVM = new RattachementLigneVM();
@@ -497,20 +509,19 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
 
-
         // Create the RattachementLigne
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligneVM))
+            )
             .andExpect(status().isBadRequest());
-
-
     }
 
     @Test
     @Transactional
-    public void addRattachementLigneExistingLigne() throws Exception {
-
+    void addRattachementLigneExistingLigne() throws Exception {
         AccountB2C u = new AccountB2C();
         u.setNumero("775167605");
         u.setFirstName("leyla");
@@ -525,24 +536,24 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setLogin(u.getNumero());
         ligneVM.setNumero("771326617");
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
-         rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
-         rattachementLigne.setNumero("771326617");
-         rattachementLigne.setAccountB2C(u);
+        rattachementLigne.setTypeNumero(UPDATED_TYPE_NUMERO);
+        rattachementLigne.setNumero("771326617");
+        rattachementLigne.setAccountB2C(u);
         rattachementLigneRepository.save(rattachementLigne);
 
         // Create the RattachementLigne
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligneVM))
+            )
             .andExpect(status().isBadRequest());
-
-
     }
 
     @Test
     @Transactional
-    public void addRattachementLigneExistingUser() throws Exception {
-
+    void addRattachementLigneExistingUser() throws Exception {
         AccountB2C u = new AccountB2C();
         u.setNumero("775167605");
         u.setFirstName("leyla");
@@ -559,16 +570,16 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setTypeNumero(UPDATED_TYPE_NUMERO);
 
         // Create the RattachementLigne
-       /* restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
-            .andExpect(status().isBadRequest());*/
-
-
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligneVM))
+            )
+            .andExpect(status().isBadRequest());
     }
 
-    private CustomerOffer getCustomer(){
-
+    private CustomerOffer getCustomer() {
         CustomerOffer customerOffer = new CustomerOffer()
             .clientCode("841431")
             .createDate("2011-05-26T15:51:10")
@@ -583,8 +594,9 @@ public class RattachementLigneResourceIntTest {
 
     @Test
     @Transactional
-    public void addRattachementLigneFixe() throws Exception {
-      /*  RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
+    @Disabled("Test not implemented")
+    void addRattachementLigneFixe() throws Exception {
+        RattachementLigneFixeVM fixeVM = new RattachementLigneFixeVM();
 
         AccountB2C u = new AccountB2C();
         u.setNumero("775167605");
@@ -605,42 +617,47 @@ public class RattachementLigneResourceIntTest {
         ligneVM.setIdClient(customerOffer.getClientCode());
 
         // Create the RattachementLigne
-        restRattachementLigneMockMvc.perform(post("/api/rattachement-lignes/fixe-register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ligneVM)))
-            .andExpect(status().isBadRequest());
-*/
+        //TODO
+        restRattachementLigneMockMvc
+            .perform(
+                post("/api/rattachement-lignes/fixe-register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(ligneVM))
+            )
+            .andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void getAllRattachementLigneByMsisdn() throws Exception {
+    void getAllRattachementLigneByMsisdn() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
         addRattachement();
 
         // Get all the rattachementLigneList
-        restRattachementLigneMockMvc.perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "770167600")
-            .param("withCustomerOffer", "false"))
+        restRattachementLigneMockMvc
+            .perform(get("/api/rattachement-lignes/get-all-number/{msisdn}", "770167600").param("withCustomerOffer", "false"))
             .andExpect(status().isOk());
     }
 
     @Test
     @Transactional
-    public void rattachementLigneByCNI() throws Exception {
+    void rattachementLigneByCNI() throws Exception {
         // Initialize the database
         rattachementLigneRepository.saveAndFlush(rattachementLigne);
         RattachementLigneCNIVM rattachementLigneCNIVM = getRattachementLigneCNIVM();
 
         // Get all the rattachementLigneList
-        restRattachementLigneMockMvc.perform(post("/v2/rattachement-lignes/register/by-cni")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(rattachementLigneCNIVM)))
+        restRattachementLigneMockMvc
+            .perform(
+                post("/v2/rattachement-lignes/register/by-cni")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(rattachementLigneCNIVM))
+            )
             .andExpect(status().isNotFound());
     }
 
-
-    private RattachementLigneCNIVM getRattachementLigneCNIVM(){
+    private RattachementLigneCNIVM getRattachementLigneCNIVM() {
         RattachementLigneCNIVM ligneCNIVM = new RattachementLigneCNIVM();
         ligneCNIVM.setIdentificationId("CNI11111111111111");
         ligneCNIVM.setLogin("781210941");
@@ -648,5 +665,4 @@ public class RattachementLigneResourceIntTest {
         ligneCNIVM.setTypeNumero(TypeNumero.MOBILE);
         return ligneCNIVM;
     }
-
 }

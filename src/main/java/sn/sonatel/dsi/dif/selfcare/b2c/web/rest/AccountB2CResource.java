@@ -1,6 +1,8 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
 import io.micrometer.core.annotation.Timed;
+import java.util.List;
+import javax.validation.Valid;
 import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +30,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 import tech.jhipster.web.util.PaginationUtil;
 
-
-import javax.validation.Valid;
-import java.util.List;
-
-
 /**
  * REST controller for managing AccountB2C.
  */
@@ -44,7 +41,6 @@ public class AccountB2CResource {
 
     private static final String ENTITY_NAME = "selfcareB2CAccountManagementAccountB2C";
 
-
     private final AccountB2CService accountB2CService;
     private final AccountB2CSecurityService accountB2cSecurityService;
 
@@ -52,19 +48,21 @@ public class AccountB2CResource {
 
     private static final String IDNULL = "idnull";
 
-    public AccountB2CResource(AccountB2CService accountB2CService, SelfcareOTPService otpService, AccountB2CSecurityService accountB2cSecurityService) {
-
+    public AccountB2CResource(
+        AccountB2CService accountB2CService,
+        SelfcareOTPService otpService,
+        AccountB2CSecurityService accountB2cSecurityService
+    ) {
         this.accountB2CService = accountB2CService;
         this.otpService = otpService;
 
         this.accountB2cSecurityService = accountB2cSecurityService;
     }
 
-
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/account-b-2-cs")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2CDto)  {
+    public ResponseEntity<AccountB2C> createAccountB2C(@Valid @RequestBody AccountB2CDTO accountB2CDto) {
         log.debug("REST request to save AccountB2C : {}", accountB2CDto);
         if (accountB2CDto.getId() != null) {
             throw new BadRequestAlertException("A new accountB2C cannot already have an ID", ENTITY_NAME, "idexists");
@@ -74,13 +72,12 @@ public class AccountB2CResource {
         return ResponseEntity.ok(result);
     }
 
-
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/register")
     public ResponseEntity<AccountB2C> registerAccountB2C(@Valid @RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to save AccountB2C : {}", managedUserVM);
 
-        if (!otpService.checkRegisterValidity(managedUserVM.getLogin())){
+        if (!otpService.checkRegisterValidity(managedUserVM.getLogin())) {
             return ResponseEntity.badRequest().build();
         }
         if (managedUserVM.getId() != null) {
@@ -90,12 +87,14 @@ public class AccountB2CResource {
         AccountB2C result = accountB2CService.registerAccountB2C(managedUserVM);
 
         return ResponseEntity.ok(result);
-
     }
 
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/v2/register")
-    public ResponseEntity<AccountB2C> registerAccountB2CV2(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+    public ResponseEntity<AccountB2C> registerAccountB2CV2(
+        @RequestHeader("X-Selfcare-Uuid") String uuid,
+        @Valid @RequestBody ManagedUserVM managedUserVM
+    ) {
         log.debug("REST request to save AccountB2C version 2 : {}", managedUserVM);
 
         if (managedUserVM.getId() != null) {
@@ -109,7 +108,10 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.ADD)
     @PostMapping("/v3/register")
-    public ResponseEntity<AccessTokenResponse> registerAccountB2CV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody ManagedUserVM managedUserVM) {
+    public ResponseEntity<AccessTokenResponse> registerAccountB2CV3(
+        @RequestHeader("X-Selfcare-Uuid") String uuid,
+        @Valid @RequestBody ManagedUserVM managedUserVM
+    ) {
         log.debug("REST request to save AccountB2C version 3 : {}", managedUserVM);
 
         if (managedUserVM.getId() != null) {
@@ -124,9 +126,8 @@ public class AccountB2CResource {
     @PostMapping("/v1/login-otp")
     public ResponseEntity<AccessTokenResponse> loginOtp(@RequestParam("login") String login, @RequestParam("otp") String otp) {
         log.debug("REST request to login client {}", login);
-        return ResponseEntity.ok(accountB2cSecurityService.loginWithOtpCode(login,otp));
+        return ResponseEntity.ok(accountB2cSecurityService.loginWithOtpCode(login, otp));
     }
-
 
     @Auditable(description = Message.Account.UPDATE)
     @PutMapping("/account-b-2-cs")
@@ -138,25 +139,22 @@ public class AccountB2CResource {
         }
         AccountB2C result = accountB2CService.updateAccountB2C(accountB2C);
 
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, accountB2C.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, accountB2C.getId().toString())).body(result);
     }
-
 
     @Auditable(description = Message.Account.UPDATE_EXPLOITANT)
     @PutMapping("/account-b-2-cs/{msisdn}")
     @PreAuthorize("hasRole('ROLE_EXPLOITANT')")
-    public ResponseEntity updateAccountB2CBySI(@PathVariable("msisdn") String msisdn, @Valid @RequestBody AccountDTOExploitant accountB2C) {
-        log.debug("REST request to update AccountB2C by exploitant for msisdn {} : {}",msisdn, accountB2C);
+    public ResponseEntity<Void> updateAccountB2CBySI(
+        @PathVariable("msisdn") String msisdn,
+        @Valid @RequestBody AccountDTOExploitant accountB2C
+    ) {
+        log.debug("REST request to update AccountB2C by exploitant for msisdn {} : {}", msisdn, accountB2C);
 
-        this.accountB2CService.updateAccountForExploitation(msisdn,accountB2C);
+        this.accountB2CService.updateAccountForExploitation(msisdn, accountB2C);
 
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, msisdn))
-            .build();
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, msisdn)).build();
     }
-
 
     @Auditable(description = Message.Account.LIST)
     @GetMapping("/account-b-2-cs")
@@ -168,10 +166,12 @@ public class AccountB2CResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-
     @Auditable(description = Message.Account.CHECK_Numero)
     @PostMapping("/v2/check_number")
-    public ResponseEntity checkNumberV2(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+    public ResponseEntity<Void> checkNumberV2(
+        @RequestHeader("X-Selfcare-Uuid") String uuid,
+        @Valid @RequestBody CheckNumberRequest checkNumberRequest
+    ) {
         checkNumberRequest.setUuid(uuid);
         accountB2CService.checkNumberV2(checkNumberRequest);
         return ResponseEntity.ok().build();
@@ -179,7 +179,10 @@ public class AccountB2CResource {
 
     @Auditable(description = Message.Account.CHECK_Numero)
     @PostMapping("/v3/check_number")
-    public ResponseEntity<AbonneStatusDTO> checkNumberV3(@RequestHeader("X-Selfcare-Uuid") String uuid, @Valid @RequestBody CheckNumberRequest checkNumberRequest) {
+    public ResponseEntity<AbonneStatusDTO> checkNumberV3(
+        @RequestHeader("X-Selfcare-Uuid") String uuid,
+        @Valid @RequestBody CheckNumberRequest checkNumberRequest
+    ) {
         log.debug("REST request to check AccountB2C  existence: {}", checkNumberRequest);
         checkNumberRequest.setUuid(uuid);
         return ResponseEntity.ok(accountB2CService.checkNumberV3(checkNumberRequest));
@@ -193,7 +196,6 @@ public class AccountB2CResource {
         return accountB2CService.emailExistingVerify(email.getEmail());
     }
 
-
     @Auditable(description = Message.Account.GET_ACCOUNT)
     @GetMapping("/account/{login}")
     @Timed
@@ -201,9 +203,7 @@ public class AccountB2CResource {
     public AccountB2C getAccount(@PathVariable String login) {
         log.debug("REST request to get AccountB2C : {}", login);
         return accountB2CService.getAccount(login);
-
     }
-
 
     /**
      * GET / view-tutorial : change the status of user for view tutorial
@@ -213,12 +213,11 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.UPDATE_TUTORIAL_VIEW)
     @GetMapping("/view-tutorial/{msisdn}")
     @Timed
-    public ResponseEntity<String> tutorialView(@PathVariable String msisdn){
+    public ResponseEntity<String> tutorialView(@PathVariable String msisdn) {
         log.debug("REST request to update field turorialView AccountB2C : {}", msisdn);
         accountB2CService.updateTutorialView(msisdn);
         return ResponseEntity.ok().build();
     }
-
 
     /**
      * GET / view-tutorial : check the status of user for view tutorial
@@ -229,26 +228,26 @@ public class AccountB2CResource {
     @Auditable(description = Message.Account.TUTORIAL_VIEW_STATUS)
     @GetMapping("/view-tutorial/status/{msisdn}")
     @Timed
-    public ResponseEntity<Boolean> checkTutorialViewStatus(@PathVariable String msisdn){
+    public ResponseEntity<Boolean> checkTutorialViewStatus(@PathVariable String msisdn) {
         log.debug("REST request to check field turorialView  status for AccountB2C : {}", msisdn);
         AccountB2C account = accountB2CService.getAccount(msisdn);
         return ResponseEntity.ok(account.isTutoViewed());
     }
 
-
     @Auditable(description = Message.Account.CHECK_Numero)
     @GetMapping("/v2/check_number/{msisdn}")
-    public Boolean checkNumberV2(@PathVariable  String  msisdn) {
+    public Boolean checkNumberV2(@PathVariable String msisdn) {
         log.debug("REST request to check number : {}", msisdn);
         return accountB2CService.checkNumberV2(msisdn);
     }
 
     @Auditable(description = Message.Account.RESET_PASSWORD)
     @PutMapping(path = "/v1/lite/reset-password")
-    public ResponseEntity<AccessTokenResponse> resetPasswordLiteMode(@RequestHeader("X-Selfcare-Uuid") String uuid, @RequestBody ResetPasswordVM resetPasswordVM) {
+    public ResponseEntity<AccessTokenResponse> resetPasswordLiteMode(
+        @RequestHeader("X-Selfcare-Uuid") String uuid,
+        @RequestBody ResetPasswordVM resetPasswordVM
+    ) {
         log.debug("Request to reset password B2C client Lite Mode ");
         return ResponseEntity.ok(accountB2cSecurityService.resetPassword(uuid, resetPasswordVM));
     }
-
-
 }

@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -10,8 +11,6 @@ import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailSendService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.UrgenceDepannageService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
-
-import java.io.IOException;
 
 /**
  * @author BOUYA KANDE
@@ -33,28 +32,27 @@ public class UrgenceDepannageResource {
         this.mailSendService = mailSendService;
     }
 
-
     @Auditable(description = Message.Account.OUVERTURE_COMPTE)
-    @PostMapping(value = "/v1/mail/ouverture-compte",consumes = {MediaType.ALL_VALUE})
-    public ResponseEntity sendmail(@RequestPart String operationDTO, @RequestPart MultipartFile formulaire, @RequestPart MultipartFile rectoID, @RequestPart( required = false) MultipartFile verso, @RequestHeader(name = "X-CANAL", required = false) String canal) throws IOException {
+    @PostMapping(value = "/v1/mail/ouverture-compte", consumes = { MediaType.ALL_VALUE })
+    public ResponseEntity<Void> sendmail(
+        @RequestPart String operationDTO,
+        @RequestPart MultipartFile formulaire,
+        @RequestPart MultipartFile rectoID,
+        @RequestPart(required = false) MultipartFile verso,
+        @RequestHeader(name = "X-CANAL", required = false) String canal
+    ) throws IOException {
         log.info("REST request to register ouverture-compte");
 
-         urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso,canal);
+        urgenceDepannageService.ouvertureCompte(operationDTO, formulaire, rectoID, verso, canal);
 
-        return ResponseEntity.accepted ().build();
-
+        return ResponseEntity.accepted().build();
     }
-
 
     @Auditable(description = Message.Account.STATUS_MAIL)
     @GetMapping(value = "/v1/mail/ouverture-compte/status/{idRequest}")
-    public ResponseEntity getStatusMailSend(@PathVariable String idRequest){
-
+    public ResponseEntity<String> getStatusMailSend(@PathVariable String idRequest) {
         String statusMailSend = mailSendService.getStatusMailSend(idRequest);
 
         return ResponseEntity.ok().body(statusMailSend);
     }
-
-
-
 }

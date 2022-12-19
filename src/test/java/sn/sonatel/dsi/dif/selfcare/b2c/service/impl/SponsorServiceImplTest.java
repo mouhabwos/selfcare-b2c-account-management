@@ -1,5 +1,14 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorMessageErrors.MSISDN_ALREADY_USED;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -16,16 +25,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.MsisdnAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorException;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorMessageErrors.MSISDN_ALREADY_USED;
-
 /**
  *
  * @author sogui
@@ -33,7 +32,7 @@ import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.SponsorMessageErro
  */
 
 @RunWith(SpringRunner.class)
-public class SponsorServiceImplTest {
+class SponsorServiceImplTest {
 
     @Mock
     private SponsorRepository sponsorRepository;
@@ -46,7 +45,6 @@ public class SponsorServiceImplTest {
     static List<Sponsor> listSponsors;
 
     static {
-
         listSponsors = new ArrayList<>();
 
         Sponsor sponsor = new Sponsor();
@@ -65,59 +63,56 @@ public class SponsorServiceImplTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
         sponsorService = new SponsorServiceImpl(sponsorRepository);
     }
 
-    @Test()
-    public void testAlreadyPresentSaveNumber() throws SponsorException {
-
+    @Test
+    void testAlreadyPresentSaveNumber() throws SponsorException {
         Sponsor sponsor = new Sponsor();
         sponsor.setId(1L);
         sponsor.setMsisdn(TEST_MSISDN);
         Mockito.when(sponsorRepository.getSponsorByMsisdn(sponsor.getMsisdn())).thenReturn(Optional.of(listSponsors.get(0)));
 
-        SponsorException thrown = org.junit.jupiter.api.Assertions.assertThrows(SponsorException.class, () -> {
-            sponsorService.save(sponsor);
-        }, "SponsorException was expected");
+        SponsorException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            SponsorException.class,
+            () -> {
+                sponsorService.save(sponsor);
+            },
+            "SponsorException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals(MSISDN_ALREADY_USED, thrown.getMessage());
-
-
-
-
-
     }
 
-    @Test()
-    public void testUpdateNumberPresent(){
-
+    @Test
+    void testUpdateNumberPresent() {
         Sponsor sponsor = new Sponsor();
         sponsor.setId(2L);
         sponsor.setMsisdn(TEST_MSISDN);
         Mockito.when(sponsorRepository.getSponsorByMsisdn(sponsor.getMsisdn())).thenReturn(Optional.of(listSponsors.get(0)));
         Mockito.when(sponsorRepository.findById(sponsor.getId())).thenReturn(Optional.of(listSponsors.get(1)));
 
-
-        MsisdnAlreadyUsedException thrown = org.junit.jupiter.api.Assertions.assertThrows(MsisdnAlreadyUsedException.class, () -> {
-            sponsorService.update(sponsor);
-        }, "MsisdnAlreadyUsedException was expected");
+        MsisdnAlreadyUsedException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            MsisdnAlreadyUsedException.class,
+            () -> {
+                sponsorService.update(sponsor);
+            },
+            "MsisdnAlreadyUsedException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est deja  utilisé", thrown.getTitle());
-
     }
 
     @Test
-    public void testUploadDuplicate() throws Exception{
-
-            Path path = Paths.get("duplicate.xls");
-            String name = "file";
-            String originalFileName = "duplicate.xls";
-            String contentType = "text/plain";
-            byte[] content =  Files.readAllBytes(path);
-            MockMultipartFile file = new MockMultipartFile(name,
-                originalFileName, contentType, content);
+    void testUploadDuplicate() throws Exception {
+        Path path = Paths.get("duplicate.xls");
+        String name = "file";
+        String originalFileName = "duplicate.xls";
+        String contentType = "text/plain";
+        byte[] content = Files.readAllBytes(path);
+        MockMultipartFile file = new MockMultipartFile(name, originalFileName, contentType, content);
 
         //Mockito.when(sponsorRepository.findAll()).thenReturn(listSponsors);
         Mockito.when(sponsorRepository.getSponsorByMsisdn(TEST_MSISDN)).thenReturn(Optional.of(listSponsors.get(0)));
@@ -125,9 +120,7 @@ public class SponsorServiceImplTest {
         UploadResponse response = sponsorService.upload(file);
 
         assertThat(response.getNbreSponsorAdded()).isEqualTo(3);
-        assertThat(response.getErrorList().size()).isEqualTo(2);
+        assertThat(response.getErrorList()).hasSize(2);
         assertThat(response.getErrorList().get(0).getMsisdn()).isEqualTo(TEST_MSISDN);
-
     }
-
 }

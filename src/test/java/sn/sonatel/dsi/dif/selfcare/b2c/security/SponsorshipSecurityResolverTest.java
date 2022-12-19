@@ -1,20 +1,20 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.security;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsor;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponsorRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-public class SponsorshipSecurityResolverTest {
+class SponsorshipSecurityResolverTest {
 
     @Mock
     private SponsorRepository mockSponsorRepository;
@@ -28,7 +28,7 @@ public class SponsorshipSecurityResolverTest {
     }
 
     @Test
-    public void testIsSponsor() {
+    void testIsSponsor() {
         // Setup
         final String msisdn = "770000000";
         List<Sponsor> list = new ArrayList<>();
@@ -36,21 +36,17 @@ public class SponsorshipSecurityResolverTest {
         sponsor.setMsisdn(msisdn);
         sponsor.setMatricule("jdk");
         list.add(sponsor);
-        Sponsor sponsor1 = new Sponsor();
-        sponsor1.setMsisdn("778000000");
-        sponsor1.setMatricule("jdk");
         when(mockSponsorRepository.findAll()).thenReturn(list);
 
         // Run the test
         final boolean result = sponsorshipSecurityResolverUnderTest.isSponsor(msisdn);
 
         // Verify the results
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
-
     @Test
-    public void testIsSponsorEmptyList() {
+    void testIsSponsorEmptyList() {
         // Setup
         final String msisdn = "770000000";
         List<Sponsor> list = new ArrayList<>();
@@ -61,6 +57,6 @@ public class SponsorshipSecurityResolverTest {
         final boolean result = sponsorshipSecurityResolverUnderTest.isSponsor(msisdn);
 
         // Verify the results
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 }

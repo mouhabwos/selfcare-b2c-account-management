@@ -11,7 +11,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.AccountB2CServiceImpl;
 
 @Service
 public class ApiManagementAccessTokenRetrieveService {
@@ -21,39 +20,46 @@ public class ApiManagementAccessTokenRetrieveService {
 
     private final Logger log = LoggerFactory.getLogger(ApiManagementAccessTokenRetrieveService.class);
 
-
-    public ApiManagementAccessTokenRetrieveService(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate, ApplicationProperties applicationProperties) {
+    public ApiManagementAccessTokenRetrieveService(
+        @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate,
+        ApplicationProperties applicationProperties
+    ) {
         this.restTemplate = restTemplate;
         this.applicationProperties = applicationProperties;
     }
 
-    String retrieveToken(){
-
-        ApplicationProperties.ApiManagement.Oauth2 oauth2 =this.applicationProperties.getApiManagement().getOauth2();
+    String retrieveToken() {
+        ApplicationProperties.ApiManagement.Oauth2 oauth2 = this.applicationProperties.getApiManagement().getOauth2();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        log.info("Get api token from Tiers {} {} {} {}",oauth2.getClientTokenUri(),oauth2.getGrantType(),oauth2.getClientId(),oauth2.getClientSecret());
+        log.info(
+            "Get api token from Tiers {} {} {} {}",
+            oauth2.getClientTokenUri(),
+            oauth2.getGrantType(),
+            oauth2.getClientId(),
+            oauth2.getClientSecret()
+        );
 
-        ResponseEntity<AuthenticationToken> response = restTemplate.exchange(oauth2.getClientTokenUri(),
+        ResponseEntity<AuthenticationToken> response = restTemplate.exchange(
+            oauth2.getClientTokenUri(),
             HttpMethod.GET,
             entity,
             AuthenticationToken.class,
             oauth2.getGrantType(),
             oauth2.getClientId(),
             oauth2.getClientSecret()
-
         );
-        return response.getBody().accessToken;
+        AuthenticationToken responseBody = response.getBody();
+        return responseBody != null ? responseBody.accessToken : null;
     }
-
 
     @Getter
     @Setter
     @NoArgsConstructor
-   private static class AuthenticationToken {
+    private static class AuthenticationToken {
 
         @JsonProperty("access_token")
         private String accessToken;
@@ -78,6 +84,5 @@ public class ApiManagementAccessTokenRetrieveService {
 
         @JsonProperty("scope")
         private String scope;
-
     }
 }
