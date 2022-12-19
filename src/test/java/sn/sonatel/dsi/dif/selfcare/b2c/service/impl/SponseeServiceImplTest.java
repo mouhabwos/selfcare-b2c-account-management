@@ -1,5 +1,13 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
@@ -25,6 +31,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.BoosterManagerService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SMSNotificationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
@@ -33,31 +41,24 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ForbiddenException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class SponseeServiceImplTest {
+class SponseeServiceImplTest {
 
     @Mock
     private SponseeRepository mockSponseeRepository;
+
     @Mock
     private SponseeMapper mockSponseeMapper;
+
     @Autowired
     private ApplicationProperties mockApplicationProperties;
+
     @Mock
     private ServicesOTP mockServicesOTP;
 
-    @Mock private   SMSNotificationService mockSmsNotificationService;
-
+    @Mock
+    private SMSNotificationService mockSmsNotificationService;
 
     private SponseeServiceImpl sponseeServiceImplUnderTest;
 
@@ -66,7 +67,6 @@ public class SponseeServiceImplTest {
 
     @Autowired
     private RattachementLigneRepository rattachementLigneRepository;
-
 
     @Autowired
     private SponseeRepository sponseeRepository;
@@ -83,18 +83,35 @@ public class SponseeServiceImplTest {
     @Mock
     private CustomerOfferService customerOfferService;
 
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                mockSponseeRepository,
+                mockSponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
     }
 
-    public void forMockService() {
-
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+    void forMockService() {
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                mockSponseeRepository,
+                mockSponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
     }
-    private AccountB2C getAccount(){
+
+    private AccountB2C getAccount() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setId(785L);
         accountB2C.setNumero("770000005");
@@ -104,8 +121,7 @@ public class SponseeServiceImplTest {
         return accountB2C;
     }
 
-    private Sponsee getSponsee(){
-
+    private Sponsee getSponsee() {
         Sponsee sponsee = new Sponsee();
         sponsee.setMsisdn("770000006");
         sponsee.setAccountB2C(getAccount());
@@ -113,15 +129,14 @@ public class SponseeServiceImplTest {
         return sponsee;
     }
 
-    private SponseeDTO getSponseeDTO(){
-
+    private SponseeDTO getSponseeDTO() {
         SponseeDTO sponsee = new SponseeDTO();
         sponsee.setMsisdn("770000006");
 
         return sponsee;
     }
 
-    private Optional<Sponsor> getSponsor(){
+    private Optional<Sponsor> getSponsor() {
         Sponsor sponsor = new Sponsor();
         sponsor.setMsisdn("77000 00 00");
         sponsor.setMatricule("mat");
@@ -130,7 +145,7 @@ public class SponseeServiceImplTest {
         return Optional.of(sponsor);
     }
 
-    private List<BoosterPromo> getListPromoBooster(){
+    private List<BoosterPromo> getListPromoBooster() {
         BoosterPromo boosterPromo = new BoosterPromo();
         boosterPromo.setId(12L);
         BoosterPromo.Gift gift = new BoosterPromo.Gift();
@@ -155,17 +170,15 @@ public class SponseeServiceImplTest {
         gift.setType(BoosterPromo.Gift.GiftType.COUPON);
         gift.setPartner(partner);
 
-
         boosterPromo.setGift(gift);
         boosterPromo.setId(90L);
 
         boosterPromos.add(boosterPromo);
         return boosterPromos;
-
     }
 
     @Test
-    public void testSendSmsToSponsee() {
+    void testSendSmsToSponsee() {
         // Setup
         final String msisdnSource = "770000005";
         final String msisdnDest = "770000006";
@@ -185,17 +198,18 @@ public class SponseeServiceImplTest {
 
         when(mockSponseeRepository.findOneByMsisdn(anyString())).thenReturn(optionalSponsee);
 
-      //  when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
+        //  when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
         List<BoosterPromo> listPromoBooster = getListPromoBooster();
         when(boosterManagerService.getActiveWelcomeBoosterValue(any(), anyString())).thenReturn(listPromoBooster);
 
         // Run the test
         sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
 
+        verify(mockSmsNotificationService).sendSMSPP(anyString(), anyString(), anyString());
     }
 
-    @Test()
-    public void testSendSmsToSponseeAlreadySponsored() {
+    @Test
+    void testSendSmsToSponseeAlreadySponsored() {
         // Setup
         final String msisdnSource = "770000008";
         final String msisdnDest = "770000006";
@@ -205,32 +219,41 @@ public class SponseeServiceImplTest {
 
         // Run the test
 
-
-        ForbiddenException thrown = org.junit.jupiter.api.Assertions.assertThrows(ForbiddenException.class, () -> {
-            sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
-        }, "ForbiddenException was expected");
+        ForbiddenException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            ForbiddenException.class,
+            () -> {
+                sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+            },
+            "ForbiddenException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Vous n'êtes pas autorisé à accéder à cette ressource", thrown.getTitle());
     }
 
-    @Test()
-    public void testSendSmsToSponseeWithNumberNoSponsored() {
+    @Test
+    void testSendSmsToSponseeWithNumberNoSponsored() {
         // Setup
         final String msisdnSource = "770000008";
         final String msisdnDest = "770000006";
 
         // Run the test
 
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
+            },
+            "BadRequestAlertException was expected"
+        );
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
-        }, "BadRequestAlertException was expected");
-
-        org.junit.jupiter.api.Assertions.assertEquals("Ce numero a deja ete selectionne. Choisis un autre numero et essaie encore, bul xaadi, day baax !", thrown.getTitle());
+        org.junit.jupiter.api.Assertions.assertEquals(
+            "Ce numero a deja ete selectionne. Choisis un autre numero et essaie encore, bul xaadi, day baax !",
+            thrown.getTitle()
+        );
     }
 
-    @Test()
-    public void testSendSmsToSponseeWithSmsNotSend() {
+    @Test
+    void testSendSmsToSponseeWithSmsNotSend() {
         // Setup
         final String msisdnSource = "770000005";
         final String msisdnDest = "770000006";
@@ -253,14 +276,23 @@ public class SponseeServiceImplTest {
 
         // Run the test
         sponseeServiceImplUnderTest.sendSmsToSponsee(msisdnSource, msisdnDest);
-
+        verify(mockSmsNotificationService).sendSMSPP(anyString(), anyString(), anyString());
     }
 
     @Test
-    public void testFindAllSponseeByMsisdn() {
+    void testFindAllSponseeByMsisdn() {
         mockSponseeRepository = mock(SponseeRepository.class);
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository,rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                mockSponseeRepository,
+                mockSponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
         Sponsee sponsee = new Sponsee();
         sponsee.setId(78L);
         sponsee.setMsisdn("778520000");
@@ -276,12 +308,11 @@ public class SponseeServiceImplTest {
         when(accountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
 
         List<Sponsee> allSponseeByMsisdn = sponseeServiceImplUnderTest.findAllSponseeBySponsor(b2C.getNumero());
-        Assert.assertEquals(1,allSponseeByMsisdn.size());
-
+        Assert.assertEquals(1, allSponseeByMsisdn.size());
     }
 
-     @Test()
-    public void testRegisterSponseeWithSponsorNoAccount(){
+    @Test
+    void testRegisterSponseeWithSponsorNoAccount() {
         AccountB2C accountB2C = getAccount();
         accountB2C.setId(null);
         accountB2CRepository.save(accountB2C);
@@ -289,53 +320,69 @@ public class SponseeServiceImplTest {
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdnSponsor("770100000");
 
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                sponseeServiceImplUnderTest.register(sponseeDTO);
+            },
+            "BadRequestAlertException was expected"
+        );
 
-
-         BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-             sponseeServiceImplUnderTest.register(sponseeDTO);
-         }, "BadRequestAlertException was expected");
-
-         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'a pas de compte", thrown.getTitle());
-
+        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'a pas de compte", thrown.getTitle());
     }
 
-    @Test()
-    public void testRegisterSponseeWithNumAlreadyUsed(){
-
+    @Test
+    void testRegisterSponseeWithNumAlreadyUsed() {
         accountB2CRepository = mock(AccountB2CRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(mockSponseeRepository, mockSponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                mockSponseeRepository,
+                mockSponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
-
-       AccountB2C accountB2C = getAccount();
+        AccountB2C accountB2C = getAccount();
         String msisdnSponsor = getSponsor().get().getMsisdn();
         accountB2C.setNumero(msisdnSponsor);
-        Optional<AccountB2C>  b2COptional = Optional.of(accountB2C);
+        Optional<AccountB2C> b2COptional = Optional.of(accountB2C);
         when(accountB2CRepository.findOneByNumero(anyString())).thenReturn(b2COptional);
-
 
         SponseeDTO sponseeDTO = getSponseeDTO();
         sponseeDTO.setMsisdn("");
         sponseeDTO.setMsisdn("770000006");
         sponseeDTO.setMsisdnSponsor(accountB2C.getNumero());
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            sponseeServiceImplUnderTest.register(sponseeDTO);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                sponseeServiceImplUnderTest.register(sponseeDTO);
+            },
+            "BadRequestAlertException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro a deja un compte", thrown.getTitle());
-
     }
 
-    @Test()
-    public void testRegisterSponseeAlreadyRattachedException(){
-
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
-
+    @Test
+    void testRegisterSponseeAlreadyRattachedException() {
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                sponseeRepository,
+                sponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
         Sponsor sponsor = sponsorOptional.get();
-
 
         // rattachement ligne
         RattachementLigne rattachementLigne = new RattachementLigne();
@@ -349,21 +396,29 @@ public class SponseeServiceImplTest {
         sponseeDTO.setMsisdnSponsor(ligne.getNumero());
         sponseeDTO.setMsisdn(ligne.getNumero());
 
-
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            sponseeServiceImplUnderTest.register(sponseeDTO);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                sponseeServiceImplUnderTest.register(sponseeDTO);
+            },
+            "BadRequestAlertException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro n'a pas de compte", thrown.getTitle());
-
     }
 
-
-
     @Test
-    public void testUpdateSponsee(){
-
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+    void testUpdateSponsee() {
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                sponseeRepository,
+                sponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
         //save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -386,18 +441,24 @@ public class SponseeServiceImplTest {
 
         SponseeDTO update = sponseeServiceImplUnderTest.update(sponseeDTO);
 
-        Assert.assertEquals(sponseeDTO.getMsisdnSponsor(),update.getMsisdnSponsor());
-        Assert.assertEquals(sponseeDTO.getFirstName(),update.getFirstName());
-        Assert.assertEquals(sponseeDTO.getLastName(),update.getLastName());
-        Assert.assertEquals(sponseeDTO.getCreatedDate(),update.getCreatedDate());
-
-
+        Assert.assertEquals(sponseeDTO.getMsisdnSponsor(), update.getMsisdnSponsor());
+        Assert.assertEquals(sponseeDTO.getFirstName(), update.getFirstName());
+        Assert.assertEquals(sponseeDTO.getLastName(), update.getLastName());
+        Assert.assertEquals(sponseeDTO.getCreatedDate(), update.getCreatedDate());
     }
 
     @Test
-    public void testGetSponseeById(){
-
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+    void testGetSponseeById() {
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                sponseeRepository,
+                sponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -420,19 +481,25 @@ public class SponseeServiceImplTest {
 
         Optional<SponseeDTO> one = sponseeServiceImplUnderTest.findOne(saveSponsee.getId());
 
-        Assert.assertEquals(sponsee.getAccountB2C().getNumero(),one.get().getMsisdnSponsor());
-        Assert.assertEquals(sponsee.getFirstName(),one.get().getFirstName());
-        Assert.assertEquals(sponsee.getLastName(),one.get().getLastName());
-        Assert.assertEquals(sponsee.getCreatedDate(),one.get().getCreatedDate());
-
+        Assert.assertEquals(sponsee.getAccountB2C().getNumero(), one.get().getMsisdnSponsor());
+        Assert.assertEquals(sponsee.getFirstName(), one.get().getFirstName());
+        Assert.assertEquals(sponsee.getLastName(), one.get().getLastName());
+        Assert.assertEquals(sponsee.getCreatedDate(), one.get().getCreatedDate());
     }
 
-    @Test()
-    public void testRegisterSponseeWithExceptionAlreadyRattached(){
-
+    @Test
+    void testRegisterSponseeWithExceptionAlreadyRattached() {
         rattachementLigneRepository = mock(RattachementLigneRepository.class);
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
-
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                sponseeRepository,
+                sponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
         // -------- save sponsor
         Optional<Sponsor> sponsorOptional = getSponsor();
@@ -450,22 +517,31 @@ public class SponseeServiceImplTest {
         sponseeDTO.setMsisdnSponsor(rattachementLigne.getNumero());
         sponseeDTO.setMsisdn(rattachementLigne.getNumero());
 
-
-
-        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
-            sponseeServiceImplUnderTest.register(sponseeDTO);
-        }, "LigneAlreadyRattachedException was expected");
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            LigneAlreadyRattachedException.class,
+            () -> {
+                sponseeServiceImplUnderTest.register(sponseeDTO);
+            },
+            "LigneAlreadyRattachedException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
-
     }
 
     @Test
-    public void testSMSSponseeWithEmptyPromoBooster(){
-
+    void testSMSSponseeWithEmptyPromoBooster() {
         boosterClient = mock(BoosterClient.class);
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                sponseeRepository,
+                sponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
         sponseeRepository.deleteAll();
         List<BoosterPromo> statuses = new ArrayList<>();
@@ -496,7 +572,6 @@ public class SponseeServiceImplTest {
         accountB2C.setNumero(sponsor.getMsisdn());
         AccountB2C save = accountB2CRepository.save(getAccount());
 
-
         // save sponsee
         SponseeDTO sponseeDTO = getSponseeDTO();
         Sponsee sponsee = new Sponsee();
@@ -508,25 +583,31 @@ public class SponseeServiceImplTest {
         sponseeDTO.setLastName("hello");
         sponseeDTO.setFirstName("hello firstname");
 
-        sponseeServiceImplUnderTest.sendSmsToSponsee(sponseeDTO.getMsisdnSponsor(),sponseeDTO.getMsisdn());
-
-
-
+        sponseeServiceImplUnderTest.sendSmsToSponsee(sponseeDTO.getMsisdnSponsor(), sponseeDTO.getMsisdn());
+        verify(mockSmsNotificationService).sendSMSPP(anyString(), anyString(), anyString());
     }
 
     @Test
-    public void testSMSSponseeWithNNullPromoBooster(){
-
+    void testSMSSponseeWithNNullPromoBooster() {
         boosterClient = mock(BoosterClient.class);
 
-        sponseeServiceImplUnderTest = new SponseeServiceImpl(sponseeRepository, sponseeMapper, mockApplicationProperties, mockSmsNotificationService, accountB2CRepository, rattachementLigneRepository, boosterManagerService);
+        sponseeServiceImplUnderTest =
+            new SponseeServiceImpl(
+                sponseeRepository,
+                sponseeMapper,
+                mockApplicationProperties,
+                mockSmsNotificationService,
+                accountB2CRepository,
+                rattachementLigneRepository,
+                boosterManagerService
+            );
 
         sponseeRepository.deleteAll();
 
         ResponseEntity<List<BoosterPromo>> listResponseEntity = ResponseEntity.ok().body(null);
 
-        when(boosterClient.getActiveWelcomeBoosterValue(anyString(),anyString(),anyString())).thenReturn(listResponseEntity);
-       // when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
+        when(boosterClient.getActiveWelcomeBoosterValue(anyString(), anyString(), anyString())).thenReturn(listResponseEntity);
+        // when(mockSmsNotificationService.sendSMSPP(anyString(),anyString(),anyString())).thenReturn(true);
 
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("0012707812");
@@ -549,7 +630,6 @@ public class SponseeServiceImplTest {
         accountB2C.setNumero(sponsor.getMsisdn());
         AccountB2C save = accountB2CRepository.save(getAccount());
 
-
         // save sponsee
         SponseeDTO sponseeDTO = getSponseeDTO();
         Sponsee sponsee = new Sponsee();
@@ -561,12 +641,7 @@ public class SponseeServiceImplTest {
         sponseeDTO.setLastName("hello");
         sponseeDTO.setFirstName("hello firstname");
 
-        sponseeServiceImplUnderTest.sendSmsToSponsee(sponseeDTO.getMsisdnSponsor(),sponseeDTO.getMsisdn());
-
-
-
+        sponseeServiceImplUnderTest.sendSmsToSponsee(sponseeDTO.getMsisdnSponsor(), sponseeDTO.getMsisdn());
+        verify(mockSmsNotificationService).sendSMSPP(anyString(), anyString(), anyString());
     }
-
-
-
 }

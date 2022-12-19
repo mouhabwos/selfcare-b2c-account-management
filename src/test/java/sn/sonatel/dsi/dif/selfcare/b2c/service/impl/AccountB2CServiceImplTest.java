@@ -1,5 +1,14 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,26 +39,18 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ServiceUnavailableExcepti
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.CheckNumberRequest;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class AccountB2CServiceImplTest {
+class AccountB2CServiceImplTest {
 
     private static final TypeNumero TYPE_NUMERO_MOBILE = TypeNumero.MOBILE;
 
     @Autowired
     private AccountB2CRepository mockAccountB2CRepository;
+
     @Autowired
     private RattachementLigneRepository mockRattachementLigneRepository;
+
     @Mock
     private KeycloakServices keycloakServices;
 
@@ -74,12 +75,20 @@ public class AccountB2CServiceImplTest {
     private AbonneService abonneServiceMock;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
-        accountB2CServiceImplUnderTest = new AccountB2CServiceImpl(mockAccountB2CRepository, mockRattachementLigneRepository, keycloakServices,sponseeService,asyncService, validationHmacService);
+        accountB2CServiceImplUnderTest =
+            new AccountB2CServiceImpl(
+                mockAccountB2CRepository,
+                mockRattachementLigneRepository,
+                keycloakServices,
+                sponseeService,
+                asyncService,
+                validationHmacService
+            );
     }
 
-    private Optional<Sponsee> getSponsee(){
+    private Optional<Sponsee> getSponsee() {
         Sponsee sponsee = new Sponsee();
         sponsee.setId(45L);
         sponsee.setMsisdn("775266364");
@@ -88,9 +97,9 @@ public class AccountB2CServiceImplTest {
     }
 
     @Test
-    public void testRegisterAccountB2CSucceess() {
+    void testRegisterAccountB2CSucceess() {
         // Setup
-       ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin("775266364");
         managedUserVM.setLastName("lastname");
@@ -101,16 +110,16 @@ public class AccountB2CServiceImplTest {
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
 
         // Run the test
-         AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+        AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
 
         // Verify the results
         assertNotNull(result);
     }
 
     @Test
-    public void testRegisterAccountB2CEmailNotNull() {
+    void testRegisterAccountB2CEmailNotNull() {
         // Setup
-        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin("775266363");
         managedUserVM.setEmail("testmail@gmail.com");
@@ -123,7 +132,7 @@ public class AccountB2CServiceImplTest {
 
         when(abonneServiceMock.getInformationAbonne(anyString())).thenReturn(abonneDTO);
 
-        ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
+        ResponseEntity<String> response = ResponseEntity.status(HttpStatus.CREATED).build();
 
         when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
 
@@ -132,90 +141,93 @@ public class AccountB2CServiceImplTest {
 
         // Verify the results
         assertNotNull(result);
-        assertTrue(abonneDTO.getPrenomAbonne().equals(""));
+        assertEquals("", abonneDTO.getPrenomAbonne());
         verify(asyncService).updateFirstnameAndLasname(any());
     }
 
     @Test
-    public void testRegisterAccountB2CFailed() {
+    void testRegisterAccountB2CFailed() {
         // Setup
-        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin("775266378");
         managedUserVM.setEmail("testmail@gmail.com");
         managedUserVM.setLastName("lastname");
         managedUserVM.setFirstName("firstname");
-        ResponseEntity response = ResponseEntity.status(HttpStatus.CREATED).build();
+        ResponseEntity<String> response = ResponseEntity.status(HttpStatus.CREATED).build();
 
         when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
         // Run the test
         accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
-
+        verify(asyncService).applyWelcomeBooster(any());
     }
 
-
     @Test
-    public void testRegisterAccountB2CNumberAlreadyUsed() {
+    void testRegisterAccountB2CNumberAlreadyUsed() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
         accountB2C.setNumero("778525255");
-         mockAccountB2CRepository.save(accountB2C);
+        mockAccountB2CRepository.save(accountB2C);
 
-        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin("778525255");
         managedUserVM.setLastName("lastname");
         managedUserVM.setFirstName("firstname");
 
-
-
-        LoginAlreadyUsedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LoginAlreadyUsedException.class, () -> {
-            accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
-            }, "LoginAlreadyUsedException was expected");
+        LoginAlreadyUsedException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            LoginAlreadyUsedException.class,
+            () -> {
+                accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+            },
+            "LoginAlreadyUsedException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro a deja un compte", thrown.getTitle());
-
     }
 
-    @Test()
-    public void testRegisterAccountB2CNumberAlreadyRattached() {
-
+    @Test
+    void testRegisterAccountB2CNumberAlreadyRattached() {
         mockRattachementLigneRepository.deleteAll();
         mockAccountB2CRepository.deleteAll();
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
         accountB2C.setNumero("778525255");
-         accountB2C = mockAccountB2CRepository.save(accountB2C);
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
 
-        RattachementLigne  ligne = new RattachementLigne();
+        RattachementLigne ligne = new RattachementLigne();
         ligne.setNumero("774232024");
         ligne.setAccountB2C(accountB2C);
         ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
         mockRattachementLigneRepository.save(ligne);
 
-        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setPassword("Passer12");
         managedUserVM.setLogin(ligne.getNumero());
         managedUserVM.setLastName("lastname");
         managedUserVM.setFirstName("firstname");
 
-        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
-            accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
-        }, "ServiceUnavailableException was expected");
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            LigneAlreadyRattachedException.class,
+            () -> {
+                accountB2CServiceImplUnderTest.registerAccountB2C(managedUserVM);
+            },
+            "ServiceUnavailableException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
     }
 
     @Test
-    public void testUpdateAccountB2C() {
+    void testUpdateAccountB2C() {
         // Setup
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
         accountB2C.setNumero("778525252");
-      accountB2C =  mockAccountB2CRepository.save(accountB2C);
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
         AccountB2CDTO accountB2CDTO = new AccountB2CDTO();
         accountB2CDTO.setId(accountB2C.getId());
         accountB2CDTO.setLastName("lastname");
@@ -224,16 +236,16 @@ public class AccountB2CServiceImplTest {
         final AccountB2C expectedResult = null;
 
         // Run the test
-       AccountB2C result = accountB2CServiceImplUnderTest.updateAccountB2C(accountB2CDTO);
+        AccountB2C result = accountB2CServiceImplUnderTest.updateAccountB2C(accountB2CDTO);
 
-       String change = "change";
+        String change = "change";
 
         // Verify the results
         assertEquals(result.getFirstName(), change);
     }
 
     @Test
-    public void testEmailExistingVerify() {
+    void testEmailExistingVerify() {
         // Setup
         final String email = "email";
 
@@ -241,11 +253,12 @@ public class AccountB2CServiceImplTest {
         final boolean result = accountB2CServiceImplUnderTest.emailExistingVerify(email);
 
         // Verify the results
-
+        Assertions.assertThat(result).isFalse();
     }
-/*
+
+    /*
     @Test
-    public void testCheckNumber(){
+    void testCheckNumber(){
 
         String msisdn = "779455656";
         when(mockCaptchaService.verifyCaptcha(anyString())).thenReturn(true);
@@ -257,7 +270,7 @@ public class AccountB2CServiceImplTest {
     }
 
     @Test(expected = LoginAlreadyUsedException.class)
-    public void testCheckNumberUsingAccount(){
+    void testCheckNumberUsingAccount(){
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
@@ -274,7 +287,7 @@ public class AccountB2CServiceImplTest {
     }
 
     @Test(expected = LigneAlreadyRattachedException.class)
-    public void testCheckNumberUsingRattachement(){
+    void testCheckNumberUsingRattachement(){
 
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
@@ -297,24 +310,27 @@ public class AccountB2CServiceImplTest {
     }
 */
     @Test
-    public void testCheckNumberV2(){
+    void testCheckNumberV2() {
         CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
         checkNumberRequest.setUuid("789");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
         checkNumberRequest.setMsisdn("771326617");
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            accountB2CServiceImplUnderTest.checkNumberV2(checkNumberRequest);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                accountB2CServiceImplUnderTest.checkNumberV2(checkNumberRequest);
+            },
+            "BadRequestAlertException was expected"
+        );
 
         assertEquals("Hmac non valide", thrown.getTitle());
     }
 
     @Test
-    public void testRegisterAccountB2CV2Success() {
-
+    void testRegisterAccountB2CV2Success() {
         // Setup
-        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setUuid("789");
         managedUserVM.setHmac("ce55ff824f9e0e518f0bb121d1a164b40d13a0f1bb6ff2364e1aee0a599c4305");
         managedUserVM.setPassword("Passer12");
@@ -330,7 +346,7 @@ public class AccountB2CServiceImplTest {
         when(abonneServiceMock.getInformationAbonne(anyString())).thenReturn(abonneDTO);
         when(keycloakServices.registerUserInKeycloack(managedUserVM)).thenReturn(response);
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
-        when(validationHmacService.validateHmac(anyString(),anyString(),anyString())).thenReturn(true);
+        when(validationHmacService.validateHmac(anyString(), anyString(), anyString())).thenReturn(true);
 
         // Run the test
         AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
@@ -341,9 +357,9 @@ public class AccountB2CServiceImplTest {
     }
 
     @Test
-    public void testRegisterAccountB2CV2HmacNonValid() {
+    void testRegisterAccountB2CV2HmacNonValid() {
         // Setup
-        ManagedUserVM managedUserVM =  new ManagedUserVM();
+        ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setUuid("789885");
         managedUserVM.setHmac("ce55ff824f9e0e518f0bb121d1a164b40d13a0f1bb6ff2364e1aee0a599c4305");
         managedUserVM.setPassword("Passer12");
@@ -356,49 +372,49 @@ public class AccountB2CServiceImplTest {
         when(sponseeRepository.findOneByMsisdn(anyString())).thenReturn(getSponsee());
 
         // Run the test
-         BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                AccountB2C result = accountB2CServiceImplUnderTest.registerAccountB2CV2(managedUserVM);
+            },
+            "BadRequestAlertException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Hmac non valide", thrown.getTitle());
-
-
         // Verify the results
-       // assertNotNull(result);
+        // assertNotNull(result);
     }
-    @Test
-    public void testCheckNumberV2Account(){
 
+    @Test
+    void testCheckNumberV2Account() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setLastName("lastname");
         accountB2C.setFirstName("firstname");
         accountB2C.setNumero("778525265");
-        accountB2C =  mockAccountB2CRepository.save(accountB2C);
+        accountB2C = mockAccountB2CRepository.save(accountB2C);
 
-        boolean checkNumberV2 = accountB2CServiceImplUnderTest.checkNumberV2(accountB2C.getNumero()) ;
+        boolean checkNumberV2 = accountB2CServiceImplUnderTest.checkNumberV2(accountB2C.getNumero());
         assertTrue(checkNumberV2);
-
     }
 
-    @Test()
-    public void testCheckNumberV3AccountShoudThrowException(){
-
-        CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
+    @Test
+    void testCheckNumberV3AccountShoudThrowException() {
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
         checkNumberRequest.setMsisdn("775266364");
         checkNumberRequest.setUuid("UUID");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
 
-
-        NoSuchElementException thrown = org.junit.jupiter.api.Assertions.assertThrows(NoSuchElementException.class, () -> {
-            accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
-        }, "BadRequestAlertException was expected");
-
-
+        NoSuchElementException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            NoSuchElementException.class,
+            () -> {
+                accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest);
+            },
+            "BadRequestAlertException was expected"
+        );
     }
 
     @Test
-    public void testCheckNumberV3AccountShoudReturnAbonneStatusDTO(){
-
+    void testCheckNumberV3AccountShoudReturnAbonneStatusDTO() {
         mockRattachementLigneRepository.deleteAll();
         mockAccountB2CRepository.deleteAll();
         AccountB2C accountB2C = new AccountB2C();
@@ -406,21 +422,20 @@ public class AccountB2CServiceImplTest {
         accountB2C.setFirstName("firstname");
         accountB2C.setNumero("778525265");
         accountB2C.setAccountStatus(AccountStatus.FULL);
-         mockAccountB2CRepository.save(accountB2C);
+        mockAccountB2CRepository.save(accountB2C);
 
-        CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
         checkNumberRequest.setMsisdn("778525265");
         checkNumberRequest.setUuid("UUID");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
 
-        AbonneStatusDTO abonneStatusDTO = accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
+        AbonneStatusDTO abonneStatusDTO = accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest);
 
         Assertions.assertThat(abonneStatusDTO.getAccountStatus()).isEqualTo(AccountStatus.FULL);
     }
 
-    @Test()
-    public void testCheckNumberV3AccountShoudThrowExceptionWhenLingneRattache(){
-
+    @Test
+    void testCheckNumberV3AccountShoudThrowExceptionWhenLingneRattache() {
         mockRattachementLigneRepository.deleteAll();
         mockAccountB2CRepository.deleteAll();
         AccountB2C accountB2C = new AccountB2C();
@@ -428,28 +443,28 @@ public class AccountB2CServiceImplTest {
         accountB2C.setFirstName("firstname");
         accountB2C.setNumero("778525265");
         accountB2C.setAccountStatus(AccountStatus.FULL);
-         mockAccountB2CRepository.save(accountB2C);
+        mockAccountB2CRepository.save(accountB2C);
 
-        RattachementLigne  ligne = new RattachementLigne();
+        RattachementLigne ligne = new RattachementLigne();
         ligne.setNumero("774232024");
         ligne.setAccountB2C(accountB2C);
         ligne.setTypeNumero(TYPE_NUMERO_MOBILE);
         mockRattachementLigneRepository.save(ligne);
 
-        CheckNumberRequest checkNumberRequest= new CheckNumberRequest();
+        CheckNumberRequest checkNumberRequest = new CheckNumberRequest();
         checkNumberRequest.setMsisdn("774232024");
         checkNumberRequest.setUuid("UUID");
         checkNumberRequest.setHmac("5f05b0c52dd671a35c0e6cba04ed8ed0d76a35f675b5a9b30c2791aa1cfb8d75");
 
-
         // Run the test
-        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(LigneAlreadyRattachedException.class, () -> {
-            accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest) ;
-        }, "LigneAlreadyRattachedException was expected");
+        LigneAlreadyRattachedException thrown = org.junit.jupiter.api.Assertions.assertThrows(
+            LigneAlreadyRattachedException.class,
+            () -> {
+                accountB2CServiceImplUnderTest.checkNumberV3(checkNumberRequest);
+            },
+            "LigneAlreadyRattachedException was expected"
+        );
 
         org.junit.jupiter.api.Assertions.assertEquals("Ce numéro est rattaché à un compte", thrown.getTitle());
-
     }
-
-
 }

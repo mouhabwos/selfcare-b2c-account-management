@@ -1,5 +1,12 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,17 +26,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.NotificationInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.NotificationInformationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class NotificationInformationResourceTest {
+class NotificationInformationResourceTest {
 
     @Autowired
     private NotificationInformationService mockNotificationInformationService;
@@ -51,44 +50,45 @@ public class NotificationInformationResourceTest {
     private NotificationInformationRepository notificationInformationRepository;
 
     @BeforeEach
-    public void setUp() {
-
+    void setUp() {
         notificationInformationResourceUnderTest = new NotificationInformationResource(mockNotificationInformationService);
-        this.restMockMvc = MockMvcBuilders.standaloneSetup(notificationInformationResourceUnderTest)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .build();
+        this.restMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(notificationInformationResourceUnderTest)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .build();
     }
 
     @Test
-    public void testGetNotificationInformationByCodeFormule() throws Exception {
-
+    void testGetNotificationInformationByCodeFormule() throws Exception {
         // Setup
-        restMockMvc.perform(get("/api/notification-information/{msisdn}", "40401"))
+        restMockMvc
+            .perform(get("/api/notification-information/{msisdn}", "40401"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string("[]"));
-
     }
 
     @Test
-    public void testUpdateCodeFormuleByMsisdnNoExistingAccount() throws Exception {
-
+    void testUpdateCodeFormuleByMsisdnNoExistingAccount() throws Exception {
         NotificationInformationDTO informationDTO = new NotificationInformationDTO();
         informationDTO.setCodeFormule("40401");
         informationDTO.setMsisdn("msisdn");
 
         // Setup
-       /* restMockMvc.perform(put("/api/notification-information")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
-            .andExpect(status().isBadRequest());*/
+        restMockMvc
+            .perform(
+                put("/api/notification-information")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(informationDTO))
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void testUpdateCodeFormuleByMsisdn() throws Exception {
-
+    void testUpdateCodeFormuleByMsisdn() throws Exception {
         String codeUpdate = "7777";
 
         //Save account
@@ -113,18 +113,17 @@ public class NotificationInformationResourceTest {
         informationDTO.setMsisdn(accountB2C.getNumero());
 
         // Setup
-        /*restMockMvc.perform(put("/api/notification-information")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
-            .andExpect(status().isOk());*/
-
+        restMockMvc
+            .perform(
+                put("/api/notification-information")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(informationDTO))
+            )
+            .andExpect(status().isOk());
     }
 
-
-
     @Test
-    public void testGetFirebaseIdByMsisdn() throws Exception {
-
+    void testGetFirebaseIdByMsisdn() throws Exception {
         List<String> stringList = new ArrayList<>();
         stringList.add("770010101");
         stringList.add("770000001");
@@ -132,14 +131,16 @@ public class NotificationInformationResourceTest {
         stringList.add("770000003");
 
         // Setup
-        restMockMvc.perform(get("/api/notification-information?listMsisdn=770010101,770000001,770000002,770000003")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8))
+        restMockMvc
+            .perform(
+                get("/api/notification-information?listMsisdn=770010101,770000001,770000002,770000003")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            )
             .andExpect(status().isOk());
     }
 
     @Test
-    public void testRegisterInformationPresent() throws Exception {
-
+    void testRegisterInformationPresent() throws Exception {
         String codeUpdate = "7777";
 
         //Save account
@@ -163,36 +164,34 @@ public class NotificationInformationResourceTest {
         informationDTO.setMsisdn(accountB2C.getNumero());
 
         // Setup
-        restMockMvc.perform(post("/api/notification-information/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+        restMockMvc
+            .perform(
+                post("/api/notification-information/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(informationDTO))
+            )
             .andExpect(status().isBadRequest());
-
     }
 
-
-
     @Test
-    public void testRegisterNoPresent() throws Exception {
-
-
-
+    void testRegisterNoPresent() throws Exception {
         NotificationInformationDTO informationDTO = new NotificationInformationDTO();
         informationDTO.setCodeFormule("9696");
         informationDTO.setFirebaseId("888888");
         informationDTO.setMsisdn("770003636");
 
         // Setup
-        restMockMvc.perform(post("/api/notification-information/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+        restMockMvc
+            .perform(
+                post("/api/notification-information/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(informationDTO))
+            )
             .andExpect(status().isBadRequest());
-
     }
 
     @Test
-    public void testRegisterCreated() throws Exception {
-
+    void testRegisterCreated() throws Exception {
         //Save account
 
         AccountB2C accountB2C = new AccountB2C();
@@ -202,24 +201,23 @@ public class NotificationInformationResourceTest {
         accountB2C.setEmail("test785015@gmail.com");
         accountB2C = accountB2CRepository.save(accountB2C);
 
-
         NotificationInformationDTO informationDTO = new NotificationInformationDTO();
         informationDTO.setCodeFormule("0012");
         informationDTO.setFirebaseId("888896");
         informationDTO.setMsisdn(accountB2C.getNumero());
 
         // Setup
-        restMockMvc.perform(post("/api/notification-information/register")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
+        restMockMvc
+            .perform(
+                post("/api/notification-information/register")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(informationDTO))
+            )
             .andExpect(status().isCreated());
-
     }
 
-
     @Test
-    public void testGetFirebaseIdByListCodeFormule() throws Exception {
-
+    void testGetFirebaseIdByListCodeFormule() throws Exception {
         //Save account
 
         AccountB2C accountB2C = new AccountB2C();
@@ -240,18 +238,16 @@ public class NotificationInformationResourceTest {
         stringList.add("8080");
 
         // Setup
-        restMockMvc.perform(get("/api/notification-information/by-codesFormule?codeFormule=9131,8080")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8))
+        restMockMvc
+            .perform(get("/api/notification-information/by-codesFormule?codeFormule=9131,8080").contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(accountB2C.getNumero())))
             .andExpect(jsonPath("$.[*].codeFormule").value(hasItem(information.getCodeFormule())));
     }
 
-
     @Test
-    public void testUpdateCodeFormuleByMsisdnNoExistingInfo() throws Exception {
-
+    void testUpdateCodeFormuleByMsisdnNoExistingInfo() throws Exception {
         String codeUpdate = "7779";
 
         //Save account
@@ -269,10 +265,12 @@ public class NotificationInformationResourceTest {
         informationDTO.setMsisdn(accountB2C.getNumero());
 
         // Setup
-      /*  restMockMvc.perform(put("/api/notification-information")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(informationDTO)))
-            .andExpect(status().isOk());*/
-
+        restMockMvc
+            .perform(
+                put("/api/notification-information")
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(informationDTO))
+            )
+            .andExpect(status().isOk());
     }
 }
