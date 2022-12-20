@@ -186,10 +186,10 @@ application:
     cancelled-title: Annulée
     acknowledged-request-title: Validée
     held-request-title:  Réalisable
-    in-progress-title: En Cours
-    held-incident-title: Signalée
-    pending-title: ABSENTAVIS
-    acknowledged-incident-title: Orienté
+    in-progress-title: Dérangement affecté
+    held-incident-title: Dérangement enregistré
+    pending-title: Dérangement non traité
+    acknowledged-incident-title: Dérangement affecté
   request-description-map:
     rejected-request-description : Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client
     cancelled-description: Votre demande a été annulée pour non faisabilité technique ou sur demande du client
