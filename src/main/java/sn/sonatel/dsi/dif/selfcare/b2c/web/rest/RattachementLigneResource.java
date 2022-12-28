@@ -15,6 +15,8 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.RattachementLigneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RattachementLigneDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LigneAlreadyRattachedException;
+import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.LoginAlreadyUsedException;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.HeaderUtil;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.*;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -179,6 +182,9 @@ public class RattachementLigneResource {
     public ResponseEntity<RattachementLigne> rattachementLigneByCni(
         @Valid @RequestBody RattachementLigneCNIVM rattachementLigneCNIVM) throws URISyntaxException {
         log.debug ( "REST request to add RattachementLigne by cni : {}", rattachementLigneCNIVM );
+        if (Objects.equals(rattachementLigneCNIVM.getNumero(),rattachementLigneCNIVM.getLogin())){
+            throw new LoginAlreadyUsedException("Ce numéro est votre compte principal");
+        }
         RattachementLigne rattachement = rattachementLigneService.rattachementLigneByCni(rattachementLigneCNIVM);
         return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
             .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )
@@ -192,6 +198,9 @@ public class RattachementLigneResource {
     public ResponseEntity<RattachementLigne> rattachementLigneByOtp(
         @Valid @RequestBody RattachementLigneCNIVM rattachementLigneCNIVM) throws URISyntaxException {
         log.debug ( "REST request to add RattachementLigne by otp : {}", rattachementLigneCNIVM );
+        if (Objects.equals(rattachementLigneCNIVM.getNumero(),rattachementLigneCNIVM.getLogin())){
+            throw new LoginAlreadyUsedException("Ce numéro est votre compte principal");
+        }
         RattachementLigne rattachement = rattachementLigneService.rattachementLigneByOtp(rattachementLigneCNIVM);
         return ResponseEntity.created ( new URI ( ENDPOINT + rattachement.getId () ) )
             .headers ( HeaderUtil.createEntityCreationAlert ( ENTITY_NAME, rattachement.getId ().toString () ) )

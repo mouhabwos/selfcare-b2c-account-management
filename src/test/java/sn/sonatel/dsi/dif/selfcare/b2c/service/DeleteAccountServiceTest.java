@@ -24,7 +24,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.domain.RattachementLigne;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.AccountStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.TypeNumero;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.repository.NotificationInformationRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.RattachementLigneRepository;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.keycloak.KeycloakServices;
 
 import static org.mockito.Mockito.*;
 
@@ -44,6 +46,12 @@ class DeleteAccountServiceTest {
 
     @MockBean
     private RattachementLigneRepository rattachementLigneRepository;
+
+    @MockBean
+    private KeycloakServices keycloakServices;
+
+    @MockBean
+    private NotificationInformationRepository notificationInformationRepository;
 
     /**
      * Method under test: {@link DeleteAccountService#purgeNumberInfos(String)}
