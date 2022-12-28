@@ -6,7 +6,6 @@ teamOrangeEtMoiJenkinsfile(
         recEnv : "dsidacdifdsorangeetmoi-rec",
   		skipTests : true,
   		skipSonar : true,
-        deployBranch: "SELFB2C-4619",
   		deployOnPreprod : true,
   		runTnr :true,
         sonarUrl : "http://sonar.v8.tools.orange-sonatel.com"
