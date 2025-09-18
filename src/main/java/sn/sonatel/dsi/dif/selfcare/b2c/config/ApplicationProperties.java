@@ -34,6 +34,10 @@ public class ApplicationProperties {
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
+    private String serviceClientMail;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
     private String selfcareB2cFileManager;
 
 
@@ -306,6 +310,10 @@ public class ApplicationProperties {
 
         @Setter(AccessLevel.PUBLIC)
         @Getter(AccessLevel.PUBLIC)
+        private AccountDeletion accountDeletion;
+
+        @Setter(AccessLevel.PUBLIC)
+        @Getter(AccessLevel.PUBLIC)
         private Server server;
 
         public static class Server{
@@ -350,6 +358,14 @@ public class ApplicationProperties {
             @Setter(AccessLevel.PUBLIC)
             @Getter(AccessLevel.PUBLIC)
             private String smsPromo;
+
+        }
+
+        public static class AccountDeletion{
+
+            @Setter(AccessLevel.PUBLIC)
+            @Getter(AccessLevel.PUBLIC)
+            private String smsContent;
 
         }
     }
@@ -403,3 +419,4 @@ public class ApplicationProperties {
     }
 
 }
+

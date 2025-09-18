@@ -14,17 +14,26 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import sn.sonatel.dsi.dif.selfcare.b2c.config.ApplicationProperties;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.TroubleSignalingDTO;
 import tech.jhipster.config.JHipsterProperties;
 
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Locale;
 
 @Service
 public class MailService {
 
-
     private final Logger log = LoggerFactory.getLogger(MailService.class);
+    
+    public static final String MAIL_DERANGEMENT_OPENING = "opening";
+
+    public static final String MAIL_DERANGEMENT_TEMPLATE = "mail/derangementMail";
+
+    public static final String MAIL_DERANGEMENT_TITLE = "email.derangement.title";
+
+    private static final String TROUBLE_SIGNALING = "troubleSignaling";
 
     private static final String USER = "user";
 
@@ -115,6 +124,35 @@ public class MailService {
         sendEmail(user.getEmail(), subject, content, false, true);
     }
 
+    @Async
+    public void sendDerangementMailFromTemplate(TroubleSignalingDTO troubleSignalingDTO) {
+        Locale locale = Locale.forLanguageTag("fr");
+        String mailOpening = getMailOpening(troubleSignalingDTO.getType());
+        Context context = new Context(locale);
+        context.setVariable(TROUBLE_SIGNALING, troubleSignalingDTO);
+        context.setVariable(MAIL_DERANGEMENT_OPENING, mailOpening);
+        String content = templateEngine.process(MAIL_DERANGEMENT_TEMPLATE, context);
+        String[] list = getMailTitleElement(troubleSignalingDTO);
+        String subject = messageSource.getMessage(MAIL_DERANGEMENT_TITLE, list, locale);
+        sendEmail(applicationProperties.getServiceClientMail(), subject, content, false, true);
+    }
+
+    private String[] getMailTitleElement(TroubleSignalingDTO troubleSignalingDTO) {
+        String[] list = new String[3];
+        list[0] = troubleSignalingDTO.getType().name();
+        list[1] = troubleSignalingDTO.getMotif();
+        list[2] = troubleSignalingDTO.getNumFix();
+        return list;
+    }
+
+    private String getMailOpening(TroubleSignalingDTO.Type type) {
+        if (type.equals(TroubleSignalingDTO.Type.RECLAMATION)) {
+            return "Une nouvelle réclamation a été signalée par un client.";
+        } else {
+            return "Un nouveau dérangement a été signalé par un client.";
+        }
+    }
+
     /**
      * Mail sent to the user to activate his account  when he create his account himself
      * @param user
@@ -134,7 +172,8 @@ public class MailService {
 
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         context.setVariable(EMAIL_ADMIN, applicationProperties.getEmailAdmin());
-        String random = RandomStringUtils.randomAlphabetic(20);
+        SecureRandom secureRandom = new SecureRandom();
+        String random = String.valueOf(secureRandom.nextFloat());
         context.setVariable(RANDOM, random);
         String content = templateEngine.process(templateName, context);
 
@@ -158,7 +197,8 @@ public class MailService {
         Locale locale = Locale
             .forLanguageTag("fr");
         Context context = new Context(locale);
-        String random = RandomStringUtils.randomAlphabetic(20);
+        SecureRandom secureRandom = new SecureRandom();
+        String random = String.valueOf(secureRandom.nextFloat());
         context.setVariable(RANDOM, random);
         String content = templateEngine.process("mail/exportUsersEmail", context);
         sendEmailWithFile(recipient, "[Orange et Moi ] Exportation des Utilisateurs", content, true, true, nameFile);
@@ -194,3 +234,4 @@ public class MailService {
         return new FileSystemResource(tempFile);
     }
 }
+

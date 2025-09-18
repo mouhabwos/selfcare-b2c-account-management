@@ -1,6 +1,14 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.io.File;
+import java.io.FileInputStream;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,24 +31,43 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.ValidationHmacService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OperationDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class UrgenceDepannageServiceImplTest {
+class UrgenceDepannageServiceImplTest {
 
-    private static final String stringOperationDTO = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
-    private static final String stringOperationDTOErrorCode = "{\n" + "\t\"operationCode\":\"operation-test\",\n" + "\"numero\":\"771326617\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
+    private static final String stringOperationDTO =
+        "{\n" +
+        "\t\"operationCode\":\"operation-100\",\n" +
+        "\"numero\":\"771326617\",\n" +
+        "\"lastName\":\"kande\",\n" +
+        "\"firstName\":\"bouya\",\n" +
+        "\"email\":\"bouyakandee@gmail.com\"\n" +
+        "}";
+    private static final String stringOperationDTOErrorCode =
+        "{\n" +
+        "\t\"operationCode\":\"operation-test\",\n" +
+        "\"numero\":\"771326617\",\n" +
+        "\"lastName\":\"kande\",\n" +
+        "\"firstName\":\"bouya\",\n" +
+        "\"email\":\"bouyakandee@gmail.com\"\n" +
+        "}";
     private static final String CANAL = "";
-    private static final String stringOperationDTONoValideMsisdn = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"000046563\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
-    private static final String stringOperationDTOWithFixeNumber = "{\n" + "\t\"operationCode\":\"operation-100\",\n" + "\"numero\":\"339962218\",\n" + "\"lastName\":\"kande\",\n" + "\"firstName\":\"bouya\",\n" + "\"email\":\"bouyakandee@gmail.com\"\n" + "}";
+    private static final String stringOperationDTONoValideMsisdn =
+        "{\n" +
+        "\t\"operationCode\":\"operation-100\",\n" +
+        "\"numero\":\"000046563\",\n" +
+        "\"lastName\":\"kande\",\n" +
+        "\"firstName\":\"bouya\",\n" +
+        "\"email\":\"bouyakandee@gmail.com\"\n" +
+        "}";
+    private static final String stringOperationDTOWithFixeNumber =
+        "{\n" +
+        "\t\"operationCode\":\"operation-100\",\n" +
+        "\"numero\":\"339962218\",\n" +
+        "\"lastName\":\"kande\",\n" +
+        "\"firstName\":\"bouya\",\n" +
+        "\"email\":\"bouyakandee@gmail.com\"\n" +
+        "}";
 
     private UrgenceDepannageService urgenceDepannageService;
 
@@ -57,14 +84,13 @@ public class UrgenceDepannageServiceImplTest {
     private SFTPClientService ftpService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
         urgenceDepannageService = new UrgenceDepannageServiceImpl(applicationProperties, ftpService, mailService);
     }
 
     private OperationDTO operationDTO() throws Exception {
         OperationDTO operationDTO = new OperationDTO();
-
 
         String filePdf = "fichierTest.pdf";
         String image = "imageTest.png";
@@ -78,9 +104,18 @@ public class UrgenceDepannageServiceImplTest {
         FileInputStream inputVerso = new FileInputStream(filePdfM);
 
         MultipartFile multipartFilePDF = new MockMultipartFile("file", filePdfM.getName(), "text/plain", IOUtils.toByteArray(inputPDF));
-        MultipartFile multipartFileRecto = new MockMultipartFile("file", fileImageRectoM.getName(), "text/plain", IOUtils.toByteArray(inputRecto));
-        MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
-
+        MultipartFile multipartFileRecto = new MockMultipartFile(
+            "file",
+            fileImageRectoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputRecto)
+        );
+        MultipartFile multipartFileVerso = new MockMultipartFile(
+            "file",
+            fileImageVersoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputVerso)
+        );
 
         operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
@@ -97,7 +132,6 @@ public class UrgenceDepannageServiceImplTest {
     private OperationDTO operationDTOWithCaracter() throws Exception {
         OperationDTO operationDTO = new OperationDTO();
 
-
         String filePdf = "fichierTest.pdf";
         String image = "---éééé ]]@..@@.png";
 
@@ -110,9 +144,18 @@ public class UrgenceDepannageServiceImplTest {
         FileInputStream inputVerso = new FileInputStream(filePdfM);
 
         MultipartFile multipartFilePDF = new MockMultipartFile("file", filePdfM.getName(), "text/plain", IOUtils.toByteArray(inputPDF));
-        MultipartFile multipartFileRecto = new MockMultipartFile("file", fileImageRectoM.getName(), "text/plain", IOUtils.toByteArray(inputRecto));
-        MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
-
+        MultipartFile multipartFileRecto = new MockMultipartFile(
+            "file",
+            fileImageRectoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputRecto)
+        );
+        MultipartFile multipartFileVerso = new MockMultipartFile(
+            "file",
+            fileImageVersoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputVerso)
+        );
 
         operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
@@ -129,7 +172,6 @@ public class UrgenceDepannageServiceImplTest {
     private OperationDTO operationDTOErrorRecto() throws Exception {
         OperationDTO operationDTO = new OperationDTO();
 
-
         String filePdf = "fichierTest.pdf";
         String image = "imageTest.pngff";
 
@@ -142,9 +184,18 @@ public class UrgenceDepannageServiceImplTest {
         FileInputStream inputVerso = new FileInputStream(filePdfM);
 
         MultipartFile multipartFilePDF = new MockMultipartFile("file", filePdfM.getName(), "text/plain", IOUtils.toByteArray(inputPDF));
-        MultipartFile multipartFileRecto = new MockMultipartFile("file", fileImageRectoM.getName(), "text/plain", IOUtils.toByteArray(inputRecto));
-        MultipartFile multipartFileVerso = new MockMultipartFile("file", fileImageVersoM.getName(), "text/plain", IOUtils.toByteArray(inputVerso));
-
+        MultipartFile multipartFileRecto = new MockMultipartFile(
+            "file",
+            fileImageRectoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputRecto)
+        );
+        MultipartFile multipartFileVerso = new MockMultipartFile(
+            "file",
+            fileImageVersoM.getName(),
+            "text/plain",
+            IOUtils.toByteArray(inputVerso)
+        );
 
         operationDTO.setFirstName("firstName");
         operationDTO.setOperationCode("operation-200");
@@ -158,7 +209,7 @@ public class UrgenceDepannageServiceImplTest {
         return operationDTO;
     }
 
-    private Mail getMailEntity(){
+    private Mail getMailEntity() {
         Mail mail = new Mail();
 
         mail.setIdRequest("mail_465465");
@@ -175,12 +226,8 @@ public class UrgenceDepannageServiceImplTest {
         return mail;
     }
 
-
-
-
     @Test
-    public void testOuvertureCompte() throws Exception {
-
+    void testOuvertureCompte() throws Exception {
         // Setup
 
         Mail mail = getMailEntity();
@@ -188,13 +235,18 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
-        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso(),CANAL);
-       assertTrue(!ouvertureCompte.equals(""));
+        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(
+            stringOperationDTO,
+            operationDTO().getFormulaire(),
+            operationDTO().getRectoID(),
+            operationDTO().getVerso(),
+            CANAL
+        );
+        assertNotEquals("", ouvertureCompte);
     }
 
     @Test
-    public void testOuvertureCompteWithCaract() throws Exception {
-
+    void testOuvertureCompteWithCaract() throws Exception {
         // Setup
 
         Mail mail = getMailEntity();
@@ -202,14 +254,19 @@ public class UrgenceDepannageServiceImplTest {
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
-        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOWithCaracter().getFormulaire(), operationDTOWithCaracter().getRectoID(), operationDTOWithCaracter().getVerso(),CANAL);
-        assertTrue(!ouvertureCompte.equals(""));
+        String ouvertureCompte = urgenceDepannageService.ouvertureCompte(
+            stringOperationDTO,
+            operationDTOWithCaracter().getFormulaire(),
+            operationDTOWithCaracter().getRectoID(),
+            operationDTOWithCaracter().getVerso(),
+            CANAL
+        );
+        assertNotEquals("", ouvertureCompte);
     }
 
     //
-    @Test()
-    public void testOuvertureCompteThrowsBadRequestAlertException() throws Exception {
-
+    @Test
+    void testOuvertureCompteThrowsBadRequestAlertException() throws Exception {
         Mail mail = getMailEntity();
 
         when(mailSendRepository.save(any())).thenReturn(mail);
@@ -218,62 +275,83 @@ public class UrgenceDepannageServiceImplTest {
         OperationDTO dto = operationDTO();
         dto.setOperationCode("operation-test");
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, dto.getFormulaire(), dto.getRectoID(), dto.getVerso(),CANAL);
-        }, "BadRequestAlertException was expected");
+        MultipartFile formulaire = dto.getFormulaire();
+        MultipartFile rectoID = dto.getRectoID();
+        MultipartFile verso = dto.getVerso();
+        BadRequestAlertException badRequestAlertException = Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> urgenceDepannageService.ouvertureCompte(stringOperationDTOErrorCode, formulaire, rectoID, verso, CANAL)
+        );
 
-        org.junit.jupiter.api.Assertions.assertEquals("Le code de l operation est introuvable", thrown.getTitle());
+        Assertions.assertEquals("Le code de l operation est introuvable", badRequestAlertException.getTitle());
     }
 
-    @Test()
-    public void testOuvertureCompteNotValideImage() throws Exception {
-
+    @Test
+    void testOuvertureCompteNotValideImage() throws Exception {
         Mail mail = getMailEntity();
 
         when(mailSendRepository.save(any())).thenReturn(mail);
 
+        MultipartFile formulaire = operationDTOErrorRecto().getFormulaire();
+        MultipartFile rectoID = operationDTOErrorRecto().getRectoID();
+        MultipartFile verso = operationDTOErrorRecto().getVerso();
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            urgenceDepannageService.ouvertureCompte(stringOperationDTO, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                urgenceDepannageService.ouvertureCompte(stringOperationDTO, formulaire, rectoID, verso, CANAL);
+            },
+            "BadRequestAlertException was expected"
+        );
 
-        org.junit.jupiter.api.Assertions.assertEquals("Le ficher doit etre soit un document (.pdf, .doc, .docx) ou une image (.png, .jpg, .jpeg)", thrown.getTitle());
+        Assertions.assertEquals(
+            "Le ficher doit etre soit un document (.pdf, .doc, .docx) ou une image (.png, .jpg, .jpeg)",
+            thrown.getTitle()
+        );
     }
 
-    @Test()
-    public void testOuvertureCompteNotValideMsisdn() throws Exception {
-
+    @Test
+    void testOuvertureCompteNotValideMsisdn() throws Exception {
         Mail mail = getMailEntity();
 
         when(mailSendRepository.save(any())).thenReturn(mail);
+        MultipartFile formulaire = operationDTOErrorRecto().getFormulaire();
+        MultipartFile rectoID = operationDTOErrorRecto().getRectoID();
+        MultipartFile verso = operationDTOErrorRecto().getVerso();
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            urgenceDepannageService.ouvertureCompte(stringOperationDTONoValideMsisdn, operationDTOErrorRecto().getFormulaire(), operationDTOErrorRecto().getRectoID(), operationDTOErrorRecto().getVerso(),CANAL);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                urgenceDepannageService.ouvertureCompte(stringOperationDTONoValideMsisdn, formulaire, rectoID, verso, CANAL);
+            },
+            "BadRequestAlertException was expected"
+        );
 
-        org.junit.jupiter.api.Assertions.assertEquals("Ce numéro doit être un numéro orange valide", thrown.getTitle());
+        Assertions.assertEquals("Ce numéro doit être un numéro orange valide", thrown.getTitle());
     }
 
-    @Test()
-    public void testOuvertureCompteWithFixeNumber() throws Exception {
-
+    @Test
+    void testOuvertureCompteWithFixeNumber() throws Exception {
         // Setup
 
         Mail mail = getMailEntity();
-
 
         when(mailSendRepository.save(any())).thenReturn(mail);
 
         // Run the test
 
+        MultipartFile formulaire = operationDTO().getFormulaire();
+        MultipartFile rectoID = operationDTO().getRectoID();
+        MultipartFile verso = operationDTO().getVerso();
 
-        BadRequestAlertException thrown = org.junit.jupiter.api.Assertions.assertThrows(BadRequestAlertException.class, () -> {
-            String ouvertureCompte = urgenceDepannageService.ouvertureCompte(stringOperationDTOWithFixeNumber, operationDTO().getFormulaire(), operationDTO().getRectoID(), operationDTO().getVerso(),CANAL);
-            assertEquals( mail.getIdRequest(),ouvertureCompte);
-        }, "BadRequestAlertException was expected");
+        BadRequestAlertException thrown = Assertions.assertThrows(
+            BadRequestAlertException.class,
+            () -> {
+                urgenceDepannageService.ouvertureCompte(stringOperationDTOWithFixeNumber, formulaire, rectoID, verso, CANAL);
+            },
+            "BadRequestAlertException was expected"
+        );
 
-        org.junit.jupiter.api.Assertions.assertEquals("Le numero doit etre un numéro mobile orange valide", thrown.getTitle());
-
+        Assertions.assertEquals("Le numero doit etre un numéro mobile orange valide", thrown.getTitle());
     }
-
 }

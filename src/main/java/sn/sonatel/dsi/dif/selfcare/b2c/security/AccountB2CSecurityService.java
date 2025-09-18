@@ -31,8 +31,12 @@ public class AccountB2CSecurityService {
     private final KeycloakServices keycloakServices;
     private final SelfcareOTPService selfcareOTPService;
 
-    public AccountB2CSecurityService(AccountB2CService accountB2CService, ValidationHmacService validationHmacService,
-            KeycloakServices keycloakServices, SelfcareOTPService selfcareOTPService) {
+    public AccountB2CSecurityService(
+        AccountB2CService accountB2CService,
+        ValidationHmacService validationHmacService,
+        KeycloakServices keycloakServices,
+        SelfcareOTPService selfcareOTPService
+    ) {
         this.accountB2CService = accountB2CService;
         this.validationHmacService = validationHmacService;
         this.keycloakServices = keycloakServices;
@@ -56,8 +60,11 @@ public class AccountB2CSecurityService {
         log.debug("Login account {} with otp {}", login, password);
 
         if (!selfcareOTPService.checkOPT(login, password).isValid()) {
-            throw new BadRequestAlertException("Le code otp n'est pas valide, veuillez essayer à nouveau ",
-                    "RattachementLigne", "notValidCode");
+            throw new BadRequestAlertException(
+                "Le code otp n'est pas valide, veuillez essayer à nouveau ",
+                "RattachementLigne",
+                "notValidCode"
+            );
         }
 
         if (accountB2CService.isLinkedAccount(login)) {
@@ -70,7 +77,6 @@ public class AccountB2CSecurityService {
         }
 
         return registerUserWithGeneratedPasswprd(login);
-
     }
 
     private AccessTokenResponse registerUserWithGeneratedPasswprd(String login) {
@@ -98,10 +104,9 @@ public class AccountB2CSecurityService {
         var resetPasswordVM = new ResetPasswordVM();
         resetPasswordVM.setNewPassword(RandomStringUtils.random(PASSWORD_MAX_LENGTH, true, true));
         resetPasswordVM.setLogin(FormatNumberPhoneUtil.extractNumberWithoutSuffix(login));
-        ResponseEntity responseEntity = keycloakServices.resetPassword(resetPasswordVM);
+        ResponseEntity<Void> responseEntity = keycloakServices.resetPassword(resetPasswordVM);
 
-        if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)
-                || responseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
+        if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED) || responseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
             UserCredentialDTO userCredential = new UserCredentialDTO();
             userCredential.setUsername(resetPasswordVM.getLogin());
             userCredential.setPassword(resetPasswordVM.getNewPassword());
@@ -114,5 +119,4 @@ public class AccountB2CSecurityService {
 
         throw new HttpClientErrorException(responseEntity.getStatusCode());
     }
-
 }

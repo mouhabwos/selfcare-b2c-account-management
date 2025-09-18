@@ -1,5 +1,23 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.sameInstant;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,44 +37,25 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 import sn.sonatel.dsi.dif.selfcare.b2c.IntegrationTest;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.AccountB2C;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.Sponsee;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.SponseeService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.SponseeDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.WelcomeBoosterStatus;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.impl.SponseeServiceImpl;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.mapper.SponseeMapper;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
-import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.sameInstant;
-
 /**
  * Integration tests for the {@link SponseeResource} REST controller.
  */
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class SponseeResourceIntTest {
+class SponseeResourceIntTest {
 
     private static final String DEFAULT_MSISDN = "AAAAAAAAAA";
     private static final String UPDATED_MSISDN = "BBBBBBBBBB";
@@ -116,18 +115,19 @@ public class SponseeResourceIntTest {
     @Mock
     private SponseeRepository sponseesRepository;
 
-
-
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
         final SponseeResource sponseeResource = new SponseeResource(sponseeService);
-        this.restSponseeMockMvc = MockMvcBuilders.standaloneSetup(sponseeResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
+        this.restSponseeMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(sponseeResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
     }
 
     /**
@@ -136,7 +136,7 @@ public class SponseeResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Sponsee createEntity(EntityManager em) {
+    static Sponsee createEntity(EntityManager em) {
         Sponsee sponsee = new Sponsee()
             .msisdn(DEFAULT_MSISDN)
             .firstName(DEFAULT_FIRST_NAME)
@@ -146,13 +146,14 @@ public class SponseeResourceIntTest {
             .enabled(DEFAULT_ENABLED);
         return sponsee;
     }
+
     /**
      * Create an updated entity for this test.
      *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Sponsee createUpdatedEntity(EntityManager em) {
+    static Sponsee createUpdatedEntity(EntityManager em) {
         Sponsee sponsee = new Sponsee()
             .msisdn(UPDATED_MSISDN)
             .firstName(UPDATED_FIRST_NAME)
@@ -164,11 +165,11 @@ public class SponseeResourceIntTest {
     }
 
     @BeforeEach
-    public void initTest() {
+    void initTest() {
         sponsee = createEntity(em);
     }
 
-    private AccountB2C getAccount(){
+    private AccountB2C getAccount() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setId(785L);
         accountB2C.setNumero("770000005");
@@ -178,8 +179,7 @@ public class SponseeResourceIntTest {
         return accountB2C;
     }
 
-    private SponseeDTO getSponseeDto(){
-
+    private SponseeDTO getSponseeDto() {
         SponseeDTO sponsee = new SponseeDTO();
         sponsee.setMsisdn("770000006");
         sponsee.setMsisdnSponsor(getAccount().getNumero());
@@ -187,21 +187,23 @@ public class SponseeResourceIntTest {
         return sponsee;
     }
 
-    private void forMockService(){
+    private void forMockService() {
         sponseeService = mock(SponseeServiceImpl.class);
         final SponseeResource sponseeResource = new SponseeResource(sponseeService);
-        this.restSponseeMockMvc = MockMvcBuilders.standaloneSetup(sponseeResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
+        this.restSponseeMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(sponseeResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
     }
 
     @Test
     @Transactional
-    public void createSponsee() throws Exception {
-
+    void createSponsee() throws Exception {
         forMockService();
         int databaseSizeBeforeCreate = sponseeRepository.findAll().size();
 
@@ -216,17 +218,16 @@ public class SponseeResourceIntTest {
         dto.setEnabled(DEFAULT_ENABLED.booleanValue());
         when(sponseeService.register(ArgumentMatchers.any())).thenReturn(dto);
 
-
         // Create the Sponsee
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isAccepted());
-
         // Validate the Sponsee in the database
-       /* List<SponseeDTO> sponseeDTOs = new ArrayList<>();
+        /* List<SponseeDTO> sponseeDTOs = new ArrayList<>();
         sponseeDTOs.add(dto);
         Page<SponseeDTO> dtoPage = new PageImpl(sponseeDTOs);
         when(sponseeService.findAll(ArgumentMatchers.any())).thenReturn(dtoPage);
@@ -244,7 +245,7 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void createSponseeWithExistingId() throws Exception {
+    void createSponseeWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = sponseeRepository.findAll().size();
 
         // Create the Sponsee with an existing ID
@@ -252,9 +253,10 @@ public class SponseeResourceIntTest {
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Sponsee in the database
@@ -262,10 +264,9 @@ public class SponseeResourceIntTest {
         assertThat(sponseeList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkMsisdnIsRequired() throws Exception {
+    void checkMsisdnIsRequired() throws Exception {
         int databaseSizeBeforeTest = sponseeRepository.findAll().size();
         // set the field null
         sponsee.setMsisdn(null);
@@ -273,9 +274,10 @@ public class SponseeResourceIntTest {
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
 
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<Sponsee> sponseeList = sponseeRepository.findAll();
@@ -284,9 +286,7 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void checkEffectiveIsRequired() throws Exception {
-
-
+    void checkEffectiveIsRequired() throws Exception {
         forMockService();
         when(sponseeService.register(ArgumentMatchers.any())).thenReturn(getSponseeDto());
 
@@ -298,16 +298,16 @@ public class SponseeResourceIntTest {
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
 
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isAccepted());
     }
 
     @Test
     @Transactional
-    public void checkCreatedDateIsRequired() throws Exception {
-
+    void checkCreatedDateIsRequired() throws Exception {
         forMockService();
         int databaseSizeBeforeTest = sponseeRepository.findAll().size();
         // set the field null
@@ -317,17 +317,16 @@ public class SponseeResourceIntTest {
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
 
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isAccepted());
-
     }
 
     @Test
     @Transactional
-    public void checkEnabledIsRequired() throws Exception {
-
+    void checkEnabledIsRequired() throws Exception {
         forMockService();
 
         // set the field null
@@ -336,16 +335,16 @@ public class SponseeResourceIntTest {
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isAccepted());
     }
 
     @Test
     @Transactional
-    public void getAllSponsees() throws Exception {
-
+    void getAllSponsees() throws Exception {
         AccountB2C accountB2C = getAccount();
         accountB2C.setNumero("780000000");
         accountB2C.setLastName("");
@@ -356,7 +355,8 @@ public class SponseeResourceIntTest {
         sponseeRepository.saveAndFlush(sponsee);
 
         // Get all the sponseeList
-        restSponseeMockMvc.perform(get("/api/sponsees?sort=id,desc"))
+        restSponseeMockMvc
+            .perform(get("/api/sponsees?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(sponsee.getId().intValue())))
@@ -370,8 +370,7 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void getSponsee() throws Exception {
-
+    void getSponsee() throws Exception {
         forMockService();
         // Initialize the database
 
@@ -393,9 +392,9 @@ public class SponseeResourceIntTest {
         Optional<SponseeDTO> dtoOptional = Optional.of(dto);
         when(sponseeService.findOne(ArgumentMatchers.any())).thenReturn(dtoOptional);
 
-
         // Get the sponsee
-        restSponseeMockMvc.perform(get("/api/sponsees/{id}", dto.getId()))
+        restSponseeMockMvc
+            .perform(get("/api/sponsees/{id}", dto.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(dto.getId().intValue()))
@@ -409,16 +408,14 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void getNonExistingSponsee() throws Exception {
+    void getNonExistingSponsee() throws Exception {
         // Get the sponsee
-        restSponseeMockMvc.perform(get("/api/sponsees/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restSponseeMockMvc.perform(get("/api/sponsees/{id}", Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updateSponsee() throws Exception {
-
+    void updateSponsee() throws Exception {
         forMockService();
         // Initialize the database
         sponseeRepository.saveAndFlush(sponsee);
@@ -439,24 +436,26 @@ public class SponseeResourceIntTest {
         SponseeDTO sponseeDTO = sponseeMapper.toDto(updatedSponsee);
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
 
-        restSponseeMockMvc.perform(put("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                put("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isOk());
     }
 
     @Test
     @Transactional
-    public void updateNonExistingSponsee() throws Exception {
+    void updateNonExistingSponsee() throws Exception {
         int databaseSizeBeforeUpdate = sponseeRepository.findAll().size();
 
         // Create the Sponsee
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restSponseeMockMvc.perform(put("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                put("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Sponsee in the database
@@ -466,15 +465,15 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void deleteSponsee() throws Exception {
+    void deleteSponsee() throws Exception {
         // Initialize the database
         sponseeRepository.saveAndFlush(sponsee);
 
         int databaseSizeBeforeDelete = sponseeRepository.findAll().size();
 
         // Delete the sponsee
-        restSponseeMockMvc.perform(delete("/api/sponsees/{id}", sponsee.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+        restSponseeMockMvc
+            .perform(delete("/api/sponsees/{id}", sponsee.getId()).accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
@@ -484,7 +483,7 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         //TestUtil.equalsVerifier(Sponsee.class);
         Sponsee sponsee1 = new Sponsee();
         sponsee1.setId(1L);
@@ -499,8 +498,7 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void dtoEqualsVerifier() throws Exception {
-
+    void dtoEqualsVerifier() throws Exception {
         SponseeDTO sponseeDTO1 = new SponseeDTO();
         sponseeDTO1.setId(1L);
         SponseeDTO sponseeDTO2 = new SponseeDTO();
@@ -517,16 +515,14 @@ public class SponseeResourceIntTest {
 
     @Test
     @Transactional
-    public void testEntityFromId() {
+    void testEntityFromId() {
         assertThat(sponseeMapper.fromId(42L).getId()).isEqualTo(42);
         assertThat(sponseeMapper.fromId(null)).isNull();
     }
 
-
     @Test
     @Transactional
-    public void testSendSmsForSponseeWithBadRequest() throws Exception {
-
+    void testSendSmsForSponseeWithBadRequest() throws Exception {
         String msisdnSource = "770000000";
         String msisdnDest = "770000070";
         sponsee.setEffective(false);
@@ -534,8 +530,8 @@ public class SponseeResourceIntTest {
         sponsee.setMsisdn(msisdnDest);
         WelcomeBoosterStatus boosterStatus = new WelcomeBoosterStatus();
         WelcomeBoosterStatus.BoosterValue boosterValue = new WelcomeBoosterStatus.BoosterValue();
-        WelcomeBoosterStatus.BoosterType boosterType =  WelcomeBoosterStatus.BoosterType.RECHARGE;
-        WelcomeBoosterStatus.Status status =  WelcomeBoosterStatus.Status.SUCCESS;
+        WelcomeBoosterStatus.BoosterType boosterType = WelcomeBoosterStatus.BoosterType.RECHARGE;
+        WelcomeBoosterStatus.Status status = WelcomeBoosterStatus.Status.SUCCESS;
 
         boosterValue.setUnit(WelcomeBoosterStatus.BoosterUnit.CFA);
         boosterValue.setAmount("1000");
@@ -551,40 +547,38 @@ public class SponseeResourceIntTest {
         // Create the Sponsee, which fails.
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
 
-        restSponseeMockMvc.perform(post("/api/sponsees/send-sms?sMsisdn="+msisdnSource+"&sMsisdn="+msisdnDest)
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees/send-sms?sMsisdn=" + msisdnSource + "&sMsisdn=" + msisdnDest)
+                    .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                    .content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isBadRequest());
-
     }
 
     @Test
     @Transactional
-    public void testFindAllSponseeByMsisdn() throws Exception {
-
-        restSponseeMockMvc.perform(get("/api/sponsees/by-msisdn/{msisdn}", "77900 00 00"))
-            .andExpect(status().isNotFound());
-
+    void testFindAllSponseeByMsisdn() throws Exception {
+        restSponseeMockMvc.perform(get("/api/sponsees/by-msisdn/{msisdn}", "77900 00 00")).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void createSponseeWithBadRequest() throws Exception {
+    void createSponseeWithBadRequest() throws Exception {
         // Create the Sponsee
         SponseeDTO sponseeDTO = sponseeMapper.toDto(sponsee);
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
         sponseeDTO.setId(1L);
-        restSponseeMockMvc.perform(post("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                post("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isBadRequest());
-
     }
 
     @Test
     @Transactional
-    public void updateSponseeWithBadRequest() throws Exception {
-
+    void updateSponseeWithBadRequest() throws Exception {
         forMockService();
         // Initialize the database
         sponseeRepository.saveAndFlush(sponsee);
@@ -607,19 +601,16 @@ public class SponseeResourceIntTest {
         sponseeDTO.setMsisdnSponsor(msisdnSponsor);
         sponseeDTO.setId(null);
 
-        restSponseeMockMvc.perform(put("/api/sponsees")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(sponseeDTO)))
+        restSponseeMockMvc
+            .perform(
+                put("/api/sponsees").contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.convertObjectToJsonBytes(sponseeDTO))
+            )
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     @Transactional
-    public void testCheckSponseeByMsisdn() throws Exception {
-
-        restSponseeMockMvc.perform(get("/api/sponsees/check-number/{msisdn}", "77900 00 00"))
-            .andExpect(status().isOk());
-
+    void testCheckSponseeByMsisdn() throws Exception {
+        restSponseeMockMvc.perform(get("/api/sponsees/check-number/{msisdn}", "77900 00 00")).andExpect(status().isOk());
     }
 }

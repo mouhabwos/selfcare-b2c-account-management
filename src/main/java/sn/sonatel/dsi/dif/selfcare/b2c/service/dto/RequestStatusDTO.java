@@ -1,5 +1,6 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.dto;
 
+import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.RedirectTo;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.TroubleTicket;
 
 public class RequestStatusDTO {
@@ -12,6 +13,7 @@ public class RequestStatusDTO {
     private int order;
     private Boolean historic;
     private Boolean currentState = false;
+    private RedirectTo redirectTo;
 
     public String getRequestId() {
         return requestId;
@@ -75,5 +77,13 @@ public class RequestStatusDTO {
 
     public void setCurrentState(Boolean currentState) {
         this.currentState = currentState;
+    }
+
+    public RedirectTo getRedirectTo() {
+        return redirectTo;
+    }
+
+    public void setRedirectTo(RedirectTo redirectTo) {
+        this.redirectTo = redirectTo;
     }
 }
