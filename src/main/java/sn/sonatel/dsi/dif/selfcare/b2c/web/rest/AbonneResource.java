@@ -4,6 +4,7 @@ import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOffe
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.RequestStatusDTO;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.TroubleSignalingDTO;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.RedocMessages;
 
@@ -172,4 +174,16 @@ public class AbonneResource {
         return abonneService.getNumberStatus(msisdn);
     }
 
+    @Auditable(description = Message.Abonne.CLIENT_TROUBLE)
+    @PostMapping(value = "/client-trouble/{msisdn}")
+    @PreAuthorize("@customSecurityResolver.isAuthorized(#msisdn)")
+    public ResponseEntity<Void> signalATrouble(
+        @PathVariable(name = "msisdn") String msisdn,
+        @Valid @RequestBody TroubleSignalingDTO troubleSignalingDTO
+    ) {
+        log.debug("REST request to send client trouble : {}", troubleSignalingDTO);
+        abonneService.sendToClientService(troubleSignalingDTO);
+        return ResponseEntity.accepted().build();
+    }
 }
+

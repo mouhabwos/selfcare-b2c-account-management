@@ -1,5 +1,17 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.web.rest;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.security.Principal;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -27,22 +39,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.FileInformationService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.export.ExportService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.ExceptionTranslator;
 
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.nio.file.Files;
-import java.security.Principal;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static sn.sonatel.dsi.dif.selfcare.b2c.web.rest.TestUtil.createFormattingConversionService;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class ExportResourceIntTest {
+class ExportResourceIntTest {
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -74,19 +73,21 @@ public class ExportResourceIntTest {
     private MockMvc restMockMvc;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.initMocks(this);
         final ExportResource exportResource = new ExportResource(exportService, fileInformationService);
-        this.restMockMvc = MockMvcBuilders.standaloneSetup(exportResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter)
-            .setValidator(validator).build();
+        this.restMockMvc =
+            MockMvcBuilders
+                .standaloneSetup(exportResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter)
+                .setValidator(validator)
+                .build();
     }
 
-    private List<FileInformation> getFileInformations(){
-
+    private List<FileInformation> getFileInformations() {
         List<FileInformation> fileInformationList = new ArrayList<>();
         FileInformation file1 = new FileInformation();
         FileInformation file2 = new FileInformation();
@@ -115,8 +116,7 @@ public class ExportResourceIntTest {
 
     @Test
     @Transactional
-    public void testExportAllUsers() throws Exception {
-
+    void testExportAllUsers() throws Exception {
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("export@orange-sonatel.com");
 
@@ -134,14 +134,11 @@ public class ExportResourceIntTest {
 
         accountB2CRepository.save(account2);
 
-        restMockMvc.perform(post("/api/export/all-users").principal(mockPrincipal))
-            .andExpect(status().isAccepted());
-
+        restMockMvc.perform(post("/api/export/all-users").principal(mockPrincipal)).andExpect(status().isAccepted());
     }
 
     @Test
-    public void testImporFileMsisdn() throws Exception {
-
+    void testImporFileMsisdn() throws Exception {
         Principal mockPrincipal = Mockito.mock(Principal.class);
         Mockito.when(mockPrincipal.getName()).thenReturn("export@orange-sonatel.com");
 
@@ -149,76 +146,72 @@ public class ExportResourceIntTest {
 
         MockMultipartFile file = new MockMultipartFile("file", "files/numero.csv", "", Files.readAllBytes(resourcesDirectory.toPath()));
 
-        restMockMvc.perform(multipart("/api/export/v1/file-campaign-flow")
-            .file(file).principal(mockPrincipal))
+        restMockMvc
+            .perform(multipart("/api/export/v1/file-campaign-flow").file(file).principal(mockPrincipal))
             .andExpect(status().isAccepted());
     }
 
     @Test
-    public void testInformationFileUploadedByUserAndDates() throws Exception {
-
+    void testInformationFileUploadedByUserAndDates() throws Exception {
         List<FileInformation> fileInformations = getFileInformations();
         informationRepository.saveAll(fileInformations);
-        restMockMvc.perform(get("/api/export/v1/uploaded-file-information")
-            .param("searchFilterItem", SearchFilterItem.BETWEEN_TWO_DATES.name())
-            .param("user", "system")
-            .param("startDate", "2021-04-01T14:36:13Z")
-            .param("endDate", "2021-04-02T09:39:33Z"))
+        restMockMvc
+            .perform(
+                get("/api/export/v1/uploaded-file-information")
+                    .param("searchFilterItem", SearchFilterItem.BETWEEN_TWO_DATES.name())
+                    .param("user", "system")
+                    .param("startDate", "2021-04-01T14:36:13Z")
+                    .param("endDate", "2021-04-02T09:39:33Z")
+            )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem("2021-04-01T20:36:01Z")))
-        ;
-
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem("2021-04-01T20:36:01Z")));
     }
 
     @Test
-    public void testInformationFileUploadedByDateWithBadRequestResponse() throws Exception {
-        restMockMvc.perform(get("/api/export/v1/uploaded-file-information")
-            .param("searchFilterItem", SearchFilterItem.BETWEEN_TWO_DATES.name()))
+    void testInformationFileUploadedByDateWithBadRequestResponse() throws Exception {
+        restMockMvc
+            .perform(get("/api/export/v1/uploaded-file-information").param("searchFilterItem", SearchFilterItem.BETWEEN_TWO_DATES.name()))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void testGetListInformationFileUploaded() throws Exception {
-
+    void testGetListInformationFileUploaded() throws Exception {
         List<FileInformation> fileInformations = getFileInformations();
-         informationRepository.saveAll(fileInformations);
+        informationRepository.saveAll(fileInformations);
 
-         restMockMvc.perform(get("/api/export/v1/uploaded-file-information")
-            .param("searchFilterItem", SearchFilterItem.ALL.name()))
+        restMockMvc
+            .perform(get("/api/export/v1/uploaded-file-information").param("searchFilterItem", SearchFilterItem.ALL.name()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].fileName").value(hasItem("Information_Account_1617287722027.csv")))
             .andExpect(jsonPath("$.[*].createdByUser").value(hasItem("system")))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem("2021-04-01T20:36:01Z")))
             .andExpect(jsonPath("$.[*].status").value(hasItem("FAILED")));
-
     }
 
     @Test
-    public void testGetListInformationFileUploadedByUser() throws Exception {
-
+    void testGetListInformationFileUploadedByUser() throws Exception {
         List<FileInformation> fileInformations = getFileInformations();
         informationRepository.saveAll(fileInformations);
         informationRepository.flush();
-        restMockMvc.perform(get("/api/export/v1/uploaded-file-information")
-            .param("searchFilterItem", SearchFilterItem.BY_USER.name())
-            .param("user", "system"))
+        restMockMvc
+            .perform(
+                get("/api/export/v1/uploaded-file-information")
+                    .param("searchFilterItem", SearchFilterItem.BY_USER.name())
+                    .param("user", "system")
+            )
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].fileName").value(hasItem("Information_Account_1617287722028.csv")))
             .andExpect(jsonPath("$.[*].createdByUser").value(hasItem("system")))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem("2021-04-01T14:36:13Z")))
             .andExpect(jsonPath("$.[*].status").value(hasItem("FAILED")));
-
-
     }
 
     @Test
-    public void testInformationFileUploadedByUserWithBadRequestResponse() throws Exception {
-         restMockMvc.perform(get("/api/export/v1/uploaded-file-information")
-            .param("searchFilterItem", SearchFilterItem.BY_USER.name()))
+    void testInformationFileUploadedByUserWithBadRequestResponse() throws Exception {
+        restMockMvc
+            .perform(get("/api/export/v1/uploaded-file-information").param("searchFilterItem", SearchFilterItem.BY_USER.name()))
             .andExpect(status().isBadRequest());
     }
-
-
 }

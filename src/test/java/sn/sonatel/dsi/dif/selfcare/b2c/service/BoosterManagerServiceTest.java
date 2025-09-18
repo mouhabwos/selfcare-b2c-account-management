@@ -1,26 +1,25 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.BoosterTrigger;
 import sn.sonatel.dsi.dif.selfcare.b2c.domain.enumeration.OfferTypeEnum;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.apimanagement.CustomerOfferService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.BoosterClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.booster.dto.BoosterPromo;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.model.CustomerOffer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-public class BoosterManagerServiceTest {
+class BoosterManagerServiceTest {
 
     @Mock
     private BoosterClient boosterClient;
@@ -30,17 +29,13 @@ public class BoosterManagerServiceTest {
 
     private BoosterManagerService boosterManagerService;
 
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
-        boosterManagerService = new BoosterManagerService( boosterClient, customerOfferService);
+        boosterManagerService = new BoosterManagerService(boosterClient, customerOfferService);
     }
 
-
-
-
-    private List<BoosterPromo> getListPromoBooster(){
+    private List<BoosterPromo> getListPromoBooster() {
         BoosterPromo boosterPromo = new BoosterPromo();
         boosterPromo.setId(12L);
         BoosterPromo.Gift gift = new BoosterPromo.Gift();
@@ -59,10 +54,9 @@ public class BoosterManagerServiceTest {
 
         boosterPromos.add(boosterPromo);
         return boosterPromos;
-
     }
 
-    private CustomerOffer getCustomerOffer(){
+    private CustomerOffer getCustomerOffer() {
         CustomerOffer customerOffer = new CustomerOffer();
         customerOffer.setClientCode("0012707812");
         customerOffer.setCreateDate("2011-05-26T15:51:10");
@@ -76,33 +70,36 @@ public class BoosterManagerServiceTest {
     }
 
     @Test
-    public void getActiveWelcomeBoosterValue(){
-
+    void getActiveWelcomeBoosterValue() {
         CustomerOffer customerOffer = getCustomerOffer();
         when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
 
         List<BoosterPromo> listPromoBooster = getListPromoBooster();
-        when(boosterClient.getActiveWelcomeBoosterValue(Mockito.anyString(), anyString(), anyString())).thenReturn(ResponseEntity.ok(listPromoBooster));
+        when(boosterClient.getActiveWelcomeBoosterValue(Mockito.anyString(), anyString(), anyString()))
+            .thenReturn(ResponseEntity.ok(listPromoBooster));
 
-        List<BoosterPromo> boosterPromoList = boosterManagerService.getActiveWelcomeBoosterValue("782363572", BoosterTrigger.FORM_INSCRIPTION.name());
+        List<BoosterPromo> boosterPromoList = boosterManagerService.getActiveWelcomeBoosterValue(
+            "782363572",
+            BoosterTrigger.FORM_INSCRIPTION.name()
+        );
 
-        Assert.assertEquals(listPromoBooster.size(),boosterPromoList.size());
-
+        Assert.assertEquals(listPromoBooster.size(), boosterPromoList.size());
     }
 
     @Test
-    public void getActiveWelcomeBoosterValueNewArrayList(){
-
+    void getActiveWelcomeBoosterValueNewArrayList() {
         CustomerOffer customerOffer = getCustomerOffer();
         when(customerOfferService.getCustomerOffer(Mockito.anyString())).thenReturn(customerOffer);
 
         List<BoosterPromo> listPromoBooster = getListPromoBooster();
-        when(boosterClient.getActiveWelcomeBoosterValue(Mockito.anyString(), anyString(), anyString())).thenReturn(ResponseEntity.ok().build());
+        when(boosterClient.getActiveWelcomeBoosterValue(Mockito.anyString(), anyString(), anyString()))
+            .thenReturn(ResponseEntity.ok().build());
 
-        List<BoosterPromo> boosterPromoList = boosterManagerService.getActiveWelcomeBoosterValue("782363572", BoosterTrigger.FORM_INSCRIPTION.name());
+        List<BoosterPromo> boosterPromoList = boosterManagerService.getActiveWelcomeBoosterValue(
+            "782363572",
+            BoosterTrigger.FORM_INSCRIPTION.name()
+        );
 
-        Assert.assertEquals(0,boosterPromoList.size());
-
+        Assert.assertEquals(0, boosterPromoList.size());
     }
-
 }

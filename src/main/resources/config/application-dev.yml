@@ -157,6 +157,8 @@ application:
       url-organization-information: /api/partyManagement/v1/organization/{msisdn}
 
   send-sms:
+    account-deletion:
+      sms-content: 'Bonjour, le compte % a ete supprime sur Orange et Moi'
     sponsorship:
       sms-sponsee: Bonjour, Comme moi telecharge l'appli Orange et Moi et retrouve tous tes services Orange en quelques clics. %s FI rek la http://bit.ly/2NHn5aS ou sur www.orangeetmoi.sn
       sms-sponsor: Bonjour, le numero %s que vous avez parraine s est inscrit sur l'appli Orange et Moi. Continue a inviter tes proches.
@@ -170,6 +172,7 @@ application:
 
   message-block-user: L acces a votre compte Orange et moi a ete bloque, cliquez sur mot de passe oublie et suivez les instructions
   service-client-orange: . Service Client Orange
+  service-client-mail: ext_kouna.fall@orange-sonatel.com
 
   order:
     first: 1
@@ -183,20 +186,20 @@ application:
     cancelled-title: Annulée
     acknowledged-request-title: Validée
     held-request-title:  Réalisable
-    in-progress-title: En Cours
-    held-incident-title: Signalée
-    pending-title: ABSENTAVIS
-    acknowledged-incident-title: Orienté
+    in-progress-title: Dérangement affecté
+    held-incident-title: Dérangement enregistré
+    pending-title: Dérangement non traité
+    acknowledged-incident-title: Dérangement affecté
   request-description-map:
     rejected-request-description : Votre demande a été suspendue. Pour plus d’informations, merci de vous rapprocher du service client
     cancelled-description: Votre demande a été annulée pour non faisabilité technique ou sur demande du client
     acknowledged-request-description: Votre demande a été validée, vous serez contacté prochainement par nos équipes
     held-request-description: Votre demande est réalisable. Pour la valider vous serez invité à signer le contrat et payer les frais
     in-progress-request-description: Votre demande est en cours de traitement, vous serez contacter par nos équipes.
-    held-incident-description:  Votre dérangement est en cours et est pris charge, vous serez contacter par nos équipes.
-    pending-description : Nous n’avons réussi à vous joindre et/ou nous vous avons proposé un RDV pour vous joindre à nouveau
+    held-incident-description: Votre ligne est bien signalé en dérangement ce %s sous la référence %s.
+    pending-description : Notre équipe n'a pas pu intervenir, plus de détails cliquer ici
     in-progress-incident-description: Votre dérangement est en cours de traitement, vous serez contacter par nos équipes.
-    acknowledged-incident-description: Votre dérangement a été envoyée aux équipes techniques
+    acknowledged-incident-description: Votre derangement est affecté à une équipe d'intervention qui vous contactera pour la prise de rendez vous
     rejected-incident-description: Votre dérangement n'a pas abouti. Veuillez vous rapprocher du Service Client
 
 

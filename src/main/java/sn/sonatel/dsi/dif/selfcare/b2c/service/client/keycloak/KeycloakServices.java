@@ -7,11 +7,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ManagedUserVM;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.vm.ResetPasswordVM;
 
 public interface KeycloakServices {
-
     ResponseEntity<String> registerUserInKeycloack(ManagedUserVM userVM);
 
     ResponseEntity<AccessTokenResponse> getToken(UserCredentialDTO userCredential);
 
-    ResponseEntity resetPassword(ResetPasswordVM resetPasswordVM);
-
- }
+    ResponseEntity<Void> resetPassword(ResetPasswordVM resetPasswordVM);
+}

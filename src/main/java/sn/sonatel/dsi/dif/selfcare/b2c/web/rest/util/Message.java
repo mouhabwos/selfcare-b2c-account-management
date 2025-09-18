@@ -3,7 +3,7 @@ package sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util;
 public final class Message {
 
     private Message() {
-        super ();
+        super();
     }
 
     public static final class Abonne {
@@ -19,9 +19,10 @@ public final class Message {
         public static final String IS_ORGANIZATION_NUMBER = "Verifier si le numero est un numero d entreprise";
         public static final String CONTACT_NUMBERS = "Recuperation de la liste des numero identifiees d un abonne par le msisdn";
         public static final String STATUS_MSISDN = "Recuperation du statut d un numero";
+        public static final String CLIENT_TROUBLE = "Envoi de réclamation ou du dérangement client au service client par mail";
 
         private Abonne() {
-            super ();
+            super();
         }
     }
 
@@ -31,7 +32,7 @@ public final class Message {
         public static final String CONN_ERR = "Erreur de Connexion";
 
         private Authentification() {
-            super ();
+            super();
         }
     }
 
@@ -48,7 +49,7 @@ public final class Message {
         public static final String GET_ACCOUNT = "Suppression d une categorie Pass Illimix";
 
         private AccountB2C() {
-            super ();
+            super();
         }
     }
 
@@ -74,12 +75,10 @@ public final class Message {
         public static final String SAVE_RATTACHEMENT_LIGNE_BY_CNI = "Rattachement de ligne ";
         public static final String SAVE_RATTACHEMENT_LIGNE_BY_OTP = "Rattachement de ligne  par code OTP";
 
-
         private Rattachement() {
-            super ();
+            super();
         }
     }
-
 
     public static final class Account {
 
@@ -112,9 +111,8 @@ public final class Message {
         public static final String RESET_PASSWORD = "Reinitialisation du mot de passe en mode lite";
         public static final String LOGIN = "Login du compte utilisateur en mode lite";
 
-
         private Account() {
-            super ();
+            super();
         }
     }
 
@@ -130,7 +128,7 @@ public final class Message {
         public static final String CHECK_SPONSEE = "Verification du numero a parraine";
 
         private Sponsee() {
-            super ();
+            super();
         }
     }
 
@@ -145,11 +143,11 @@ public final class Message {
         public static final String DELETE = "Suppression d un sponsor";
 
         private Sponsor() {
-            super ();
+            super();
         }
     }
 
-    public static final class NotificationInformation{
+    public static final class NotificationInformation {
 
         public static final String MSISDN_FIREBASEID_BY_CODE_FORMULE = "Liste des msisdn avec les firebaseId par le codeFormule";
 
@@ -159,19 +157,22 @@ public final class Message {
 
         public static final String REGISTER = "add information Notification";
 
-        public static final String MSISDN_FIREBASEID_BY_LIST_CODE_FORMULE = "Liste des msisdn avec les firebaseId pour une liste de codeFormule";
+        public static final String MSISDN_FIREBASEID_BY_LIST_CODE_FORMULE =
+            "Liste des msisdn avec les firebaseId pour une liste de codeFormule";
 
-        private NotificationInformation() {  super (); }
+        private NotificationInformation() {
+            super();
+        }
     }
 
-    public static final class ExportUsers{
+    public static final class ExportUsers {
 
         public static final String EXPORT_ALL_USER = "Exporter la liste de touts les utilisateurs Orange et Moi dans un fichier excel";
         public static final String IMPORT_FILE_MSISDN = "Upload des informations des utilisations via une liste de numero";
         public static final String UPLOADED_FILE_INFORMATION = "Recuperation de la liste des informations des fichiers uploade";
 
-        private ExportUsers() {  super (); }
+        private ExportUsers() {
+            super();
+        }
     }
-
-
 }

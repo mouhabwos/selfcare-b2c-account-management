@@ -9,7 +9,6 @@ import sn.sonatel.dsi.dac.dif.ds.juf.middleware.logging.Auditable;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.LoginAttemptService;
 import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.Message;
 
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthResource {
@@ -19,9 +18,7 @@ public class AuthResource {
     private final LoginAttemptService loginAttemptService;
 
     public AuthResource(LoginAttemptService loginAttemptService) {
-
         this.loginAttemptService = loginAttemptService;
-
     }
 
     /**
@@ -37,7 +34,6 @@ public class AuthResource {
         return ResponseEntity.ok().build();
     }
 
-
     /**
      * GET : to increment the number of attempts login
      * @param username
@@ -45,10 +41,9 @@ public class AuthResource {
     @Auditable(description = Message.Authentification.CONN_ERR)
     @GetMapping(value = "/login-failed/{username}")
     @Timed
-    public ResponseEntity loginFailed(@PathVariable String username){
+    public ResponseEntity<String> loginFailed(@PathVariable String username) {
         log.info("logging loginFailed {}", username);
         int attemps = loginAttemptService.loginFailed(username);
-        return ResponseEntity.ok().body(attemps+"");
+        return ResponseEntity.ok().body(attemps + "");
     }
-
 }

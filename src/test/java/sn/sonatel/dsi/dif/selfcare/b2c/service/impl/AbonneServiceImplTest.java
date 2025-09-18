@@ -1,32 +1,36 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
-import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class AbonneServiceImplTest {
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.IndividualInformation;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.InfoClientWrapper;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationIdentification;
+import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.OrganizationInformation;
 
-    private static final String RESPONSE_NUMERO_ORGANIZATION = "{\n" +
+class AbonneServiceImplTest {
+
+    private static final String RESPONSE_NUMERO_ORGANIZATION =
+        "{\n" +
         "    \"clientType\": \"ORGANIZATION\",\n" +
         "    \"information\": {\n" +
         "        \"id\": null,\n" +
@@ -63,7 +67,8 @@ public class AbonneServiceImplTest {
         "    }\n" +
         "}";
 
-    private static final String RESPONSE_NUMERO_INDIVIDUAL = "{\n" +
+    private static final String RESPONSE_NUMERO_INDIVIDUAL =
+        "{\n" +
         "    \"clientType\": \"INDIVIDUAL\",\n" +
         "    \"information\": {\n" +
         "        \"id\": \"781040956\",\n" +
@@ -105,13 +110,16 @@ public class AbonneServiceImplTest {
 
     private AbonneServiceImpl abonneServiceImplUnderTest;
 
+    @MockBean
+    private MailService mailService;
+
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
-        abonneServiceImplUnderTest = new AbonneServiceImpl(mockPartyManagementApiClient);
+        abonneServiceImplUnderTest = new AbonneServiceImpl(mockPartyManagementApiClient, mailService);
     }
 
-    private IndividualInformation getIndividualInformation(String msisdn){
+    private IndividualInformation getIndividualInformation(String msisdn) {
         IndividualInformation information = new IndividualInformation();
         Set<OrganizationIdentification> individualIdentification = new HashSet<>();
         OrganizationIdentification identification = new OrganizationIdentification();
@@ -140,8 +148,7 @@ public class AbonneServiceImplTest {
         return information;
     }
 
-    private OrganizationInformation getOrganization(String msisdn){
-
+    private OrganizationInformation getOrganization(String msisdn) {
         OrganizationInformation identification = new OrganizationInformation();
         identification.setId(msisdn);
         identification.setIsLegalEntity("");
@@ -154,9 +161,8 @@ public class AbonneServiceImplTest {
         return identification;
     }
 
-
     @Test
-    public void testGetIsOrangeNumberWithNotFoundNumber() {
+    void testGetIsOrangeNumberWithNotFoundNumber() {
         // Setup
         final String msisdn = "700000000";
 
@@ -168,36 +174,30 @@ public class AbonneServiceImplTest {
         // Run the test
         boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
         assertFalse(orangeNumber);
-
     }
 
     @Test
-    public void testIsOrangeNumberWithTrue() {
+    void testIsOrangeNumberWithTrue() {
         // Setup
         final String msisdn = "700000000";
 
-
-        ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body(getIndividualInformation(msisdn));
+        ResponseEntity<OrganizationInformation> response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ResponseEntity<IndividualInformation> responseEntity = ResponseEntity.status(HttpStatus.OK).body(getIndividualInformation(msisdn));
 
         when(mockPartyManagementApiClient.getIndividualInformation(Mockito.anyString())).thenReturn(responseEntity);
         when(mockPartyManagementApiClient.getOrganizationInformation(Mockito.anyString())).thenReturn(response);
 
         // Run the test
         boolean orangeNumber = abonneServiceImplUnderTest.isOrangeNumber(msisdn);
-      //  assertTrue(orangeNumber);
-
+        Assertions.assertTrue(orangeNumber);
     }
 
-
-
     @Test
-    public void testIsOrangeNumbersWithTrue() {
+    void testIsOrangeNumbersWithTrue() {
         // Setup
         final String msisdn = "700000000";
 
-
-        OrganizationInformation organization =  getOrganization(msisdn);
+        OrganizationInformation organization = getOrganization(msisdn);
         ResponseEntity response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body(organization);
 
@@ -211,8 +211,7 @@ public class AbonneServiceImplTest {
     }
 
     @Test
-    public void testGetIndividualInfos(){
-
+    void testGetIndividualInfos() {
         String msisdn = "776713165";
 
         IndividualInformation individualInformation = new IndividualInformation();
@@ -227,12 +226,13 @@ public class AbonneServiceImplTest {
         Assert.assertEquals("1996-03-21", information.getBirthDate());
         Assert.assertEquals(individualInformation.getGivenName(), information.getGivenName());
         Assert.assertEquals(individualInformation.getFamilyName(), information.getFamilyName());
-
     }
 
     @Test
-    public void testIsOrangeNumberResponseFalse() throws IOException {
-        ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(getInfoClientWrapperIndividual().getInformation());
+    void testIsOrangeNumberResponseFalse() throws IOException {
+        ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(
+            getInfoClientWrapperIndividual().getInformation()
+        );
         when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(informationResponseEntity);
 
         boolean organizationNumber = abonneServiceImplUnderTest.isCoorporateNumber("770000000");
@@ -240,15 +240,14 @@ public class AbonneServiceImplTest {
     }
 
     @Test
-    public void testIsOrangeNumberResponseTrue() throws IOException {
-
+    void testIsOrangeNumberResponseTrue() throws IOException {
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperOrganization();
-
 
         when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
 
-
-        ResponseEntity<OrganizationInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getOrganization());
+        ResponseEntity<OrganizationInformation> informationResponseEntity = ResponseEntity.ok(
+            infoClientWrapperIndividual.getOrganization()
+        );
         when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(informationResponseEntity);
 
         boolean organizationNumber = abonneServiceImplUnderTest.isCoorporateNumber("782362572");
@@ -256,11 +255,13 @@ public class AbonneServiceImplTest {
     }
 
     @Test
-    public void testGetMyContactNumbersWithNotValidMsisdn() throws IOException {
+    void testGetMyContactNumbersWithNotValidMsisdn() throws IOException {
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperOrganization();
         when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
 
-        ResponseEntity<OrganizationInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getOrganization());
+        ResponseEntity<OrganizationInformation> informationResponseEntity = ResponseEntity.ok(
+            infoClientWrapperIndividual.getOrganization()
+        );
         when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(informationResponseEntity);
 
         Set<String> contactNumbers = abonneServiceImplUnderTest.getMyContactNumbers("test");
@@ -268,7 +269,7 @@ public class AbonneServiceImplTest {
     }
 
     @Test
-    public void testGetMyContactNumbers() throws IOException {
+    void testGetMyContactNumbers() throws IOException {
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
         ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getInformation());
 
@@ -276,33 +277,29 @@ public class AbonneServiceImplTest {
         when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
 
         Set<String> contactNumbers = abonneServiceImplUnderTest.getMyContactNumbers("test");
-        Assert.assertEquals(2,contactNumbers.size());
+        Assert.assertEquals(2, contactNumbers.size());
     }
 
     @Test
-    public void testGetNumberStatus() throws IOException {
-
+    void testGetNumberStatus() throws IOException {
         InfoClientWrapper infoClientWrapperIndividual = getInfoClientWrapperIndividual();
 
-
         when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
-
 
         ResponseEntity<IndividualInformation> informationResponseEntity = ResponseEntity.ok(infoClientWrapperIndividual.getInformation());
         when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(informationResponseEntity);
 
         ResponseEntity<String> responseEntity = abonneServiceImplUnderTest.getNumberStatus("330000000");
-        Assert.assertEquals(ResponseEntity.ok("ACTIF"),responseEntity);
+        Assert.assertEquals(ResponseEntity.ok("ACTIF"), responseEntity);
     }
 
     @Test
-    public void testGetNumberStatusWithNotFoundException(){
-
+    void testGetNumberStatusWithNotFoundException() {
         when(mockPartyManagementApiClient.getOrganizationInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
         when(mockPartyManagementApiClient.getIndividualInformation(anyString())).thenReturn(ResponseEntity.notFound().build());
 
         ResponseEntity<String> responseEntity = abonneServiceImplUnderTest.getNumberStatus("330000000");
-        Assert.assertEquals(ResponseEntity.notFound().build(),responseEntity);
+        Assert.assertEquals(ResponseEntity.notFound().build(), responseEntity);
     }
 
     private InfoClientWrapper getInfoClientWrapperOrganization() throws IOException {

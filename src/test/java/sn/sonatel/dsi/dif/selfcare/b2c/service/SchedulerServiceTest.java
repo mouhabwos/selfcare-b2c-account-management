@@ -1,5 +1,10 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service;
 
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,15 +23,9 @@ import sn.sonatel.dsi.dif.selfcare.b2c.repository.AccountB2CRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.repository.SponseeRepository;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.AbonneDTO;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.MockitoAnnotations.initMocks;
-
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class SchedulerServiceTest {
+class SchedulerServiceTest {
 
     @Autowired
     private SponseeRepository mockSponseeRepository;
@@ -43,12 +42,12 @@ public class SchedulerServiceTest {
     private ApplicationProperties applicationProperties;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         initMocks(this);
         schedulerServiceUnderTest = new SchedulerService(mockSponseeRepository, accountB2CRepository, abonneService, applicationProperties);
     }
 
-    private AccountB2C getAccount(){
+    private AccountB2C getAccount() {
         AccountB2C accountB2C = new AccountB2C();
         accountB2C.setId(785L);
         accountB2C.setNumero("770000055");
@@ -58,8 +57,7 @@ public class SchedulerServiceTest {
         return accountB2C;
     }
 
-    private Sponsee getSponsee(){
-
+    private Sponsee getSponsee() {
         Sponsee sponsee = new Sponsee();
         sponsee.setMsisdn("770000006");
         sponsee.setAccountB2C(getAccount());
@@ -67,9 +65,8 @@ public class SchedulerServiceTest {
         return sponsee;
     }
 
-
     @Test
-    public void testDisabledSponsee() {
+    void testDisabledSponsee() {
         AccountB2C account = getAccount();
         AccountB2C accountB2C = accountB2CRepository.save(account);
         Sponsee sponsee = getSponsee();
@@ -86,14 +83,13 @@ public class SchedulerServiceTest {
         Optional<Sponsee> sponseeOptional = mockSponseeRepository.findOneByMsisdn(sponsee.getMsisdn());
 
         Assert.assertFalse(!sponsee.isEnabled());
-        Assert.assertEquals(sponsee.getAccountB2C().getNumero(),sponseeOptional.get().getAccountB2C().getNumero());
-        Assert.assertEquals(sponsee.getFirstName(),sponseeOptional.get().getFirstName());
-        Assert.assertEquals(sponsee.getLastName(),sponseeOptional.get().getLastName());
+        Assert.assertEquals(sponsee.getAccountB2C().getNumero(), sponseeOptional.get().getAccountB2C().getNumero());
+        Assert.assertEquals(sponsee.getFirstName(), sponseeOptional.get().getFirstName());
+        Assert.assertEquals(sponsee.getLastName(), sponseeOptional.get().getLastName());
     }
 
     @Test
-    public void testUpdateFirstnameAndLastname(){
-
+    void testUpdateFirstnameAndLastname() {
         accountB2CRepository.deleteAll();
 
         AccountB2C accountB2C = new AccountB2C();
@@ -120,10 +116,8 @@ public class SchedulerServiceTest {
 
         List<AccountB2C> b2CList = accountB2CRepository.findAll();
 
-
-        Assert.assertEquals(2,b2CList.size());
-        Assert.assertEquals(abonneDTO.getNomAbonne(),b2CList.get(0).getLastName());
-        Assert.assertEquals(abonneDTO.getPrenomAbonne(),b2CList.get(0).getFirstName());
-
+        Assert.assertEquals(2, b2CList.size());
+        Assert.assertEquals(abonneDTO.getNomAbonne(), b2CList.get(0).getLastName());
+        Assert.assertEquals(abonneDTO.getPrenomAbonne(), b2CList.get(0).getFirstName());
     }
 }
