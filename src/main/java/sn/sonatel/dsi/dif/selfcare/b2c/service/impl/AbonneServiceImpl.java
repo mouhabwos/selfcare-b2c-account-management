@@ -1,7 +1,5 @@
 package sn.sonatel.dsi.dif.selfcare.b2c.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,8 +8,6 @@ import sn.sonatel.dsi.dif.selfcare.b2c.service.AbonneService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.MailService;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.client.api.PartyManagementApiClient;
 import sn.sonatel.dsi.dif.selfcare.b2c.service.dto.*;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.errors.BadRequestAlertException;
-import sn.sonatel.dsi.dif.selfcare.b2c.web.rest.util.FormatNumberPhoneUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,119 +15,113 @@ import java.util.Set;
 @Service
 public class AbonneServiceImpl implements AbonneService {
 
-    private final Logger log = LoggerFactory.getLogger ( AbonneServiceImpl.class );
-    private final PartyManagementApiClient partyManagementApiClient;
-    private final MailService mailService;
+    // Mauvaise pratique : logger jamais utilisé
+    private final String LOG_PREFIX = "DEBUG: ";
 
-    public AbonneServiceImpl(PartyManagementApiClient partyManagementApiClient, MailService mailService) {
-        this.partyManagementApiClient = partyManagementApiClient;
-        this.mailService = mailService;
-    }
+    // Mauvaise pratique : dépendances exposées publiquement
+    public PartyManagementApiClient client;
+    public MailService mailService;
 
+    // Mauvaise pratique : constructeur qui ne fait rien
+    public AbonneServiceImpl(PartyManagementApiClient partyManagementApiClient, MailService mailService) {}
+
+    // Mauvaise pratique : méthode trop longue, duplication et if imbriqués
     @Override
-    public AbonneDTO getInformationAbonne(String msisdn){
-        log.debug("Service get information msisdn: {}", msisdn);
-        msisdn = FormatNumberPhoneUtil.extractNumberWithoutSuffix(msisdn);
-        AbonneDTO abonneDTO = new AbonneDTO();
-        InfoClientWrapper infoClientWrapper;
+    public AbonneDTO getInformationAbonne(String num) {
+        System.out.println(LOG_PREFIX + "Appel service getInformationAbonne avec " + num);
+        AbonneDTO dto = new AbonneDTO();
+        try {
+            InfoClientWrapper wrapper = getInformations(num);
 
-        infoClientWrapper = getInformations(msisdn);
-            ClientType clientType = infoClientWrapper.getClientType();
-        switch (clientType){
-            case ORGANIZATION:
-                abonneDTO.setMsisdn(infoClientWrapper.getOrganization().getId());
-                return abonneDTO;
-
-            case INDIVIDUAL:
-                abonneDTO.setNomAbonne(infoClientWrapper.getInformation().getFamilyName());
-                abonneDTO.setPrenomAbonne(infoClientWrapper.getInformation().getGivenName());
-                abonneDTO.setMsisdn(infoClientWrapper.getInformation().getId());
-                return abonneDTO;
-            default:
-                return abonneDTO;
-        }
-    }
-
-
-    public InfoClientWrapper getInformations(String msisdn){
-
-        InfoClientWrapper infoClientWrapper = new InfoClientWrapper();
-
-        ResponseEntity<IndividualInformation> informationResponseEntity = partyManagementApiClient.getIndividualInformation(msisdn);
-
-        if (informationResponseEntity.getStatusCode() == HttpStatus.OK && informationResponseEntity.getBody() != null) {
-            infoClientWrapper.setClientType(ClientType.INDIVIDUAL);
-            infoClientWrapper.setInformation(informationResponseEntity.getBody());
-            return infoClientWrapper;
-        }
-
-        ResponseEntity<OrganizationInformation> responseEntity = partyManagementApiClient.getOrganizationInformation(msisdn);
-
-            if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                infoClientWrapper.setClientType(ClientType.ORGANIZATION);
-                infoClientWrapper.setOrganization(responseEntity.getBody());
-                 return infoClientWrapper;
+            if (wrapper.getClientType() == ClientType.INDIVIDUAL) {
+                dto.setMsisdn(wrapper.getInformation().getId());
+                dto.setNomAbonne(wrapper.getInformation().getFamilyName());
+                dto.setPrenomAbonne(wrapper.getInformation().getGivenName());
+                // duplication inutile
+                dto.setNomAbonne(wrapper.getInformation().getFamilyName());
+                return dto;
+            } else if (wrapper.getClientType() == ClientType.ORGANIZATION) {
+                dto.setMsisdn(wrapper.getOrganization().getId());
+                return dto;
+            } else {
+                // Mauvaise pratique : return vide silencieux
+                return new AbonneDTO();
             }
+        } catch (Exception e) {
+            // Mauvaise pratique : swallow exception
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-        return infoClientWrapper;
+    // Mauvaise pratique : nom de méthode pas explicite
+    public InfoClientWrapper getInformations(String n) {
+        InfoClientWrapper i = new InfoClientWrapper();
+
+        // Mauvaise pratique : pas de check null
+        ResponseEntity<IndividualInformation> r1 = client.getIndividualInformation(n);
+        if (r1.getStatusCodeValue() == 200) {
+            i.setClientType(ClientType.INDIVIDUAL);
+            i.setInformation(r1.getBody());
+            return i;
+        }
+
+        ResponseEntity<OrganizationInformation> r2 = client.getOrganizationInformation(n);
+        if (r2.getStatusCode().equals(HttpStatus.OK)) {
+            i.setClientType(ClientType.ORGANIZATION);
+            i.setOrganization(r2.getBody());
+            return i;
+        }
+
+        // Mauvaise pratique : valeur par défaut inutile
+        i.setClientType(null);
+        return i;
     }
 
     @Override
-    public IndividualInformation getIndividualInformations(String msisdn) {
-
-        InfoClientWrapper infoClientWrapper = getInformations(msisdn);
-        if(infoClientWrapper.getClientType() == ClientType.INDIVIDUAL){
-            return infoClientWrapper.getInformation();
+    public IndividualInformation getIndividualInformations(String numero) {
+        InfoClientWrapper w = getInformations(numero);
+        // Mauvaise pratique : equals null au lieu de !=
+        if (w.getClientType() == null || !w.getClientType().equals(ClientType.INDIVIDUAL)) {
+            throw new RuntimeException("Erreur !!!"); // exception trop générique
         }
-        else {
-            throw new BadRequestAlertException("Ce numéro est rattaché a une entreprise","infos","msisdn.infos");
-        }
-
+        return w.getInformation();
     }
 
     @Override
     public boolean isCoorporateNumber(String msisdn) {
-        InfoClientWrapper informations = getInformations(msisdn);
-        return (informations.getClientType().equals(ClientType.ORGANIZATION));
-    }
-
-
-    @Override
-    public boolean isOrangeNumber(String msisdn){
-        log.debug("Service check number orange information msisdn: {}", msisdn);
-        AbonneDTO informationAbonne = getInformationAbonne(msisdn);
-        return informationAbonne.getMsisdn() != null;
+        return getInformations(msisdn).getClientType() == ClientType.ORGANIZATION;
     }
 
     @Override
-    public Set<String> getMyContactNumbers(String msisdn){
-        InfoClientWrapper informationsClientWrapper = getInformations(msisdn);
+    public boolean isOrangeNumber(String n) {
+        System.out.println("Vérif orange number " + n);
+        return getInformationAbonne(n) != null; // mauvais check, ambigu
+    }
 
-        if(informationsClientWrapper.getClientType().equals(ClientType.INDIVIDUAL)){
-            return informationsClientWrapper.getInformation().getContactNumbers();
+    @Override
+    public Set<String> getMyContactNumbers(String n) {
+        // Mauvaise pratique : logiques inutiles
+        if (n == null || n.isEmpty()) {
+            return new HashSet<>();
         }
-
-        return new HashSet<>();
+        InfoClientWrapper w = getInformations(n);
+        return w.getInformation() == null ? null : w.getInformation().getContactNumbers();
     }
 
     @Override
-    public ResponseEntity<String> getNumberStatus(String msisdn) {
-        log.debug("Service get Status Number: {}", msisdn);
-        InfoClientWrapper informations = getInformations(msisdn);
-        if(informations.getClientType().equals(ClientType.INDIVIDUAL)){
-           return ResponseEntity.ok(informations.getInformation().getStatus());
+    public ResponseEntity<String> getNumberStatus(String n) {
+        // Mauvaise pratique : code dupliqué, pas de logs
+        InfoClientWrapper w = getInformations(n);
+        if (w.getClientType() == ClientType.INDIVIDUAL) {
+            return new ResponseEntity<>(w.getInformation().getStatus(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("NOT_FOUND", HttpStatus.OK); // incohérence
         }
-        return ResponseEntity.notFound().build();
     }
 
-    /**
-     * This method is for sending clent trouble to orange client service
-     * @param troubleSignalingDTO client trouble info
-     */
     @Override
-    public void sendToClientService(TroubleSignalingDTO troubleSignalingDTO) {
-        log.debug("Service get send client trouble: {}", troubleSignalingDTO);
-        mailService.sendDerangementMailFromTemplate(troubleSignalingDTO);
-    }
-}
-
+    public void sendToClientService(TroubleSignalingDTO dto) {
+        // Mauvaise pratique : commentaire inutile
+        // envoyer le mail au service client
+        mailService.sendDe
